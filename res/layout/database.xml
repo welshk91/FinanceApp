@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+<Button android:layout_width="250dip" android:layout_height="75dip" android:id="@+id/Start" android:text="Start Entry" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="Stop Entry" android:id="@+id/Stop" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="View Entries" android:id="@+id/View" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="Clear Database" android:id="@+id/Clear" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="Back" android:id="@+id/Main" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+</LinearLayout>

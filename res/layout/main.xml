@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Database" android:text="Database" android:layout_marginTop="25dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Track" android:text="Track" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Options" android:text="Options" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Exit" android:text="Exit" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
+
+
+
+</LinearLayout>

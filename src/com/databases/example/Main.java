@@ -19,10 +19,14 @@ import android.widget.Toast;
 
 public class Main extends Activity {	
 	int page;
-	String name = null;
-	String time = null;
-	String type = null;
-	String date = null;
+
+	//Variables for the Account Table
+	String accountName = null;
+	String accountTime = null;
+	String accountBalance = null;
+	String accountDate = null;
+	
+	//Variables for the Views
 	Button Track_Button;
 	Button Database_Button;
 	Button Exit_Button;
@@ -41,19 +45,21 @@ public class Main extends Activity {
 	EditText stopName;
 	EditText stopTime;
 	TextView startLabel;
-	public final String MY_DB_TABLE1 = "t_Name";
-	public final String MY_DB_NAME = "FireCATlog";
-
+	
+	//Variables for the Database
+	public final String tblAccounts = "t_Name";
+	public final String dbFinance = "Financelog";
 	public SQLiteDatabase myDB = null;
 
+	//Variables for the ListView
 	public ArrayList<String> results = new ArrayList<String>();
 
+	//Method handling 'mouse-click'
 	public OnClickListener buttonListener = new OnClickListener() {
 		public void onClick(View view) {
 			switch (view.getId()) {
 			case R.id.Track:
-
-				//code here
+				//code here for track button
 				break;
 
 			case R.id.Database:
@@ -83,36 +89,36 @@ public class Main extends Activity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Main.this);
 				builder.setMessage(
-				"Do you want to completely clear the database?")
-				.setCancelable(false)
-				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface arg0,
-							int arg1) {
-						myDB.execSQL("DELETE FROM "
-								+ MY_DB_TABLE1 + ";");
-					}
-				})
-				.setNegativeButton("No",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface arg0,
-							int arg1) {
-						// no action taken
-					}
-				}).show();
+						"Do you want to completely clear the database?")
+						.setCancelable(false)
+						.setPositiveButton("Yes",
+								new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface arg0,
+									int arg1) {
+								myDB.execSQL("DELETE FROM "
+										+ tblAccounts + ";");
+							}
+						})
+						.setNegativeButton("No",
+								new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface arg0,
+									int arg1) {
+								// no action taken
+							}
+						}).show();
 				break;
 
 			case R.id.StartDone:
-				name = startName.getText().toString();
-				type = "START";
-				time = startTime.getText().toString();
-				date = "Logged at " + Calendar.getInstance().get(Calendar.MONTH) + " " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ", " + Calendar.getInstance().get(Calendar.YEAR);
-				if (name != null || time != null || date != null
-						|| name != " " || time != " " || date != " ") {
-					myDB.execSQL("INSERT INTO " + MY_DB_TABLE1
-							+ " (Name, Type, Time, Date)" + " VALUES ('"
-							+ name + "', '" + type + "', '" + time + "', '"
-							+ date + "');");
+				accountName = startName.getText().toString();
+				accountBalance = "START";
+				accountTime = startTime.getText().toString();
+				accountDate = "Logged at " + Calendar.getInstance().get(Calendar.MONTH) + " " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ", " + Calendar.getInstance().get(Calendar.YEAR);
+				if (accountName != null || accountTime != null || accountDate != null
+						|| accountName != " " || accountTime != " " || accountDate != " ") {
+					myDB.execSQL("INSERT INTO " + tblAccounts
+							+ " (Name, Balance, Time, Date)" + " VALUES ('"
+							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+							+ accountDate + "');");
 					page = R.layout.database;
 				} else {
 					Toast.makeText(Main.this, " No Nulls Allowed ", 3000)
@@ -121,16 +127,16 @@ public class Main extends Activity {
 				break;
 
 			case R.id.StopDone:
-				name = stopName.getText().toString();
-				type = "STOP";
-				time = stopTime.getText().toString();
-				date = "Logged at " + Calendar.getInstance().get(Calendar.MONTH) + " "+ Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ", " +Calendar.getInstance().get(Calendar.YEAR);
-				if (name != null || time != null || date != null
-						|| name != " " || time != " " || date != " ") {
-					myDB.execSQL("INSERT INTO " + MY_DB_TABLE1
-							+ " (Name, Type, Time, Date)" + " VALUES ('"
-							+ name + "', '" + type + "', '" + time + "', '"
-							+ date + "');");
+				accountName = stopName.getText().toString();
+				accountBalance = "STOP";
+				accountTime = stopTime.getText().toString();
+				accountDate = "Logged at " + Calendar.getInstance().get(Calendar.MONTH) + " "+ Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ", " +Calendar.getInstance().get(Calendar.YEAR);
+				if (accountName != null || accountTime != null || accountDate != null
+						|| accountName != " " || accountTime != " " || accountDate != " ") {
+					myDB.execSQL("INSERT INTO " + tblAccounts
+							+ " (Name, Balance, Time, Date)" + " VALUES ('"
+							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+							+ accountDate + "');");
 					page = R.layout.database;
 				} else {
 					Toast.makeText(Main.this, " No Nulls Allowed ", 3000)
@@ -194,7 +200,7 @@ public class Main extends Activity {
 				StopBack_Button = (Button) findViewById(R.id.StopBack);
 				StopBack_Button.setOnClickListener(buttonListener);
 				stopName = (EditText) findViewById(R.id.EditTextStopName);
-				stopName.setText(name);
+				stopName.setText(accountName);
 				stopTime = (EditText) findViewById(R.id.EditTextStop);
 				stopTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " " + Calendar.getInstance().get(Calendar.AM_PM));
 				break;
@@ -223,19 +229,24 @@ public class Main extends Activity {
 		 * is populated by 'default' data
 		 */
 		try {
-			myDB = this.openOrCreateDatabase(MY_DB_NAME, MODE_PRIVATE, null);
+			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 			myDB.execSQL("CREATE TABLE IF NOT EXISTS "
-					+ MY_DB_TABLE1
-					+ " (Name VARCHAR, Type VARCHAR, Time VARCHAR, Date VARCHAR);");
+					+ tblAccounts
+					+ " (Name VARCHAR, Balance VARCHAR, Time VARCHAR, Date VARCHAR);");
 			myDB.execSQL("INSERT INTO "
-					+ MY_DB_TABLE1
-					+ " (Name, Type, Time, Date)"
-					+ " VALUES ('BOB', 'START', '5:30', '5-26-2012');");
-		} catch (Exception e) {
+					+ tblAccounts
+					+ " (Name, Balance, Time, Date)"
+					+ " VALUES ('LMCU', '$500', '5:30', '5-26-2012');");
+		} 
+		catch (Exception e) {
+			System.out.print("Error Creating Database!!!");
 		}
 
 	}// end onCreate
 
+	/*
+	 * Handle closing database properly to avoid corruption
+	 * */
 	@Override
 	public void onDestroy() {
 		if (myDB != null)

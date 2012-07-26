@@ -15,8 +15,8 @@ import android.widget.ListView;
 @SuppressWarnings("unused")
 public class ViewDB extends ListActivity {
 	Cursor c = null;
-	final String MY_DB_TABLE1 = "t_Name";
-	final String MY_DB_NAME = "FireCATlog";
+	final String tblAccounts = "t_Name";
+	final String dbFinance = "Financelog";
 	SQLiteDatabase myDB;
 	ArrayList<String> results = new ArrayList<String>();
 
@@ -28,8 +28,8 @@ public class ViewDB extends ListActivity {
 
 	protected void open() {
 		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(MY_DB_NAME, MODE_PRIVATE, null);
-		c = myDB.query(MY_DB_TABLE1, new String[] { "Name", "Type", "Time", "Date" }, null,
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		c = myDB.query(tblAccounts, new String[] { "Name", "Type", "Time", "Date" }, null,
 				null, null, null, null);
 		startManagingCursor(c);
 		int NameColumn = c.getColumnIndex("Name");
@@ -73,7 +73,16 @@ public class ViewDB extends ListActivity {
 
 		if (selectedEntry.equals(" BACK ")) {
 			// Refresh
+			Toast.makeText(ViewDB.this, " Going Back... ", 3000)
+			.show();
 			finish();
+		}
+		
+		//Code For Item getting clicked on goes here???
+		else{
+			System.out.print("An item was clicked on!!!");
+			Toast.makeText(ViewDB.this, " An Item Was Clicked On!!! ", 4000)
+			.show();
 		}
 
 	}// end onListItemClick

@@ -5,10 +5,10 @@
     android:layout_height="fill_parent"
     >
 
-<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Database" android:text="Database" android:layout_marginTop="25dip" android:layout_marginLeft="35dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Track" android:text="Track" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Options" android:text="Options" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Exit" android:text="Exit" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Database" android:text="@string/accounts" android:layout_marginTop="25dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Track" android:text="Not Used Yet" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Options" android:text="@string/options" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="70dip" android:id="@+id/Exit" android:text="@string/exit" android:layout_marginTop="50dip" android:layout_marginLeft="35dip"></Button>
 
 
 

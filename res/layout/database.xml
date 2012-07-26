@@ -5,9 +5,9 @@
     android:layout_height="fill_parent"
     >
     
-<Button android:layout_width="250dip" android:layout_height="75dip" android:id="@+id/Start" android:text="Start Entry" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="Stop Entry" android:id="@+id/Stop" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="View Entries" android:id="@+id/View" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="Clear Database" android:id="@+id/Clear" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="Back" android:id="@+id/Main" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/add_accounts" android:id="@+id/Start" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/delete_accounts" android:id="@+id/Stop" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/view_accounts" android:id="@+id/View" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/clear_database" android:id="@+id/Clear" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/back" android:id="@+id/Main" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
 </LinearLayout>

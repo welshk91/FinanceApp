@@ -25,7 +25,7 @@ public class Main extends Activity {
 	String accountTime = null;
 	String accountBalance = null;
 	String accountDate = null;
-	
+
 	//Variables for the Views
 	Button Track_Button;
 	Button Database_Button;
@@ -45,7 +45,7 @@ public class Main extends Activity {
 	EditText stopName;
 	EditText stopTime;
 	TextView startLabel;
-	
+
 	//Variables for the Database
 	public final String tblAccounts = "t_Name";
 	public final String dbFinance = "Financelog";

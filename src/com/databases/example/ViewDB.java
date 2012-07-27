@@ -2,17 +2,17 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import android.app.ListActivity;
-import android.content.ContentValues;
-import android.content.Intent;
+//import android.content.ContentValues;
+//import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.widget.ListView;
 
-@SuppressWarnings("unused")
 public class ViewDB extends ListActivity {
 	Cursor c = null;
 	final String tblAccounts = "t_Name";
@@ -20,17 +20,35 @@ public class ViewDB extends ListActivity {
 	SQLiteDatabase myDB;
 	ArrayList<String> results = new ArrayList<String>();
 
-	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+
+		ListView lv = getListView();
+
+		//Turn clicks on
+		lv.setClickable(true);
+		lv.setLongClickable(true);
+
+		//Listener for Long Presses 
+		lv.setOnItemLongClickListener( new AdapterView.OnItemLongClickListener 
+				(){ 
+			@Override 
+			public boolean onItemLongClick(AdapterView<?> av, View v, int 
+					pos, long id) { 
+				onLongListItemClick(v,pos,id); 
+				return true; 
+			} 
+		}); 
+
 		open();
 	}// end onCreate
 
+	//Method called after creation
 	protected void open() {
 		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
 		results.add(" BACK ");
-		
+
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 		c = myDB.query(tblAccounts, new String[] { "Name", "Balance", "Time", "Date" }, null,
@@ -70,31 +88,31 @@ public class ViewDB extends ListActivity {
 
 	}
 
+	//Method for Click
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		//int selectionRowID = (int) this.getSelectedItemId();
-		//String selectedEntry = this.results.get(selectionRowID);
-		
 		int selectionRowID = (int) getListAdapter().getItemId(position);
 		String item = (String) getListAdapter().getItem(position);
-		
-		Toast.makeText(ViewDB.this, " Row: " + selectionRowID + " Entry: " + item, 4000)
+
+		Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000)
 		.show();
-		/*
-		if (selectedEntry.equals(" BACK ")) {
+
+		if (item.contains("BACK")) {
 			// Refresh
-			Toast.makeText(ViewDB.this, " Going Back to the future... ", 3000)
+			Toast.makeText(ViewDB.this, " Going Back... ", 3000)
 			.show();
 			finish();
 		}
-		
-		//Code For Item getting clicked on goes here???
-		else{
-			System.out.print("An item was clicked on!!!");
-			Toast.makeText(ViewDB.this, " An Item Was Clicked On hopefully!!! ", 4000)
-			.show();
-		}*/
 
 	}// end onListItemClick
+
+	//Method for Handling Long Press 
+	protected void onLongListItemClick(View v, int position, long id) { 
+		int selectionRowID = (int) getListAdapter().getItemId(position);
+		String item = (String) getListAdapter().getItem(position);
+
+		Toast.makeText(ViewDB.this, "Long Press\nRow: " + selectionRowID + "\nEntry: " + item, 4000)
+		.show();
+	} 
 
 }// end ViewDB

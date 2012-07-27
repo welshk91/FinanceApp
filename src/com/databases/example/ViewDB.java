@@ -20,6 +20,7 @@ public class ViewDB extends ListActivity {
 	SQLiteDatabase myDB;
 	ArrayList<String> results = new ArrayList<String>();
 
+	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -27,6 +28,9 @@ public class ViewDB extends ListActivity {
 	}// end onCreate
 
 	protected void open() {
+		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
+		results.add(" BACK ");
+		
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 		c = myDB.query(tblAccounts, new String[] { "Name", "Balance", "Time", "Date" }, null,
@@ -36,7 +40,6 @@ public class ViewDB extends ListActivity {
 		int BalanceColumn = c.getColumnIndex("Balance");
 		int TimeColumn = c.getColumnIndex("Time");
 		int DateColumn = c.getColumnIndex("Date");
-		results.add(" BACK ");
 
 		c.moveToFirst();
 		if (c != null) {
@@ -69,12 +72,18 @@ public class ViewDB extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		int selectionRowID = (int) this.getSelectedItemId();
-		String selectedEntry = this.results.get(selectionRowID);
-
+		//int selectionRowID = (int) this.getSelectedItemId();
+		//String selectedEntry = this.results.get(selectionRowID);
+		
+		int selectionRowID = (int) getListAdapter().getItemId(position);
+		String item = (String) getListAdapter().getItem(position);
+		
+		Toast.makeText(ViewDB.this, " Row: " + selectionRowID + " Entry: " + item, 4000)
+		.show();
+		/*
 		if (selectedEntry.equals(" BACK ")) {
 			// Refresh
-			Toast.makeText(ViewDB.this, " Going Back... ", 3000)
+			Toast.makeText(ViewDB.this, " Going Back to the future... ", 3000)
 			.show();
 			finish();
 		}
@@ -82,9 +91,9 @@ public class ViewDB extends ListActivity {
 		//Code For Item getting clicked on goes here???
 		else{
 			System.out.print("An item was clicked on!!!");
-			Toast.makeText(ViewDB.this, " An Item Was Clicked On!!! ", 4000)
+			Toast.makeText(ViewDB.this, " An Item Was Clicked On hopefully!!! ", 4000)
 			.show();
-		}
+		}*/
 
 	}// end onListItemClick
 

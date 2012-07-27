@@ -13,5 +13,7 @@
     <string name="exit">Exit</string>    
     <string name="done">Done</string>    
     
+    <string name="balance:">BALANCE:</string>
+    <string name="name:">NAME:</string>
     
 </resources>

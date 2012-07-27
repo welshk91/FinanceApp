@@ -4,11 +4,11 @@
   android:orientation="vertical"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content">
-<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="NAME:  "></TextView>
-<EditText android:layout_height="wrap_content" android:id="@+id/EditTextName" android:layout_width="200dip"></EditText>
+<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/name:"></TextView>
+<EditText android:layout_height="wrap_content" android:id="@+id/EditTextName" android:layout_width="200dip" android:inputType="text"></EditText>
 
-<TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="BALANCE:"></TextView>
-<EditText android:id="@+id/EditTextStart" android:layout_width="200dip" android:layout_height="wrap_content"></EditText>
+<TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/balance:"></TextView>
+<EditText android:id="@+id/EditTextStart" android:layout_width="200dip" android:layout_height="wrap_content" android:inputType="number"></EditText>
 
 <Button android:layout_height="70dip" android:text="@string/done" android:layout_width="300dip" android:layout_marginLeft="10dip" android:id="@+id/StartDone" android:layout_marginTop="50dip"></Button>
 <Button android:layout_height="70dip" android:text="@string/back" android:layout_width="300dip" android:layout_marginLeft="10dip" android:id="@+id/StartBack"></Button>

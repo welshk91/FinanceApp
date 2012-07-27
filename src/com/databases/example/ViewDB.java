@@ -29,11 +29,11 @@ public class ViewDB extends ListActivity {
 	protected void open() {
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		c = myDB.query(tblAccounts, new String[] { "Name", "Type", "Time", "Date" }, null,
+		c = myDB.query(tblAccounts, new String[] { "Name", "Balance", "Time", "Date" }, null,
 				null, null, null, null);
 		startManagingCursor(c);
 		int NameColumn = c.getColumnIndex("Name");
-		int TypeColumn = c.getColumnIndex("Type");
+		int BalanceColumn = c.getColumnIndex("Balance");
 		int TimeColumn = c.getColumnIndex("Time");
 		int DateColumn = c.getColumnIndex("Date");
 		results.add(" BACK ");
@@ -45,13 +45,13 @@ public class ViewDB extends ListActivity {
 				do {
 					i++;
 					String Name = c.getString(NameColumn);
-					String Type = c.getString(TypeColumn);
+					String Balance = c.getString(BalanceColumn);
 					String Time = c.getString(TimeColumn);
 					String Date = c.getString(DateColumn);
-					if (Name != null && Type != null && Time != null && Date != null && 
-							Name != "" && Type != "" && Time != "" && Date != "") {
+					if (Name != null && Balance != null && Time != null && Date != null && 
+							Name != "" && Balance != "" && Time != "" && Date != "") {
 						results.add(" " + i + ": " + Name + ", "
-								+ Type + ", " + Time + ", " + Date);
+								+ Balance + ", " + Time + ", " + Date);
 
 					}
 				} while (c.moveToNext());
@@ -67,6 +67,7 @@ public class ViewDB extends ListActivity {
 
 	}
 
+	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		int selectionRowID = (int) this.getSelectedItemId();
 		String selectedEntry = this.results.get(selectionRowID);

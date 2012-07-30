@@ -1,3 +1,10 @@
 This is the README for my Finance App for the Android Platform.
 
 More to come...
+
+
+
+GIT Notes for Myself:
+git add -A
+git commit -a -m 'Fixed some warnings'
+git push -u origin master

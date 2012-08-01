@@ -42,8 +42,7 @@ public class Main extends Activity {
 	EditText startName;
 	EditText startTime;
 	EditText addAddress;
-	EditText stopName;
-	EditText stopTime;
+	EditText removeName;
 	TextView startLabel;
 
 	//Variables for the Database
@@ -89,7 +88,7 @@ public class Main extends Activity {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						Main.this);
 				builder.setMessage(
-						"Do you want to completely clear the database?")
+						"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
 						.setCancelable(false)
 						.setPositiveButton("Yes",
 								new DialogInterface.OnClickListener() {
@@ -110,9 +109,14 @@ public class Main extends Activity {
 
 			case R.id.StartDone:
 				accountName = startName.getText().toString();
-				accountBalance = "START";
-				accountTime = startTime.getText().toString();
-				accountDate = "Logged at " + Calendar.getInstance().get(Calendar.MONTH) + " " + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ", " + Calendar.getInstance().get(Calendar.YEAR);
+				accountBalance = startTime.getText().toString();
+				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+				}
+				else{
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+				}				
+				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
 				if (accountName != null || accountTime != null || accountDate != null
 						|| accountName != " " || accountTime != " " || accountDate != " ") {
 					myDB.execSQL("INSERT INTO " + tblAccounts
@@ -127,20 +131,13 @@ public class Main extends Activity {
 				break;
 
 			case R.id.StopDone:
-				accountName = stopName.getText().toString();
-				accountBalance = "STOP";
-				accountTime = stopTime.getText().toString();
-				accountDate = "Logged at " + Calendar.getInstance().get(Calendar.MONTH) + " "+ Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + ", " +Calendar.getInstance().get(Calendar.YEAR);
-				if (accountName != null || accountTime != null || accountDate != null
-						|| accountName != " " || accountTime != " " || accountDate != " ") {
-					myDB.execSQL("INSERT INTO " + tblAccounts
-							+ " (Name, Balance, Time, Date)" + " VALUES ('"
-							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-							+ accountDate + "');");
-					page = R.layout.database;
-				} else {
-					Toast.makeText(Main.this, " No Nulls Allowed ", 3000)
-					.show();
+				accountName = removeName.getText().toString();
+				if(accountName!=null && accountName!=""){
+					myDB.execSQL("DELETE FROM " + tblAccounts + " WHERE Name = '" + accountName + "';");
+					page=R.layout.database;
+				}
+				else{
+					Toast.makeText(Main.this, " No Nulls Allowed ", 3000).show();
 				}
 				break;
 
@@ -190,7 +187,12 @@ public class Main extends Activity {
 				StartBack_Button.setOnClickListener(buttonListener);
 				startName = (EditText) findViewById(R.id.EditTextName);
 				startTime = (EditText) findViewById(R.id.EditTextStart);
-				startTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " " + Calendar.getInstance().get(Calendar.AM_PM));
+				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+					startTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " PM");
+				}
+				else{
+					startTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " AM");
+				}
 				break;
 
 			case R.layout.stop:
@@ -199,10 +201,8 @@ public class Main extends Activity {
 				StopDone_Button.setOnClickListener(buttonListener);
 				StopBack_Button = (Button) findViewById(R.id.StopBack);
 				StopBack_Button.setOnClickListener(buttonListener);
-				stopName = (EditText) findViewById(R.id.EditTextStopName);
-				stopName.setText(accountName);
-				stopTime = (EditText) findViewById(R.id.EditTextStop);
-				stopTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " " + Calendar.getInstance().get(Calendar.AM_PM));
+				removeName = (EditText) findViewById(R.id.EditTextStopName);
+				removeName.setText(accountName);
 				break;
 
 			}// end switch(page)

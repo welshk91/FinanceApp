@@ -66,8 +66,10 @@ public class Main extends Activity {
 				break;
 
 			case R.id.Exit:
-				if (myDB != null)
+				if (myDB != null){
 					myDB.close();
+				}
+				
 				Main.this.finish();
 				break;
 
@@ -116,6 +118,7 @@ public class Main extends Activity {
 				else{
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
 				}				
+
 				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
 				if (accountName != null || accountTime != null || accountDate != null
 						|| accountName != " " || accountTime != " " || accountDate != " ") {
@@ -124,7 +127,9 @@ public class Main extends Activity {
 							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
 							+ accountDate + "');");
 					page = R.layout.database;
-				} else {
+				} 
+
+				else {
 					Toast.makeText(Main.this, " No Nulls Allowed ", 3000)
 					.show();
 				}
@@ -249,8 +254,9 @@ public class Main extends Activity {
 	 * */
 	@Override
 	public void onDestroy() {
-		if (myDB != null)
+		if (myDB != null){
 			myDB.close();
+		}
 		super.onDestroy();
 	}
 

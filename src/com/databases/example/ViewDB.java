@@ -7,13 +7,23 @@ import android.app.ListActivity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.widget.ListView;
 
 public class ViewDB extends ListActivity {
+
+	//Constants for ContextMenu
+	int CONTEXT_MENU_OPEN=1;
+	int CONTEXT_MENU_EDIT=2;
+	int CONTEXT_MENU_DELETE=3;
+
 	Cursor c = null;
 	final String tblAccounts = "t_Name";
 	final String dbFinance = "Financelog";
@@ -24,28 +34,20 @@ public class ViewDB extends ListActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-		ListView lv = getListView();
+		ListView lv = getListView();  
 
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
 
-		//Listener for Long Presses 
-		lv.setOnItemLongClickListener( new AdapterView.OnItemLongClickListener 
-				(){ 
-			@Override 
-			public boolean onItemLongClick(AdapterView<?> av, View v, int 
-					pos, long id) { 
-				onLongListItemClick(v,pos,id); 
-				return true; 
-			} 
-		}); 
+		//Allows Context Menus for each item of the list view
+		registerForContextMenu(lv);
 
-		open();
+		start();
 	}// end onCreate
 
 	//Method called after creation
-	protected void open() {
+	protected void start() {
 		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
 		results.add(" BACK ");
 
@@ -80,8 +82,9 @@ public class ViewDB extends ListActivity {
 		} else {
 			results.add(" DATABASE EMPTY!!! ");
 		}
-		if (myDB != null)
+		if (myDB != null){
 			myDB.close();
+		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, results);
 		this.setListAdapter(adapter);
@@ -94,25 +97,65 @@ public class ViewDB extends ListActivity {
 		int selectionRowID = (int) getListAdapter().getItemId(position);
 		String item = (String) getListAdapter().getItem(position);
 
-		Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000)
-		.show();
+		Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
 
 		if (item.contains("BACK")) {
 			// Refresh
-			Toast.makeText(ViewDB.this, " Going Back... ", 3000)
-			.show();
+			Toast.makeText(ViewDB.this, " Going Back... ", 3000).show();
 			finish();
 		}
 
 	}// end onListItemClick
 
-	//Method for Handling Long Press 
-	protected void onLongListItemClick(View v, int position, long id) { 
-		int selectionRowID = (int) getListAdapter().getItemId(position);
-		String item = (String) getListAdapter().getItem(position);
+	@Override  
+	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
+		super.onCreateContextMenu(menu, v, menuInfo);
 
-		Toast.makeText(ViewDB.this, "Long Press\nRow: " + selectionRowID + "\nEntry: " + item, 4000)
-		.show();
-	} 
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		String name = "" + getListAdapter().getItem(itemInfo.position);
+
+		menu.setHeaderTitle(name);  
+		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+	}  
+
+	@Override  
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		Object itemName = getListAdapter().getItem(itemInfo.position);
+
+		if(item.getTitle()=="Open"){
+			accountOpen(itemName);
+		}  
+		else if(item.getTitle()=="Edit"){
+			accountEdit(itemName);
+		}
+		else if(item.getTitle()=="Delete"){
+			
+			//accountDelete(itemName);
+		}
+		else {
+			System.out.print("ERROR on ContextMenu; function not found");
+			return false;
+		}  
+
+		return true;  
+	}  
+
+	//For Opening an Account
+	public void accountOpen(Object id){  
+		Toast.makeText(this, "Open\nItem:" + id, Toast.LENGTH_SHORT).show();  
+	}  
+
+	//For Editing an Account
+	public void accountEdit(Object id){  
+		Toast.makeText(this, "Edit\nItem:" + id, Toast.LENGTH_SHORT).show();  
+	}
+
+	//For Deleting an Account
+	public void accountDelete(Object id){  
+		Toast.makeText(this, "Delete\nItem:" + id, Toast.LENGTH_SHORT).show();
+	}
 
 }// end ViewDB

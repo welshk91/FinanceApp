@@ -79,12 +79,17 @@ public class ViewDB extends ListActivity {
 					}
 				} while (c.moveToNext());
 			}
-		} else {
+		} 
+
+		else {
 			results.add(" DATABASE EMPTY!!! ");
 		}
+
+		//Close Database if Open
 		if (myDB != null){
 			myDB.close();
 		}
+
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, results);
 		this.setListAdapter(adapter);
@@ -130,10 +135,24 @@ public class ViewDB extends ListActivity {
 		}  
 		else if(item.getTitle()=="Edit"){
 			accountEdit(itemName);
+
 		}
 		else if(item.getTitle()=="Delete"){
-			
-			//accountDelete(itemName);
+			//NEEDS ACCOUNT ID else it will delete multiple accounts of same name!
+			//NOTE: LIMIT *position*,*how many after*
+			String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE Name IN (SELECT Name FROM (SELECT Name FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
+
+			//Open Database
+			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+			myDB.execSQL(sqlCommand);
+			Toast.makeText(this, "SQL\n" + sqlCommand, 5000).show();
+
+			//Close Database if Opened
+			if (myDB != null){
+				myDB.close();
+			}
+
 		}
 		else {
 			System.out.print("ERROR on ContextMenu; function not found");
@@ -154,7 +173,7 @@ public class ViewDB extends ListActivity {
 	}
 
 	//For Deleting an Account
-	public void accountDelete(Object id){  
+	public void accountDelete(Object id){
 		Toast.makeText(this, "Delete\nItem:" + id, Toast.LENGTH_SHORT).show();
 	}
 

@@ -127,17 +127,48 @@ public class ViewDB extends ListActivity {
 
 	@Override  
 	public boolean onContextItemSelected(MenuItem item) {
+
+		if(item.getTitle()=="Open"){
+			accountOpen(item);
+		}  
+		else if(item.getTitle()=="Edit"){
+			accountEdit(item);
+		}
+		else if(item.getTitle()=="Delete"){
+			accountDelete(item);
+		}
+		else {
+			System.out.print("ERROR on ContextMenu; function not found");
+			return false;
+		}  
+
+		return true;  
+	}  
+
+	//For Opening an Account
+	public void accountOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = getListAdapter().getItem(itemInfo.position);
 
-		if(item.getTitle()=="Open"){
-			accountOpen(itemName);
-		}  
-		else if(item.getTitle()=="Edit"){
-			accountEdit(itemName);
+		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
+	}  
 
-		}
-		else if(item.getTitle()=="Delete"){
+	//For Editing an Account
+	public void accountEdit(MenuItem item){
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		Object itemName = getListAdapter().getItem(itemInfo.position);
+
+		Toast.makeText(this, "Editing Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
+	}
+
+	//For Deleting an Account
+	public void accountDelete(MenuItem item){
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		Object itemName = getListAdapter().getItem(itemInfo.position);
+
+		//Need to skip code if you try to delete "BACK" entry
+		if(itemInfo.position>=1){
+
 			//NEEDS ACCOUNT ID else it will delete multiple accounts of same name!
 			//NOTE: LIMIT *position*,*how many after*
 			String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE Name IN (SELECT Name FROM (SELECT Name FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
@@ -153,28 +184,9 @@ public class ViewDB extends ListActivity {
 				myDB.close();
 			}
 
+			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 		}
-		else {
-			System.out.print("ERROR on ContextMenu; function not found");
-			return false;
-		}  
 
-		return true;  
-	}  
-
-	//For Opening an Account
-	public void accountOpen(Object id){  
-		Toast.makeText(this, "Open\nItem:" + id, Toast.LENGTH_SHORT).show();  
-	}  
-
-	//For Editing an Account
-	public void accountEdit(Object id){  
-		Toast.makeText(this, "Edit\nItem:" + id, Toast.LENGTH_SHORT).show();  
-	}
-
-	//For Deleting an Account
-	public void accountDelete(Object id){
-		Toast.makeText(this, "Delete\nItem:" + id, Toast.LENGTH_SHORT).show();
 	}
 
 }// end ViewDB

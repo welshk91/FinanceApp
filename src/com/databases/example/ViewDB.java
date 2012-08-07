@@ -41,9 +41,9 @@ public class ViewDB extends Activity {
 
 		setContentView(R.layout.accounts);
 
-		lv = (ListView)findViewById(R.id.ListViewId);  
-		lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, results));
-
+		lv = (ListView)findViewById(R.id.list);
+		lv.setAdapter(adapter);
+		
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
@@ -119,8 +119,8 @@ public class ViewDB extends Activity {
 			myDB.close();
 		}
 
-		adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, results);
-		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.accounts, results);
+		//adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, results);
+		adapter = new ArrayAdapter<String>(this,R.layout.account_item, results);
 		lv.setAdapter(adapter);
 	}
 

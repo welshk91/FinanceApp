@@ -108,7 +108,7 @@ public class Main extends Activity {
 				break;
 
 			case R.id.StartDone:
-				accountName = startName.getText().toString();
+				accountName = startName.getText().toString().trim();
 				accountBalance = startTime.getText().toString();
 				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
@@ -128,13 +128,12 @@ public class Main extends Activity {
 				} 
 
 				else {
-					Toast.makeText(Main.this, " No Nulls Allowed ", 3000)
-					.show();
+					Toast.makeText(Main.this, " No Nulls Allowed ", 3000).show();
 				}
 				break;
 
 			case R.id.StopDone:
-				accountName = removeName.getText().toString();
+				accountName = removeName.getText().toString().trim();
 				if(accountName!=null && accountName!=""){
 					myDB.execSQL("DELETE FROM " + tblAccounts + " WHERE Name = '" + accountName + "';");
 					page=R.layout.database;

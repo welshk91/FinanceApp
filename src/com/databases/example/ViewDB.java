@@ -1,30 +1,43 @@
 package com.databases.example;
 
 import java.util.ArrayList;
-
+import java.util.Calendar;
 import android.app.Activity;
-import android.app.ListActivity;
-//import android.content.ContentValues;
-//import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ListView;
 
 public class ViewDB extends Activity {
 
+	int page;
+
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=1;
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
+
+	//Adding
+	Button StartDone_Button;
+	Button StartBack_Button;
+	EditText startName;
+	EditText startTime;
+	//Variables for the Account Table
+	String accountName = null;
+	String accountTime = null;
+	String accountBalance = null;
+	String accountDate = null;
 
 	ListView lv = null;
 	ArrayAdapter<String> adapter = null;
@@ -40,10 +53,11 @@ public class ViewDB extends Activity {
 		super.onCreate(icicle);
 
 		setContentView(R.layout.accounts);
+		page = R.layout.accounts;
 
 		lv = (ListView)findViewById(R.id.list);
 		lv.setAdapter(adapter);
-		
+
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
@@ -72,12 +86,18 @@ public class ViewDB extends Activity {
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
 
+		//Buttons
+		Button addAccount = (Button)findViewById(R.id.footerAdd); 
+		addAccount.setOnClickListener(buttonListener);
+
 		start();
+
 	}// end onCreate
 
 	//Method called after creation
 	protected void start() {
 		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
+		results = new ArrayList<String>();
 		results.add(" BACK ");
 
 		// Cursor is used to navigate the query results
@@ -178,10 +198,9 @@ public class ViewDB extends Activity {
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position);
 
-		//Need to skip code if you try to delete "BACK" entry
+		//Needed to skip code if you try to delete "BACK" entry
 		if(itemInfo.position>=1){
 
-			//NEEDS ACCOUNT ID else it will delete multiple accounts of same name!
 			//NOTE: LIMIT *position*,*how many after*
 			String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
 
@@ -195,10 +214,113 @@ public class ViewDB extends Activity {
 			if (myDB != null){
 				myDB.close();
 			}
-
+			
+			results.remove(itemInfo.position);
+			adapter.notifyDataSetChanged();
+			
 			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 		}
 
+	}//end of accountDelete
+
+	//Method for handling Button 'mouse-clicks'
+	public OnClickListener buttonListener = new OnClickListener() {
+		public void onClick(View view) {
+			switch (view.getId()) {
+			//If the Add button on the Account list is pressed
+			case R.id.footerAdd:
+				//code here for add button
+				page = R.layout.start;
+				break;
+
+				//If the Transfer button on the Account list is pressed
+			case R.id.footerTransfer:
+				//code here for transfer button
+				Toast.makeText(ViewDB.this, "Transfer Pressed", Toast.LENGTH_SHORT).show();
+				break;
+
+				//If the unknown button on the Account list is pressed
+			case R.id.footerUnknown:
+				//code here for unknown button
+				Toast.makeText(ViewDB.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
+				break;
+
+
+				//If The Done button is pressed on the Add Account page
+			case R.id.StartDone:
+				accountName = startName.getText().toString().trim();
+				accountBalance = startTime.getText().toString().trim();
+
+				//Open Database
+				myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+				}
+				else{
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+				}				
+
+				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+				if (accountName != null && accountTime != null && accountDate != null
+						&& accountName != " " && accountTime != " " && accountDate != " ") {
+					myDB.execSQL("INSERT INTO " + tblAccounts
+							+ " (Name, Balance, Time, Date)" + " VALUES ('"
+							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+							+ accountDate + "');");
+					page = R.layout.accounts;
+				} 
+
+				else {
+					Toast.makeText(ViewDB.this, " No Nulls Allowed ", 3000).show();
+				}
+
+				//Close Database if Opened
+				if (myDB != null){
+					myDB.close();
+				}
+
+				break;
+
+				//If Back pressed on Start
+			case R.id.StartBack:
+				page = R.layout.accounts;
+				break;
+
+			}
+
+			switch (page) {
+
+			//Going to Accounts
+			case R.layout.accounts:
+				ViewDB.this.onCreate(null);
+
+				break;
+
+				//Going to Add Account
+			case R.layout.start:
+				setContentView(R.layout.start);
+				StartDone_Button = (Button) findViewById(R.id.StartDone);
+				StartDone_Button.setOnClickListener(buttonListener);
+				StartBack_Button = (Button) findViewById(R.id.StartBack);
+				StartBack_Button.setOnClickListener(buttonListener);
+				startName = (EditText) findViewById(R.id.EditTextName);
+				startTime = (EditText) findViewById(R.id.EditTextStart);
+
+				break;
+			}
+		}
+	};//end of buttonListener
+
+	/*
+	 * Handle closing database properly to avoid corruption
+	 * */
+	@Override
+	public void onDestroy() {
+		if (myDB != null){
+			myDB.close();
+		}
+		super.onDestroy();
 	}
 
 }// end ViewDB

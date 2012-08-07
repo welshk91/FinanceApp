@@ -69,7 +69,7 @@ public class Main extends Activity {
 				if (myDB != null){
 					myDB.close();
 				}
-				
+
 				Main.this.finish();
 				break;
 
@@ -87,8 +87,7 @@ public class Main extends Activity {
 				break;
 
 			case R.id.Clear:
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						Main.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(Main.this);
 				builder.setMessage(
 						"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
 						.setCancelable(false)
@@ -102,8 +101,7 @@ public class Main extends Activity {
 						})
 						.setNegativeButton("No",
 								new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface arg0,
-									int arg1) {
+							public void onClick(DialogInterface arg0, int arg1) {
 								// no action taken
 							}
 						}).show();
@@ -192,12 +190,7 @@ public class Main extends Activity {
 				StartBack_Button.setOnClickListener(buttonListener);
 				startName = (EditText) findViewById(R.id.EditTextName);
 				startTime = (EditText) findViewById(R.id.EditTextStart);
-				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-					startTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " PM");
-				}
-				else{
-					startTime.setText(Calendar.getInstance().get(Calendar.HOUR) + ":" + Calendar.getInstance().get(Calendar.MINUTE) + " AM");
-				}
+
 				break;
 
 			case R.layout.stop:
@@ -237,7 +230,7 @@ public class Main extends Activity {
 			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 			myDB.execSQL("CREATE TABLE IF NOT EXISTS "
 					+ tblAccounts
-					+ " (Name VARCHAR, Balance VARCHAR, Time VARCHAR, Date VARCHAR);");
+					+ " (ID INTEGER PRIMARY KEY, Name VARCHAR, Balance VARCHAR, Time VARCHAR, Date VARCHAR);");
 			myDB.execSQL("INSERT INTO "
 					+ tblAccounts
 					+ " (Name, Balance, Time, Date)"

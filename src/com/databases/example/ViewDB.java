@@ -1,6 +1,8 @@
 package com.databases.example;
 
 import java.util.ArrayList;
+
+import android.app.Activity;
 import android.app.ListActivity;
 //import android.content.ContentValues;
 //import android.content.Intent;
@@ -12,17 +14,20 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.widget.ListView;
 
-public class ViewDB extends ListActivity {
+public class ViewDB extends Activity {
 
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=1;
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
+
+	ListView lv = null;
+	ArrayAdapter<String> adapter = null;
 
 	Cursor c = null;
 	final String tblAccounts = "t_Name";
@@ -34,11 +39,35 @@ public class ViewDB extends ListActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-		ListView lv = getListView();  
+		setContentView(R.layout.accounts);
+
+		lv = (ListView)findViewById(R.id.ListViewId);  
+		lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, results));
 
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
+
+		//Set Listener for regular mouse click
+		lv.setOnItemClickListener(new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+				int selectionRowID = (int) adapter.getItemId(position);
+				String item = (String) adapter.getItem(position);
+
+				Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
+
+				if (item.contains("BACK")) {
+					// Refresh
+					Toast.makeText(ViewDB.this, " Going Back... ", 3000).show();
+					finish();
+				}
+
+			}// end onItemClick
+
+		}//end onItemClickListener
+				);//end setOnItemClickListener
+
 
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
@@ -90,34 +119,17 @@ public class ViewDB extends ListActivity {
 			myDB.close();
 		}
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, results);
-		this.setListAdapter(adapter);
-
+		adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, results);
+		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.accounts, results);
+		lv.setAdapter(adapter);
 	}
-
-	//Method for Click
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		int selectionRowID = (int) getListAdapter().getItemId(position);
-		String item = (String) getListAdapter().getItem(position);
-
-		Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
-
-		if (item.contains("BACK")) {
-			// Refresh
-			Toast.makeText(ViewDB.this, " Going Back... ", 3000).show();
-			finish();
-		}
-
-	}// end onListItemClick
 
 	@Override  
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + getListAdapter().getItem(itemInfo.position);
+		String name = "" + adapter.getItem(itemInfo.position);
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -148,7 +160,7 @@ public class ViewDB extends ListActivity {
 	//For Opening an Account
 	public void accountOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = getListAdapter().getItem(itemInfo.position);
+		Object itemName = adapter.getItem(itemInfo.position);
 
 		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
 	}  
@@ -156,7 +168,7 @@ public class ViewDB extends ListActivity {
 	//For Editing an Account
 	public void accountEdit(MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = getListAdapter().getItem(itemInfo.position);
+		Object itemName = adapter.getItem(itemInfo.position);
 
 		Toast.makeText(this, "Editing Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
 	}
@@ -164,14 +176,14 @@ public class ViewDB extends ListActivity {
 	//For Deleting an Account
 	public void accountDelete(MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = getListAdapter().getItem(itemInfo.position);
+		Object itemName = adapter.getItem(itemInfo.position);
 
 		//Need to skip code if you try to delete "BACK" entry
 		if(itemInfo.position>=1){
 
 			//NEEDS ACCOUNT ID else it will delete multiple accounts of same name!
 			//NOTE: LIMIT *position*,*how many after*
-			String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE Name IN (SELECT Name FROM (SELECT Name FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
+			String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
 
 			//Open Database
 			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);

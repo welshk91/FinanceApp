@@ -14,37 +14,43 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
-        public static final int Clear=0x7f050008;
-        public static final int Database=0x7f05000a;
-        public static final int EditTextName=0x7f05000f;
-        public static final int EditTextStart=0x7f050011;
-        public static final int EditTextStopName=0x7f050014;
-        public static final int Exit=0x7f05000d;
-        public static final int Main=0x7f050009;
-        public static final int Options=0x7f05000c;
-        public static final int Start=0x7f050005;
-        public static final int StartBack=0x7f050013;
-        public static final int StartDone=0x7f050012;
-        public static final int Stop=0x7f050006;
-        public static final int StopBack=0x7f050016;
-        public static final int StopDone=0x7f050015;
-        public static final int TextView01=0x7f05000e;
-        public static final int TextView02=0x7f050010;
-        public static final int Track=0x7f05000b;
-        public static final int View=0x7f050007;
-        public static final int footerAdd=0x7f050002;
-        public static final int footerTransfer=0x7f050003;
-        public static final int footerUnknown=0x7f050004;
-        public static final int list=0x7f050000;
-        public static final int tv=0x7f050001;
+        public static final int Clear=0x7f05000b;
+        public static final int Database=0x7f05000d;
+        public static final int EditTextName=0x7f050012;
+        public static final int EditTextStart=0x7f050014;
+        public static final int EditTextStopName=0x7f050017;
+        public static final int Exit=0x7f050010;
+        public static final int Main=0x7f05000c;
+        public static final int Options=0x7f05000f;
+        public static final int Start=0x7f050008;
+        public static final int StartBack=0x7f050016;
+        public static final int StartDone=0x7f050015;
+        public static final int Stop=0x7f050009;
+        public static final int StopBack=0x7f050019;
+        public static final int StopDone=0x7f050018;
+        public static final int TextView01=0x7f050011;
+        public static final int TextView02=0x7f050013;
+        public static final int Track=0x7f05000e;
+        public static final int View=0x7f05000a;
+        public static final int account_menu_help=0x7f050002;
+        public static final int account_menu_logout=0x7f050000;
+        public static final int account_menu_options=0x7f050001;
+        public static final int footerAdd=0x7f050005;
+        public static final int footerSchedule=0x7f05001a;
+        public static final int footerTransfer=0x7f050006;
+        public static final int footerUnknown=0x7f050007;
+        public static final int list=0x7f050003;
+        public static final int tv=0x7f050004;
     }
     public static final class layout {
         public static final int account_item=0x7f030000;
-        public static final int accounts=0x7f030001;
-        public static final int database=0x7f030002;
-        public static final int main=0x7f030003;
-        public static final int start=0x7f030004;
-        public static final int stop=0x7f030005;
+        public static final int account_menu=0x7f030001;
+        public static final int accounts=0x7f030002;
+        public static final int database=0x7f030003;
+        public static final int main=0x7f030004;
+        public static final int start=0x7f030005;
+        public static final int stop=0x7f030006;
+        public static final int transactions=0x7f030007;
     }
     public static final class string {
         public static final int accounts=0x7f040007;

@@ -3,11 +3,14 @@ package com.databases.example;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View.OnClickListener;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,8 +46,8 @@ public class ViewDB extends Activity {
 	ArrayAdapter<String> adapter = null;
 
 	Cursor c = null;
-	final String tblAccounts = "t_Name";
-	final String dbFinance = "Financelog";
+	final String tblAccounts = "tblAccounts";
+	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
 	ArrayList<String> results = new ArrayList<String>();
 
@@ -69,12 +72,52 @@ public class ViewDB extends Activity {
 				int selectionRowID = (int) adapter.getItemId(position);
 				String item = (String) adapter.getItem(position);
 
-				Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
-
+				//Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
 				if (item.contains("BACK")) {
 					// Refresh
 					Toast.makeText(ViewDB.this, " Going Back... ", 3000).show();
 					finish();
+				}
+
+				else{
+
+					//NOTE: LIMIT *position*,*how many after*
+					String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
+
+					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+					Cursor c = myDB.rawQuery(sqlCommand, null);
+					startManagingCursor(c);
+					
+					int entry_id = 0;
+					String entry_name = null;
+					String entry_balance = null;
+					String entry_time = null;
+					String entry_date = null;
+
+					c.moveToFirst();
+					do{
+						entry_id = c.getInt(0);
+						entry_name = c.getString(1);
+						entry_balance = c.getString(2);
+						entry_time = c.getString(3);
+						entry_date = c.getString(4);
+						Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, 2000).show();
+					}while(c.moveToNext());
+
+					//Close Database if Open
+					if (myDB != null){
+						myDB.close();
+					}
+
+					//Call an Intent to go to Transactions Class
+					Intent i = new Intent(ViewDB.this, Transactions.class);
+					i.putExtra("ID", entry_id);
+					i.putExtra("name", entry_name);
+					i.putExtra("balance", entry_balance);
+					i.putExtra("time", entry_time);
+					i.putExtra("date", entry_date);
+					startActivity(i);
 				}
 
 			}// end onItemClick
@@ -90,12 +133,12 @@ public class ViewDB extends Activity {
 		Button addAccount = (Button)findViewById(R.id.footerAdd); 
 		addAccount.setOnClickListener(buttonListener);
 
-		start();
+		populate();
 
 	}// end onCreate
 
-	//Method called after creation
-	protected void start() {
+	//Method called after creation, populates list with account information
+	protected void populate() {
 		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
 		results = new ArrayList<String>();
 		results.add(" BACK ");
@@ -113,18 +156,15 @@ public class ViewDB extends Activity {
 		c.moveToFirst();
 		if (c != null) {
 			if (c.isFirst()) {
-				int i = 0;
 				do {
-					i++;
 					String Name = c.getString(NameColumn);
 					String Balance = c.getString(BalanceColumn);
 					String Time = c.getString(TimeColumn);
 					String Date = c.getString(DateColumn);
 					if (Name != null && Balance != null && Time != null && Date != null && 
 							Name != "" && Balance != "" && Time != "" && Date != "") {
-						results.add(" " + i + ": " + Name + ", "
+						results.add(Name + ", "
 								+ Balance + ", " + Time + ", " + Date);
-
 					}
 				} while (c.moveToNext());
 			}
@@ -208,16 +248,16 @@ public class ViewDB extends Activity {
 			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 			myDB.execSQL(sqlCommand);
-			Toast.makeText(this, "SQL\n" + sqlCommand, 5000).show();
+			//Toast.makeText(this, "SQL\n" + sqlCommand, 5000).show();
 
 			//Close Database if Opened
 			if (myDB != null){
 				myDB.close();
 			}
-			
+
 			results.remove(itemInfo.position);
 			adapter.notifyDataSetChanged();
-			
+
 			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 		}
 
@@ -244,7 +284,6 @@ public class ViewDB extends Activity {
 				//code here for unknown button
 				Toast.makeText(ViewDB.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
 				break;
-
 
 				//If The Done button is pressed on the Add Account page
 			case R.id.StartDone:
@@ -321,6 +360,35 @@ public class ViewDB extends Activity {
 			myDB.close();
 		}
 		super.onDestroy();
+	}
+
+
+	//For Menu
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.layout.account_menu, menu);
+		return true;
+	}
+
+	//For Menu Items
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.account_menu_logout:     
+			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_LONG).show();
+			this.onDestroy();
+			break;
+
+		case R.id.account_menu_options:    
+			Toast.makeText(this, "You pressed Options!", Toast.LENGTH_LONG).show();
+			break;
+
+		case R.id.account_menu_help:    
+			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_LONG).show();
+			break;
+		}
+		return true;
 	}
 
 }// end ViewDB

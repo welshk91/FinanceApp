@@ -46,8 +46,8 @@ public class Main extends Activity {
 	TextView startLabel;
 
 	//Variables for the Database
-	public final String tblAccounts = "t_Name";
-	public final String dbFinance = "Financelog";
+	public final String tblAccounts = "tblAccounts";
+	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 
 	//Variables for the ListView
@@ -230,10 +230,12 @@ public class Main extends Activity {
 			myDB.execSQL("CREATE TABLE IF NOT EXISTS "
 					+ tblAccounts
 					+ " (ID INTEGER PRIMARY KEY, Name VARCHAR, Balance VARCHAR, Time VARCHAR, Date VARCHAR);");
+			/*
 			myDB.execSQL("INSERT INTO "
 					+ tblAccounts
 					+ " (Name, Balance, Time, Date)"
 					+ " VALUES ('LMCU', '$500', '5:30', '5-26-2012');");
+			 */
 		} 
 		catch (Exception e) {
 			System.out.print("Error Creating Database!!!");

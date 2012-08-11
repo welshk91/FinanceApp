@@ -377,7 +377,9 @@ public class ViewDB extends Activity {
 		switch (item.getItemId()) {
 		case R.id.account_menu_logout:     
 			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_LONG).show();
-			this.onDestroy();
+			this.finish();
+			this.moveTaskToBack(true);
+			super.onDestroy();
 			break;
 
 		case R.id.account_menu_options:    

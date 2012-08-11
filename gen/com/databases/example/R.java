@@ -36,10 +36,13 @@ public final class R {
         public static final int account_menu_logout=0x7f050000;
         public static final int account_menu_options=0x7f050001;
         public static final int footerAdd=0x7f050005;
-        public static final int footerSchedule=0x7f05001a;
+        public static final int footerSchedule=0x7f05001d;
         public static final int footerTransfer=0x7f050006;
         public static final int footerUnknown=0x7f050007;
         public static final int list=0x7f050003;
+        public static final int transaction_menu_help=0x7f05001c;
+        public static final int transaction_menu_logout=0x7f05001a;
+        public static final int transaction_menu_options=0x7f05001b;
         public static final int tv=0x7f050004;
     }
     public static final class layout {
@@ -50,7 +53,8 @@ public final class R {
         public static final int main=0x7f030004;
         public static final int start=0x7f030005;
         public static final int stop=0x7f030006;
-        public static final int transactions=0x7f030007;
+        public static final int transaction_menu=0x7f030007;
+        public static final int transactions=0x7f030008;
     }
     public static final class string {
         public static final int accounts=0x7f040007;

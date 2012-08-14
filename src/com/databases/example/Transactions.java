@@ -41,9 +41,9 @@ public class Transactions extends Activity{
 
 	//Variables for the Transactions Table
 	String transName = null;
-	String accountTime = null;
+	String transTime = null;
 	String transBalance = null;
-	String accountDate = null;
+	String transDate = null;
 
 	int account_id;
 	String account_name;
@@ -234,7 +234,6 @@ public class Transactions extends Activity{
 		if(itemInfo.position>=1){
 
 			//NOTE: LIMIT *position*,*how many after*
-			//NOT PERFECT!!! HAD SOME CASES WHERE DELETE DIDNT KILL IT
 			String sqlCommand = "DELETE FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
 
 			//Open Database
@@ -248,8 +247,7 @@ public class Transactions extends Activity{
 				myDB.close();
 			}
 
-			results.remove(itemInfo.position);
-			adapter.notifyDataSetChanged();
+			Transactions.this.populate();
 
 			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 		}
@@ -312,41 +310,40 @@ public class Transactions extends Activity{
 					public void onClick(DialogInterface dialog,int id) {
 						// CODE FOR "OK"
 
-						tName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-						tBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+						tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+						tBalance = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
 						transName = tName.getText().toString().trim();
 						transBalance = tBalance.getText().toString().trim();
 
-						//						//Open Database
-						//						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-						//
-						//						if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-						//							accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-						//						}
-						//						else{
-						//							accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-						//						}				
-						//
-						//						accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-						//						if (accountName != null && accountTime != null && accountDate != null
-						//								&& accountName != " " && accountTime != " " && accountDate != " ") {
-						//							myDB.execSQL("INSERT INTO " + tblTrans
-						//									+ " (Name, Balance, Time, Date)" + " VALUES ('"
-						//									+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-						//									+ accountDate + "');");
-						//							page = R.layout.accounts;
-						//						} 
-						//
-						//						else {
-						//							Toast.makeText(Transactions.this, " No Nulls Allowed ", 3000).show();
-						//						}
-						//
-						//						//Close Database if Opened
-						//						if (myDB != null){
-						//							myDB.close();
-						//						}
-						//
-						//						Transactions.this.populate();
+						//Open Database
+						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+						if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+							transTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+						}
+						else{
+							transTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+						}				
+
+						transDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+						if (transName != null && transTime != null && transDate != null
+								&& transName != " " && transTime != " " && transDate != " ") {
+							myDB.execSQL("INSERT INTO " + tblTrans
+									+ " (TransDesc, ToAcctID, TransAmt, TransDate)" + " VALUES ('"
+									+ transName + "', '" + account_id + "', '" + transBalance + "', '" + transDate + "');");
+							page = R.layout.transactions;
+						} 
+
+						else {
+							Toast.makeText(Transactions.this, " No Nulls Allowed ", 3000).show();
+						}
+
+						//Close Database if Opened
+						if (myDB != null){
+							myDB.close();
+						}
+
+						Transactions.this.populate();
 
 					}//end onClick "OK"
 				})

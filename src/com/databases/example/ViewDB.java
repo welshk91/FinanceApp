@@ -261,8 +261,10 @@ public class ViewDB extends Activity {
 				myDB.close();
 			}
 
-			results.remove(itemInfo.position);
-			adapter.notifyDataSetChanged();
+			//results.remove(itemInfo.position);
+			//adapter.notifyDataSetChanged();
+			
+			ViewDB.this.populate();
 
 			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 		}

@@ -27,7 +27,7 @@ public final class R {
         public static final int EditTransactionDate=0x7f060021;
         public static final int EditTransactionMemo=0x7f06001f;
         public static final int EditTransactionName=0x7f060015;
-        public static final int EditTransactionValue=0x7f060016;
+        public static final int EditTransactionValue=0x7f060017;
         public static final int Exit=0x7f060014;
         public static final int Main=0x7f060010;
         public static final int Options=0x7f060013;
@@ -35,9 +35,9 @@ public final class R {
         public static final int Stop=0x7f06000d;
         public static final int TextView01=0x7f060000;
         public static final int TextView02=0x7f060002;
-        public static final int TextView03=0x7f060017;
-        public static final int TextView04=0x7f060019;
-        public static final int TextView05=0x7f06001c;
+        public static final int TextView03=0x7f060018;
+        public static final int TextView04=0x7f06001a;
+        public static final int TextView05=0x7f060016;
         public static final int TextView06=0x7f06001e;
         public static final int TextView07=0x7f060020;
         public static final int TextView08=0x7f060022;
@@ -50,9 +50,9 @@ public final class R {
         public static final int account_menu_logout=0x7f060004;
         public static final int account_menu_options=0x7f060005;
         public static final int list=0x7f060007;
-        public static final int spinner_transaction_category=0x7f06001a;
-        public static final int spinner_transaction_type=0x7f060018;
-        public static final int transaction_add_category=0x7f06001b;
+        public static final int spinner_transaction_category=0x7f06001b;
+        public static final int spinner_transaction_type=0x7f060019;
+        public static final int transaction_add_category=0x7f06001c;
         public static final int transaction_footer_Add=0x7f060027;
         public static final int transaction_footer_Schedule=0x7f060028;
         public static final int transaction_footer_Unknown=0x7f060029;

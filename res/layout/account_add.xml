@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -15,6 +15,8 @@
         android:id="@+id/EditAccountName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView01"
+        android:layout_toRightOf="@+id/TextView02"
         android:inputType="text" >
     </EditText>
 
@@ -22,6 +24,7 @@
         android:id="@+id/TextView02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/EditAccountName"
         android:text="@string/balance:" >
     </TextView>
 
@@ -29,7 +32,9 @@
         android:id="@+id/EditAccountBalance"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView02"
+        android:layout_toRightOf="@+id/TextView02"
         android:inputType="numberDecimal" >
     </EditText>
 
-</LinearLayout>
+</RelativeLayout>

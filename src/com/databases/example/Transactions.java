@@ -39,12 +39,6 @@ public class Transactions extends Activity{
 	EditText tName;
 	EditText tBalance;
 
-	//Variables for the Transactions Table
-	String transName = null;
-	String transTime = null;
-	String transBalance = null;
-	String transDate = null;
-
 	int account_id;
 	String account_name;
 	String account_balance;
@@ -312,25 +306,25 @@ public class Transactions extends Activity{
 
 						tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
 						tBalance = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-						transName = tName.getText().toString().trim();
-						transBalance = tBalance.getText().toString().trim();
+						transactionName = tName.getText().toString().trim();
+						transactionBalance = tBalance.getText().toString().trim();
 
 						//Open Database
 						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 						if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-							transTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+							transactionTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
 						}
 						else{
-							transTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+							transactionTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
 						}				
 
-						transDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-						if (transName != null && transTime != null && transDate != null
-								&& transName != " " && transTime != " " && transDate != " ") {
+						transactionDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+						if (transactionName != null && transactionTime != null && transactionDate != null
+								&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
 							myDB.execSQL("INSERT INTO " + tblTrans
 									+ " (TransDesc, ToAcctID, TransAmt, TransDate)" + " VALUES ('"
-									+ transName + "', '" + account_id + "', '" + transBalance + "', '" + transDate + "');");
+									+ transactionName + "', '" + account_id + "', '" + transactionBalance + "', '" + transactionDate + "');");
 							page = R.layout.transactions;
 						} 
 

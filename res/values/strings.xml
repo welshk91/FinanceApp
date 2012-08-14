@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="hello">Hello World, Database!</string>
     <string name="app_name">Welsh Finance</string>
     <string name="add_accounts">Add Account</string>
     <string name="delete_accounts">Delete Account</string>
     <string name="view_accounts">View Accounts</string>
     <string name="clear_database">Clear Database</string>
-    <string name="back">Back</string>    
-    
-    <string name="accounts">Accounts</string>    
-    <string name="options">Options</string>    
-    <string name="exit">Exit</string>    
-    <string name="done">Done</string>    
-    
+    <string name="back">Back</string>
+    <string name="accounts">Accounts</string>
+    <string name="options">Options</string>
+    <string name="exit">Exit</string>
+    <string name="done">Done</string>
     <string name="balance:">BALANCE:</string>
     <string name="name:">NAME:</string>
-    
+    <string name="value:">VALUE:</string>
+
+    <string-array name="transaction_type">
+        <item>Withdrawl</item>
+        <item>Deposit</item>
+    </string-array>
+    <string-array name="transaction_category">
+        <item>Allowance</item>
+        <item>ATM</item>
+        <item>CHECK</item>
+        <item>FOOD</item>
+        <item>GASOLINE</item>
+        <item>GIFT</item>
+        <item>GROCERIES</item>
+        <item>MORTGAGE</item>
+        <item>OTHER</item>
+        <item>PAYCHECK</item>
+        <item>RENT</item>
+        <item>STUDENT LOANS</item>
+        <item>TIP</item>
+        <item>TRANSFER</item>
+    </string-array>
+
 </resources>

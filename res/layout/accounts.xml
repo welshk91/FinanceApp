@@ -27,7 +27,7 @@
         android:background="#FF0000" >
 
         <Button
-            android:id="@+id/footerAdd"
+            android:id="@+id/account_footer_Add"
             android:layout_width="0px"
             android:layout_height="fill_parent"
             android:layout_weight="10"
@@ -37,7 +37,7 @@
         </Button>
 
         <Button
-            android:id="@+id/footerTransfer"
+            android:id="@+id/account_footer_Transfer"
             android:layout_width="0px"
             android:layout_height="fill_parent"
             android:layout_weight="10"
@@ -47,7 +47,7 @@
         </Button>
 
         <Button
-            android:id="@+id/footerUnknown"
+            android:id="@+id/account_footer_Unknown"
             android:layout_width="0px"
             android:layout_height="fill_parent"
             android:layout_weight="10"

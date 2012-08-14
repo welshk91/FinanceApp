@@ -1,8 +1,6 @@
 package com.databases.example;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -74,11 +72,7 @@ public class Main extends Activity {
 				break;
 
 			case R.id.Start:
-				page = R.layout.start;
-				break;
-
-			case R.id.Stop:
-				page = R.layout.stop;
+				page = R.layout.account_add;
 				break;
 
 			case R.id.View:
@@ -105,50 +99,6 @@ public class Main extends Activity {
 								// no action taken
 							}
 						}).show();
-				break;
-
-			case R.id.StartDone:
-				accountName = startName.getText().toString().trim();
-				accountBalance = startTime.getText().toString();
-				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-				}
-				else{
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-				}				
-
-				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-				if (accountName != null || accountTime != null || accountDate != null
-						|| accountName != " " || accountTime != " " || accountDate != " ") {
-					myDB.execSQL("INSERT INTO " + tblAccounts
-							+ " (Name, Balance, Time, Date)" + " VALUES ('"
-							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-							+ accountDate + "');");
-					page = R.layout.database;
-				} 
-
-				else {
-					Toast.makeText(Main.this, " No Nulls Allowed ", 3000).show();
-				}
-				break;
-
-			case R.id.StopDone:
-				accountName = removeName.getText().toString().trim();
-				if(accountName!=null && accountName!=""){
-					myDB.execSQL("DELETE FROM " + tblAccounts + " WHERE Name = '" + accountName + "';");
-					page=R.layout.database;
-				}
-				else{
-					Toast.makeText(Main.this, " No Nulls Allowed ", 3000).show();
-				}
-				break;
-
-			case R.id.StartBack:
-				page = R.layout.database;
-				break;
-
-			case R.id.StopBack:
-				page = R.layout.database;
 				break;
 
 			case R.id.Main:
@@ -181,26 +131,6 @@ public class Main extends Activity {
 				Main_Button.setOnClickListener(buttonListener);
 				break;
 
-			case R.layout.start:
-				setContentView(R.layout.start);
-				StartDone_Button = (Button) findViewById(R.id.StartDone);
-				StartDone_Button.setOnClickListener(buttonListener);
-				StartBack_Button = (Button) findViewById(R.id.StartBack);
-				StartBack_Button.setOnClickListener(buttonListener);
-				startName = (EditText) findViewById(R.id.EditTextName);
-				startTime = (EditText) findViewById(R.id.EditTextStart);
-
-				break;
-
-			case R.layout.stop:
-				setContentView(R.layout.stop);
-				StopDone_Button = (Button) findViewById(R.id.StopDone);
-				StopDone_Button.setOnClickListener(buttonListener);
-				StopBack_Button = (Button) findViewById(R.id.StopBack);
-				StopBack_Button.setOnClickListener(buttonListener);
-				removeName = (EditText) findViewById(R.id.EditTextStopName);
-				removeName.setText(accountName);
-				break;
 
 			}// end switch(page)
 

@@ -3,12 +3,15 @@ package com.databases.example;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View.OnClickListener;
@@ -31,11 +34,10 @@ public class ViewDB extends Activity {
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
 
-	//Adding
-	Button StartDone_Button;
-	Button StartBack_Button;
-	EditText startName;
-	EditText startTime;
+	//Text Area for Adding Accounts
+	EditText aName;
+	EditText aBalance;
+
 	//Variables for the Account Table
 	String accountName = null;
 	String accountTime = null;
@@ -88,7 +90,7 @@ public class ViewDB extends Activity {
 
 					Cursor c = myDB.rawQuery(sqlCommand, null);
 					startManagingCursor(c);
-					
+
 					int entry_id = 0;
 					String entry_name = null;
 					String entry_balance = null;
@@ -129,9 +131,13 @@ public class ViewDB extends Activity {
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
 
-		//Buttons
-		Button addAccount = (Button)findViewById(R.id.footerAdd); 
+		//Footer Buttons 
+		Button addAccount = (Button)findViewById(R.id.account_footer_Add); 
 		addAccount.setOnClickListener(buttonListener);
+		Button transferAccount = (Button)findViewById(R.id.account_footer_Transfer); 
+		transferAccount.setOnClickListener(buttonListener);
+		Button unknownAccount = (Button)findViewById(R.id.account_footer_Unknown); 
+		unknownAccount.setOnClickListener(buttonListener);
 
 		populate();
 
@@ -268,65 +274,24 @@ public class ViewDB extends Activity {
 		public void onClick(View view) {
 			switch (view.getId()) {
 			//If the Add button on the Account list is pressed
-			case R.id.footerAdd:
+			case R.id.account_footer_Add:
 				//code here for add button
-				page = R.layout.start;
+				page = R.layout.account_add;
 				break;
 
 				//If the Transfer button on the Account list is pressed
-			case R.id.footerTransfer:
+			case R.id.account_footer_Transfer:
 				//code here for transfer button
 				Toast.makeText(ViewDB.this, "Transfer Pressed", Toast.LENGTH_SHORT).show();
 				break;
 
 				//If the unknown button on the Account list is pressed
-			case R.id.footerUnknown:
+			case R.id.account_footer_Unknown:
 				//code here for unknown button
 				Toast.makeText(ViewDB.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
 				break;
 
-				//If The Done button is pressed on the Add Account page
-			case R.id.StartDone:
-				accountName = startName.getText().toString().trim();
-				accountBalance = startTime.getText().toString().trim();
-
-				//Open Database
-				myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-				}
-				else{
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-				}				
-
-				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-				if (accountName != null && accountTime != null && accountDate != null
-						&& accountName != " " && accountTime != " " && accountDate != " ") {
-					myDB.execSQL("INSERT INTO " + tblAccounts
-							+ " (Name, Balance, Time, Date)" + " VALUES ('"
-							+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-							+ accountDate + "');");
-					page = R.layout.accounts;
-				} 
-
-				else {
-					Toast.makeText(ViewDB.this, " No Nulls Allowed ", 3000).show();
-				}
-
-				//Close Database if Opened
-				if (myDB != null){
-					myDB.close();
-				}
-
-				break;
-
-				//If Back pressed on Start
-			case R.id.StartBack:
-				page = R.layout.accounts;
-				break;
-
-			}
+			}//end Switch ViewByID
 
 			switch (page) {
 
@@ -337,14 +302,80 @@ public class ViewDB extends Activity {
 				break;
 
 				//Going to Add Account
-			case R.layout.start:
-				setContentView(R.layout.start);
-				StartDone_Button = (Button) findViewById(R.id.StartDone);
-				StartDone_Button.setOnClickListener(buttonListener);
-				StartBack_Button = (Button) findViewById(R.id.StartBack);
-				StartBack_Button.setOnClickListener(buttonListener);
-				startName = (EditText) findViewById(R.id.EditTextName);
-				startTime = (EditText) findViewById(R.id.EditTextStart);
+			case R.layout.account_add:
+
+				// get account_add.xml view
+				LayoutInflater li = LayoutInflater.from(ViewDB.this);
+				final View promptsView = li.inflate(R.layout.account_add, null);
+
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+						ViewDB.this);
+
+				// set account_add.xml to AlertDialog builder
+				alertDialogBuilder.setView(promptsView);
+
+				//set Title
+				alertDialogBuilder.setTitle("Add An Account");
+
+				// set dialog message
+				alertDialogBuilder
+				.setCancelable(false)
+				.setPositiveButton("Save",
+						new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id) {
+						// CODE FOR "OK"
+
+						aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
+						aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+						accountName = aName.getText().toString().trim();
+						accountBalance = aBalance.getText().toString().trim();
+
+						//Open Database
+						myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+						if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+							accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+						}
+						else{
+							accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+						}				
+
+						accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+						if (accountName != null && accountTime != null && accountDate != null
+								&& accountName != " " && accountTime != " " && accountDate != " ") {
+							myDB.execSQL("INSERT INTO " + tblAccounts
+									+ " (Name, Balance, Time, Date)" + " VALUES ('"
+									+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+									+ accountDate + "');");
+							page = R.layout.accounts;
+						} 
+
+						else {
+							Toast.makeText(ViewDB.this, " No Nulls Allowed ", 3000).show();
+						}
+
+						//Close Database if Opened
+						if (myDB != null){
+							myDB.close();
+						}
+
+						ViewDB.this.populate();
+
+					}//end onClick "OK"
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id) {
+						// CODE FOR "Cancel"
+						dialog.cancel();
+					}
+				});
+
+				// create alert dialog
+				AlertDialog alertDialog = alertDialogBuilder.create();
+
+				// show it
+				alertDialog.show();
 
 				break;
 			}
@@ -376,18 +407,18 @@ public class ViewDB extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.account_menu_logout:     
-			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
 			this.finish();
 			this.moveTaskToBack(true);
 			super.onDestroy();
 			break;
 
 		case R.id.account_menu_options:    
-			Toast.makeText(this, "You pressed Options!", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
 			break;
 
 		case R.id.account_menu_help:    
-			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
 			break;
 		}
 		return true;

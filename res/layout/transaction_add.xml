@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name:" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/EditTransactionName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView01"
+        android:layout_toRightOf="@+id/TextView05"
+        android:inputType="text" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/EditTransactionName"
+        android:text="@string/value:" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/EditTransactionValue"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView02"
+        android:layout_toRightOf="@+id/TextView05"
+        android:inputType="numberDecimal" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/EditTransactionValue"
+        android:text="TYPE:" />
+
+    <Spinner
+        android:id="@+id/spinner_transaction_type"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView03"
+        android:layout_toRightOf="@+id/TextView05"
+        android:entries="@array/transaction_type" />
+
+    <TextView
+        android:id="@+id/TextView04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner_transaction_type"
+        android:text="CATEGORY:" />
+
+    <Spinner
+        android:id="@+id/spinner_transaction_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView04"
+        android:layout_toRightOf="@+id/TextView05"
+        android:entries="@array/transaction_category" />
+
+    <Button
+        android:id="@+id/transaction_add_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/spinner_transaction_category"
+        android:layout_toRightOf="@+id/spinner_transaction_category"
+        android:text="ADD" >
+    </Button>
+
+    <TextView
+        android:id="@+id/TextView05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner_transaction_category"
+        android:text="CHECK NUM:" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/EditTransactionCheck"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView05"
+        android:layout_toRightOf="@+id/TextView05"
+        android:inputType="numberDecimal" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView06"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/EditTransactionCheck"
+        android:text="MEMO:" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/EditTransactionMemo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView06"
+        android:layout_toRightOf="@+id/TextView05"
+        android:inputType="text" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView07"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/EditTransactionMemo"
+        android:text="DATE:" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/EditTransactionDate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView07"
+        android:layout_toRightOf="@+id/TextView05"
+        android:inputType="text" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView08"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/EditTransactionDate"
+        android:text="CLEARED:" >
+    </TextView>
+
+    <CheckBox
+        android:id="@+id/CheckTransactionCleared"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView08"
+        android:layout_toRightOf="@+id/TextView05"
+        android:checked="true" >
+    </CheckBox>
+
+</RelativeLayout>

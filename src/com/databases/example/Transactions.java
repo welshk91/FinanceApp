@@ -5,6 +5,9 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,16 +20,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class Transactions extends Activity{
 
+	//The View
 	int page;
 
 	//Variables for the transaction Table
@@ -35,10 +41,15 @@ public class Transactions extends Activity{
 	String transactionBalance = null;
 	String transactionDate = null;
 
+	//Dialog for Adding Transaction
+	View promptsView;
+
 	//Text Area for Adding Accounts
 	EditText tName;
 	EditText tBalance;
+	EditText tDate;
 
+	//Variables of the Account Used
 	int account_id;
 	String account_name;
 	String account_balance;
@@ -50,9 +61,11 @@ public class Transactions extends Activity{
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
 
+	//ListView and Adapter
 	ListView lv = null;
 	ArrayAdapter<String> adapter = null;
 
+	//Variables needed for traversing database
 	Cursor c = null;
 	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
@@ -75,7 +88,7 @@ public class Transactions extends Activity{
 
 		//No Parameters used in calling Intent
 		if(getIntent().getExtras()==null){
-			Toast.makeText(this, "Could Not Find Account Information", 5000).show();
+			Toast.makeText(this, "Could Not Find Account Information", Toast.LENGTH_LONG).show();
 			return;
 		}
 
@@ -85,7 +98,7 @@ public class Transactions extends Activity{
 		account_date = getIntent().getExtras().getString("date");
 		account_time = getIntent().getExtras().getString("time");
 
-		Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, 2000).show();
+		Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
 
 		//Set Listener for regular mouse click
 		lv.setOnItemClickListener(new OnItemClickListener(){
@@ -94,11 +107,13 @@ public class Transactions extends Activity{
 				int selectionRowID = (int) adapter.getItemId(position);
 				String item = (String) adapter.getItem(position);
 
-				Toast.makeText(Transactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
 				if (item.contains("BACK")) {
 					// Refresh
-					Toast.makeText(Transactions.this, " Going Back... ", 3000).show();
+					Toast.makeText(Transactions.this, " Going Back... ", Toast.LENGTH_SHORT).show();
 					finish();
+				}
+				else{
+					Toast.makeText(Transactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
 				}
 
 			}// end onItemClick
@@ -118,6 +133,7 @@ public class Transactions extends Activity{
 		Button unknownTransaction = (Button)findViewById(R.id.transaction_footer_Unknown); 
 		unknownTransaction.setOnClickListener(buttonListener);
 
+		//Populate List with Entries
 		populate();
 
 	}//end onCreate
@@ -125,31 +141,32 @@ public class Transactions extends Activity{
 
 	//Populate view with all the transactions of selected account
 	protected void populate(){
+
 		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
 		results = new ArrayList<String>();
 		results.add(" BACK ");
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		c = myDB.query(tblTrans, new String[] { "TransID", "TransAmt", "ToAcctID"}, "ToAcctID = " + account_id,
+		c = myDB.query(tblTrans, new String[] { "TransDesc", "TransAmt", "TransDate"}, "ToAcctID = " + account_id,
 				null, null, null, null);
 
 		startManagingCursor(c);
-		int idColumn = c.getColumnIndex("TransID");
+		int descColumn = c.getColumnIndex("TransDesc");
 		int amtColumn = c.getColumnIndex("TransAmt");
-		int acctColumn = c.getColumnIndex("ToAcctID");
+		int dateColumn = c.getColumnIndex("TransDate");
 
 		c.moveToFirst();
 		if (c != null) {
 			if (c.isFirst()) {
 				do {
-					String Name = c.getString(idColumn);
+					String Name = c.getString(descColumn);
 					String Balance = c.getString(amtColumn);
-					String Time = c.getString(acctColumn);
-					if (Name != null && Balance != null && Time != null && 
-							Name != "" && Balance != "" && Time != "") {
+					String Date = c.getString(dateColumn);
+					if (Name != null && Balance != null && Date != null && 
+							Name != "" && Balance != "" && Date != "") {
 						results.add(Name + ", "
-								+ Balance + ", " + Time);
+								+ Balance + ", " + Date);
 					}
 				} while (c.moveToNext());
 			}
@@ -234,7 +251,7 @@ public class Transactions extends Activity{
 			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 			myDB.execSQL(sqlCommand);
-			Toast.makeText(this, "SQL\n" + sqlCommand, 3000).show();
+			Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
 			//Close Database if Opened
 			if (myDB != null){
@@ -285,7 +302,7 @@ public class Transactions extends Activity{
 
 				// get transaction_add.xml view
 				LayoutInflater li = LayoutInflater.from(Transactions.this);
-				final View promptsView = li.inflate(R.layout.transaction_add, null);
+				promptsView = li.inflate(R.layout.transaction_add, null);
 
 				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 						Transactions.this);
@@ -329,7 +346,7 @@ public class Transactions extends Activity{
 						} 
 
 						else {
-							Toast.makeText(Transactions.this, " No Nulls Allowed ", 3000).show();
+							Toast.makeText(Transactions.this, " No Nulls Allowed ", Toast.LENGTH_LONG).show();
 						}
 
 						//Close Database if Opened
@@ -389,5 +406,7 @@ public class Transactions extends Activity{
 		}
 		return true;
 	}
+
+
 
 }//end Transactions

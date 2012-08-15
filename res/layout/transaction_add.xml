@@ -118,20 +118,29 @@
         android:text="DATE:" >
     </TextView>
 
-    <EditText
-        android:id="@+id/EditTransactionDate"
-        android:layout_width="fill_parent"
+    <Button
+        android:id="@+id/ButtonTransactionDate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
         android:layout_toRightOf="@+id/TextView05"
-        android:inputType="text" >
-    </EditText>
+        android:onClick="showDatePickerDialog" >
+    </Button>
+
+    <Button
+        android:id="@+id/ButtonTransactionTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/TextView07"
+        android:layout_toRightOf="@+id/ButtonTransactionDate"
+        android:onClick="showTimePickerDialog" >
+    </Button>
 
     <TextView
         android:id="@+id/TextView08"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/EditTransactionDate"
+        android:layout_below="@id/ButtonTransactionDate"
         android:text="CLEARED:" >
     </TextView>
 

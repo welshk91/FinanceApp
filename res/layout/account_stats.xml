@@ -44,7 +44,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/TextTransactionDate"
+        android:id="@+id/TextAccountDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
@@ -53,11 +53,12 @@
     </TextView>
 
     <TextView
-        android:id="@+id/TextTransactionTime"
+        android:id="@+id/TextAccountTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
-        android:layout_toRightOf="@+id/TextTransactionDate"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/TextAccountDate"
         android:onClick="showTimePickerDialog" >
     </TextView>
 

@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
@@ -45,6 +46,13 @@ public class ViewDB extends Activity {
 	String accountTime = null;
 	String accountBalance = null;
 	String accountDate = null;
+
+	//TextView of Statistics
+	TextView statsName;
+	TextView statsValue;
+	TextView statsDate;
+	TextView statsTime;
+
 
 	ListView lv = null;
 	ArrayAdapter<String> adapter = null;
@@ -232,6 +240,36 @@ public class ViewDB extends Activity {
 
 		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
 
+		String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp)";
+		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
+
+		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+		Cursor c = myDB.rawQuery(sqlCommand, null);
+		startManagingCursor(c);
+
+		int entry_id = 0;
+		String entry_name = null;
+		String entry_balance = null;
+		String entry_time = null;
+		String entry_date = null;
+
+		c.moveToFirst();
+		do{
+			entry_id = c.getInt(c.getColumnIndex("ID"));
+			entry_name = c.getString(c.getColumnIndex("Name"));
+			entry_balance = c.getString(c.getColumnIndex("Balance"));
+			entry_time = c.getString(c.getColumnIndex("Time"));
+			entry_date = c.getString(c.getColumnIndex("Date"));
+			Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+		}while(c.moveToNext());
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+
+
 		LayoutInflater li = LayoutInflater.from(ViewDB.this);
 		accountStatsView = li.inflate(R.layout.account_stats, null);
 
@@ -242,7 +280,7 @@ public class ViewDB extends Activity {
 		alertDialogBuilder.setView(accountStatsView);
 
 		//set Title
-		alertDialogBuilder.setTitle("View Transaction");
+		alertDialogBuilder.setTitle("View Account");
 
 		// set dialog message
 		alertDialogBuilder
@@ -254,6 +292,15 @@ public class ViewDB extends Activity {
 		// show it
 		alertDialog.show();
 
+		//Set Statistics
+		statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
+		statsName.setText(entry_name);
+		statsValue = (TextView)accountStatsView.findViewById(R.id.TextAccountValue);
+		statsValue.setText(entry_balance);
+		statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
+		statsDate.setText(entry_date);
+		statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
+		statsTime.setText(entry_date);
 
 	}  
 

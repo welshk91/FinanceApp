@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -53,6 +54,17 @@ public class Transactions extends FragmentActivity{
 	static Button tDate;
 	static Button tTime;
 
+	//TextView of Statistics
+	TextView statsName;
+	TextView statsValue;
+	TextView statsType;
+	TextView statsCategory;
+	TextView statsCheckNum;
+	TextView statsMemo;
+	TextView statsCleared;
+	TextView statsDate;
+	TextView statsTime;
+
 	//Variables of the Account Used
 	int account_id;
 	String account_name;
@@ -72,6 +84,7 @@ public class Transactions extends FragmentActivity{
 	//Variables needed for traversing database
 	Cursor c = null;
 	final String tblTrans = "tblTrans";
+	final String tblAccounts = "tblAccounts";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
 	ArrayList<String> results = new ArrayList<String>();
@@ -229,21 +242,42 @@ public class Transactions extends FragmentActivity{
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position);
 
-		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
-		/*
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("TEST HERE")
-		       .setCancelable(true);
-		AlertDialog alert = builder.create();
-		alert.show();*/
+		String sqlCommand = "SELECT * FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp)";
+		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
+
+		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+		Cursor c = myDB.rawQuery(sqlCommand, null);
+		startManagingCursor(c);
+
+		int entry_id = 0;
+		String entry_name = null;
+		String entry_balance = null;
+		String entry_time = null;
+		String entry_date = null;
+
+		c.moveToFirst();
+		do{
+			entry_id = c.getInt(c.getColumnIndex("TransID"));
+			entry_name = c.getString(c.getColumnIndex("TransDesc"));
+			entry_balance = c.getString(c.getColumnIndex("TransAmt"));
+			entry_time = c.getString(c.getColumnIndex("TransDate"));
+			entry_date = c.getString(c.getColumnIndex("TransDate"));
+			Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+		}while(c.moveToNext());
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
 
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(Transactions.this);
 		transStatsView = li.inflate(R.layout.transaction_stats, null);
 
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Transactions.this);
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(transStatsView);
@@ -257,6 +291,24 @@ public class Transactions extends FragmentActivity{
 
 		// create alert dialog
 		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		//Set Statistics
+		statsName = (TextView)transStatsView.findViewById(R.id.TextTransactionName);
+		statsName.setText(entry_name);
+		statsValue = (TextView)transStatsView.findViewById(R.id.TextTransactionValue);
+		statsValue.setText(entry_balance);
+		statsType = (TextView)transStatsView.findViewById(R.id.TextTransactionType);
+		statsType.setText(entry_date);
+		statsCategory = (TextView)transStatsView.findViewById(R.id.TextTransactionCategory);
+		statsCategory.setText(entry_date);
+		statsCheckNum = (TextView)transStatsView.findViewById(R.id.TextTransactionCheck);
+		statsCheckNum.setText(entry_date);
+		statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
+		statsMemo.setText(entry_date);
+		statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
+		statsDate.setText(entry_date);
+		statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
+		statsTime.setText(entry_date);
 
 		// show it
 		alertDialog.show();

@@ -11,148 +11,130 @@
         android:text="@string/name:" >
     </TextView>
 
-    <EditText
-        android:id="@+id/EditTransactionName"
+    <TextView
+        android:id="@+id/TextTransactionName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView01"
-        android:layout_toRightOf="@+id/TextView05"
-        android:inputType="text" >
-    </EditText>
+        android:layout_toRightOf="@+id/TextView05" >
+    </TextView>
 
     <TextView
         android:id="@+id/TextView02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/EditTransactionName"
+        android:layout_below="@+id/TextTransactionName"
         android:text="@string/value:" >
     </TextView>
 
-    <EditText
-        android:id="@+id/EditTransactionValue"
+    <TextView
+        android:id="@+id/TextTransactionValue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView02"
-        android:layout_toRightOf="@+id/TextView05"
-        android:inputType="numberDecimal" >
-    </EditText>
+        android:layout_toRightOf="@+id/TextView05" >
+    </TextView>
 
     <TextView
         android:id="@+id/TextView03"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/EditTransactionValue"
+        android:layout_below="@+id/TextTransactionValue"
         android:text="@string/type:" />
 
-    <Spinner
-        android:id="@+id/spinner_transaction_type"
+    <TextView
+        android:id="@+id/TextTransactionType"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView03"
-        android:layout_toRightOf="@+id/TextView05"
-        android:entries="@array/transaction_type" />
+        android:layout_toRightOf="@+id/TextView05" />
 
     <TextView
         android:id="@+id/TextView04"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinner_transaction_type"
+        android:layout_below="@+id/TextTransactionType"
         android:text="@string/category:" />
 
-    <Spinner
-        android:id="@+id/spinner_transaction_category"
+    <TextView
+        android:id="@+id/TextTransactionCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView04"
-        android:layout_toRightOf="@+id/TextView05"
-        android:entries="@array/transaction_category" />
-
-    <Button
-        android:id="@+id/transaction_add_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/spinner_transaction_category"
-        android:layout_toRightOf="@+id/spinner_transaction_category"
-        android:text="@string/add" >
-    </Button>
+        android:layout_toRightOf="@+id/TextView05" />
 
     <TextView
         android:id="@+id/TextView05"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinner_transaction_category"
+        android:layout_below="@+id/TextTransactionCategory"
         android:text="@string/checknum:" >
     </TextView>
 
-    <EditText
-        android:id="@+id/EditTransactionCheck"
+    <TextView
+        android:id="@+id/TextTransactionCheck"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView05"
-        android:layout_toRightOf="@+id/TextView05"
-        android:inputType="numberDecimal" >
-    </EditText>
+        android:layout_toRightOf="@+id/TextView05" >
+    </TextView>
 
     <TextView
         android:id="@+id/TextView06"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/EditTransactionCheck"
+        android:layout_below="@+id/TextTransactionCheck"
         android:text="@string/memo:" >
     </TextView>
 
-    <EditText
-        android:id="@+id/EditTransactionMemo"
+    <TextView
+        android:id="@+id/TextTransactionMemo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView06"
-        android:layout_toRightOf="@+id/TextView05"
-        android:inputType="text" >
-    </EditText>
+        android:layout_toRightOf="@+id/TextView05" >
+    </TextView>
 
     <TextView
         android:id="@+id/TextView07"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/EditTransactionMemo"
+        android:layout_below="@+id/TextTransactionMemo"
         android:text="@string/date:" >
     </TextView>
 
-    <Button
-        android:id="@+id/ButtonTransactionDate"
+    <TextView
+        android:id="@+id/TextTransactionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
         android:layout_toRightOf="@+id/TextView05"
-        android:onClick="showDatePickerDialog"
-        android:text="Date" >
-    </Button>
+        android:onClick="showDatePickerDialog" >
+    </TextView>
 
-    <Button
-        android:id="@+id/ButtonTransactionTime"
+    <TextView
+        android:id="@+id/TextTransactionTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
-        android:layout_toRightOf="@+id/ButtonTransactionDate"
-        android:onClick="showTimePickerDialog"
-        android:text="Time" >
-    </Button>
+        android:layout_toRightOf="@+id/TextTransactionDate"
+        android:onClick="showTimePickerDialog" >
+    </TextView>
 
     <TextView
         android:id="@+id/TextView08"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ButtonTransactionDate"
+        android:layout_below="@+id/TextTransactionDate"
         android:text="@string/cleared:" >
     </TextView>
 
-    <CheckBox
+    <TextView
         android:id="@+id/CheckTransactionCleared"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView08"
-        android:layout_toRightOf="@+id/TextView05"
-        android:checked="true" >
-    </CheckBox>
+        android:layout_toRightOf="@+id/TextView05" >
+    </TextView>
 
 </RelativeLayout>

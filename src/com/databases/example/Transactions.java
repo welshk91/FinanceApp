@@ -45,6 +45,7 @@ public class Transactions extends FragmentActivity{
 
 	//Dialog for Adding Transaction
 	static View promptsView;
+	View transStatsView;
 
 	//Text Area for Adding Accounts
 	EditText tName;
@@ -228,7 +229,38 @@ public class Transactions extends FragmentActivity{
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position);
 
-		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
+		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+
+		/*
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("TEST HERE")
+		       .setCancelable(true);
+		AlertDialog alert = builder.create();
+		alert.show();*/
+
+		// get transaction_add.xml view
+		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		transStatsView = li.inflate(R.layout.transaction_stats, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				Transactions.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(transStatsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("View Transaction");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true);
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
 	}  
 
 	//For Editing an Account

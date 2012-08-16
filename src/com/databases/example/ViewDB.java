@@ -38,6 +38,8 @@ public class ViewDB extends Activity {
 	EditText aName;
 	EditText aBalance;
 
+	View accountStatsView;
+
 	//Variables for the Account Table
 	String accountName = null;
 	String accountTime = null;
@@ -77,7 +79,7 @@ public class ViewDB extends Activity {
 				//Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
 				if (item.contains("BACK")) {
 					// Refresh
-					Toast.makeText(ViewDB.this, " Going Back... ", 3000).show();
+					Toast.makeText(ViewDB.this, " Going Back... ", Toast.LENGTH_SHORT).show();
 					finish();
 				}
 
@@ -104,7 +106,7 @@ public class ViewDB extends Activity {
 						entry_balance = c.getString(2);
 						entry_time = c.getString(3);
 						entry_date = c.getString(4);
-						Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, 2000).show();
+						Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 					}while(c.moveToNext());
 
 					//Close Database if Open
@@ -229,6 +231,30 @@ public class ViewDB extends Activity {
 		Object itemName = adapter.getItem(itemInfo.position);
 
 		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
+
+		LayoutInflater li = LayoutInflater.from(ViewDB.this);
+		accountStatsView = li.inflate(R.layout.account_stats, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				ViewDB.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(accountStatsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("View Transaction");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true);
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+
 	}  
 
 	//For Editing an Account
@@ -263,7 +289,7 @@ public class ViewDB extends Activity {
 
 			//results.remove(itemInfo.position);
 			//adapter.notifyDataSetChanged();
-			
+
 			ViewDB.this.populate();
 
 			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
@@ -353,7 +379,7 @@ public class ViewDB extends Activity {
 						} 
 
 						else {
-							Toast.makeText(ViewDB.this, " No Nulls Allowed ", 3000).show();
+							Toast.makeText(ViewDB.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
 						}
 
 						//Close Database if Opened

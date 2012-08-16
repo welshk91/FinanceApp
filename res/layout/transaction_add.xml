@@ -124,7 +124,8 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
         android:layout_toRightOf="@+id/TextView05"
-        android:onClick="showDatePickerDialog" >
+        android:onClick="showDatePickerDialog"
+        android:text="Date" >
     </Button>
 
     <Button
@@ -133,7 +134,8 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView07"
         android:layout_toRightOf="@+id/ButtonTransactionDate"
-        android:onClick="showTimePickerDialog" >
+        android:onClick="showTimePickerDialog"
+        android:text="Time" >
     </Button>
 
     <TextView

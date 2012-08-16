@@ -2,16 +2,17 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,34 +21,36 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.DatePicker;
 
-public class Transactions extends Activity{
+
+public class Transactions extends FragmentActivity{
 
 	//The View
 	int page;
 
 	//Variables for the transaction Table
 	String transactionName = null;
-	String transactionTime = null;
+	static String transactionTime = null;
 	String transactionBalance = null;
-	String transactionDate = null;
+	static String transactionDate = null;
 
 	//Dialog for Adding Transaction
-	View promptsView;
+	static View promptsView;
 
 	//Text Area for Adding Accounts
 	EditText tName;
 	EditText tBalance;
-	EditText tDate;
+	static Button tDate;
+	static Button tTime;
 
 	//Variables of the Account Used
 	int account_id;
@@ -327,16 +330,8 @@ public class Transactions extends Activity{
 						transactionBalance = tBalance.getText().toString().trim();
 
 						//Open Database
-						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
 
-						if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-							transactionTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-						}
-						else{
-							transactionTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-						}				
-
-						transactionDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
 						if (transactionName != null && transactionTime != null && transactionDate != null
 								&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
 							myDB.execSQL("INSERT INTO " + tblTrans
@@ -407,6 +402,64 @@ public class Transactions extends Activity{
 		return true;
 	}
 
+	//Method to help create TimePicker
+	public static class TimePickerFragment extends DialogFragment
+	implements TimePickerDialog.OnTimeSetListener {
 
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current time as the default values for the picker
+			final Calendar c = Calendar.getInstance();
+			int hour = c.get(Calendar.HOUR_OF_DAY);
+			int minute = c.get(Calendar.MINUTE);
+
+			// Create a new instance of TimePickerDialog and return it
+			return new TimePickerDialog(getActivity(), this, hour, minute,
+					DateFormat.is24HourFormat(getActivity()));
+		}
+
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+			// Do something with the time chosen by the user
+			transactionTime = hourOfDay + ":" + minute;
+			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+			tTime.setText(transactionTime);
+		}
+	}
+
+	//Method called to show the TimePicker when adding a transaction
+	public void showTimePickerDialog(View v) {
+		DialogFragment newFragment = new TimePickerFragment();
+		newFragment.show(getSupportFragmentManager(), "timePicker");
+	}
+
+	//Method to help create DatePicker
+	public static class DatePickerFragment extends DialogFragment
+	implements DatePickerDialog.OnDateSetListener {
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current date as the default date in the picker
+			final Calendar c = Calendar.getInstance();
+			int year = c.get(Calendar.YEAR);
+			int month = c.get(Calendar.MONTH);
+			int day = c.get(Calendar.DAY_OF_MONTH);
+
+			// Create a new instance of DatePickerDialog and return it
+			return new DatePickerDialog(getActivity(), this, year, month, day);
+		}
+
+		public void onDateSet(DatePicker view, int year, int month, int day) {
+			// Do something with the date chosen by the user
+			transactionDate = (month+1) + "/" + day + "/" + year;
+			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+			tDate.setText(transactionDate);
+		}
+	}
+
+	//Method called to show DatePicker when adding transaction
+	public void showDatePickerDialog(View v) {
+		DialogFragment newFragment = new DatePickerFragment();
+		newFragment.show(getSupportFragmentManager(), "datePicker");
+	}
 
 }//end Transactions

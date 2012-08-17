@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -81,7 +83,7 @@ public class Transactions extends FragmentActivity{
 
 	//ListView and Adapter
 	ListView lv = null;
-	ArrayAdapter<String> adapter = null;
+	ArrayAdapter<UserRecord> adapter = null;
 
 	//Variables needed for traversing database
 	Cursor c = null;
@@ -89,7 +91,7 @@ public class Transactions extends FragmentActivity{
 	final String tblAccounts = "tblAccounts";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
-	ArrayList<String> results = new ArrayList<String>();
+	ArrayList<UserRecord> results = new ArrayList<UserRecord>();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -99,7 +101,6 @@ public class Transactions extends FragmentActivity{
 		setContentView(R.layout.transactions);
 
 		lv = (ListView)findViewById(R.id.list);
-		lv.setAdapter(adapter);
 
 		//Turn clicks on
 		lv.setClickable(true);
@@ -124,16 +125,9 @@ public class Transactions extends FragmentActivity{
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapter.getItemId(position);
-				String item = (String) adapter.getItem(position);
+				String item = adapter.getItem(position).name;
 
-				if (item.contains("BACK")) {
-					// Refresh
-					Toast.makeText(Transactions.this, " Going Back... ", Toast.LENGTH_SHORT).show();
-					finish();
-				}
-				else{
-					Toast.makeText(Transactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
-				}
+				Toast.makeText(Transactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
 
 			}// end onItemClick
 
@@ -162,8 +156,7 @@ public class Transactions extends FragmentActivity{
 	protected void populate(){
 
 		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
-		results = new ArrayList<String>();
-		results.add(" BACK ");
+		results = new ArrayList<UserRecord>();
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -179,20 +172,20 @@ public class Transactions extends FragmentActivity{
 		if (c != null) {
 			if (c.isFirst()) {
 				do {
-					String Name = c.getString(descColumn);
-					String Balance = c.getString(amtColumn);
-					String Date = c.getString(dateColumn);
-					if (Name != null && Balance != null && Date != null && 
-							Name != "" && Balance != "" && Date != "") {
-						results.add(Name + ", "
-								+ Balance + ", " + Date);
-					}
+					String name = c.getString(descColumn);
+					String balance = c.getString(amtColumn);
+					String date = c.getString(dateColumn); 
+
+					UserRecord entry = new UserRecord(name, balance,null,null,null,null,date,null,null);
+					results.add(entry);
+
 				} while (c.moveToNext());
 			}
 		} 
 
 		else {
-			results.add(" DATABASE EMPTY!!! ");
+			UserRecord tmp = new UserRecord("DATABASE EMPTY", null,null,null,null,null,null,null,null);
+			results.add(tmp);
 		}
 
 		//Close Database if Open
@@ -200,9 +193,10 @@ public class Transactions extends FragmentActivity{
 			myDB.close();
 		}
 
-		//adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, results);
-		adapter = new ArrayAdapter<String>(this,R.layout.transaction_item, results);
+
+		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
+		//lv.setAdapter(new UserItemAdapter(this, android.R.layout.simple_list_item_1, results));
 
 	}//end populate
 
@@ -211,7 +205,7 @@ public class Transactions extends FragmentActivity{
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapter.getItem(itemInfo.position);
+		String name = "" + adapter.getItem(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -243,10 +237,9 @@ public class Transactions extends FragmentActivity{
 	public void transactionOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		//Object itemName = adapter.getItem(itemInfo.position);
-
 		//Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
-		String sqlCommand = "SELECT * FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp)";
+		String sqlCommand = "SELECT * FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp)";
 		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -311,7 +304,7 @@ public class Transactions extends FragmentActivity{
 		statsDate.setText(entry_date);
 		statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
 		statsTime.setText(entry_date);
-		
+
 		//chkCleared = (CheckBox)this.findViewById(R.id.CheckTransactionCleared);
 		//String cleared = Boolean.valueOf(chkCleared.isChecked()).toString();
 		statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
@@ -335,27 +328,23 @@ public class Transactions extends FragmentActivity{
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position);
 
-		//Needed to skip code if you try to delete "BACK" entry
-		if(itemInfo.position>=1){
+		//NOTE: LIMIT *position*,*how many after*
+		String sqlCommand = "DELETE FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp);";
 
-			//NOTE: LIMIT *position*,*how many after*
-			String sqlCommand = "DELETE FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
+		//Open Database
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-			//Open Database
-			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB.execSQL(sqlCommand);
+		Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
-			myDB.execSQL(sqlCommand);
-			Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
-
-			//Close Database if Opened
-			if (myDB != null){
-				myDB.close();
-			}
-
-			Transactions.this.populate();
-
-			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
 		}
+
+		Transactions.this.populate();
+
+		Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
 	}//end of accountDelete
 
@@ -551,6 +540,99 @@ public class Transactions extends FragmentActivity{
 	public void showDatePickerDialog(View v) {
 		DialogFragment newFragment = new DatePickerFragment();
 		newFragment.show(getSupportFragmentManager(), "datePicker");
+	}
+
+	public class UserItemAdapter extends ArrayAdapter<UserRecord> {
+		private ArrayList<UserRecord> users;
+
+		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<UserRecord> users) {
+			super(context, textViewResourceId, users);
+			this.users = users;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.transaction_item, null);
+			}
+
+			UserRecord user = users.get(position);
+			if (user != null) {
+				TextView name = (TextView) v.findViewById(R.id.name);
+				TextView value = (TextView) v.findViewById(R.id.value);
+				TextView type = (TextView) v.findViewById(R.id.type);
+				TextView category = (TextView) v.findViewById(R.id.category);
+				TextView checknum = (TextView) v.findViewById(R.id.checknum);
+				TextView memo = (TextView) v.findViewById(R.id.memo);
+				TextView date = (TextView) v.findViewById(R.id.date);
+				TextView time = (TextView) v.findViewById(R.id.time);
+				TextView cleared = (TextView) v.findViewById(R.id.cleared);
+
+				if (user.name != null) {
+					name.setText(user.name);
+				}
+
+				if(user.value != null) {
+					value.setText("Value: " + user.value );
+				}
+
+				if(user.type != null) {
+					type.setText("Type: " + user.type );
+				}
+
+				if(user.category != null) {
+					category.setText("Category: " + user.category );
+				}
+
+				if(user.checknum != null) {
+					checknum.setText("Check Num: " + user.checknum );
+				}
+
+				if(user.memo != null) {
+					memo.setText("Memo: " + user.memo );
+				}
+
+				if(user.date != null) {
+					date.setText("Date: " + user.date );
+				}
+
+				if(user.time != null) {
+					time.setText("Time: " + user.time );
+				}
+
+				if(user.cleared != null) {
+					cleared.setText("Cleared: " + user.cleared );
+				}
+
+			}
+			return v;
+		}
+	}
+
+	public class UserRecord {
+		private String name;
+		private String value;
+		private String type;
+		private String category;
+		private String checknum;
+		private String memo;
+		private String date;
+		private String time;
+		private String cleared;
+
+		public UserRecord(String name, String value, String type, String category, String checknum, String memo, String date, String time, String cleared) {
+			this.name = name;
+			this.value = value;
+			this.type = type;
+			this.category = category;
+			this.checknum = checknum;
+			this.memo = memo;
+			this.date = date;
+			this.time = time;
+			this.cleared = cleared;
+		}
 	}
 
 }//end Transactions

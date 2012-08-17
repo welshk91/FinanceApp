@@ -15,7 +15,10 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int calculator=0x7f020000;
+        public static final int green=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int red=0x7f020003;
     }
     public static final class id {
         public static final int ButtonTransactionDate=0x7f060025;
@@ -38,15 +41,15 @@ public final class R {
         public static final int TextAccountName=0x7f060007;
         public static final int TextAccountTime=0x7f06000b;
         public static final int TextAccountValue=0x7f060008;
-        public static final int TextTransactionCategory=0x7f06002f;
-        public static final int TextTransactionCheck=0x7f060030;
-        public static final int TextTransactionCleared=0x7f060034;
-        public static final int TextTransactionDate=0x7f060032;
-        public static final int TextTransactionMemo=0x7f060031;
-        public static final int TextTransactionName=0x7f06002c;
-        public static final int TextTransactionTime=0x7f060033;
-        public static final int TextTransactionType=0x7f06002e;
-        public static final int TextTransactionValue=0x7f06002d;
+        public static final int TextTransactionCategory=0x7f060039;
+        public static final int TextTransactionCheck=0x7f06003a;
+        public static final int TextTransactionCleared=0x7f06003e;
+        public static final int TextTransactionDate=0x7f06003c;
+        public static final int TextTransactionMemo=0x7f06003b;
+        public static final int TextTransactionName=0x7f060036;
+        public static final int TextTransactionTime=0x7f06003d;
+        public static final int TextTransactionType=0x7f060038;
+        public static final int TextTransactionValue=0x7f060037;
         public static final int TextView01=0x7f060000;
         public static final int TextView02=0x7f060002;
         public static final int TextView03=0x7f06001d;
@@ -63,17 +66,27 @@ public final class R {
         public static final int account_menu_help=0x7f060006;
         public static final int account_menu_logout=0x7f060004;
         public static final int account_menu_options=0x7f060005;
+        public static final int category=0x7f06002d;
+        public static final int checknum=0x7f06002e;
+        public static final int cleared=0x7f060032;
+        public static final int date=0x7f060030;
         public static final int list=0x7f06000c;
+        public static final int memo=0x7f06002f;
+        public static final int name=0x7f06002a;
+        public static final int picture=0x7f060029;
         public static final int spinner_transaction_category=0x7f060020;
         public static final int spinner_transaction_type=0x7f06001e;
+        public static final int time=0x7f060031;
         public static final int transaction_add_category=0x7f060021;
-        public static final int transaction_footer_Add=0x7f060035;
-        public static final int transaction_footer_Schedule=0x7f060036;
-        public static final int transaction_footer_Unknown=0x7f060037;
-        public static final int transaction_menu_help=0x7f06002b;
-        public static final int transaction_menu_logout=0x7f060029;
-        public static final int transaction_menu_options=0x7f06002a;
+        public static final int transaction_footer_Add=0x7f06003f;
+        public static final int transaction_footer_Schedule=0x7f060040;
+        public static final int transaction_footer_Unknown=0x7f060041;
+        public static final int transaction_menu_help=0x7f060035;
+        public static final int transaction_menu_logout=0x7f060033;
+        public static final int transaction_menu_options=0x7f060034;
         public static final int tv=0x7f06000d;
+        public static final int type=0x7f06002c;
+        public static final int value=0x7f06002b;
     }
     public static final class layout {
         public static final int account_add=0x7f030000;

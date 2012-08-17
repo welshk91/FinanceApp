@@ -195,7 +195,6 @@ public class ViewDB extends Activity {
 			myDB.close();
 		}
 
-		//adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, results);
 		adapter = new ArrayAdapter<String>(this,R.layout.account_item, results);
 		lv.setAdapter(adapter);
 	}

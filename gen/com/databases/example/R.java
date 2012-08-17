@@ -40,6 +40,7 @@ public final class R {
         public static final int TextAccountValue=0x7f060008;
         public static final int TextTransactionCategory=0x7f06002f;
         public static final int TextTransactionCheck=0x7f060030;
+        public static final int TextTransactionCleared=0x7f060034;
         public static final int TextTransactionDate=0x7f060032;
         public static final int TextTransactionMemo=0x7f060031;
         public static final int TextTransactionName=0x7f06002c;
@@ -66,9 +67,9 @@ public final class R {
         public static final int spinner_transaction_category=0x7f060020;
         public static final int spinner_transaction_type=0x7f06001e;
         public static final int transaction_add_category=0x7f060021;
-        public static final int transaction_footer_Add=0x7f060034;
-        public static final int transaction_footer_Schedule=0x7f060035;
-        public static final int transaction_footer_Unknown=0x7f060036;
+        public static final int transaction_footer_Add=0x7f060035;
+        public static final int transaction_footer_Schedule=0x7f060036;
+        public static final int transaction_footer_Unknown=0x7f060037;
         public static final int transaction_menu_help=0x7f06002b;
         public static final int transaction_menu_logout=0x7f060029;
         public static final int transaction_menu_options=0x7f06002a;

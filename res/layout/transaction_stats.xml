@@ -131,7 +131,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/CheckTransactionCleared"
+        android:id="@+id/TextTransactionCleared"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView08"

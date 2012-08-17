@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -64,6 +65,7 @@ public class Transactions extends FragmentActivity{
 	TextView statsCleared;
 	TextView statsDate;
 	TextView statsTime;
+	CheckBox chkCleared;
 
 	//Variables of the Account Used
 	int account_id;
@@ -240,7 +242,7 @@ public class Transactions extends FragmentActivity{
 	//For Opening an Account
 	public void transactionOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position);
+		//Object itemName = adapter.getItem(itemInfo.position);
 
 		//Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
@@ -309,6 +311,11 @@ public class Transactions extends FragmentActivity{
 		statsDate.setText(entry_date);
 		statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
 		statsTime.setText(entry_date);
+		
+		//chkCleared = (CheckBox)this.findViewById(R.id.CheckTransactionCleared);
+		//String cleared = Boolean.valueOf(chkCleared.isChecked()).toString();
+		statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
+		//statsCleared.setText(cleared);
 
 		// show it
 		alertDialog.show();

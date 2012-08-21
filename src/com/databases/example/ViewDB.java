@@ -2,8 +2,13 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import com.databases.example.Transactions.UserItemAdapter;
+import com.databases.example.Transactions.UserRecord;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +19,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,13 +61,13 @@ public class ViewDB extends Activity {
 
 
 	ListView lv = null;
-	ArrayAdapter<String> adapter = null;
+	ArrayAdapter<UserRecord> adapter = null;
 
 	Cursor c = null;
 	final String tblAccounts = "tblAccounts";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
-	ArrayList<String> results = new ArrayList<String>();
+	ArrayList<UserRecord> results = new ArrayList<UserRecord>();
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -71,7 +77,6 @@ public class ViewDB extends Activity {
 		page = R.layout.accounts;
 
 		lv = (ListView)findViewById(R.id.list);
-		lv.setAdapter(adapter);
 
 		//Turn clicks on
 		lv.setClickable(true);
@@ -82,55 +87,45 @@ public class ViewDB extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapter.getItemId(position);
-				String item = (String) adapter.getItem(position);
+				String item = (String) adapter.getItem(position).name;
 
-				//Toast.makeText(ViewDB.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, 4000).show();
-				if (item.contains("BACK")) {
-					// Refresh
-					Toast.makeText(ViewDB.this, " Going Back... ", Toast.LENGTH_SHORT).show();
-					finish();
+				//NOTE: LIMIT *position*,*how many after*
+				String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
+
+				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				Cursor c = myDB.rawQuery(sqlCommand, null);
+				startManagingCursor(c);
+
+				int entry_id = 0;
+				String entry_name = null;
+				String entry_balance = null;
+				String entry_time = null;
+				String entry_date = null;
+
+				c.moveToFirst();
+				do{
+					entry_id = c.getInt(0);
+					entry_name = c.getString(1);
+					entry_balance = c.getString(2);
+					entry_time = c.getString(3);
+					entry_date = c.getString(4);
+					Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+				}while(c.moveToNext());
+
+				//Close Database if Open
+				if (myDB != null){
+					myDB.close();
 				}
 
-				else{
-
-					//NOTE: LIMIT *position*,*how many after*
-					String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
-
-					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-					Cursor c = myDB.rawQuery(sqlCommand, null);
-					startManagingCursor(c);
-
-					int entry_id = 0;
-					String entry_name = null;
-					String entry_balance = null;
-					String entry_time = null;
-					String entry_date = null;
-
-					c.moveToFirst();
-					do{
-						entry_id = c.getInt(0);
-						entry_name = c.getString(1);
-						entry_balance = c.getString(2);
-						entry_time = c.getString(3);
-						entry_date = c.getString(4);
-						Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
-					}while(c.moveToNext());
-
-					//Close Database if Open
-					if (myDB != null){
-						myDB.close();
-					}
-
-					//Call an Intent to go to Transactions Class
-					Intent i = new Intent(ViewDB.this, Transactions.class);
-					i.putExtra("ID", entry_id);
-					i.putExtra("name", entry_name);
-					i.putExtra("balance", entry_balance);
-					i.putExtra("time", entry_time);
-					i.putExtra("date", entry_date);
-					startActivity(i);
-				}
+				//Call an Intent to go to Transactions Class
+				Intent i = new Intent(ViewDB.this, Transactions.class);
+				i.putExtra("ID", entry_id);
+				i.putExtra("name", entry_name);
+				i.putExtra("balance", entry_balance);
+				i.putExtra("time", entry_time);
+				i.putExtra("date", entry_date);
+				startActivity(i);
 
 			}// end onItemClick
 
@@ -149,15 +144,16 @@ public class ViewDB extends Activity {
 		Button unknownAccount = (Button)findViewById(R.id.account_footer_Unknown); 
 		unknownAccount.setOnClickListener(buttonListener);
 
+		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		lv.setAdapter(adapter);
+
 		populate();
 
 	}// end onCreate
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
-		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
-		results = new ArrayList<String>();
-		results.add(" BACK ");
+		results = new ArrayList<UserRecord>();
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -173,21 +169,21 @@ public class ViewDB extends Activity {
 		if (c != null) {
 			if (c.isFirst()) {
 				do {
-					String Name = c.getString(NameColumn);
-					String Balance = c.getString(BalanceColumn);
-					String Time = c.getString(TimeColumn);
-					String Date = c.getString(DateColumn);
-					if (Name != null && Balance != null && Time != null && Date != null && 
-							Name != "" && Balance != "" && Time != "" && Date != "") {
-						results.add(Name + ", "
-								+ Balance + ", " + Time + ", " + Date);
-					}
+					String name = c.getString(NameColumn);
+					String balance = c.getString(BalanceColumn);
+					String time = c.getString(TimeColumn);
+					String date = c.getString(DateColumn);
+
+					UserRecord entry = new UserRecord(name, balance,date,time);
+					results.add(entry);
+
 				} while (c.moveToNext());
 			}
 		} 
 
 		else {
-			results.add(" DATABASE EMPTY!!! ");
+			UserRecord tmp = new UserRecord("DATABASE EMPTY",null,null,null);
+			results.add(tmp);		
 		}
 
 		//Close Database if Open
@@ -195,7 +191,7 @@ public class ViewDB extends Activity {
 			myDB.close();
 		}
 
-		adapter = new ArrayAdapter<String>(this,R.layout.account_item, results);
+		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 	}
 
@@ -204,7 +200,7 @@ public class ViewDB extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapter.getItem(itemInfo.position);
+		String name = "" + adapter.getItem(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -239,7 +235,7 @@ public class ViewDB extends Activity {
 
 		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
 
-		String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp)";
+		String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp)";
 		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -316,30 +312,27 @@ public class ViewDB extends Activity {
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position);
 
-		//Needed to skip code if you try to delete "BACK" entry
-		if(itemInfo.position>=1){
 
-			//NOTE: LIMIT *position*,*how many after*
-			String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-1) + ",1)AS tmp);";
+		//NOTE: LIMIT *position*,*how many after*
+		String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
-			//Open Database
-			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		//Open Database
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-			myDB.execSQL(sqlCommand);
-			//Toast.makeText(this, "SQL\n" + sqlCommand, 5000).show();
+		myDB.execSQL(sqlCommand);
+		//Toast.makeText(this, "SQL\n" + sqlCommand, 5000).show();
 
-			//Close Database if Opened
-			if (myDB != null){
-				myDB.close();
-			}
-
-			//results.remove(itemInfo.position);
-			//adapter.notifyDataSetChanged();
-
-			ViewDB.this.populate();
-
-			Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
 		}
+
+		//results.remove(itemInfo.position);
+		//adapter.notifyDataSetChanged();
+
+		ViewDB.this.populate();
+
+		Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
 	}//end of accountDelete
 
@@ -398,7 +391,6 @@ public class ViewDB extends Activity {
 						new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,int id) {
 						// CODE FOR "OK"
-
 						aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
 						aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
 						accountName = aName.getText().toString().trim();
@@ -496,6 +488,64 @@ public class ViewDB extends Activity {
 			break;
 		}
 		return true;
+	}
+
+	public class UserItemAdapter extends ArrayAdapter<UserRecord> {
+		private ArrayList<UserRecord> users;
+
+		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<UserRecord> users) {
+			super(context, textViewResourceId, users);
+			this.users = users;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.account_item, null);
+			}
+
+			UserRecord user = users.get(position);
+			if (user != null) {
+				TextView name = (TextView) v.findViewById(R.id.account_name);
+				TextView balance = (TextView) v.findViewById(R.id.account_balance);
+				TextView date = (TextView) v.findViewById(R.id.account_date);
+				TextView time = (TextView) v.findViewById(R.id.account_time);
+
+				if (user.name != null) {
+					name.setText(user.name);
+				}
+
+				if(user.balance != null) {
+					balance.setText("Balance: " + user.balance );
+				}
+
+				if(user.date != null) {
+					date.setText("Date: " + user.date );
+				}
+
+				if(user.time != null) {
+					time.setText("Time: " + user.time );
+				}
+
+			}
+			return v;
+		}
+	}
+
+	public class UserRecord {
+		private String name;
+		private String balance;
+		private String date;
+		private String time;
+
+		public UserRecord(String name, String balance, String date, String time) {
+			this.name = name;
+			this.balance = balance;
+			this.date = date;
+			this.time = time;
+		}
 	}
 
 }// end ViewDB

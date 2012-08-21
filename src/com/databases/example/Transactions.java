@@ -155,7 +155,6 @@ public class Transactions extends FragmentActivity{
 	//Populate view with all the transactions of selected account
 	protected void populate(){
 
-		//Add A back button. Might want to change this to a menu button, as you'd have to scroll up if list is big
 		results = new ArrayList<UserRecord>();
 
 		// Cursor is used to navigate the query results
@@ -193,10 +192,8 @@ public class Transactions extends FragmentActivity{
 			myDB.close();
 		}
 
-
 		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
-		//lv.setAdapter(new UserItemAdapter(this, android.R.layout.simple_list_item_1, results));
 
 	}//end populate
 

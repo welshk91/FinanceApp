@@ -22,7 +22,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/transaction_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -31,7 +31,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/value"
+            android:id="@+id/transaction_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -40,7 +40,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/type"
+            android:id="@+id/transaction_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -49,7 +49,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/category"
+            android:id="@+id/transaction_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -58,7 +58,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/checknum"
+            android:id="@+id/transaction_checknum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -67,7 +67,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/memo"
+            android:id="@+id/transaction_memo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -76,7 +76,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/transaction_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -85,7 +85,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/time"
+            android:id="@+id/transaction_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -94,7 +94,7 @@
             android:typeface="monospace" />
 
         <TextView
-            android:id="@+id/cleared"
+            android:id="@+id/transaction_cleared"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.databases.example.Transactions.UserItemAdapter;
-import com.databases.example.Transactions.UserRecord;
+import com.databases.example.Transactions.TransactionRecord;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -61,13 +61,13 @@ public class ViewDB extends Activity {
 
 
 	ListView lv = null;
-	ArrayAdapter<UserRecord> adapter = null;
+	ArrayAdapter<AccountRecord> adapter = null;
 
 	Cursor c = null;
 	final String tblAccounts = "tblAccounts";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
-	ArrayList<UserRecord> results = new ArrayList<UserRecord>();
+	ArrayList<AccountRecord> results = new ArrayList<AccountRecord>();
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -153,7 +153,7 @@ public class ViewDB extends Activity {
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
-		results = new ArrayList<UserRecord>();
+		results = new ArrayList<AccountRecord>();
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -174,7 +174,7 @@ public class ViewDB extends Activity {
 					String time = c.getString(TimeColumn);
 					String date = c.getString(DateColumn);
 
-					UserRecord entry = new UserRecord(name, balance,date,time);
+					AccountRecord entry = new AccountRecord(name, balance,date,time);
 					results.add(entry);
 
 				} while (c.moveToNext());
@@ -182,7 +182,7 @@ public class ViewDB extends Activity {
 		} 
 
 		else {
-			UserRecord tmp = new UserRecord("DATABASE EMPTY",null,null,null);
+			AccountRecord tmp = new AccountRecord("DATABASE EMPTY",null,null,null);
 			results.add(tmp);		
 		}
 
@@ -459,7 +459,6 @@ public class ViewDB extends Activity {
 		super.onDestroy();
 	}
 
-
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -490,12 +489,12 @@ public class ViewDB extends Activity {
 		return true;
 	}
 
-	public class UserItemAdapter extends ArrayAdapter<UserRecord> {
-		private ArrayList<UserRecord> users;
+	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {
+		private ArrayList<AccountRecord> account;
 
-		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<UserRecord> users) {
+		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<AccountRecord> users) {
 			super(context, textViewResourceId, users);
-			this.users = users;
+			this.account = users;
 		}
 
 		@Override
@@ -506,7 +505,7 @@ public class ViewDB extends Activity {
 				v = vi.inflate(R.layout.account_item, null);
 			}
 
-			UserRecord user = users.get(position);
+			AccountRecord user = account.get(position);
 			if (user != null) {
 				TextView name = (TextView) v.findViewById(R.id.account_name);
 				TextView balance = (TextView) v.findViewById(R.id.account_balance);
@@ -534,13 +533,13 @@ public class ViewDB extends Activity {
 		}
 	}
 
-	public class UserRecord {
+	public class AccountRecord {
 		private String name;
 		private String balance;
 		private String date;
 		private String time;
 
-		public UserRecord(String name, String balance, String date, String time) {
+		public AccountRecord(String name, String balance, String date, String time) {
 			this.name = name;
 			this.balance = balance;
 			this.date = date;

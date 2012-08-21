@@ -83,7 +83,7 @@ public class Transactions extends FragmentActivity{
 
 	//ListView and Adapter
 	ListView lv = null;
-	ArrayAdapter<UserRecord> adapter = null;
+	ArrayAdapter<TransactionRecord> adapter = null;
 
 	//Variables needed for traversing database
 	Cursor c = null;
@@ -91,7 +91,7 @@ public class Transactions extends FragmentActivity{
 	final String tblAccounts = "tblAccounts";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
-	ArrayList<UserRecord> results = new ArrayList<UserRecord>();
+	ArrayList<TransactionRecord> results = new ArrayList<TransactionRecord>();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -155,7 +155,7 @@ public class Transactions extends FragmentActivity{
 	//Populate view with all the transactions of selected account
 	protected void populate(){
 
-		results = new ArrayList<UserRecord>();
+		results = new ArrayList<TransactionRecord>();
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -175,7 +175,7 @@ public class Transactions extends FragmentActivity{
 					String balance = c.getString(amtColumn);
 					String date = c.getString(dateColumn); 
 
-					UserRecord entry = new UserRecord(name, balance,null,null,null,null,date,null,null);
+					TransactionRecord entry = new TransactionRecord(name, balance,null,null,null,null,date,null,null);
 					results.add(entry);
 
 				} while (c.moveToNext());
@@ -183,7 +183,7 @@ public class Transactions extends FragmentActivity{
 		} 
 
 		else {
-			UserRecord tmp = new UserRecord("DATABASE EMPTY", null,null,null,null,null,null,null,null);
+			TransactionRecord tmp = new TransactionRecord("DATABASE EMPTY", null,null,null,null,null,null,null,null);
 			results.add(tmp);
 		}
 
@@ -539,12 +539,12 @@ public class Transactions extends FragmentActivity{
 		newFragment.show(getSupportFragmentManager(), "datePicker");
 	}
 
-	public class UserItemAdapter extends ArrayAdapter<UserRecord> {
-		private ArrayList<UserRecord> users;
+	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
+		private ArrayList<TransactionRecord> transaction;
 
-		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<UserRecord> users) {
+		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<TransactionRecord> users) {
 			super(context, textViewResourceId, users);
-			this.users = users;
+			this.transaction = users;
 		}
 
 		@Override
@@ -555,17 +555,17 @@ public class Transactions extends FragmentActivity{
 				v = vi.inflate(R.layout.transaction_item, null);
 			}
 
-			UserRecord user = users.get(position);
+			TransactionRecord user = transaction.get(position);
 			if (user != null) {
-				TextView name = (TextView) v.findViewById(R.id.name);
-				TextView value = (TextView) v.findViewById(R.id.value);
-				TextView type = (TextView) v.findViewById(R.id.type);
-				TextView category = (TextView) v.findViewById(R.id.category);
-				TextView checknum = (TextView) v.findViewById(R.id.checknum);
-				TextView memo = (TextView) v.findViewById(R.id.memo);
-				TextView date = (TextView) v.findViewById(R.id.date);
-				TextView time = (TextView) v.findViewById(R.id.time);
-				TextView cleared = (TextView) v.findViewById(R.id.cleared);
+				TextView name = (TextView) v.findViewById(R.id.transaction_name);
+				TextView value = (TextView) v.findViewById(R.id.transaction_value);
+				TextView type = (TextView) v.findViewById(R.id.transaction_type);
+				TextView category = (TextView) v.findViewById(R.id.transaction_category);
+				TextView checknum = (TextView) v.findViewById(R.id.transaction_checknum);
+				TextView memo = (TextView) v.findViewById(R.id.transaction_memo);
+				TextView date = (TextView) v.findViewById(R.id.transaction_date);
+				TextView time = (TextView) v.findViewById(R.id.transaction_time);
+				TextView cleared = (TextView) v.findViewById(R.id.transaction_cleared);
 
 				if (user.name != null) {
 					name.setText(user.name);
@@ -608,7 +608,7 @@ public class Transactions extends FragmentActivity{
 		}
 	}
 
-	public class UserRecord {
+	public class TransactionRecord {
 		private String name;
 		private String value;
 		private String type;
@@ -619,7 +619,7 @@ public class Transactions extends FragmentActivity{
 		private String time;
 		private String cleared;
 
-		public UserRecord(String name, String value, String type, String category, String checknum, String memo, String date, String time, String cleared) {
+		public TransactionRecord(String name, String value, String type, String category, String checknum, String memo, String date, String time, String cleared) {
 			this.name = name;
 			this.value = value;
 			this.type = type;

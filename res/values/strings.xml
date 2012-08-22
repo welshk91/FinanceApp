@@ -22,6 +22,15 @@
     <string name="memo:">MEMO:</string>
     <string name="date:">DATE:</string>
     <string name="cleared:">CLEARED:</string>
+    <string name="pref_key_backgroundColor">key_backgroundColor</string>
+    <string name="pref_summary_TipPercent">summary_TipPercent</string>
+    <string name="pref_title_TipPercent">title_TipPercent</string>
+    <string name="pref_key_TaxPercent">key_TaxPercent</string>
+    <string name="pref_summary_TaxPercent">summary_TaxPercent</string>
+    <string name="pref_title_TaxPercent">title_TaxPercent</string>
+    <string name="pref_key_ExtraAmount">key_ExtraAmount</string>
+    <string name="pref_summary_ExtraAmount">summary_ExtraAmount</string>
+    <string name="pref_title_ExtraAmount">title_ExtraAmount</string>
 
     <string-array name="transaction_type">
         <item>Withdrawl</item>
@@ -42,6 +51,14 @@
         <item>STUDENT LOANS</item>
         <item>TIP</item>
         <item>TRANSFER</item>
+    </string-array>
+    <string-array name="pref_listOptions">
+        <item>List Option 1</item>
+        <item>List Option 2</item>
+    </string-array>
+    <string-array name="pref_listValues">
+        <item>List Value 1</item>
+        <item>List Value 2</item>
     </string-array>
 
 </resources>

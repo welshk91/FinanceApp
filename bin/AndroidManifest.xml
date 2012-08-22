@@ -37,6 +37,10 @@
             android:name=".Transactions"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".Options"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

@@ -3,9 +3,6 @@ package com.databases.example;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.databases.example.Transactions.UserItemAdapter;
-import com.databases.example.Transactions.TransactionRecord;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -87,7 +84,7 @@ public class ViewDB extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapter.getItemId(position);
-				String item = (String) adapter.getItem(position).name;
+				//String item = (String) adapter.getItem(position).name;
 
 				//NOTE: LIMIT *position*,*how many after*
 				String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
@@ -479,7 +476,9 @@ public class ViewDB extends Activity {
 			break;
 
 		case R.id.account_menu_options:    
-			Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			Intent v = new Intent(ViewDB.this, Options.class);
+			startActivity(v);
 			break;
 
 		case R.id.account_menu_help:    

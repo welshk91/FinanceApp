@@ -9,6 +9,8 @@ package com.databases.example;
 
 public final class R {
     public static final class array {
+        public static final int pref_listOptions=0x7f050002;
+        public static final int pref_listValues=0x7f050003;
         public static final int transaction_category=0x7f050001;
         public static final int transaction_type=0x7f050000;
     }
@@ -41,15 +43,15 @@ public final class R {
         public static final int TextAccountName=0x7f06000c;
         public static final int TextAccountTime=0x7f060010;
         public static final int TextAccountValue=0x7f06000d;
-        public static final int TextTransactionCategory=0x7f06003d;
-        public static final int TextTransactionCheck=0x7f06003e;
-        public static final int TextTransactionCleared=0x7f060042;
-        public static final int TextTransactionDate=0x7f060040;
-        public static final int TextTransactionMemo=0x7f06003f;
-        public static final int TextTransactionName=0x7f06003a;
-        public static final int TextTransactionTime=0x7f060041;
-        public static final int TextTransactionType=0x7f06003c;
-        public static final int TextTransactionValue=0x7f06003b;
+        public static final int TextTransactionCategory=0x7f06003e;
+        public static final int TextTransactionCheck=0x7f06003f;
+        public static final int TextTransactionCleared=0x7f060043;
+        public static final int TextTransactionDate=0x7f060041;
+        public static final int TextTransactionMemo=0x7f060040;
+        public static final int TextTransactionName=0x7f06003b;
+        public static final int TextTransactionTime=0x7f060042;
+        public static final int TextTransactionType=0x7f06003d;
+        public static final int TextTransactionValue=0x7f06003c;
         public static final int TextView01=0x7f060000;
         public static final int TextView02=0x7f060002;
         public static final int TextView03=0x7f060022;
@@ -75,21 +77,22 @@ public final class R {
         public static final int spinner_transaction_category=0x7f060025;
         public static final int spinner_transaction_type=0x7f060023;
         public static final int transaction_add_category=0x7f060026;
-        public static final int transaction_category=0x7f060031;
-        public static final int transaction_checknum=0x7f060032;
-        public static final int transaction_cleared=0x7f060036;
-        public static final int transaction_date=0x7f060034;
-        public static final int transaction_footer_Add=0x7f060043;
-        public static final int transaction_footer_Schedule=0x7f060044;
-        public static final int transaction_footer_Unknown=0x7f060045;
-        public static final int transaction_memo=0x7f060033;
-        public static final int transaction_menu_help=0x7f060039;
-        public static final int transaction_menu_logout=0x7f060037;
-        public static final int transaction_menu_options=0x7f060038;
-        public static final int transaction_name=0x7f06002e;
-        public static final int transaction_time=0x7f060035;
-        public static final int transaction_type=0x7f060030;
-        public static final int transaction_value=0x7f06002f;
+        public static final int transaction_category=0x7f060032;
+        public static final int transaction_checknum=0x7f060033;
+        public static final int transaction_cleared=0x7f060037;
+        public static final int transaction_date=0x7f060035;
+        public static final int transaction_footer_Add=0x7f060044;
+        public static final int transaction_footer_Schedule=0x7f060045;
+        public static final int transaction_footer_Unknown=0x7f060046;
+        public static final int transaction_layout=0x7f06002e;
+        public static final int transaction_memo=0x7f060034;
+        public static final int transaction_menu_help=0x7f06003a;
+        public static final int transaction_menu_logout=0x7f060038;
+        public static final int transaction_menu_options=0x7f060039;
+        public static final int transaction_name=0x7f06002f;
+        public static final int transaction_time=0x7f060036;
+        public static final int transaction_type=0x7f060031;
+        public static final int transaction_value=0x7f060030;
         public static final int tv=0x7f060012;
     }
     public static final class layout {
@@ -100,11 +103,12 @@ public final class R {
         public static final int accounts=0x7f030004;
         public static final int database=0x7f030005;
         public static final int main=0x7f030006;
-        public static final int transaction_add=0x7f030007;
-        public static final int transaction_item=0x7f030008;
-        public static final int transaction_menu=0x7f030009;
-        public static final int transaction_stats=0x7f03000a;
-        public static final int transactions=0x7f03000b;
+        public static final int options=0x7f030007;
+        public static final int transaction_add=0x7f030008;
+        public static final int transaction_item=0x7f030009;
+        public static final int transaction_menu=0x7f03000a;
+        public static final int transaction_stats=0x7f03000b;
+        public static final int transactions=0x7f03000c;
     }
     public static final class string {
         public static final int accounts=0x7f040007;
@@ -125,6 +129,15 @@ public final class R {
         public static final int memo_=0x7f040012;
         public static final int name_=0x7f04000c;
         public static final int options=0x7f040008;
+        public static final int pref_key_ExtraAmount=0x7f04001b;
+        public static final int pref_key_TaxPercent=0x7f040018;
+        public static final int pref_key_backgroundColor=0x7f040015;
+        public static final int pref_summary_ExtraAmount=0x7f04001c;
+        public static final int pref_summary_TaxPercent=0x7f040019;
+        public static final int pref_summary_TipPercent=0x7f040016;
+        public static final int pref_title_ExtraAmount=0x7f04001d;
+        public static final int pref_title_TaxPercent=0x7f04001a;
+        public static final int pref_title_TipPercent=0x7f040017;
         public static final int type_=0x7f04000e;
         public static final int value_=0x7f04000d;
         public static final int view_accounts=0x7f040004;

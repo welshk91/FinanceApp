@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView02"
         android:layout_toRightOf="@+id/TextView05"
-        android:inputType="numberDecimal" >
+        android:inputType="number|numberDecimal|phone" >
     </EditText>
 
     <TextView
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView05"
         android:layout_toRightOf="@+id/TextView05"
-        android:inputType="numberDecimal" >
+        android:inputType="text" >
     </EditText>
 
     <TextView

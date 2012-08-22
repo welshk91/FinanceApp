@@ -8,9 +8,13 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
@@ -28,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -469,10 +474,13 @@ public class Transactions extends FragmentActivity{
 			break;
 
 		case R.id.transaction_menu_options:    
-			Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			Intent v = new Intent(Transactions.this, Options.class);
+			startActivity(v);
 			break;
 
-		case R.id.transaction_menu_help:    
+		case R.id.transaction_menu_help:
+
 			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
 			break;
 		}
@@ -553,6 +561,21 @@ public class Transactions extends FragmentActivity{
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.transaction_item, null);
+
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this);
+				String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_backgroundColor), "#E8E8E8");				
+
+				try{
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.transaction_layout);
+					l.setBackgroundColor(Color.parseColor(DefaultColor));
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+				}
+				
+				
+
 			}
 
 			TransactionRecord user = transaction.get(position);

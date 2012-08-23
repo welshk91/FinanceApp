@@ -132,10 +132,14 @@ public final class R {
         public static final int memo_=0x7f040012;
         public static final int name_=0x7f04000c;
         public static final int options=0x7f040008;
-        public static final int pref_key_account_backgroundColor=0x7f040018;
-        public static final int pref_key_account_nameColor=0x7f04001a;
-        public static final int pref_key_account_nameSize=0x7f040019;
+        public static final int pref_key_account_backgroundColor=0x7f04001a;
+        public static final int pref_key_account_fieldColor=0x7f04001e;
+        public static final int pref_key_account_fieldSize=0x7f04001d;
+        public static final int pref_key_account_nameColor=0x7f04001c;
+        public static final int pref_key_account_nameSize=0x7f04001b;
         public static final int pref_key_transaction_backgroundColor=0x7f040015;
+        public static final int pref_key_transaction_fieldColor=0x7f040019;
+        public static final int pref_key_transaction_fieldSize=0x7f040018;
         public static final int pref_key_transaction_nameColor=0x7f040017;
         public static final int pref_key_transaction_nameSize=0x7f040016;
         public static final int type_=0x7f04000e;

@@ -25,9 +25,13 @@
     <string name="pref_key_transaction_backgroundColor">key_transaction_backgroundColor</string>
     <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
     <string name="pref_key_transaction_nameColor">key_transaction_nameColor</string>
+    <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
+    <string name="pref_key_transaction_fieldColor">key_transaction_fieldColor</string>
     <string name="pref_key_account_backgroundColor">key_account_backgroundColor</string>
     <string name="pref_key_account_nameSize">key_account_nameSize</string>
     <string name="pref_key_account_nameColor">key_account_nameColor</string>
+    <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
+    <string name="pref_key_account_fieldColor">key_account_fieldColor</string>
 
     <string-array name="transaction_type">
         <item>Withdrawl</item>

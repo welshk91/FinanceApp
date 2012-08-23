@@ -503,10 +503,13 @@ public class ViewDB extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
+
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
 
+
+				//For Custom View Properties
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
 				boolean useDefaults = prefs.getBoolean("checkbox_default", false);
 
@@ -528,12 +531,12 @@ public class ViewDB extends Activity {
 				}
 
 				try{
-					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameSize), "20");
+					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameSize), "16");
 					TextView t;
 					t=(TextView)v.findViewById(R.id.account_name);
 
 					if(useDefaults){
-						t.setTextSize(20);
+						t.setTextSize(16);
 					}
 					else{
 						t.setTextSize(Integer.parseInt(DefaultSize));
@@ -561,6 +564,95 @@ public class ViewDB extends Activity {
 					Toast.makeText(ViewDB.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
+				try{
+					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_fieldSize), "10");
+					TextView tmp;
+
+					if(useDefaults){
+						tmp=(TextView)v.findViewById(R.id.account_balance);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.account_date);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.account_time);
+						tmp.setTextSize(10);
+					}
+					else{
+						tmp=(TextView)v.findViewById(R.id.account_balance);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.account_date);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.account_time);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_fieldColor), "#0099CC");
+					TextView tmp;
+
+					if(useDefaults){
+						tmp=(TextView)v.findViewById(R.id.account_balance);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.account_date);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.account_time);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+					}
+					else{
+						tmp=(TextView)v.findViewById(R.id.account_balance);
+						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp=(TextView)v.findViewById(R.id.account_date);
+						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp=(TextView)v.findViewById(R.id.account_time);
+						tmp.setTextColor(Color.parseColor(DefaultColor));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+				}
+
+
+				//For User-Defined Field Visibility
+				if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
+					TextView name = (TextView) v.findViewById(R.id.account_name);
+					name.setVisibility(View.VISIBLE);
+				}
+				else{
+					TextView name = (TextView) v.findViewById(R.id.account_name);
+					name.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
+					TextView balance = (TextView) v.findViewById(R.id.account_balance);
+					balance.setVisibility(View.VISIBLE);
+				}
+				else{
+					TextView balance = (TextView) v.findViewById(R.id.account_balance);
+					balance.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
+					TextView date = (TextView) v.findViewById(R.id.account_date);
+					date.setVisibility(View.VISIBLE);
+				}
+				else{
+					TextView date = (TextView) v.findViewById(R.id.account_date);
+					date.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
+					TextView time = (TextView) v.findViewById(R.id.account_time);
+					time.setVisibility(View.VISIBLE);
+				}
+				else{
+					TextView time = (TextView) v.findViewById(R.id.account_time);
+					time.setVisibility(View.INVISIBLE);
+				}
 
 
 			}

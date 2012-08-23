@@ -8,6 +8,8 @@
         android:summary="Change looks"
         android:title="Appearance" >
 
+        <!-- TRANSACTION APPEARANCE -->
+
         <PreferenceScreen
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -23,7 +25,7 @@
                     android:defaultValue="#E8E8E8"
                     android:inputType="text|phone"
                     android:key="@string/pref_key_transaction_backgroundColor"
-                    android:summary="Background color of each transaction row"
+                    android:summary="Background color of each transaction row. Default is &apos;#E8E8E8&apos;"
                     android:title="Background color" >
                 </EditTextPreference>
             </PreferenceCategory>
@@ -36,16 +38,32 @@
                     android:defaultValue="20"
                     android:inputType="number|phone"
                     android:key="@string/pref_key_transaction_nameSize"
-                    android:summary="Change the size of Name field"
-                    android:title="Size of name" >
+                    android:summary="Change the size of Name field. Default is &apos;20&apos;"
+                    android:title="Size of main field" >
                 </EditTextPreference>
 
                 <EditTextPreference
                     android:defaultValue="#000000"
                     android:inputType="number|phone"
                     android:key="@string/pref_key_transaction_nameColor"
-                    android:summary="Change the color of Name field"
-                    android:title="Color of name" >
+                    android:summary="Change the color of Name field. Default is &apos;#000000&apos;"
+                    android:title="Color of main field" >
+                </EditTextPreference>
+
+                <EditTextPreference
+                    android:defaultValue="10"
+                    android:inputType="number|phone"
+                    android:key="@string/pref_key_transaction_fieldSize"
+                    android:summary="Change the size of Name field. Default is &apos;10&apos;"
+                    android:title="Size of secondary fields" >
+                </EditTextPreference>
+
+                <EditTextPreference
+                    android:defaultValue="#0099CC"
+                    android:inputType="number|phone"
+                    android:key="@string/pref_key_transaction_fieldColor"
+                    android:summary="Change the color of Name field. Default is &apos;#0099CC&apos;"
+                    android:title="Color of secondary fields" >
                 </EditTextPreference>
             </PreferenceCategory>
 
@@ -61,29 +79,29 @@
                     android:title="Transaction Fields" >
 
                     <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_name"
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_nameField"
                         android:summary="Name Field. May Require Restart"
                         android:title="Name" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_value"
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_valueField"
                         android:summary="Value Field. May Require Restart"
                         android:title="Value" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_date"
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_dateField"
                         android:summary="Date Field. May Require Restart"
                         android:title="Date" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_time"
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_timeField"
                         android:summary="Time Field. May Require Restart"
                         android:title="Time" >
                     </CheckBoxPreference>
@@ -91,6 +109,8 @@
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
+
+    <!-- ACCOUNT APPEARANCE -->
 
     <PreferenceScreen
         android:layout_width="fill_parent"
@@ -107,7 +127,7 @@
                 android:defaultValue="#E8E8E8"
                 android:inputType="text|phone"
                 android:key="@string/pref_key_account_backgroundColor"
-                android:summary="Background color of each account row"
+                android:summary="Background color of each account row. Default is &apos;#E8E8E8&apos;"
                 android:title="Background color" >
             </EditTextPreference>
         </PreferenceCategory>
@@ -117,22 +137,39 @@
             android:title="Fonts" >
 
             <EditTextPreference
-                android:defaultValue="20"
+                android:defaultValue="16"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_account_nameSize"
-                android:summary="Change the size of Name field"
-                android:title="Size of main" >
+                android:summary="Change the size of Name field. Default is &apos;16&apos;"
+                android:title="Size of main field" >
             </EditTextPreference>
 
             <EditTextPreference
                 android:defaultValue="#000000"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_account_nameColor"
-                android:summary="Change the color of Name field"
-                android:title="Color of name" >
+                android:summary="Change the color of Name field. Default is &apos;#000000&apos;"
+                android:title="Color of main field" >
+            </EditTextPreference>
+
+            <EditTextPreference
+                android:defaultValue="10"
+                android:inputType="number|phone"
+                android:key="@string/pref_key_account_fieldSize"
+                android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
+                android:title="Size of secondary fields" >
+            </EditTextPreference>
+
+            <EditTextPreference
+                android:defaultValue="#0099CC"
+                android:inputType="number|phone"
+                android:key="@string/pref_key_account_fieldColor"
+                android:summary="Change the color of secondary fields. Default is &apos;#0099CC&apos;"
+                android:title="Color of secondary fields" >
             </EditTextPreference>
         </PreferenceCategory>
 
+        <!-- VISIBILITY -->
         <PreferenceCategory
             android:summary="Change fields"
             android:title="Fields" >
@@ -145,29 +182,29 @@
                 android:title="Account Fields" >
 
                 <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="checkbox_account_name"
+                    android:defaultValue="true"
+                    android:key="checkbox_account_nameField"
                     android:summary="Name Field. May Require Restart"
                     android:title="Name" >
                 </CheckBoxPreference>
 
                 <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="checkbox_account_value"
+                    android:defaultValue="true"
+                    android:key="checkbox_account_balanceField"
                     android:summary="Balance Field. May Require Restart"
                     android:title="Balance" >
                 </CheckBoxPreference>
 
                 <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="checkbox_account_Date"
+                    android:defaultValue="true"
+                    android:key="checkbox_account_dateField"
                     android:summary="Date Field. May Require Restart"
                     android:title="Date" >
                 </CheckBoxPreference>
 
                 <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="checkbox_account_time"
+                    android:defaultValue="true"
+                    android:key="checkbox_account_timeField"
                     android:summary="Time Field. May Require Restart"
                     android:title="Time" >
                 </CheckBoxPreference>

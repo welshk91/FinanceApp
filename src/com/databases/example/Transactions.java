@@ -559,6 +559,7 @@ public class Transactions extends FragmentActivity{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
+
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.transaction_item, null);
@@ -614,6 +615,77 @@ public class Transactions extends FragmentActivity{
 				}
 				catch(Exception e){
 					Toast.makeText(Transactions.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "10");
+					TextView tmp;
+
+					if(useDefaults){
+						tmp=(TextView)v.findViewById(R.id.transaction_value);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_date);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_time);
+						tmp.setTextSize(10);
+					}
+					else{
+						tmp=(TextView)v.findViewById(R.id.transaction_value);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_date);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_time);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldColor), "#0099CC");
+					TextView tmp;
+
+					if(useDefaults){
+						tmp=(TextView)v.findViewById(R.id.transaction_value);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_date);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_time);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+					}
+					else{
+						tmp=(TextView)v.findViewById(R.id.transaction_value);
+						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp=(TextView)v.findViewById(R.id.transaction_date);
+						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp=(TextView)v.findViewById(R.id.transaction_time);
+						tmp.setTextColor(Color.parseColor(DefaultColor));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+				}
+
+				//For User-Defined Field Visibility
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_nameField", true)){
+					TextView name = (TextView) v.findViewById(R.id.transaction_name);
+					name.setVisibility(View.VISIBLE);
+				}
+				else{
+					TextView name = (TextView) v.findViewById(R.id.transaction_name);
+					name.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
+					TextView value = (TextView) v.findViewById(R.id.transaction_value);
+					value.setVisibility(View.VISIBLE);
+				}
+				else{
+					TextView value = (TextView) v.findViewById(R.id.transaction_value);
+					value.setVisibility(View.INVISIBLE);
 				}
 
 

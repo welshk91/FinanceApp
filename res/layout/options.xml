@@ -1,33 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:key="pref_screen_default" >
 
     <PreferenceCategory
         android:summary="Change looks"
         android:title="Appearance" >
 
-        <EditTextPreference
-            android:defaultValue="#E8E8E8"
-            android:key="@string/pref_key_backgroundColor"
-            android:summary="Background color of each transaction row"
-            android:title="Background color" >
-        </EditTextPreference>
+        <PreferenceScreen
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:key="pref_screen_transactions"
+            android:summary="Change appearance of transactions"
+            android:title="Transaction Appearance" >
 
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/pref_key_TaxPercent"
-            android:summary="@string/pref_summary_TaxPercent"
-            android:title="@string/pref_title_TaxPercent" >
-        </EditTextPreference>
+            <PreferenceCategory
+                android:summary="Change background"
+                android:title="Background" >
 
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/pref_key_ExtraAmount"
-            android:summary="@string/pref_summary_ExtraAmount"
-            android:title="@string/pref_title_ExtraAmount" >
-        </EditTextPreference>
+                <EditTextPreference
+                    android:defaultValue="#E8E8E8"
+                    android:inputType="text|phone"
+                    android:key="@string/pref_key_transaction_backgroundColor"
+                    android:summary="Background color of each transaction row"
+                    android:title="Background color" >
+                </EditTextPreference>
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                android:summary="Change fonts"
+                android:title="Fonts" >
+
+                <EditTextPreference
+                    android:defaultValue="20"
+                    android:inputType="number|phone"
+                    android:key="@string/pref_key_transaction_nameSize"
+                    android:summary="Change the size of Name field"
+                    android:title="Size of name" >
+                </EditTextPreference>
+
+                <EditTextPreference
+                    android:defaultValue="#000000"
+                    android:inputType="number|phone"
+                    android:key="@string/pref_key_transaction_nameColor"
+                    android:summary="Change the color of Name field"
+                    android:title="Color of name" >
+                </EditTextPreference>
+            </PreferenceCategory>
+        </PreferenceScreen>
     </PreferenceCategory>
+
+    <PreferenceScreen
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:key="pref_screen_transactions"
+        android:summary="Change appearance of accounts"
+        android:title="Account Appearance" >
+
+        <PreferenceCategory
+            android:summary="Change background"
+            android:title="Background" >
+
+            <EditTextPreference
+                android:defaultValue="#E8E8E8"
+                android:inputType="text|phone"
+                android:key="@string/pref_key_account_backgroundColor"
+                android:summary="Background color of each account row"
+                android:title="Background color" >
+            </EditTextPreference>
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:summary="Change fonts"
+            android:title="Fonts" >
+
+            <EditTextPreference
+                android:defaultValue="20"
+                android:inputType="number|phone"
+                android:key="@string/pref_key_account_nameSize"
+                android:summary="Change the size of Name field"
+                android:title="Size of main" >
+            </EditTextPreference>
+
+            <EditTextPreference
+                android:defaultValue="#000000"
+                android:inputType="number|phone"
+                android:key="@string/pref_key_account_nameColor"
+                android:summary="Change the color of Name field"
+                android:title="Color of name" >
+            </EditTextPreference>
+        </PreferenceCategory>
+    </PreferenceScreen>
 
     <PreferenceCategory
         android:summary="Change behavior"
@@ -36,14 +100,14 @@
         <EditTextPreference
             android:defaultValue="LAME!"
             android:key="blah"
-            android:summary="Here's a simple Textbox"
+            android:summary="Here&apos;s a simple Textbox"
             android:title="My Lame Text Box" >
         </EditTextPreference>
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="haha"
-            android:summary="Here's a simple Checkbox"
+            android:summary="Here&apos;s a simple Checkbox"
             android:title="My Boring Checkbox" >
         </CheckBoxPreference>
 
@@ -51,9 +115,21 @@
             android:entries="@array/pref_listOptions"
             android:entryValues="@array/pref_listValues"
             android:key="boo"
-            android:summary="Here's a simple list"
+            android:summary="Here&apos;s a simple list"
             android:title="My List of Stuff" >
         </ListPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:summary="Random Options"
+        android:title="Misc" >
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="checkbox_default"
+            android:summary="Use Default Values instead of User-Defined ones"
+            android:title="Use Default Values" >
+        </CheckBoxPreference>
     </PreferenceCategory>
 
 </PreferenceScreen>

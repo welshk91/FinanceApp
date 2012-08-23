@@ -555,6 +555,7 @@ public class Transactions extends FragmentActivity{
 			this.transaction = users;
 		}
 
+		//Used to Define the View of each transaction
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
@@ -563,18 +564,58 @@ public class Transactions extends FragmentActivity{
 				v = vi.inflate(R.layout.transaction_item, null);
 
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this);
-				String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_backgroundColor), "#E8E8E8");				
+				boolean useDefaults = prefs.getBoolean("checkbox_default", false);
 
 				try{
+					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_backgroundColor), "#E8E8E8");
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.transaction_layout);
-					l.setBackgroundColor(Color.parseColor(DefaultColor));
+
+					if(useDefaults){
+						l.setBackgroundColor(Color.parseColor("#E8E8E8"));
+					}
+					else{
+						l.setBackgroundColor(Color.parseColor(DefaultColor));
+					}
 				}
 				catch(Exception e){
 					Toast.makeText(Transactions.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
-				
-				
+
+				try{
+					String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "20");
+					TextView t;
+					t=(TextView)v.findViewById(R.id.transaction_name);
+
+					if(useDefaults){
+						t.setTextSize(20);
+					}
+					else{
+						t.setTextSize(Integer.parseInt(DefaultSize));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameColor), "#000000");
+					TextView t;
+					t=(TextView)v.findViewById(R.id.transaction_name);
+
+					if(useDefaults){
+						t.setTextColor(Color.parseColor("#000000"));
+					}
+					else{
+						t.setTextColor(Color.parseColor(DefaultColor));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+
 
 			}
 

@@ -22,15 +22,12 @@
     <string name="memo:">MEMO:</string>
     <string name="date:">DATE:</string>
     <string name="cleared:">CLEARED:</string>
-    <string name="pref_key_backgroundColor">key_backgroundColor</string>
-    <string name="pref_summary_TipPercent">summary_TipPercent</string>
-    <string name="pref_title_TipPercent">title_TipPercent</string>
-    <string name="pref_key_TaxPercent">key_TaxPercent</string>
-    <string name="pref_summary_TaxPercent">summary_TaxPercent</string>
-    <string name="pref_title_TaxPercent">title_TaxPercent</string>
-    <string name="pref_key_ExtraAmount">key_ExtraAmount</string>
-    <string name="pref_summary_ExtraAmount">summary_ExtraAmount</string>
-    <string name="pref_title_ExtraAmount">title_ExtraAmount</string>
+    <string name="pref_key_transaction_backgroundColor">key_transaction_backgroundColor</string>
+    <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
+    <string name="pref_key_transaction_nameColor">key_transaction_nameColor</string>
+    <string name="pref_key_account_backgroundColor">key_account_backgroundColor</string>
+    <string name="pref_key_account_nameSize">key_account_nameSize</string>
+    <string name="pref_key_account_nameColor">key_account_nameColor</string>
 
     <string-array name="transaction_type">
         <item>Withdrawl</item>

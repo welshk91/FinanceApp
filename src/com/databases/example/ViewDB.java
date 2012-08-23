@@ -8,9 +8,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
@@ -502,6 +506,63 @@ public class ViewDB extends Activity {
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
+
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
+				boolean useDefaults = prefs.getBoolean("checkbox_default", false);
+
+				try{
+					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_backgroundColor), "#E8E8E8");
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.account_layout);
+
+					if(useDefaults){
+						l.setBackgroundColor(Color.parseColor("#E8E8E8"));
+					}
+					else{
+						l.setBackgroundColor(Color.parseColor(DefaultColor));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameSize), "20");
+					TextView t;
+					t=(TextView)v.findViewById(R.id.account_name);
+
+					if(useDefaults){
+						t.setTextSize(20);
+					}
+					else{
+						t.setTextSize(Integer.parseInt(DefaultSize));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameColor), "#000000");
+					TextView t;
+					t=(TextView)v.findViewById(R.id.account_name);
+
+					if(useDefaults){
+						t.setTextColor(Color.parseColor("#000000"));
+					}
+					else{
+						t.setTextColor(Color.parseColor(DefaultColor));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+
+
+
 			}
 
 			AccountRecord user = account.get(position);

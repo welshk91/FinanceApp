@@ -49,13 +49,29 @@
         <item>TIP</item>
         <item>TRANSFER</item>
     </string-array>
-    <string-array name="pref_listOptions">
-        <item>List Option 1</item>
-        <item>List Option 2</item>
+    <string-array name="pref_transaction_listOptions">
+        <item>Name</item>
+        <item>Value</item>
+        <item>Time</item>
+        <item>Date</item>
     </string-array>
-    <string-array name="pref_listValues">
-        <item>List Value 1</item>
-        <item>List Value 2</item>
+    <string-array name="pref_transaction_listValues">
+        <item>List Value Name</item>
+        <item>List Value Value</item>
+        <item>List Value Time</item>
+        <item>List Value Date</item>
+    </string-array>
+    <string-array name="pref_account_listOptions">
+        <item>Name</item>
+        <item>Balance</item>
+        <item>Time</item>
+        <item>Date</item>
+    </string-array>
+    <string-array name="pref_account_listValues">
+        <item>List Value Name</item>
+        <item>List Value Balance</item>
+        <item>List Value Time</item>
+        <item>List Value Date</item>
     </string-array>
 
 </resources>

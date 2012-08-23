@@ -48,6 +48,47 @@
                     android:title="Color of name" >
                 </EditTextPreference>
             </PreferenceCategory>
+
+            <PreferenceCategory
+                android:summary="Change fields"
+                android:title="Fields" >
+
+                <PreferenceScreen
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:key="pref_screen_transaction_fields"
+                    android:summary="Change fields visible for transaction"
+                    android:title="Transaction Fields" >
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="checkbox_transaction_name"
+                        android:summary="Name Field. May Require Restart"
+                        android:title="Name" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="checkbox_transaction_value"
+                        android:summary="Value Field. May Require Restart"
+                        android:title="Value" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="checkbox_transaction_date"
+                        android:summary="Date Field. May Require Restart"
+                        android:title="Date" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="checkbox_transaction_time"
+                        android:summary="Time Field. May Require Restart"
+                        android:title="Time" >
+                    </CheckBoxPreference>
+                </PreferenceScreen>
+            </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -91,6 +132,47 @@
                 android:title="Color of name" >
             </EditTextPreference>
         </PreferenceCategory>
+
+        <PreferenceCategory
+            android:summary="Change fields"
+            android:title="Fields" >
+
+            <PreferenceScreen
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:key="pref_screen_account_fields"
+                android:summary="Change fields visible for account"
+                android:title="Account Fields" >
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="checkbox_account_name"
+                    android:summary="Name Field. May Require Restart"
+                    android:title="Name" >
+                </CheckBoxPreference>
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="checkbox_account_value"
+                    android:summary="Balance Field. May Require Restart"
+                    android:title="Balance" >
+                </CheckBoxPreference>
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="checkbox_account_Date"
+                    android:summary="Date Field. May Require Restart"
+                    android:title="Date" >
+                </CheckBoxPreference>
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="checkbox_account_time"
+                    android:summary="Time Field. May Require Restart"
+                    android:title="Time" >
+                </CheckBoxPreference>
+            </PreferenceScreen>
+        </PreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceCategory
@@ -112,11 +194,19 @@
         </CheckBoxPreference>
 
         <ListPreference
-            android:entries="@array/pref_listOptions"
-            android:entryValues="@array/pref_listValues"
-            android:key="boo"
-            android:summary="Here&apos;s a simple list"
-            android:title="My List of Stuff" >
+            android:entries="@array/pref_transaction_listOptions"
+            android:entryValues="@array/pref_transaction_listValues"
+            android:key="transaction_fields"
+            android:summary="Which transaction fields are visible"
+            android:title="Transaction Fields" >
+        </ListPreference>
+
+        <ListPreference
+            android:entries="@array/pref_account_listOptions"
+            android:entryValues="@array/pref_account_listValues"
+            android:key="account_fields"
+            android:summary="Which account fields are visible"
+            android:title="Account Fields" >
         </ListPreference>
     </PreferenceCategory>
 
@@ -127,7 +217,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="checkbox_default"
-            android:summary="Use Default Values instead of User-Defined ones"
+            android:summary="Use Default Values instead of User-Defined Ones. May Require Restart"
             android:title="Use Default Values" >
         </CheckBoxPreference>
     </PreferenceCategory>

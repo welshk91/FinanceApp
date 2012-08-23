@@ -9,8 +9,10 @@ package com.databases.example;
 
 public final class R {
     public static final class array {
-        public static final int pref_listOptions=0x7f050002;
-        public static final int pref_listValues=0x7f050003;
+        public static final int pref_account_listOptions=0x7f050004;
+        public static final int pref_account_listValues=0x7f050005;
+        public static final int pref_transaction_listOptions=0x7f050002;
+        public static final int pref_transaction_listValues=0x7f050003;
         public static final int transaction_category=0x7f050001;
         public static final int transaction_type=0x7f050000;
     }

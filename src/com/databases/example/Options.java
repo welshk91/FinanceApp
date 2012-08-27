@@ -2,6 +2,7 @@ package com.databases.example;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.preference.PreferenceActivity;
@@ -16,6 +17,7 @@ public class Options extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.options);
 		//GetOptions();
+
 	}
 
 

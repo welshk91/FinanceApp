@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -33,7 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
-public class ViewDB extends Activity {
+public class ViewDB extends Activity implements OnSharedPreferenceChangeListener {
 
 	int page;
 
@@ -145,8 +146,13 @@ public class ViewDB extends Activity {
 		Button unknownAccount = (Button)findViewById(R.id.account_footer_Unknown); 
 		unknownAccount.setOnClickListener(buttonListener);
 
+		//Set up an adapter for the listView
 		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
+
+		//Set up a listener for changes in settings menu
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		populate();
 
@@ -685,6 +691,7 @@ public class ViewDB extends Activity {
 		}
 	}
 
+	//An Object Class used to hold the data of each account record
 	public class AccountRecord {
 		private String name;
 		private String balance;
@@ -697,6 +704,13 @@ public class ViewDB extends Activity {
 			this.date = date;
 			this.time = time;
 		}
+	}
+
+	//Used after a change in settings occurs
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		//Toast.makeText(this, "Options Just Changed: ViewDB.Java", Toast.LENGTH_SHORT).show();
+		populate();
 	}
 
 }// end ViewDB

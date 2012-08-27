@@ -81,28 +81,28 @@
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="checkbox_transaction_nameField"
-                        android:summary="Name Field. May Require Restart"
+                        android:summary="Name Field"
                         android:title="Name" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="checkbox_transaction_valueField"
-                        android:summary="Value Field. May Require Restart"
+                        android:summary="Value Field"
                         android:title="Value" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="checkbox_transaction_dateField"
-                        android:summary="Date Field. May Require Restart"
+                        android:summary="Date Field"
                         android:title="Date" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="checkbox_transaction_timeField"
-                        android:summary="Time Field. May Require Restart"
+                        android:summary="Time Field"
                         android:title="Time" >
                     </CheckBoxPreference>
                 </PreferenceScreen>
@@ -170,6 +170,7 @@
         </PreferenceCategory>
 
         <!-- VISIBILITY -->
+
         <PreferenceCategory
             android:summary="Change fields"
             android:title="Fields" >
@@ -184,28 +185,28 @@
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="checkbox_account_nameField"
-                    android:summary="Name Field. May Require Restart"
+                    android:summary="Name Field"
                     android:title="Name" >
                 </CheckBoxPreference>
 
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="checkbox_account_balanceField"
-                    android:summary="Balance Field. May Require Restart"
+                    android:summary="Balance Field"
                     android:title="Balance" >
                 </CheckBoxPreference>
 
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="checkbox_account_dateField"
-                    android:summary="Date Field. May Require Restart"
+                    android:summary="Date Field"
                     android:title="Date" >
                 </CheckBoxPreference>
 
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="checkbox_account_timeField"
-                    android:summary="Time Field. May Require Restart"
+                    android:summary="Time Field"
                     android:title="Time" >
                 </CheckBoxPreference>
             </PreferenceScreen>

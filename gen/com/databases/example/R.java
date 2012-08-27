@@ -19,10 +19,12 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int calculator=0x7f020000;
-        public static final int green=0x7f020001;
-        public static final int icon=0x7f020002;
-        public static final int red=0x7f020003;
+        public static final int account_gradient=0x7f020000;
+        public static final int calculator=0x7f020001;
+        public static final int green=0x7f020002;
+        public static final int icon=0x7f020003;
+        public static final int red=0x7f020004;
+        public static final int transaction_gradient=0x7f020005;
     }
     public static final class id {
         public static final int ButtonTransactionDate=0x7f06002b;
@@ -45,15 +47,15 @@ public final class R {
         public static final int TextAccountName=0x7f06000d;
         public static final int TextAccountTime=0x7f060011;
         public static final int TextAccountValue=0x7f06000e;
-        public static final int TextTransactionCategory=0x7f06003f;
-        public static final int TextTransactionCheck=0x7f060040;
-        public static final int TextTransactionCleared=0x7f060044;
-        public static final int TextTransactionDate=0x7f060042;
-        public static final int TextTransactionMemo=0x7f060041;
-        public static final int TextTransactionName=0x7f06003c;
-        public static final int TextTransactionTime=0x7f060043;
-        public static final int TextTransactionType=0x7f06003e;
-        public static final int TextTransactionValue=0x7f06003d;
+        public static final int TextTransactionCategory=0x7f060040;
+        public static final int TextTransactionCheck=0x7f060041;
+        public static final int TextTransactionCleared=0x7f060045;
+        public static final int TextTransactionDate=0x7f060043;
+        public static final int TextTransactionMemo=0x7f060042;
+        public static final int TextTransactionName=0x7f06003d;
+        public static final int TextTransactionTime=0x7f060044;
+        public static final int TextTransactionType=0x7f06003f;
+        public static final int TextTransactionValue=0x7f06003e;
         public static final int TextView01=0x7f060000;
         public static final int TextView02=0x7f060002;
         public static final int TextView03=0x7f060023;
@@ -69,6 +71,7 @@ public final class R {
         public static final int account_footer_Add=0x7f060014;
         public static final int account_footer_Transfer=0x7f060015;
         public static final int account_footer_Unknown=0x7f060016;
+        public static final int account_gradient=0x7f060005;
         public static final int account_layout=0x7f060004;
         public static final int account_menu_help=0x7f06000c;
         public static final int account_menu_logout=0x7f06000a;
@@ -76,26 +79,26 @@ public final class R {
         public static final int account_name=0x7f060006;
         public static final int account_time=0x7f060009;
         public static final int list=0x7f060012;
-        public static final int picture=0x7f060005;
         public static final int spinner_transaction_category=0x7f060026;
         public static final int spinner_transaction_type=0x7f060024;
         public static final int transaction_add_category=0x7f060027;
-        public static final int transaction_category=0x7f060033;
-        public static final int transaction_checknum=0x7f060034;
-        public static final int transaction_cleared=0x7f060038;
-        public static final int transaction_date=0x7f060036;
-        public static final int transaction_footer_Add=0x7f060045;
-        public static final int transaction_footer_Schedule=0x7f060046;
-        public static final int transaction_footer_Unknown=0x7f060047;
+        public static final int transaction_category=0x7f060034;
+        public static final int transaction_checknum=0x7f060035;
+        public static final int transaction_cleared=0x7f060039;
+        public static final int transaction_date=0x7f060037;
+        public static final int transaction_footer_Add=0x7f060046;
+        public static final int transaction_footer_Schedule=0x7f060047;
+        public static final int transaction_footer_Unknown=0x7f060048;
+        public static final int transaction_gradient=0x7f060030;
         public static final int transaction_layout=0x7f06002f;
-        public static final int transaction_memo=0x7f060035;
-        public static final int transaction_menu_help=0x7f06003b;
-        public static final int transaction_menu_logout=0x7f060039;
-        public static final int transaction_menu_options=0x7f06003a;
-        public static final int transaction_name=0x7f060030;
-        public static final int transaction_time=0x7f060037;
-        public static final int transaction_type=0x7f060032;
-        public static final int transaction_value=0x7f060031;
+        public static final int transaction_memo=0x7f060036;
+        public static final int transaction_menu_help=0x7f06003c;
+        public static final int transaction_menu_logout=0x7f06003a;
+        public static final int transaction_menu_options=0x7f06003b;
+        public static final int transaction_name=0x7f060031;
+        public static final int transaction_time=0x7f060038;
+        public static final int transaction_type=0x7f060033;
+        public static final int transaction_value=0x7f060032;
         public static final int tv=0x7f060013;
     }
     public static final class layout {

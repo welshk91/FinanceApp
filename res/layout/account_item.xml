@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/account_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="#E8E8E8"
-    android:id="@+id/account_layout"
     android:gravity="left|center"
     android:paddingBottom="2dp"
     android:paddingLeft="4dp"
     android:paddingTop="2dp" >
 
-    <ImageView
-        android:id="@+id/picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/account_gradient"
+        android:layout_width="10dp"
+        android:layout_height="fill_parent"
         android:layout_marginRight="6dip"
-        android:src="@drawable/green" />
+        android:background="@drawable/account_gradient" />
 
     <LinearLayout
         android:layout_width="0dip"

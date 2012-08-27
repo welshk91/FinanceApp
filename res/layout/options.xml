@@ -5,6 +5,7 @@
     android:key="pref_screen_default" >
 
     <PreferenceCategory
+        android:key="category_appearance"
         android:summary="Change looks"
         android:title="Appearance" >
 

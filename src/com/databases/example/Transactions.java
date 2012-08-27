@@ -2,6 +2,8 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -14,6 +16,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -25,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -565,14 +570,16 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
+			TransactionRecord user = transaction.get(position);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", false);
+
 
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.transaction_item, null);
 
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this);
-				boolean useDefaults = prefs.getBoolean("checkbox_default", false);
-
+				//Change Background Color
 				try{
 					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_backgroundColor), "#E8E8E8");
 					LinearLayout l;
@@ -697,7 +704,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 			}
 
-			TransactionRecord user = transaction.get(position);
 			if (user != null) {
 				TextView name = (TextView) v.findViewById(R.id.transaction_name);
 				TextView value = (TextView) v.findViewById(R.id.transaction_value);
@@ -708,6 +714,43 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				TextView date = (TextView) v.findViewById(R.id.transaction_date);
 				TextView time = (TextView) v.findViewById(R.id.transaction_time);
 				TextView cleared = (TextView) v.findViewById(R.id.transaction_cleared);
+
+				//Change gradient
+				try{
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.transaction_gradient);
+					GradientDrawable defaultGradientPos = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFF00FF33,0xFF000000});
+					//gd.setCornerRadius(0f);
+
+					GradientDrawable defaultGradientNeg = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFFFF0000,0xFF000000});
+					//gd.setCornerRadius(0f);
+
+					if(useDefaults){
+						if(Float.parseFloat((user.value)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+
+					}
+					else{
+						if(Float.parseFloat((user.value)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+				}
 
 				if (user.name != null) {
 					name.setText(user.name);
@@ -780,6 +823,15 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		//Toast.makeText(this, "Options Just Changed: Transactions.Java", Toast.LENGTH_SHORT).show();
 		populate();
+	}
+
+	//If android version supports it, smooth gradient
+	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		Window window = getWindow();
+		window.setFormat(PixelFormat.RGBA_8888);
+
 	}
 
 }//end Transactions

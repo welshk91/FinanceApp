@@ -3,6 +3,7 @@ package com.databases.example;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,8 +14,14 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -24,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -509,16 +517,18 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
+			AccountRecord user = account.get(position);
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", false);
+
 
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
 
-
-				//For Custom View Properties
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
-				boolean useDefaults = prefs.getBoolean("checkbox_default", false);
-
+				//Change Background Colors
 				try{
 					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_backgroundColor), "#E8E8E8");
 					LinearLayout l;
@@ -663,12 +673,49 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 			}
 
-			AccountRecord user = account.get(position);
 			if (user != null) {
 				TextView name = (TextView) v.findViewById(R.id.account_name);
 				TextView balance = (TextView) v.findViewById(R.id.account_balance);
 				TextView date = (TextView) v.findViewById(R.id.account_date);
 				TextView time = (TextView) v.findViewById(R.id.account_time);
+
+				//Change gradient
+				try{
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.account_gradient);
+					GradientDrawable defaultGradientPos = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFF00FF33,0xFF000000});
+					//gd.setCornerRadius(0f);
+
+					GradientDrawable defaultGradientNeg = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFFFF0000,0xFF000000});
+					//gd.setCornerRadius(0f);
+
+					if(useDefaults){
+						if(Float.parseFloat((user.balance)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+
+					}
+					else{
+						if(Float.parseFloat((user.balance)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+				}
+
 
 				if (user.name != null) {
 					name.setText(user.name);
@@ -710,7 +757,28 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		//Toast.makeText(this, "Options Just Changed: ViewDB.Java", Toast.LENGTH_SHORT).show();
+		prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
+		boolean defaultOn = prefs.getBoolean("checkbox_default", true);
+		//Toast.makeText(this, "Default: " + defaultOn, Toast.LENGTH_SHORT).show();
+		if(defaultOn){
+			//Code Here
+		}
+		else{
+			//PreferenceScreen tScreen = (PreferenceScreen) ((PreferenceGroup) prefs).findPreference("pref_screen_transactions");
+			//tScreen.setEnabled(true);
+		}
+
 		populate();
+	}
+
+	//If android version supports it, smooth gradient
+	@TargetApi(5)
+	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		Window window = getWindow();
+		window.setFormat(PixelFormat.RGBA_8888);
+
 	}
 
 }// end ViewDB

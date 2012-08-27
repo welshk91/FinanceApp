@@ -26,8 +26,8 @@ public class Options extends PreferenceActivity {
 		Context context = getApplicationContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-		String sDefaultTipPercent = prefs.getString(this.getString(R.string.pref_key_transaction_backgroundColor), "#E8E8E8");
-		String sDefaultTaxPercent = prefs.getString(this.getString(R.string.pref_key_transaction_nameSize), "20");
+		//String sDefaultTipPercent = prefs.getString(this.getString(R.string.pref_key_transaction_backgroundColor), "#E8E8E8");
+		//String sDefaultTaxPercent = prefs.getString(this.getString(R.string.pref_key_transaction_nameSize), "20");
 
 		//Toast.makeText(this, "Options\n" + sDefaultTipPercent + sDefaultTaxPercent + sDefaultExtraAmount, Toast.LENGTH_LONG).show();
 

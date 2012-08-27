@@ -17,11 +17,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -530,15 +526,20 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				//Change Background Colors
 				try{
-					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_backgroundColor), "#E8E8E8");
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.account_layout);
+					String startColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_startBackgroundColor), "#E8E8E8");
+					String endColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_endBackgroundColor), "#FFFFFF");
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
+					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
-						l.setBackgroundColor(Color.parseColor("#E8E8E8"));
+						l.setBackgroundResource(R.drawable.account_background_gradient);
 					}
 					else{
-						l.setBackgroundColor(Color.parseColor(DefaultColor));
+						l.setBackgroundDrawable(defaultGradient);
 					}
 
 				}

@@ -25,9 +25,17 @@
                 <EditTextPreference
                     android:defaultValue="#E8E8E8"
                     android:inputType="text|phone"
-                    android:key="@string/pref_key_transaction_backgroundColor"
-                    android:summary="Background color of each transaction row. Default is &apos;#E8E8E8&apos;"
-                    android:title="Background color" >
+                    android:key="@string/pref_key_transaction_startBackgroundColor"
+                    android:summary="Starting background color of each transaction row. Default is &apos;#E8E8E8&apos;"
+                    android:title="Background Starting Color" >
+                </EditTextPreference>
+
+                <EditTextPreference
+                    android:defaultValue="#FFFFFF"
+                    android:inputType="text|phone"
+                    android:key="@string/pref_key_transaction_endBackgroundColor"
+                    android:summary="Ending background color of each transaction row. Default is &apos;#FFFFFF&apos;"
+                    android:title="Background Ending Color" >
                 </EditTextPreference>
             </PreferenceCategory>
 
@@ -127,9 +135,17 @@
             <EditTextPreference
                 android:defaultValue="#E8E8E8"
                 android:inputType="text|phone"
-                android:key="@string/pref_key_account_backgroundColor"
-                android:summary="Background color of each account row. Default is &apos;#E8E8E8&apos;"
-                android:title="Background color" >
+                android:key="@string/pref_key_account_startBackgroundColor"
+                android:summary="Starting background color of each account row. Default is &apos;#E8E8E8&apos;"
+                android:title="Background Starting color" >
+            </EditTextPreference>
+
+            <EditTextPreference
+                android:defaultValue="#FFFFFF"
+                android:inputType="text|phone"
+                android:key="@string/pref_key_account_endBackgroundColor"
+                android:summary="Ending background color of each account row. Default is &apos;#FFFFFF&apos;"
+                android:title="Background Ending Color" >
             </EditTextPreference>
         </PreferenceCategory>
 

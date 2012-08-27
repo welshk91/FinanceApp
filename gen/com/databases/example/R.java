@@ -19,12 +19,14 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int account_gradient=0x7f020000;
-        public static final int calculator=0x7f020001;
-        public static final int green=0x7f020002;
-        public static final int icon=0x7f020003;
-        public static final int red=0x7f020004;
-        public static final int transaction_gradient=0x7f020005;
+        public static final int account_background_gradient=0x7f020000;
+        public static final int account_id_gradient=0x7f020001;
+        public static final int calculator=0x7f020002;
+        public static final int green=0x7f020003;
+        public static final int icon=0x7f020004;
+        public static final int red=0x7f020005;
+        public static final int transaction_background_gradient=0x7f020006;
+        public static final int transaction_id_gradient=0x7f020007;
     }
     public static final class id {
         public static final int ButtonTransactionDate=0x7f06002b;
@@ -135,16 +137,18 @@ public final class R {
         public static final int memo_=0x7f040012;
         public static final int name_=0x7f04000c;
         public static final int options=0x7f040008;
-        public static final int pref_key_account_backgroundColor=0x7f04001a;
-        public static final int pref_key_account_fieldColor=0x7f04001e;
-        public static final int pref_key_account_fieldSize=0x7f04001d;
-        public static final int pref_key_account_nameColor=0x7f04001c;
-        public static final int pref_key_account_nameSize=0x7f04001b;
-        public static final int pref_key_transaction_backgroundColor=0x7f040015;
-        public static final int pref_key_transaction_fieldColor=0x7f040019;
-        public static final int pref_key_transaction_fieldSize=0x7f040018;
-        public static final int pref_key_transaction_nameColor=0x7f040017;
-        public static final int pref_key_transaction_nameSize=0x7f040016;
+        public static final int pref_key_account_endBackgroundColor=0x7f04001c;
+        public static final int pref_key_account_fieldColor=0x7f040020;
+        public static final int pref_key_account_fieldSize=0x7f04001f;
+        public static final int pref_key_account_nameColor=0x7f04001e;
+        public static final int pref_key_account_nameSize=0x7f04001d;
+        public static final int pref_key_account_startBackgroundColor=0x7f04001b;
+        public static final int pref_key_transaction_endBackgroundColor=0x7f040016;
+        public static final int pref_key_transaction_fieldColor=0x7f04001a;
+        public static final int pref_key_transaction_fieldSize=0x7f040019;
+        public static final int pref_key_transaction_nameColor=0x7f040018;
+        public static final int pref_key_transaction_nameSize=0x7f040017;
+        public static final int pref_key_transaction_startBackgroundColor=0x7f040015;
         public static final int type_=0x7f04000e;
         public static final int value_=0x7f04000d;
         public static final int view_accounts=0x7f040004;

@@ -579,18 +579,24 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.transaction_item, null);
 
-				//Change Background Color
+				//Change Background Colors
 				try{
-					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_backgroundColor), "#E8E8E8");
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.transaction_layout);
+					String startColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_startBackgroundColor), "#E8E8E8");
+					String endColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_endBackgroundColor), "#FFFFFF");
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
+					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
-						l.setBackgroundColor(Color.parseColor("#E8E8E8"));
+						l.setBackgroundResource(R.drawable.account_background_gradient);
 					}
 					else{
-						l.setBackgroundColor(Color.parseColor(DefaultColor));
+						l.setBackgroundDrawable(defaultGradient);
 					}
+
 				}
 				catch(Exception e){
 					Toast.makeText(Transactions.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
@@ -826,6 +832,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	}
 
 	//If android version supports it, smooth gradient
+	@TargetApi(5)
 	@Override
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();

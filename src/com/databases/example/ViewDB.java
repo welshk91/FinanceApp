@@ -17,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -116,7 +117,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					entry_balance = c.getString(2);
 					entry_time = c.getString(3);
 					entry_date = c.getString(4);
-					Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 				}while(c.moveToNext());
 
 				//Close Database if Open
@@ -267,7 +268,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 			entry_balance = c.getString(c.getColumnIndex("Balance"));
 			entry_time = c.getString(c.getColumnIndex("Time"));
 			entry_date = c.getString(c.getColumnIndex("Date"));
-			Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 		}while(c.moveToNext());
 
 		//Close Database if Open
@@ -758,17 +759,6 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		//Toast.makeText(this, "Options Just Changed: ViewDB.Java", Toast.LENGTH_SHORT).show();
-		prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
-		boolean defaultOn = prefs.getBoolean("checkbox_default", true);
-		//Toast.makeText(this, "Default: " + defaultOn, Toast.LENGTH_SHORT).show();
-		if(defaultOn){
-			//Code Here
-		}
-		else{
-			//PreferenceScreen tScreen = (PreferenceScreen) ((PreferenceGroup) prefs).findPreference("pref_screen_transactions");
-			//tScreen.setEnabled(true);
-		}
-
 		populate();
 	}
 

@@ -124,7 +124,7 @@
     <PreferenceScreen
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:key="pref_screen_transactions"
+        android:key="pref_screen_accounts"
         android:summary="Change appearance of accounts"
         android:title="Account Appearance" >
 

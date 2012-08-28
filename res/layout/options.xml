@@ -272,13 +272,13 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="checkbox_default"
-            android:summary="Use Default Values instead of User-Defined Ones. May Require Restart"
+            android:summary="Use Default Values instead of User-Defined Ones"
             android:title="Use Default Values" >
         </CheckBoxPreference>
 
         <Preference
             android:key="pref_reset"
-            android:summary="Will reset all custom values to their defaults"
+            android:summary="Will reset all custom values to their defaults. May require restart"
             android:title="Reset Defaults" >
         </Preference>
     </PreferenceCategory>

@@ -84,16 +84,9 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 			}
 		}
 
-
-	}
+	}//end Check Defaults
 
 	public void prefsReset(){
-		//Toast.makeText(getBaseContext(),"The custom preference has been clicked",Toast.LENGTH_SHORT).show();
-		//SharedPreferences customSharedPreference = getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE);
-		//SharedPreferences.Editor editor = customSharedPreference.edit();
-		//editor.putString("myCustomPref","The preference has been clicked");
-		//editor.commit();
-
 		//Set an alert dialog to confirm
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 

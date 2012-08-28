@@ -1,8 +1,12 @@
 package com.databases.example;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
@@ -20,6 +24,17 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 
 		checkDefaults();
 
+		Preference customPref = (Preference) findPreference("pref_reset");
+		customPref
+		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				prefsReset();
+				return true;
+			}
+
+		});
+
 	}
 
 	//Used after a change in settings occurs
@@ -29,6 +44,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 		checkDefaults();
 	}
 
+	//Set visibility of options depending on whether user wants to use defaults
 	public void checkDefaults(){
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);
 		boolean defaultOn = prefs.getBoolean("checkbox_default", true);
@@ -71,7 +87,46 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 
 	}
 
+	public void prefsReset(){
+		//Toast.makeText(getBaseContext(),"The custom preference has been clicked",Toast.LENGTH_SHORT).show();
+		//SharedPreferences customSharedPreference = getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE);
+		//SharedPreferences.Editor editor = customSharedPreference.edit();
+		//editor.putString("myCustomPref","The preference has been clicked");
+		//editor.commit();
+
+		//Set an alert dialog to confirm
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set title
+		alertDialogBuilder.setTitle("Reset Preferences?");
+
+		// set dialog message
+		alertDialogBuilder
+		.setMessage("Do you wish to reset all the preferences?")
+		.setCancelable(false)
+		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				//Reset Preferences
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);
+				prefs.edit().clear().commit();
+				prefs.edit().putBoolean("checkbox_default", true).commit();
+			}
+		})
+		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+	}
+
 }
+
 
 
 

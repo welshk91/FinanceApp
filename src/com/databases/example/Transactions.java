@@ -52,6 +52,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//The View
 	int page;
 
+	//Used to keep Track of total Balance
+	float totalBalance;
+	
 	//Variables for the transaction Table
 	String transactionName = null;
 	static String transactionTime = null;
@@ -157,6 +160,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		Button unknownTransaction = (Button)findViewById(R.id.transaction_footer_Unknown); 
 		unknownTransaction.setOnClickListener(buttonListener);
 
+		//Set up a listener for changes in settings menu
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		
 		//Populate List with Entries
 		populate();
 
@@ -167,6 +174,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	protected void populate(){
 
 		results = new ArrayList<TransactionRecord>();
+		
+		//Reset totalBalance
+		totalBalance = 0;
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -188,6 +198,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 					TransactionRecord entry = new TransactionRecord(name, balance,null,null,null,null,date,null,null);
 					results.add(entry);
+					
+					//Add account balance to total balance
+					totalBalance = totalBalance + Float.parseFloat(balance);
 
 				} while (c.moveToNext());
 			}
@@ -207,10 +220,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
-		//Set up a listener for changes in settings menu
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-
+		//Refresh Balance
+		calculateBalance();
+		
 	}//end populate
 
 	@Override  
@@ -591,9 +603,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
-						l.setBackgroundResource(R.drawable.account_background_gradient);
+						l.setBackgroundResource(R.drawable.transaction_list_style);
 					}
 					else{
+						
 						l.setBackgroundDrawable(defaultGradient);
 					}
 
@@ -841,4 +854,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	}
 
+	//Calculates the balance
+		public void calculateBalance(){
+			TextView balance = (TextView)this.findViewById(R.id.transaction_total_balance);
+			balance.setText("Total Balance: " + totalBalance);
+		}
+	
 }//end Transactions

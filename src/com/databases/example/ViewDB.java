@@ -2,7 +2,6 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -42,6 +41,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 	int page;
 
+	//Balance
+	float totalBalance;
+
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=1;
 	int CONTEXT_MENU_EDIT=2;
@@ -78,6 +80,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+
+		//Reset balance
+		//totalBalance = 0;
 
 		setContentView(R.layout.accounts);
 		page = R.layout.accounts;
@@ -166,6 +171,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	protected void populate() {
 		results = new ArrayList<AccountRecord>();
 
+		//Reset Balance
+		totalBalance=0;
+		
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 		c = myDB.query(tblAccounts, new String[] { "Name", "Balance", "Time", "Date" }, null,
@@ -188,6 +196,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					AccountRecord entry = new AccountRecord(name, balance,date,time);
 					results.add(entry);
 
+					//Add account balance to total balance
+					totalBalance = totalBalance + Float.parseFloat(balance);
+
 				} while (c.moveToNext());
 			}
 		} 
@@ -204,7 +215,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
-	}
+
+		//Refresh Balance
+		calculateBalance();
+
+	}//end populate
 
 	@Override  
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
@@ -533,10 +548,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
-					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
-						l.setBackgroundResource(R.drawable.account_background_gradient);
+						l.setBackgroundResource(R.drawable.account_list_style);
 					}
 					else{
 						l.setBackgroundDrawable(defaultGradient);
@@ -547,6 +561,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					Toast.makeText(ViewDB.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
+				//Change Size of main field
 				try{
 					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameSize), "16");
 					TextView t;
@@ -769,6 +784,12 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		Window window = getWindow();
 		window.setFormat(PixelFormat.RGBA_8888);
 
+	}
+
+	//Calculates the balance
+	public void calculateBalance(){
+		TextView balance = (TextView)this.findViewById(R.id.account_total_balance);
+		balance.setText("Total Balance: " + totalBalance);
 	}
 
 }// end ViewDB

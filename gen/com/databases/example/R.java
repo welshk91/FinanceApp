@@ -20,13 +20,17 @@ public final class R {
     }
     public static final class drawable {
         public static final int account_background_gradient=0x7f020000;
-        public static final int account_id_gradient=0x7f020001;
-        public static final int calculator=0x7f020002;
-        public static final int green=0x7f020003;
-        public static final int icon=0x7f020004;
-        public static final int red=0x7f020005;
-        public static final int transaction_background_gradient=0x7f020006;
-        public static final int transaction_id_gradient=0x7f020007;
+        public static final int account_hover_gradient=0x7f020001;
+        public static final int account_id_gradient=0x7f020002;
+        public static final int account_list_style=0x7f020003;
+        public static final int calculator=0x7f020004;
+        public static final int green=0x7f020005;
+        public static final int icon=0x7f020006;
+        public static final int red=0x7f020007;
+        public static final int transaction_background_gradient=0x7f020008;
+        public static final int transaction_hover_gradient=0x7f020009;
+        public static final int transaction_id_gradient=0x7f02000a;
+        public static final int transaction_list_style=0x7f02000b;
     }
     public static final class id {
         public static final int ButtonTransactionDate=0x7f06002b;
@@ -80,6 +84,7 @@ public final class R {
         public static final int account_menu_options=0x7f06000b;
         public static final int account_name=0x7f060006;
         public static final int account_time=0x7f060009;
+        public static final int account_total_balance=0x7f060013;
         public static final int list=0x7f060012;
         public static final int spinner_transaction_category=0x7f060026;
         public static final int spinner_transaction_type=0x7f060024;
@@ -88,9 +93,9 @@ public final class R {
         public static final int transaction_checknum=0x7f060035;
         public static final int transaction_cleared=0x7f060039;
         public static final int transaction_date=0x7f060037;
-        public static final int transaction_footer_Add=0x7f060046;
-        public static final int transaction_footer_Schedule=0x7f060047;
-        public static final int transaction_footer_Unknown=0x7f060048;
+        public static final int transaction_footer_Add=0x7f060047;
+        public static final int transaction_footer_Schedule=0x7f060048;
+        public static final int transaction_footer_Unknown=0x7f060049;
         public static final int transaction_gradient=0x7f060030;
         public static final int transaction_layout=0x7f06002f;
         public static final int transaction_memo=0x7f060036;
@@ -99,9 +104,9 @@ public final class R {
         public static final int transaction_menu_options=0x7f06003b;
         public static final int transaction_name=0x7f060031;
         public static final int transaction_time=0x7f060038;
+        public static final int transaction_total_balance=0x7f060046;
         public static final int transaction_type=0x7f060033;
         public static final int transaction_value=0x7f060032;
-        public static final int tv=0x7f060013;
     }
     public static final class layout {
         public static final int account_add=0x7f030000;

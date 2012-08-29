@@ -35,7 +35,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 
 		});
 
-	}
+	}//end onCreate
 
 	//Used after a change in settings occurs
 	@Override
@@ -116,9 +116,9 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 
 		// show it
 		alertDialog.show();
-	}
+	}//end of prefsReset
 
-}
+}//end of Options
 
 
 

@@ -17,12 +17,6 @@ import android.widget.TextView;
 public class Main extends Activity {	
 	int page;
 
-	//Variables for the Account Table
-	String accountName = null;
-	String accountTime = null;
-	String accountBalance = null;
-	String accountDate = null;
-
 	//Variables for the Views
 	Button Track_Button;
 	Button Database_Button;
@@ -44,8 +38,15 @@ public class Main extends Activity {
 
 	//Variables for the Database
 	public final String tblAccounts = "tblAccounts";
+	final String tblTrans = "tblTrans";
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
+
+	//Variables for the Account Table
+	String accountName = null;
+	String accountTime = null;
+	String accountBalance = null;
+	String accountDate = null;
 
 	//Variables for the ListView
 	public ArrayList<String> results = new ArrayList<String>();
@@ -90,6 +91,9 @@ public class Main extends Activity {
 									int arg1) {
 								myDB.execSQL("DELETE FROM "
 										+ tblAccounts + ";");
+								myDB.execSQL("DELETE FROM "
+										+ tblTrans + ";");
+								Main.this.deleteDatabase(dbFinance);
 							}
 						})
 						.setNegativeButton("No",
@@ -154,21 +158,29 @@ public class Main extends Activity {
 		 * Where the Table is created(if not created already) and opened Table
 		 * is populated by 'default' data
 		 */
-		try {
-			myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-			myDB.execSQL("CREATE TABLE IF NOT EXISTS "
-					+ tblAccounts
-					+ " (ID INTEGER PRIMARY KEY, Name VARCHAR, Balance VARCHAR, Time VARCHAR, Date VARCHAR);");
-			/*
-			myDB.execSQL("INSERT INTO "
-					+ tblAccounts
-					+ " (Name, Balance, Time, Date)"
-					+ " VALUES ('LMCU', '$500', '5:30', '5-26-2012');");
-			 */
-		} 
-		catch (Exception e) {
-			System.out.print("Error Creating Database!!!");
-		}
+
+		//If this is the first time running program...
+		if(true){
+			try {
+
+				//Create database and open
+				myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				//Create Accounts table
+				myDB.execSQL("CREATE TABLE IF NOT EXISTS "
+						+ tblAccounts
+						+ " (AcctID INTEGER PRIMARY KEY, AcctName VARCHAR, AcctBalance VARCHAR, AcctTime VARCHAR, AcctDate VARCHAR);");
+
+				//Create Transactions table
+				myDB.execSQL("CREATE TABLE IF NOT EXISTS "
+						+ tblTrans
+						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);");
+			} 
+			catch (Exception e) {
+				System.out.print("Error Creating Database!!!");
+			}
+
+		}//end if
 
 	}// end onCreate
 

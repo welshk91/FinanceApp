@@ -40,6 +40,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -54,22 +55,21 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	//Used to keep Track of total Balance
 	float totalBalance;
-	
-	//Variables for the transaction Table
-	String transactionName = null;
-	static String transactionTime = null;
-	String transactionBalance = null;
-	static String transactionDate = null;
 
 	//Dialog for Adding Transaction
 	static View promptsView;
 	View transStatsView;
 
-	//Text Area for Adding Accounts
+	//Widgets for Adding Accounts
 	EditText tName;
-	EditText tBalance;
-	static Button tDate;
+	EditText tValue;
+	Spinner tType;	
+	Spinner tCategory;
+	EditText tCheckNum;
+	EditText tMemo;
 	static Button tTime;
+	static Button tDate;
+	CheckBox tCleared;
 
 	//TextView of Statistics
 	TextView statsName;
@@ -107,6 +107,18 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	SQLiteDatabase myDB;
 	ArrayList<TransactionRecord> results = new ArrayList<TransactionRecord>();
 
+	//Variables for the transaction Table
+	String transactionName = null;
+	String transactionValue = null;
+	String transactionType = null;
+	String transactionCategory = null;
+	String transactionCheckNum = null;
+	String transactionMemo = null;
+	static String transactionTime = null;
+	static String transactionDate = null;
+	String transactionCleared = null;
+
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -132,7 +144,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		account_date = getIntent().getExtras().getString("date");
 		account_time = getIntent().getExtras().getString("time");
 
-		Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
 
 		//Set Listener for regular mouse click
 		lv.setOnItemClickListener(new OnItemClickListener(){
@@ -163,7 +175,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
-		
+
 		//Populate List with Entries
 		populate();
 
@@ -174,40 +186,56 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	protected void populate(){
 
 		results = new ArrayList<TransactionRecord>();
-		
+
 		//Reset totalBalance
 		totalBalance = 0;
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		c = myDB.query(tblTrans, new String[] { "TransDesc", "TransAmt", "TransDate"}, "ToAcctID = " + account_id,
+		c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
 				null, null, null, null);
 
 		startManagingCursor(c);
-		int descColumn = c.getColumnIndex("TransDesc");
-		int amtColumn = c.getColumnIndex("TransAmt");
+		int idColumn = c.getColumnIndex("TransID");
+		int acctIDColumn = c.getColumnIndex("ToAcctID");
+		int nameColumn = c.getColumnIndex("TransName");
+		int valueColumn = c.getColumnIndex("TransValue");
+		int typeColumn = c.getColumnIndex("TransType");
+		int categoryColumn = c.getColumnIndex("TransCategory");
+		int checknumColumn = c.getColumnIndex("TransCheckNum");
+		int memoColumn = c.getColumnIndex("TransMemo");
+		int timeColumn = c.getColumnIndex("TransTime");
 		int dateColumn = c.getColumnIndex("TransDate");
+		int clearedColumn = c.getColumnIndex("TransCleared");
 
 		c.moveToFirst();
 		if (c != null) {
 			if (c.isFirst()) {
 				do {
-					String name = c.getString(descColumn);
-					String balance = c.getString(amtColumn);
-					String date = c.getString(dateColumn); 
+					int id = c.getInt(idColumn);
+					int acctId = c.getInt(acctIDColumn);
+					String name = c.getString(nameColumn);
+					String value = c.getString(valueColumn);
+					String type = c.getString(typeColumn);
+					String category = c.getString(categoryColumn);
+					String checknum = c.getString(checknumColumn);
+					String memo = c.getString(memoColumn);
+					String time = c.getString(timeColumn);
+					String date = c.getString(dateColumn);
+					String cleared = c.getString(clearedColumn);
 
-					TransactionRecord entry = new TransactionRecord(name, balance,null,null,null,null,date,null,null);
+					TransactionRecord entry = new TransactionRecord(id, acctId, name, value,type,category,checknum,memo,time,date,cleared);
 					results.add(entry);
-					
+
 					//Add account balance to total balance
-					totalBalance = totalBalance + Float.parseFloat(balance);
+					totalBalance = totalBalance + Float.parseFloat(value);
 
 				} while (c.moveToNext());
 			}
 		} 
 
 		else {
-			TransactionRecord tmp = new TransactionRecord("DATABASE EMPTY", null,null,null,null,null,null,null,null);
+			TransactionRecord tmp = new TransactionRecord(0,0,"DATABASE EMPTY",null,null,null,null,null,null,null,null);
 			results.add(tmp);
 		}
 
@@ -222,7 +250,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 		//Refresh Balance
 		calculateBalance();
-		
+
 	}//end populate
 
 	@Override  
@@ -262,7 +290,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	public void transactionOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		//Object itemName = adapter.getItem(itemInfo.position);
-		//Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
 		String sqlCommand = "SELECT * FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp)";
 		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
@@ -274,18 +301,18 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 		int entry_id = 0;
 		String entry_name = null;
-		String entry_balance = null;
+		String entry_value = null;
 		String entry_time = null;
 		String entry_date = null;
 
 		c.moveToFirst();
 		do{
 			entry_id = c.getInt(c.getColumnIndex("TransID"));
-			entry_name = c.getString(c.getColumnIndex("TransDesc"));
-			entry_balance = c.getString(c.getColumnIndex("TransAmt"));
-			entry_time = c.getString(c.getColumnIndex("TransDate"));
+			entry_name = c.getString(c.getColumnIndex("TransName"));
+			entry_value = c.getString(c.getColumnIndex("TransValue"));
+			entry_time = c.getString(c.getColumnIndex("TransTime"));
 			entry_date = c.getString(c.getColumnIndex("TransDate"));
-			Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+			Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 		}while(c.moveToNext());
 
 		//Close Database if Open
@@ -316,7 +343,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		statsName = (TextView)transStatsView.findViewById(R.id.TextTransactionName);
 		statsName.setText(entry_name);
 		statsValue = (TextView)transStatsView.findViewById(R.id.TextTransactionValue);
-		statsValue.setText(entry_balance);
+		statsValue.setText(entry_value);
 		statsType = (TextView)transStatsView.findViewById(R.id.TextTransactionType);
 		statsType.setText(entry_date);
 		statsCategory = (TextView)transStatsView.findViewById(R.id.TextTransactionCategory);
@@ -430,9 +457,20 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						// CODE FOR "OK"
 
 						tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-						tBalance = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+						tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+						tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+						tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+						tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
+						tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
+						tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+
 						transactionName = tName.getText().toString().trim();
-						transactionBalance = tBalance.getText().toString().trim();
+						transactionValue = tValue.getText().toString().trim();
+						transactionType = tType.getSelectedItem().toString().trim();
+						transactionCategory = tCategory.getSelectedItem().toString().trim();
+						transactionCheckNum = tCheckNum.getText().toString().trim();
+						transactionMemo = tMemo.getText().toString().trim();
+						transactionCleared = tCleared.isChecked()+"";
 
 						//Open Database
 						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
@@ -440,8 +478,8 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						if (transactionName != null && transactionTime != null && transactionDate != null
 								&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
 							myDB.execSQL("INSERT INTO " + tblTrans
-									+ " (TransDesc, ToAcctID, TransAmt, TransDate)" + " VALUES ('"
-									+ transactionName + "', '" + account_id + "', '" + transactionBalance + "', '" + transactionDate + "');");
+									+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+									+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');");	
 							page = R.layout.transactions;
 						} 
 
@@ -606,7 +644,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						l.setBackgroundResource(R.drawable.transaction_list_style);
 					}
 					else{
-						
+
 						l.setBackgroundDrawable(defaultGradient);
 					}
 
@@ -741,12 +779,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					GradientDrawable defaultGradientPos = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {0xFF00FF33,0xFF000000});
-					//gd.setCornerRadius(0f);
 
 					GradientDrawable defaultGradientNeg = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {0xFFFF0000,0xFF000000});
-					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
 						if(Float.parseFloat((user.value)) >=0){
@@ -814,25 +850,29 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	//An Object Class used to hold the data of each transaction record
 	public class TransactionRecord {
+		private int id;
+		private int acctId;
 		private String name;
 		private String value;
 		private String type;
 		private String category;
 		private String checknum;
 		private String memo;
-		private String date;
 		private String time;
+		private String date;
 		private String cleared;
 
-		public TransactionRecord(String name, String value, String type, String category, String checknum, String memo, String date, String time, String cleared) {
+		public TransactionRecord(int id, int acctId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
+			this.id = id;
+			this.acctId = acctId;
 			this.name = name;
 			this.value = value;
 			this.type = type;
 			this.category = category;
 			this.checknum = checknum;
 			this.memo = memo;
-			this.date = date;
 			this.time = time;
+			this.date = date;
 			this.cleared = cleared;
 		}
 	}
@@ -855,9 +895,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	}
 
 	//Calculates the balance
-		public void calculateBalance(){
-			TextView balance = (TextView)this.findViewById(R.id.transaction_total_balance);
-			balance.setText("Total Balance: " + totalBalance);
-		}
-	
+	public void calculateBalance(){
+		TextView balance = (TextView)this.findViewById(R.id.transaction_total_balance);
+		balance.setText("Total Balance: " + totalBalance);
+	}
+
 }//end Transactions

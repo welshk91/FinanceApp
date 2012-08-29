@@ -101,7 +101,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				//String item = (String) adapter.getItem(position).name;
 
 				//NOTE: LIMIT *position*,*how many after*
-				String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
+				String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + " LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
 
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -173,16 +173,16 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 		//Reset Balance
 		totalBalance=0;
-		
+
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		c = myDB.query(tblAccounts, new String[] { "Name", "Balance", "Time", "Date" }, null,
+		c = myDB.query(tblAccounts, new String[] { "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
 				null, null, null, null);
 		startManagingCursor(c);
-		int NameColumn = c.getColumnIndex("Name");
-		int BalanceColumn = c.getColumnIndex("Balance");
-		int TimeColumn = c.getColumnIndex("Time");
-		int DateColumn = c.getColumnIndex("Date");
+		int NameColumn = c.getColumnIndex("AcctName");
+		int BalanceColumn = c.getColumnIndex("AcctBalance");
+		int TimeColumn = c.getColumnIndex("AcctTime");
+		int DateColumn = c.getColumnIndex("AcctDate");
 
 		c.moveToFirst();
 		if (c != null) {
@@ -257,11 +257,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	//For Opening an Account
 	public void accountOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position);
+		//Object itemName = adapter.getItem(itemInfo.position);
 
-		Toast.makeText(this, "Opened Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
-
-		String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp)";
+		String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp)";
 		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -277,11 +275,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 		c.moveToFirst();
 		do{
-			entry_id = c.getInt(c.getColumnIndex("ID"));
-			entry_name = c.getString(c.getColumnIndex("Name"));
-			entry_balance = c.getString(c.getColumnIndex("Balance"));
-			entry_time = c.getString(c.getColumnIndex("Time"));
-			entry_date = c.getString(c.getColumnIndex("Date"));
+			entry_id = c.getInt(c.getColumnIndex("AcctID"));
+			entry_name = c.getString(c.getColumnIndex("AcctName"));
+			entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
+			entry_time = c.getString(c.getColumnIndex("AcctTime"));
+			entry_date = c.getString(c.getColumnIndex("AcctDate"));
 			//Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 		}while(c.moveToNext());
 
@@ -340,7 +338,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 
 		//NOTE: LIMIT *position*,*how many after*
-		String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE ID IN (SELECT ID FROM (SELECT ID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
+		String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
 		//Open Database
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -356,7 +354,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		//results.remove(itemInfo.position);
 		//adapter.notifyDataSetChanged();
 
-		ViewDB.this.populate();
+		populate();
 
 		Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
@@ -436,7 +434,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						if (accountName != null && accountTime != null && accountDate != null
 								&& accountName != " " && accountTime != " " && accountDate != " ") {
 							myDB.execSQL("INSERT INTO " + tblAccounts
-									+ " (Name, Balance, Time, Date)" + " VALUES ('"
+									+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
 									+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
 									+ accountDate + "');");
 							page = R.layout.accounts;
@@ -792,4 +790,5 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		balance.setText("Total Balance: " + totalBalance);
 	}
 
+	
 }// end ViewDB

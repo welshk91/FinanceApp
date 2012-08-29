@@ -76,6 +76,7 @@ public class Main extends Activity {
 				break;
 
 			case R.id.View:
+				createDatabase();
 				Intent v = new Intent(Main.this, ViewDB.class);
 				startActivity(v);
 				break;
@@ -89,11 +90,7 @@ public class Main extends Activity {
 								new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface arg0,
 									int arg1) {
-								myDB.execSQL("DELETE FROM "
-										+ tblAccounts + ";");
-								myDB.execSQL("DELETE FROM "
-										+ tblTrans + ";");
-								Main.this.deleteDatabase(dbFinance);
+								destroyDatabase();
 							}
 						})
 						.setNegativeButton("No",
@@ -153,6 +150,30 @@ public class Main extends Activity {
 		Exit_Button = (Button) findViewById(R.id.Exit);
 		Exit_Button.setOnClickListener(buttonListener);
 
+	}// end onCreate
+
+	/*
+	 * Handle closing database properly to avoid corruption
+	 * */
+	@Override
+	public void onDestroy() {
+		if (myDB != null){
+			myDB.close();
+		}
+		super.onDestroy();
+	}
+
+	//Method for Deleting Database
+	public void destroyDatabase(){
+		myDB.execSQL("DELETE FROM "
+				+ tblAccounts + ";");
+		myDB.execSQL("DELETE FROM "
+				+ tblTrans + ";");
+		Main.this.deleteDatabase(dbFinance);
+	}
+
+	//Method for Creating Database
+	public void createDatabase(){
 		/*
 		 * Where the Database is created(if not created already) and opened
 		 * Where the Table is created(if not created already) and opened Table
@@ -182,17 +203,6 @@ public class Main extends Activity {
 
 		}//end if
 
-	}// end onCreate
-
-	/*
-	 * Handle closing database properly to avoid corruption
-	 * */
-	@Override
-	public void onDestroy() {
-		if (myDB != null){
-			myDB.close();
-		}
-		super.onDestroy();
 	}
 
 }// end Database

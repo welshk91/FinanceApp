@@ -300,19 +300,31 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		startManagingCursor(c);
 
 		int entry_id = 0;
+		int entry_acctId = 0;
 		String entry_name = null;
 		String entry_value = null;
+		String entry_type = null;
+		String entry_category = null;
+		String entry_checknum = null;
+		String entry_memo = null;
 		String entry_time = null;
 		String entry_date = null;
+		String entry_cleared = null;
 
 		c.moveToFirst();
 		do{
 			entry_id = c.getInt(c.getColumnIndex("TransID"));
+			entry_acctId = c.getInt(c.getColumnIndex("ToAcctID"));
 			entry_name = c.getString(c.getColumnIndex("TransName"));
 			entry_value = c.getString(c.getColumnIndex("TransValue"));
+			entry_type = c.getString(c.getColumnIndex("TransType"));
+			entry_category = c.getString(c.getColumnIndex("TransCategory"));
+			entry_checknum = c.getString(c.getColumnIndex("TransCheckNum"));
+			entry_memo = c.getString(c.getColumnIndex("TransMemo"));
 			entry_time = c.getString(c.getColumnIndex("TransTime"));
 			entry_date = c.getString(c.getColumnIndex("TransDate"));
-			Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+			entry_cleared = c.getString(c.getColumnIndex("TransCleared"));
+			//Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 		}while(c.moveToNext());
 
 		//Close Database if Open
@@ -345,22 +357,19 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		statsValue = (TextView)transStatsView.findViewById(R.id.TextTransactionValue);
 		statsValue.setText(entry_value);
 		statsType = (TextView)transStatsView.findViewById(R.id.TextTransactionType);
-		statsType.setText(entry_date);
+		statsType.setText(entry_type);
 		statsCategory = (TextView)transStatsView.findViewById(R.id.TextTransactionCategory);
-		statsCategory.setText(entry_date);
+		statsCategory.setText(entry_category);
 		statsCheckNum = (TextView)transStatsView.findViewById(R.id.TextTransactionCheck);
-		statsCheckNum.setText(entry_date);
+		statsCheckNum.setText(entry_checknum);
 		statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
-		statsMemo.setText(entry_date);
+		statsMemo.setText(entry_memo);
 		statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
 		statsDate.setText(entry_date);
 		statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
-		statsTime.setText(entry_date);
-
-		//chkCleared = (CheckBox)this.findViewById(R.id.CheckTransactionCleared);
-		//String cleared = Boolean.valueOf(chkCleared.isChecked()).toString();
+		statsTime.setText(entry_time);
 		statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
-		//statsCleared.setText(cleared);
+		statsCleared.setText(entry_cleared);
 
 		// show it
 		alertDialog.show();

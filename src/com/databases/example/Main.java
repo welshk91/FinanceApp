@@ -152,9 +152,7 @@ public class Main extends Activity {
 
 	}// end onCreate
 
-	/*
-	 * Handle closing database properly to avoid corruption
-	 * */
+	//Over-rode method to handle database closing, prevent corruption
 	@Override
 	public void onDestroy() {
 		if (myDB != null){

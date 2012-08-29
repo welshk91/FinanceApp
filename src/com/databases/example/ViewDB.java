@@ -319,7 +319,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
 		statsDate.setText(entry_date);
 		statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
-		statsTime.setText(entry_date);
+		statsTime.setText(entry_time);
 
 	}  
 

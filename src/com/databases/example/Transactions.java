@@ -230,7 +230,13 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					results.add(entry);
 
 					//Add account balance to total balance
-					totalBalance = totalBalance + Float.parseFloat(value);
+					try{
+						totalBalance = totalBalance + Float.parseFloat(value);
+					}
+					catch(Exception e){
+						Toast.makeText(Transactions.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
+
+					}
 
 				} while (c.moveToNext());
 			}
@@ -389,7 +395,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//For Deleting an Account
 	public void transactionDelete(MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position);
+		Object itemName = adapter.getItem(itemInfo.position).name;
 
 		//NOTE: LIMIT *position*,*how many after*
 		String sqlCommand = "DELETE FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp);";

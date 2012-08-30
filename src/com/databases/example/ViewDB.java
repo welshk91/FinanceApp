@@ -173,9 +173,10 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		c = myDB.query(tblAccounts, new String[] { "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
+		c = myDB.query(tblAccounts, new String[] { "AcctID", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
 				null, null, null, null);
 		startManagingCursor(c);
+		int IDColumn = c.getColumnIndex("AcctID");
 		int NameColumn = c.getColumnIndex("AcctName");
 		int BalanceColumn = c.getColumnIndex("AcctBalance");
 		int TimeColumn = c.getColumnIndex("AcctTime");
@@ -185,23 +186,29 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		if (c != null) {
 			if (c.isFirst()) {
 				do {
+					String id = c.getString(IDColumn);
 					String name = c.getString(NameColumn);
 					String balance = c.getString(BalanceColumn);
 					String time = c.getString(TimeColumn);
 					String date = c.getString(DateColumn);
 
-					AccountRecord entry = new AccountRecord(name, balance,date,time);
+					AccountRecord entry = new AccountRecord(id, name, balance,date,time);
 					results.add(entry);
 
 					//Add account balance to total balance
-					totalBalance = totalBalance + Float.parseFloat(balance);
+					try{
+						totalBalance = totalBalance + Float.parseFloat(balance);
+					}
+					catch(Exception e){
+						Toast.makeText(ViewDB.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
+					}
 
 				} while (c.moveToNext());
 			}
 		} 
 
 		else {
-			AccountRecord tmp = new AccountRecord("DATABASE EMPTY",null,null,null);
+			AccountRecord tmp = new AccountRecord(null,"DATABASE EMPTY",null,null,null);
 			results.add(tmp);		
 		}
 
@@ -277,7 +284,6 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 			entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
 			entry_time = c.getString(c.getColumnIndex("AcctTime"));
 			entry_date = c.getString(c.getColumnIndex("AcctDate"));
-			//Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 		}while(c.moveToNext());
 
 		//Close Database if Open
@@ -322,16 +328,106 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 	//For Editing an Account
 	public void accountEdit(MenuItem item){
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position);
+		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		final String name = adapter.getItem(itemInfo.position).name;
+		final String balance = adapter.getItem(itemInfo.position).balance;
 
-		Toast.makeText(this, "Editing Item:\n" + itemName, Toast.LENGTH_SHORT).show();  
+		//Toast.makeText(this, "Editing Item:\n" + id, Toast.LENGTH_SHORT).show();  
+
+		// get account_add.xml view
+		LayoutInflater li = LayoutInflater.from(ViewDB.this);
+		final View promptsView = li.inflate(R.layout.account_add, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				ViewDB.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("Edit An Account");
+
+		//Add the previous info into the fields
+		aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
+		aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+		aName.setText(name);
+		aBalance.setText(balance);
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(false)
+		.setPositiveButton("Save",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// CODE FOR "OK"
+				accountName = aName.getText().toString().trim();
+				accountBalance = aBalance.getText().toString().trim();
+
+				//Open Database
+				myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+				}
+				else{
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+				}				
+
+				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+
+				try{
+					final String ID = adapter.getItem(itemInfo.position).id;
+					String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
+					String insertCommand= "INSERT INTO " + tblAccounts
+							+ " (AcctID, AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
+							+ ID + "', '" + accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+							+ accountDate + "');";
+					//Open Database
+					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+					//Delete Old Record
+					myDB.execSQL(deleteCommand);
+
+					//Make new record with same ID
+					myDB.execSQL(insertCommand);
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+				}
+
+				//Close Database if Opened
+				if (myDB != null){
+					myDB.close();
+				}
+
+				page = R.layout.accounts;
+
+				ViewDB.this.populate();
+
+			}//end onClick "OK"
+		})
+		.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// CODE FOR "Cancel"
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+
+
 	}
 
 	//For Deleting an Account
 	public void accountDelete(MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position);
+		Object itemName = adapter.getItem(itemInfo.position).name;
 
 
 		//NOTE: LIMIT *position*,*how many after*
@@ -432,10 +528,13 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						try{
 							if (accountName != null && accountTime != null && accountDate != null
 									&& accountName != " " && accountTime != " " && accountDate != " ") {
+
+								//Create a new account
 								myDB.execSQL("INSERT INTO " + tblAccounts
 										+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
 										+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
 										+ accountDate + "');");
+
 								page = R.layout.accounts;
 							} 
 
@@ -755,12 +854,14 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 	//An Object Class used to hold the data of each account record
 	public class AccountRecord {
+		private String id;
 		private String name;
 		private String balance;
 		private String date;
 		private String time;
 
-		public AccountRecord(String name, String balance, String date, String time) {
+		public AccountRecord(String id, String name, String balance, String date, String time) {
+			this.id = id;
 			this.name = name;
 			this.balance = balance;
 			this.date = date;

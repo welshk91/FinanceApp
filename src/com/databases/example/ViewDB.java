@@ -81,9 +81,6 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 
-		//Reset balance
-		//totalBalance = 0;
-
 		setContentView(R.layout.accounts);
 		page = R.layout.accounts;
 
@@ -431,17 +428,23 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						}				
 
 						accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-						if (accountName != null && accountTime != null && accountDate != null
-								&& accountName != " " && accountTime != " " && accountDate != " ") {
-							myDB.execSQL("INSERT INTO " + tblAccounts
-									+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
-									+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-									+ accountDate + "');");
-							page = R.layout.accounts;
-						} 
 
-						else {
-							Toast.makeText(ViewDB.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
+						try{
+							if (accountName != null && accountTime != null && accountDate != null
+									&& accountName != " " && accountTime != " " && accountDate != " ") {
+								myDB.execSQL("INSERT INTO " + tblAccounts
+										+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
+										+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+										+ accountDate + "');");
+								page = R.layout.accounts;
+							} 
+
+							else {
+								Toast.makeText(ViewDB.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
+							}
+						}
+						catch(Exception e){
+							Toast.makeText(ViewDB.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 						}
 
 						//Close Database if Opened
@@ -472,9 +475,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		}
 	};//end of buttonListener
 
-	/*
-	 * Handle closing database properly to avoid corruption
-	 * */
+	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {
 		if (myDB != null){
@@ -790,5 +791,4 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		balance.setText("Total Balance: " + totalBalance);
 	}
 
-	
 }// end ViewDB

@@ -372,7 +372,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		statsTime.setText(entry_time);
 		statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
 		statsCleared.setText(entry_cleared);
-				
+
 		// show it
 		alertDialog.show();
 
@@ -486,18 +486,22 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						//Open Database
 						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
 
-						if (transactionName != null && transactionTime != null && transactionDate != null
-								&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
-							myDB.execSQL("INSERT INTO " + tblTrans
-									+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-									+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');");	
-							page = R.layout.transactions;
-						} 
+						try{
+							if (transactionName != null && transactionTime != null && transactionDate != null
+									&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
+								myDB.execSQL("INSERT INTO " + tblTrans
+										+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+										+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');");	
+								page = R.layout.transactions;
+							} 
 
-						else {
-							Toast.makeText(Transactions.this, " No Nulls Allowed ", Toast.LENGTH_LONG).show();
+							else {
+								Toast.makeText(Transactions.this, " No Nulls Allowed ", Toast.LENGTH_LONG).show();
+							}
 						}
-
+						catch(Exception e){
+							Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+						}
 						//Close Database if Opened
 						if (myDB != null){
 							myDB.close();

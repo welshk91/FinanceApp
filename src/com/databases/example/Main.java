@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class Main extends Activity {	
@@ -163,11 +164,13 @@ public class Main extends Activity {
 
 	//Method for Deleting Database
 	public void destroyDatabase(){
-		myDB.execSQL("DELETE FROM "
-				+ tblAccounts + ";");
-		myDB.execSQL("DELETE FROM "
-				+ tblTrans + ";");
-		Main.this.deleteDatabase(dbFinance);
+
+		try{
+			Main.this.deleteDatabase(dbFinance);
+		}
+		catch(Exception e){
+			Toast.makeText(this, "Error Deleting Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
+		}
 	}
 
 	//Method for Creating Database
@@ -196,7 +199,7 @@ public class Main extends Activity {
 						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);");
 			} 
 			catch (Exception e) {
-				System.out.print("Error Creating Database!!!");
+				Toast.makeText(this, "Error Creating Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
 			}
 
 		}//end if

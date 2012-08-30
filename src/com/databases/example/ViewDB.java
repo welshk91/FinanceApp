@@ -363,9 +363,6 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				accountName = aName.getText().toString().trim();
 				accountBalance = aBalance.getText().toString().trim();
 
-				//Open Database
-				myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
 				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
 				}
@@ -390,14 +387,15 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 					//Make new record with same ID
 					myDB.execSQL(insertCommand);
+				
+					//Close Database if Opened
+					if (myDB != null){
+						myDB.close();
+					}
+				
 				}
 				catch(Exception e){
 					Toast.makeText(ViewDB.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-				}
-
-				//Close Database if Opened
-				if (myDB != null){
-					myDB.close();
 				}
 
 				page = R.layout.accounts;

@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -370,7 +372,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		statsTime.setText(entry_time);
 		statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
 		statsCleared.setText(entry_cleared);
-
+				
 		// show it
 		alertDialog.show();
 

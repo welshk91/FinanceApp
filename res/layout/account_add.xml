@@ -34,6 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView02"
         android:layout_toRightOf="@+id/TextView02"
+        android:digits="1234567890.-"
+        android:imeOptions="actionNext"
         android:inputType="number|numberDecimal|numberSigned|phone" >
     </EditText>
 

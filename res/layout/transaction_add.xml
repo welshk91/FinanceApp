@@ -40,7 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView02"
             android:layout_toRightOf="@+id/TextView05"
-            android:inputType="number|numberDecimal|phone" >
+            android:digits="1234567890."
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal|phone" >
         </EditText>
 
         <TextView
@@ -113,7 +115,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView06"
             android:layout_toRightOf="@+id/TextView05"
-            android:inputType="text" >
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+            android:maxLength="2000"
+            android:maxLines="4" >
         </EditText>
 
         <TextView

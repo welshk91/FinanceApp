@@ -103,6 +103,34 @@
 
                     <CheckBoxPreference
                         android:defaultValue="true"
+                        android:key="checkbox_transaction_typeField"
+                        android:summary="Type Field"
+                        android:title="Type" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_categoryField"
+                        android:summary="Category Field"
+                        android:title="Category" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_checknumField"
+                        android:summary="Check Number Field"
+                        android:title="Check Number" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_memoField"
+                        android:summary="Memo Field"
+                        android:title="Memo" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
                         android:key="checkbox_transaction_dateField"
                         android:summary="Date Field"
                         android:title="Date" >
@@ -113,6 +141,13 @@
                         android:key="checkbox_transaction_timeField"
                         android:summary="Time Field"
                         android:title="Time" >
+                    </CheckBoxPreference>
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_transaction_clearedField"
+                        android:summary="Cleared Field"
+                        android:title="Cleared" >
                     </CheckBoxPreference>
                 </PreferenceScreen>
             </PreferenceCategory>

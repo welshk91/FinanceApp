@@ -602,7 +602,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						String sqlCommand = "INSERT INTO " + tblTrans
 								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
 								+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
-						
+
 						//Open Database
 						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
 
@@ -619,12 +619,12 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						catch(Exception e){
 							Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 						}
-						
+
 						//Close Database if Opened
 						if (myDB != null){
 							myDB.close();
 						}
-						
+
 						page = R.layout.transactions;
 
 						Transactions.this.populate();
@@ -757,7 +757,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 			View v = convertView;
 			TransactionRecord user = transaction.get(position);
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this);
-			boolean useDefaults = prefs.getBoolean("checkbox_default", false);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 
 			if (v == null) {
@@ -875,22 +875,77 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				}
 
 				//For User-Defined Field Visibility
+				TextView name = (TextView) v.findViewById(R.id.transaction_name);
+				TextView value = (TextView) v.findViewById(R.id.transaction_value);
+				TextView type = (TextView) v.findViewById(R.id.transaction_type);
+				TextView category = (TextView) v.findViewById(R.id.transaction_category);
+				TextView checknum = (TextView) v.findViewById(R.id.transaction_checknum);
+				TextView memo = (TextView) v.findViewById(R.id.transaction_memo);
+				TextView date = (TextView) v.findViewById(R.id.transaction_date);
+				TextView time = (TextView) v.findViewById(R.id.transaction_time);
+				TextView cleared = (TextView) v.findViewById(R.id.transaction_cleared);
+
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_nameField", true)){
-					TextView name = (TextView) v.findViewById(R.id.transaction_name);
 					name.setVisibility(View.VISIBLE);
 				}
 				else{
-					TextView name = (TextView) v.findViewById(R.id.transaction_name);
 					name.setVisibility(View.INVISIBLE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
-					TextView value = (TextView) v.findViewById(R.id.transaction_value);
 					value.setVisibility(View.VISIBLE);
 				}
 				else{
-					TextView value = (TextView) v.findViewById(R.id.transaction_value);
 					value.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_typeField", true)){
+					type.setVisibility(View.VISIBLE);
+				}
+				else{
+					type.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_categoryField", true)){
+					category.setVisibility(View.VISIBLE);
+				}
+				else{
+					category.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_checknumField", true)){
+					checknum.setVisibility(View.VISIBLE);
+				}
+				else{
+					checknum.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_memoField", true)){
+					memo.setVisibility(View.VISIBLE);
+				}
+				else{
+					memo.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_dateField", true)){
+					date.setVisibility(View.VISIBLE);
+				}
+				else{
+					date.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_timeField", true)){
+					time.setVisibility(View.VISIBLE);
+				}
+				else{
+					time.setVisibility(View.INVISIBLE);
+				}
+
+				if(useDefaults||prefs.getBoolean("checkbox_transaction_clearedField", true)){
+					cleared.setVisibility(View.VISIBLE);
+				}
+				else{
+					cleared.setVisibility(View.INVISIBLE);
 				}
 
 

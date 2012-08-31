@@ -2,7 +2,6 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -22,7 +21,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -34,7 +32,6 @@ import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -517,7 +514,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		myDB.execSQL(sqlCommand);
-		Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
 		//Close Database if Opened
 		if (myDB != null){
@@ -602,16 +599,17 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						transactionMemo = tMemo.getText().toString().trim();
 						transactionCleared = tCleared.isChecked()+"";
 
+						String sqlCommand = "INSERT INTO " + tblTrans
+								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+								+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+						
 						//Open Database
 						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
 
 						try{
 							if (transactionName != null && transactionTime != null && transactionDate != null
 									&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
-								myDB.execSQL("INSERT INTO " + tblTrans
-										+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-										+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');");	
-								page = R.layout.transactions;
+								myDB.execSQL(sqlCommand);	
 							} 
 
 							else {
@@ -621,10 +619,13 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						catch(Exception e){
 							Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 						}
+						
 						//Close Database if Opened
 						if (myDB != null){
 							myDB.close();
 						}
+						
+						page = R.layout.transactions;
 
 						Transactions.this.populate();
 

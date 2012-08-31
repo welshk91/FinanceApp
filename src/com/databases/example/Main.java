@@ -156,14 +156,23 @@ public class Main extends Activity {
 	//Over-rode method to handle database closing, prevent corruption
 	@Override
 	public void onDestroy() {
+		
+		//Close database to avoid corruption/leaks
 		if (myDB != null){
 			myDB.close();
 		}
+		
+		//Exit
 		super.onDestroy();
 	}
 
 	//Method for Deleting Database
 	public void destroyDatabase(){
+		
+		//Make sure database is closed before deleting; not sure if necessary
+		if (myDB != null){
+			myDB.close();
+		}
 
 		try{
 			Main.this.deleteDatabase(dbFinance);
@@ -176,27 +185,30 @@ public class Main extends Activity {
 	//Method for Creating Database
 	public void createDatabase(){
 		/*
-		 * Where the Database is created(if not created already) and opened
-		 * Where the Table is created(if not created already) and opened Table
-		 * is populated by 'default' data
+		 * Initialize database and tables
 		 */
 
 		//If this is the first time running program...
 		if(true){
 			try {
 
+				String sqlCommandAccounts = "CREATE TABLE IF NOT EXISTS "
+						+ tblAccounts
+						+ " (AcctID INTEGER PRIMARY KEY, AcctName VARCHAR, AcctBalance VARCHAR, AcctTime VARCHAR, AcctDate VARCHAR);";
+
+				String sqlCommandTransactions = "CREATE TABLE IF NOT EXISTS "
+						+ tblTrans
+						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
+
 				//Create database and open
 				myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 				//Create Accounts table
-				myDB.execSQL("CREATE TABLE IF NOT EXISTS "
-						+ tblAccounts
-						+ " (AcctID INTEGER PRIMARY KEY, AcctName VARCHAR, AcctBalance VARCHAR, AcctTime VARCHAR, AcctDate VARCHAR);");
+				myDB.execSQL(sqlCommandAccounts);
 
 				//Create Transactions table
-				myDB.execSQL("CREATE TABLE IF NOT EXISTS "
-						+ tblTrans
-						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);");
+				myDB.execSQL(sqlCommandTransactions);
+
 			} 
 			catch (Exception e) {
 				Toast.makeText(this, "Error Creating Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
@@ -204,6 +216,11 @@ public class Main extends Activity {
 
 		}//end if
 
-	}
+		//Make sure Database is closed even if try-catch fails
+		if (myDB != null){
+			myDB.close();
+		}
 
-}// end Database
+	}//end createDatabase
+
+}// end Main

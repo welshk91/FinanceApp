@@ -511,6 +511,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						accountName = aName.getText().toString().trim();
 						accountBalance = aBalance.getText().toString().trim();
 
+						final String sqlCommand = "INSERT INTO " + tblAccounts
+								+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
+								+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+								+ accountDate + "');";
+						
 						//Open Database
 						myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -528,12 +533,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 									&& accountName != " " && accountTime != " " && accountDate != " ") {
 
 								//Create a new account
-								myDB.execSQL("INSERT INTO " + tblAccounts
-										+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
-										+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-										+ accountDate + "');");
-
-								page = R.layout.accounts;
+								myDB.execSQL(sqlCommand);
 							} 
 
 							else {
@@ -548,6 +548,8 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						if (myDB != null){
 							myDB.close();
 						}
+						
+						page = R.layout.accounts;
 
 						ViewDB.this.populate();
 

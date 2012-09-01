@@ -422,8 +422,6 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		// show it
 		alertDialog.show();
 
-
-
 	}
 
 	//For Deleting an Account
@@ -432,15 +430,19 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
 		//NOTE: LIMIT *position*,*how many after*
-		String sqlCommand = "DELETE FROM " + tblAccounts + 
+		String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
 				" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
 				" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
+		
+		//Deletes all transactions in the account
+		String sqlDeleteTransactions = "DELETE FROM " + tblTrans + 
+				" WHERE ToAcctID = " + adapter.getItem(itemInfo.position).id;
 
 		//Open Database
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-		myDB.execSQL(sqlCommand);
-		//Toast.makeText(this, "SQL\n" + sqlCommand, 5000).show();
+		myDB.execSQL(sqlDeleteAccount);
+		myDB.execSQL(sqlDeleteTransactions);	
 
 		//Close Database if Opened
 		if (myDB != null){

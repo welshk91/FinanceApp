@@ -40,7 +40,7 @@
         <item>Deposit</item>
     </string-array>
     <string-array name="transaction_category">
-        <item>Allowance</item>
+        <item>ALLOWANCE</item>
         <item>ATM</item>
         <item>CHECK</item>
         <item>FOOD</item>
@@ -51,6 +51,7 @@
         <item>OTHER</item>
         <item>PAYCHECK</item>
         <item>RENT</item>
+        <item>STARTING BALANCE</item>
         <item>STUDENT LOANS</item>
         <item>TIP</item>
         <item>TRANSFER</item>

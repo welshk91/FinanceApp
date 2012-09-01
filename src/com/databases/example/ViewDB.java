@@ -73,6 +73,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 	Cursor c = null;
 	final String tblAccounts = "tblAccounts";
+	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
 	ArrayList<AccountRecord> results = new ArrayList<AccountRecord>();
@@ -387,12 +388,12 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 					//Make new record with same ID
 					myDB.execSQL(insertCommand);
-				
+
 					//Close Database if Opened
 					if (myDB != null){
 						myDB.close();
 					}
-				
+
 				}
 				catch(Exception e){
 					Toast.makeText(ViewDB.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
@@ -451,6 +452,126 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 	}//end of accountDelete
 
+	public void accountAdd(){
+		// get account_add.xml view
+		LayoutInflater li = LayoutInflater.from(ViewDB.this);
+		final View promptsView = li.inflate(R.layout.account_add, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				ViewDB.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("Add An Account");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(false)
+		.setPositiveButton("Save",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+
+				//Variables for adding the account
+				aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
+				aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+				accountName = aName.getText().toString().trim();
+				accountBalance = aBalance.getText().toString().trim();
+
+				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
+				}
+				else{
+					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
+				}				
+
+				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+
+				//Variables for adding Starting Balance transaction
+				final String transactionName = "STARTING BALANCE";
+				final String transactionValue = accountBalance;
+				final String transactionType = "Deposit";
+				final String transactionCategory = "STARTING BALANCE";
+				final String transactionCheckNum = "None";
+				final String transactionMemo = "This is an automatically generated transaction created when you add an account";
+				final String transactionTime = accountTime;
+				final String transactionDate = accountDate;
+				final String transactionCleared = "true";
+
+				final String sqlCommand = "INSERT INTO " + tblAccounts
+						+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
+						+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+						+ accountDate + "');";
+
+				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
+
+				//Open Database
+				myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				try{
+					if (accountName != null && accountTime != null && accountDate != null
+							&& accountName != " " && accountTime != " " && accountDate != " ") {
+
+						//Create a new account
+						myDB.execSQL(sqlCommand);
+
+						//Query the Newly created account
+						Cursor c = myDB.rawQuery(sqlQuery, null);
+						startManagingCursor(c);
+
+						int entry_id = 0;
+
+						c.moveToFirst();
+						do{
+							entry_id = c.getInt(0);
+							Toast.makeText(ViewDB.this, "ID: "+entry_id, Toast.LENGTH_SHORT).show();
+						}while(c.moveToNext());
+
+						//Create Starting Balance transaction
+						final String sqlStartingBalance = "INSERT INTO " + tblTrans
+								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+								+ entry_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";;
+
+								myDB.execSQL(sqlStartingBalance);
+
+					} 
+
+					else {
+						Toast.makeText(ViewDB.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
+					}
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+				}
+
+				//Close Database if Opened
+				if (myDB != null){
+					myDB.close();
+				}
+
+				page = R.layout.accounts;
+
+				ViewDB.this.populate();
+
+			}//end onClick "OK"
+		})
+		.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// CODE FOR "Cancel"
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+	}
+
 	//Method for handling Button 'mouse-clicks'
 	public OnClickListener buttonListener = new OnClickListener() {
 		public void onClick(View view) {
@@ -485,89 +606,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				//Going to Add Account
 			case R.layout.account_add:
-
-				// get account_add.xml view
-				LayoutInflater li = LayoutInflater.from(ViewDB.this);
-				final View promptsView = li.inflate(R.layout.account_add, null);
-
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-						ViewDB.this);
-
-				// set account_add.xml to AlertDialog builder
-				alertDialogBuilder.setView(promptsView);
-
-				//set Title
-				alertDialogBuilder.setTitle("Add An Account");
-
-				// set dialog message
-				alertDialogBuilder
-				.setCancelable(false)
-				.setPositiveButton("Save",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						// CODE FOR "OK"
-						aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-						aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
-						accountName = aName.getText().toString().trim();
-						accountBalance = aBalance.getText().toString().trim();
-
-						final String sqlCommand = "INSERT INTO " + tblAccounts
-								+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
-								+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-								+ accountDate + "');";
-						
-						//Open Database
-						myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-						if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-							accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-						}
-						else{
-							accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-						}				
-
-						accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-
-						try{
-							if (accountName != null && accountTime != null && accountDate != null
-									&& accountName != " " && accountTime != " " && accountDate != " ") {
-
-								//Create a new account
-								myDB.execSQL(sqlCommand);
-							} 
-
-							else {
-								Toast.makeText(ViewDB.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
-							}
-						}
-						catch(Exception e){
-							Toast.makeText(ViewDB.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-						}
-
-						//Close Database if Opened
-						if (myDB != null){
-							myDB.close();
-						}
-						
-						page = R.layout.accounts;
-
-						ViewDB.this.populate();
-
-					}//end onClick "OK"
-				})
-				.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						// CODE FOR "Cancel"
-						dialog.cancel();
-					}
-				});
-
-				// create alert dialog
-				AlertDialog alertDialog = alertDialogBuilder.create();
-
-				// show it
-				alertDialog.show();
+				accountAdd();
 
 				break;
 			}

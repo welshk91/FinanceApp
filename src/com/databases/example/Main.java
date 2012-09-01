@@ -156,19 +156,19 @@ public class Main extends Activity {
 	//Over-rode method to handle database closing, prevent corruption
 	@Override
 	public void onDestroy() {
-		
+
 		//Close database to avoid corruption/leaks
 		if (myDB != null){
 			myDB.close();
 		}
-		
+
 		//Exit
 		super.onDestroy();
 	}
 
 	//Method for Deleting Database
 	public void destroyDatabase(){
-		
+
 		//Make sure database is closed before deleting; not sure if necessary
 		if (myDB != null){
 			myDB.close();

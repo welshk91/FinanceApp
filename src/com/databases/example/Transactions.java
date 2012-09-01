@@ -84,10 +84,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	//Variables of the Account Used
 	int account_id;
-	String account_name;
-	String account_balance;
-	String account_date;
-	String account_time;
 
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=1;
@@ -138,10 +134,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		}
 
 		account_id = getIntent().getExtras().getInt("ID");
-		account_name = getIntent().getExtras().getString("name");
-		account_balance = getIntent().getExtras().getString("balance");
-		account_date = getIntent().getExtras().getString("date");
-		account_time = getIntent().getExtras().getString("time");
+		//String account_name = getIntent().getExtras().getString("name");
+		//String account_balance = getIntent().getExtras().getString("balance");
+		//String account_date = getIntent().getExtras().getString("date");
+		//String account_time = getIntent().getExtras().getString("time");
 
 		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
 
@@ -254,7 +250,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
-		calculateBalance();
+		calculateBalance(account_id);
 
 	}//end populate
 
@@ -297,7 +293,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		//Object itemName = adapter.getItem(itemInfo.position);
 
 		String sqlCommand = "SELECT * FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp)";
-		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
 
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -454,11 +449,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				transactionDate = tDate.getText().toString().trim();
 
 				try{
-					final int ID = adapter.getItem(itemInfo.position).id;
-					String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + ID + ";";
+					String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
 					String insertCommand = "INSERT INTO " + tblTrans
 							+ " (TransID, ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-							+ ID + "', '" + account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+							+ tID + "', '" + aID + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
 
 					//Open Database
 					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -1085,9 +1079,26 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	}
 
 	//Calculates the balance
-	public void calculateBalance(){
+	public void calculateBalance(int id){
 		TextView balance = (TextView)this.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
+
+		//Update account with accurate balance
+		String sqlCommand = "";
+
+		//Open Database
+		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+		//Update Record
+		//myDB.execSQL(sqlCommand);
+
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
+		}
+
+		//Toast.makeText(this, "AcctID: " + id, Toast.LENGTH_SHORT).show();
+
 	}
 
 }//end Transactions

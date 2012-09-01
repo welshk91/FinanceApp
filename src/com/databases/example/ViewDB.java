@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
@@ -348,11 +349,13 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		//set Title
 		alertDialogBuilder.setTitle("Edit An Account");
 
-		//Add the previous info into the fields
+		//Add the previous info into the fields, remove unnecessary fields
 		aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
 		aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+		TextView aBalanceText = (TextView)promptsView.findViewById(R.id.BalanceTexts);
 		aName.setText(name);
-		aBalance.setText(balance);
+		aBalance.setVisibility(View.GONE);
+		aBalanceText.setVisibility(View.GONE);
 
 		// set dialog message
 		alertDialogBuilder
@@ -362,7 +365,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 			public void onClick(DialogInterface dialog,int id) {
 				// CODE FOR "OK"
 				accountName = aName.getText().toString().trim();
-				accountBalance = aBalance.getText().toString().trim();
+				accountBalance = balance.trim();
 
 				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";

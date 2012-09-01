@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_account_add"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -15,14 +16,15 @@
     <EditText
         android:id="@+id/EditAccountName"
         android:layout_width="fill_parent"
+        android:layout_marginLeft="20dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/TextView01"
-        android:layout_toRightOf="@+id/TextView02"
+        android:layout_toRightOf="@+id/TextView01"
         android:inputType="text" >
     </EditText>
 
     <TextView
-        android:id="@+id/TextView02"
+        android:id="@+id/BalanceTexts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/EditAccountName"
@@ -33,8 +35,8 @@
         android:id="@+id/EditAccountBalance"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/TextView02"
-        android:layout_toRightOf="@+id/TextView02"
+        android:layout_alignTop="@+id/BalanceTexts"
+        android:layout_toRightOf="@+id/BalanceTexts"
         android:digits="1234567890.-"
         android:imeOptions="actionNext"
         android:inputType="number|numberDecimal|numberSigned|phone" >

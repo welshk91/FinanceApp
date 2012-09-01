@@ -428,9 +428,10 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
-
 		//NOTE: LIMIT *position*,*how many after*
-		String sqlCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
+		String sqlCommand = "DELETE FROM " + tblAccounts + 
+				" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
+				" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
 		//Open Database
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -452,6 +453,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 	}//end of accountDelete
 
+	//For Adding an Account
 	public void accountAdd(){
 		// get account_add.xml view
 		LayoutInflater li = LayoutInflater.from(ViewDB.this);
@@ -929,6 +931,13 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	public void calculateBalance(){
 		TextView balance = (TextView)this.findViewById(R.id.account_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
+	}
+
+	//Override default resume to also call populate in case view needs refreshing
+	@Override
+	public void onResume(){
+		populate();
+		super.onResume();
 	}
 
 }// end ViewDB

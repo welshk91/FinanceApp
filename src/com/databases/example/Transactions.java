@@ -176,7 +176,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	}//end onCreate
 
-
 	//Populate view with all the transactions of selected account
 	protected void populate(){
 
@@ -254,6 +253,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	}//end populate
 
+	//Creates menu for long presses
 	@Override  
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);
@@ -267,6 +267,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
 	}  
 
+	//Handles which methods are called when using the long presses menu
 	@Override  
 	public boolean onContextItemSelected(MenuItem item) {
 
@@ -502,7 +503,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
 		//NOTE: LIMIT *position*,*how many after*
-		String sqlCommand = "DELETE FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp);";
+		String sqlCommand = "DELETE FROM " + tblTrans + 
+				" WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + 
+				" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
 		//Open Database
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -1084,13 +1087,13 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		balance.setText("Total Balance: " + totalBalance);
 
 		//Update account with accurate balance
-		String sqlCommand = "";
+		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
 
 		//Open Database
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		//Update Record
-		//myDB.execSQL(sqlCommand);
+		myDB.execSQL(sqlCommand);
 
 		//Close Database if Opened
 		if (myDB != null){
@@ -1099,6 +1102,13 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 		//Toast.makeText(this, "AcctID: " + id, Toast.LENGTH_SHORT).show();
 
+	}
+
+	//Override default resume to also call populate in case view needs refreshing
+	@Override
+	public void onResume(){
+		populate();
+		super.onResume();
 	}
 
 }//end Transactions

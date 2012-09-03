@@ -223,7 +223,16 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 					//Add account balance to total balance
 					try{
-						totalBalance = totalBalance + Float.parseFloat(value);
+
+						//Withdraws should subtract totalBalance
+						if(type.contains("Withdrawl")){
+							totalBalance = totalBalance + (Float.parseFloat(value)*-1);
+						}
+						//Deposit should add to totalBalance
+						else{
+							totalBalance = totalBalance + Float.parseFloat(value);
+						}
+
 					}
 					catch(Exception e){
 						Toast.makeText(Transactions.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
@@ -770,7 +779,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
-					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
 						l.setBackgroundResource(R.drawable.transaction_list_style);
@@ -972,7 +980,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 							new int[] {0xFFFF0000,0xFF000000});
 
 					if(useDefaults){
-						if(Float.parseFloat((user.value)) >=0){
+						if(user.type.contains("Deposit")){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -981,7 +989,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 					}
 					else{
-						if(Float.parseFloat((user.value)) >=0){
+						if(user.type.contains("Deposit")){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{

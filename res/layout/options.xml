@@ -44,7 +44,8 @@
                 android:title="Fonts" >
 
                 <EditTextPreference
-                    android:defaultValue="20"
+                    android:defaultValue="18"
+                    android:digits="0123456789"
                     android:inputType="number|phone"
                     android:key="@string/pref_key_transaction_nameSize"
                     android:summary="Change the size of Name field. Default is &apos;20&apos;"
@@ -61,6 +62,7 @@
 
                 <EditTextPreference
                     android:defaultValue="10"
+                    android:digits="0123456789"
                     android:inputType="number|phone"
                     android:key="@string/pref_key_transaction_fieldSize"
                     android:summary="Change the size of Name field. Default is &apos;10&apos;"
@@ -102,7 +104,7 @@
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="true"
+                        android:defaultValue="false"
                         android:key="checkbox_transaction_typeField"
                         android:summary="Type Field"
                         android:title="Type" >
@@ -123,7 +125,7 @@
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="true"
+                        android:defaultValue="false"
                         android:key="checkbox_transaction_memoField"
                         android:summary="Memo Field"
                         android:title="Memo" >
@@ -144,7 +146,7 @@
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
-                        android:defaultValue="true"
+                        android:defaultValue="false"
                         android:key="checkbox_transaction_clearedField"
                         android:summary="Cleared Field"
                         android:title="Cleared" >
@@ -190,6 +192,7 @@
 
             <EditTextPreference
                 android:defaultValue="16"
+                android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_account_nameSize"
                 android:summary="Change the size of Name field. Default is &apos;16&apos;"
@@ -206,6 +209,7 @@
 
             <EditTextPreference
                 android:defaultValue="10"
+                android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_account_fieldSize"
                 android:summary="Change the size of secondary fields. Default is &apos;10&apos;"

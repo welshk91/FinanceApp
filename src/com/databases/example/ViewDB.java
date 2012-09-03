@@ -41,7 +41,7 @@ import android.widget.ListView;
 public class ViewDB extends Activity implements OnSharedPreferenceChangeListener {
 
 	int page;
-	
+
 	//Used in searching to id the last activity
 	final private String SEARCH_CONTEXT = "ViewDB.java";
 
@@ -821,7 +821,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				}
 				else{
 					TextView name = (TextView) v.findViewById(R.id.account_name);
-					name.setVisibility(View.INVISIBLE);
+					name.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
@@ -830,7 +830,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				}
 				else{
 					TextView balance = (TextView) v.findViewById(R.id.account_balance);
-					balance.setVisibility(View.INVISIBLE);
+					balance.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
@@ -839,7 +839,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				}
 				else{
 					TextView date = (TextView) v.findViewById(R.id.account_date);
-					date.setVisibility(View.INVISIBLE);
+					date.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
@@ -848,7 +848,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				}
 				else{
 					TextView time = (TextView) v.findViewById(R.id.account_time);
-					time.setVisibility(View.INVISIBLE);
+					time.setVisibility(View.GONE);
 				}
 
 
@@ -963,14 +963,14 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		populate();
 		super.onResume();
 	}
-	
+
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
 	public boolean onSearchRequested() {
-	     Bundle appData = new Bundle();
-	     appData.putString("appData.key", SEARCH_CONTEXT);
-	     startSearch(null, false, appData, false);
-	     return true;
-	 }
+		Bundle appData = new Bundle();
+		appData.putString("appData.key", SEARCH_CONTEXT);
+		startSearch(null, false, appData, false);
+		return true;
+	}
 
 }// end ViewDB

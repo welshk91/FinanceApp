@@ -816,12 +816,13 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				}
 
 				try{
-					String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "20");
+					String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "18");
 					TextView t;
+
 					t=(TextView)v.findViewById(R.id.transaction_name);
 
 					if(useDefaults){
-						t.setTextSize(20);
+						t.setTextSize(18);
 					}
 					else{
 						t.setTextSize(Integer.parseInt(DefaultSize));
@@ -926,7 +927,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					value.setVisibility(View.GONE);
 				}
 
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_typeField", true)){
+				if(prefs.getBoolean("checkbox_transaction_typeField", false)){
 					type.setVisibility(View.VISIBLE);
 				}
 				else{
@@ -947,7 +948,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					checknum.setVisibility(View.GONE);
 				}
 
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_memoField", true)){
+				if(prefs.getBoolean("checkbox_transaction_memoField", false)){
 					memo.setVisibility(View.VISIBLE);
 				}
 				else{
@@ -968,13 +969,12 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					time.setVisibility(View.GONE);
 				}
 
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_clearedField", true)){
+				if(prefs.getBoolean("checkbox_transaction_clearedField", false)){
 					cleared.setVisibility(View.VISIBLE);
 				}
 				else{
 					cleared.setVisibility(View.GONE);
 				}
-
 
 			}
 

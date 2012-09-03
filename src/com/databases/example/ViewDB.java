@@ -41,6 +41,9 @@ import android.widget.ListView;
 public class ViewDB extends Activity implements OnSharedPreferenceChangeListener {
 
 	int page;
+	
+	//Used in searching to id the last activity
+	final private String SEARCH_CONTEXT = "ViewDB.java";
 
 	//Balance
 	float totalBalance;
@@ -79,6 +82,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	SQLiteDatabase myDB;
 	ArrayList<AccountRecord> results = new ArrayList<AccountRecord>();
 
+	//Method called upon first creation
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -959,5 +963,14 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		populate();
 		super.onResume();
 	}
+	
+	//Override method to send the search extra data, letting it know which class called it
+	@Override
+	public boolean onSearchRequested() {
+	     Bundle appData = new Bundle();
+	     appData.putString("appData.key", SEARCH_CONTEXT);
+	     startSearch(null, false, appData, false);
+	     return true;
+	 }
 
 }// end ViewDB

@@ -18,6 +18,9 @@ import android.widget.Toast;
 public class Main extends Activity {	
 	int page;
 
+	//Used in searching to id the last activity
+	final private String SEARCH_CONTEXT = "Main.java";
+	
 	//Variables for the Views
 	Button Track_Button;
 	Button Database_Button;
@@ -222,5 +225,14 @@ public class Main extends Activity {
 		}
 
 	}//end createDatabase
+	
+	//Override method to send the search extra data, letting it know which class called it
+	@Override
+	public boolean onSearchRequested() {
+	     Bundle appData = new Bundle();
+	     appData.putString("appData.key", SEARCH_CONTEXT);
+	     startSearch(null, false, appData, false);
+	     return true;
+	 }
 
 }// end Main

@@ -52,6 +52,10 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//The View
 	int page;
 
+	//Used in searching to id the last activity
+	final private String SEARCH_CONTEXT = "Transactions.java";
+
+
 	//Used to keep Track of total Balance
 	float totalBalance;
 
@@ -391,6 +395,19 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(Transactions.this);
 		promptsView = li.inflate(R.layout.transaction_add, null);
+
+		final Calendar c = Calendar.getInstance();
+		final int year = c.get(Calendar.YEAR);
+		final int month = c.get(Calendar.MONTH);
+		final int day = c.get(Calendar.DAY_OF_MONTH);
+		final int hour = c.get(Calendar.HOUR_OF_DAY);
+		final int minute = c.get(Calendar.MINUTE);
+
+		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+		tDate.setText((month+1) + "/" + day + "/" + year);
+
+		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+		tTime.setText(hour + ":" + minute);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				Transactions.this);
@@ -1121,6 +1138,15 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	public void onResume(){
 		populate();
 		super.onResume();
+	}
+
+	//Override method to send the search extra data, letting it know which class called it
+	@Override
+	public boolean onSearchRequested() {
+		Bundle appData = new Bundle();
+		appData.putString("appData.key", SEARCH_CONTEXT);
+		startSearch(null, false, appData, false);
+		return true;
 	}
 
 }//end Transactions

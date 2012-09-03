@@ -130,7 +130,7 @@ public final class R {
         public static final int accounts=0x7f050007;
         public static final int add=0x7f050010;
         public static final int add_accounts=0x7f050002;
-        public static final int app_name=0x7f050001;
+        public static final int app_name=0x7f050000;
         public static final int back=0x7f050006;
         public static final int balance_=0x7f05000b;
         public static final int category_=0x7f05000f;
@@ -141,7 +141,6 @@ public final class R {
         public static final int delete_accounts=0x7f050003;
         public static final int done=0x7f05000a;
         public static final int exit=0x7f050009;
-        public static final int hello=0x7f050000;
         public static final int memo_=0x7f050012;
         public static final int name_=0x7f05000c;
         public static final int options=0x7f050008;
@@ -157,6 +156,7 @@ public final class R {
         public static final int pref_key_transaction_nameColor=0x7f050018;
         public static final int pref_key_transaction_nameSize=0x7f050017;
         public static final int pref_key_transaction_startBackgroundColor=0x7f050015;
+        public static final int search_hint=0x7f050001;
         public static final int type_=0x7f05000e;
         public static final int value_=0x7f05000d;
         public static final int view_accounts=0x7f050004;

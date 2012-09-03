@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, Database!</string>
     <string name="app_name">Welsh Finance</string>
+    <string name="search_hint">Search your records</string>
     <string name="add_accounts">Add Account</string>
     <string name="delete_accounts">Delete Account</string>
     <string name="view_accounts">View Accounts</string>

@@ -50,41 +50,57 @@ public class SearchTime extends ListActivity {
 		} 
 	}    
 
-	//The Method that handles the Searching
-	private void doSearch(String queryStr) { 
+	//The Method that determines which searching methods to call
+	private void doSearch(String query) { 
 
 		if(SEARCH_CONTEXT.contains("ViewDB")){
 			Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_LONG).show();
+			searchAccounts(query);
 		}
 
 		else if(SEARCH_CONTEXT.contains("Transactions")){
 			Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_LONG).show();
+			searchTransactions(query);
 		}
 
 		else{
 			Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_LONG).show();
+			searchAccounts(query);
+			searchTransactions(query);
 		}
 
+	}//end doSearch
 
+	//Override method to send the search extra data, letting it know which class called it
+	@Override
+	public boolean onSearchRequested() {
+		Bundle appData = new Bundle();
+		appData.putString("appData.key", SEARCH_CONTEXT);
+		startSearch(null, false, appData, false);
+		return true;
+	}
 
+	//Method that searches for Accounts
+	public void searchAccounts(String query){
 
-
-
-
-
-
-		String sqlCommand = " SELECT AcctID,AcctName,AcctBalance FROM " + tblAccounts + 
+		String sqlCommand = " SELECT * FROM " + tblAccounts + 
 				" WHERE AcctName " + 
-				" LIKE '%" + queryStr + "%'" + 
+				" LIKE '%" + query + "%'" + 
 				" UNION " + 
-				" SELECT TransID,TransName,TransValue FROM " + tblTrans +
-				" WHERE TransName " + 
-				" LIKE '%" + queryStr + "%'";
+				" SELECT * FROM " + tblAccounts +
+				" WHERE AcctBalance " + 
+				" LIKE '%" + query + "%'" + 
+				" UNION " + 
+				" SELECT * FROM " + tblAccounts +
+				" WHERE AcctDate " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblAccounts +
+				" WHERE AcctTime " + 
+				" LIKE '%" + query + "%'";
 
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 		Cursor c = myDB.rawQuery(sqlCommand, null);
-
-		//Toast.makeText(this, "Searching From " + Boolean.toString(jargon), Toast.LENGTH_LONG).show();
 
 		startManagingCursor(c);
 
@@ -98,16 +114,16 @@ public class SearchTime extends ListActivity {
 		if(c!=null){
 			if (c.isFirst()) {
 				do{
-					entry_id = c.getInt(0);
-					entry_name = c.getString(1);
-					entry_balance = c.getString(2);
-					//entry_time = c.getString(c.getColumnIndex("AcctTime"));
-					//entry_date = c.getString(c.getColumnIndex("AcctDate"));
+					entry_id = c.getInt(c.getColumnIndex("AcctID"));
+					entry_name = c.getString(c.getColumnIndex("AcctName"));
+					entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
+					entry_time = c.getString(c.getColumnIndex("AcctTime"));
+					entry_date = c.getString(c.getColumnIndex("AcctDate"));
 					Toast.makeText(this, "Id: "+ entry_id + "\nName: " + entry_name + "\nBalance: " + entry_balance, Toast.LENGTH_LONG).show();
 				}while(c.moveToNext());
 			}
 			else{
-				Toast.makeText(this, "No Search Results for " + queryStr, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "No Search Results for " + query, Toast.LENGTH_SHORT).show();
 			}
 		}
 
@@ -117,15 +133,74 @@ public class SearchTime extends ListActivity {
 		}
 
 
-	}//end doSearch
+		return;
+	}//end searchAccounts
 
-	//Override method to send the search extra data, letting it know which class called it
-	@Override
-	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
-		appData.putString("appData.key", SEARCH_CONTEXT);
-		startSearch(null, false, appData, false);
-		return true;
-	}
+
+	//Method that searches for Transactions
+	public void searchTransactions(String query){
+
+		String sqlCommand = " SELECT * FROM " + tblTrans + 
+				" WHERE TransName " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransValue " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransDate " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransTime " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransMemo " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransCheckNum " + 
+				" LIKE '%" + query + "%'";
+
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		Cursor c = myDB.rawQuery(sqlCommand, null);
+
+		//Toast.makeText(this, "Searching From " + Boolean.toString(jargon), Toast.LENGTH_LONG).show();
+
+		startManagingCursor(c);
+
+		c.moveToFirst();
+		if(c!=null){
+			if (c.isFirst()) {
+				do{
+					int id = c.getInt(c.getColumnIndex("TransID"));
+					int acctId = c.getInt(c.getColumnIndex("ToAcctID"));
+					String name = c.getString(c.getColumnIndex("TransName"));
+					String value = c.getString(c.getColumnIndex("TransValue"));
+					String type = c.getString(c.getColumnIndex("TransType"));
+					String category = c.getString(c.getColumnIndex("TransCategory"));
+					String checknum = c.getString(c.getColumnIndex("TransCheckNum"));
+					String memo = c.getString(c.getColumnIndex("TransMemo"));
+					String time = c.getString(c.getColumnIndex("TransTime"));
+					String date = c.getString(c.getColumnIndex("TransDate"));
+					String cleared = c.getString(c.getColumnIndex("TransCleared"));
+
+					Toast.makeText(this, "Id: "+ id + "\nToAcctID: "+ acctId + "\nName: " + name + "\nValue: " + value, Toast.LENGTH_LONG).show();
+				}while(c.moveToNext());
+			}
+			else{
+				Toast.makeText(this, "No Search Results for " + query, Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+
+		return;
+	}//end searchTransactions
 
 }//end SearchTime

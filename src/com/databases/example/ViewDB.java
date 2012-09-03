@@ -265,9 +265,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		//Object itemName = adapter.getItem(itemInfo.position);
 
-		String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + " LIMIT " + (itemInfo.position-0) + ",1)AS tmp)";
-		//Toast.makeText(this, "SQL\n" + sqlCommand, Toast.LENGTH_LONG).show();
-
+		String sqlCommand = "SELECT * FROM " + tblAccounts + 
+				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
+		
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		Cursor c = myDB.rawQuery(sqlCommand, null);

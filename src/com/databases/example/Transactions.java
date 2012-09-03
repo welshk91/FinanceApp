@@ -302,8 +302,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		//Object itemName = adapter.getItem(itemInfo.position);
 
 		String sqlCommand = "SELECT * FROM " + tblTrans + 
-				" WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + 
-				" LIMIT " + (itemInfo.position) + ",1)AS tmp)";
+				" WHERE TransID = " + adapter.getItem(itemInfo.position).id;
 
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -387,7 +386,95 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	}  
 
-	//For Editing an Account
+	//For Adding a Transaction
+	public void transactionAdd(){
+		// get transaction_add.xml view
+		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		promptsView = li.inflate(R.layout.transaction_add, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				Transactions.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("Add A Transaction");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(false)
+		.setPositiveButton("Save",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// CODE FOR "OK"
+
+				tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+				tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+				tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+				tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+				tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
+				tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
+				tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+
+				transactionName = tName.getText().toString().trim();
+				transactionValue = tValue.getText().toString().trim();
+				transactionType = tType.getSelectedItem().toString().trim();
+				transactionCategory = tCategory.getSelectedItem().toString().trim();
+				transactionCheckNum = tCheckNum.getText().toString().trim();
+				transactionMemo = tMemo.getText().toString().trim();
+				transactionCleared = tCleared.isChecked()+"";
+
+				String sqlCommand = "INSERT INTO " + tblTrans
+						+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+						+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+
+				//Open Database
+				myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
+
+				try{
+					if (transactionName != null && transactionTime != null && transactionDate != null
+							&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
+						myDB.execSQL(sqlCommand);	
+					} 
+
+					else {
+						Toast.makeText(Transactions.this, " No Nulls Allowed ", Toast.LENGTH_LONG).show();
+					}
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+				}
+
+				//Close Database if Opened
+				if (myDB != null){
+					myDB.close();
+				}
+
+				page = R.layout.transactions;
+
+				Transactions.this.populate();
+
+			}//end onClick "OK"
+		})
+		.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// CODE FOR "Cancel"
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+
+	}
+
+	//For Editing an Transaction
 	public void transactionEdit(MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		final int tID = adapter.getItem(itemInfo.position).id;
@@ -505,7 +592,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	}
 
-	//For Deleting an Account
+	//For Deleting an Transaction
 	public void transactionDelete(MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position).name;
@@ -536,19 +623,19 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	public OnClickListener buttonListener = new OnClickListener() {
 		public void onClick(View view) {
 			switch (view.getId()) {
-			//If the Add button on the Account list is pressed
+			//If the Add button on the Transaction list is pressed
 			case R.id.transaction_footer_Add:
 				//code here for add button
 				page = R.layout.transaction_add;
 				break;
 
-				//If the Transfer button on the Account list is pressed
+				//If the Transfer button on the Transaction list is pressed
 			case R.id.transaction_footer_Schedule:
 				//code here for transfer button
 				Toast.makeText(Transactions.this, "Schedule Pressed", Toast.LENGTH_SHORT).show();
 				break;
 
-				//If the unknown button on the Account list is pressed
+				//If the unknown button on the Transaction list is pressed
 			case R.id.transaction_footer_Unknown:
 				//code here for unknown button
 				Toast.makeText(Transactions.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
@@ -558,97 +645,15 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 			switch (page) {
 
-			//Going to Accounts
+			//Going to Transactions
 			case R.layout.transactions:
 				Transactions.this.onCreate(null);
 
 				break;
 
-				//Going to Add Account
+				//Going to Add Transaction
 			case R.layout.transaction_add:
-
-				// get transaction_add.xml view
-				LayoutInflater li = LayoutInflater.from(Transactions.this);
-				promptsView = li.inflate(R.layout.transaction_add, null);
-
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-						Transactions.this);
-
-				// set account_add.xml to AlertDialog builder
-				alertDialogBuilder.setView(promptsView);
-
-				//set Title
-				alertDialogBuilder.setTitle("Add A Transaction");
-
-				// set dialog message
-				alertDialogBuilder
-				.setCancelable(false)
-				.setPositiveButton("Save",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						// CODE FOR "OK"
-
-						tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-						tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-						tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-						tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-						tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-						tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
-						tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-
-						transactionName = tName.getText().toString().trim();
-						transactionValue = tValue.getText().toString().trim();
-						transactionType = tType.getSelectedItem().toString().trim();
-						transactionCategory = tCategory.getSelectedItem().toString().trim();
-						transactionCheckNum = tCheckNum.getText().toString().trim();
-						transactionMemo = tMemo.getText().toString().trim();
-						transactionCleared = tCleared.isChecked()+"";
-
-						String sqlCommand = "INSERT INTO " + tblTrans
-								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-								+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
-
-						//Open Database
-						myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
-
-						try{
-							if (transactionName != null && transactionTime != null && transactionDate != null
-									&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
-								myDB.execSQL(sqlCommand);	
-							} 
-
-							else {
-								Toast.makeText(Transactions.this, " No Nulls Allowed ", Toast.LENGTH_LONG).show();
-							}
-						}
-						catch(Exception e){
-							Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-						}
-
-						//Close Database if Opened
-						if (myDB != null){
-							myDB.close();
-						}
-
-						page = R.layout.transactions;
-
-						Transactions.this.populate();
-
-					}//end onClick "OK"
-				})
-				.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						// CODE FOR "Cancel"
-						dialog.cancel();
-					}
-				});
-
-				// create alert dialog
-				AlertDialog alertDialog = alertDialogBuilder.create();
-
-				// show it
-				alertDialog.show();
+				transactionAdd();
 
 				break;
 			}

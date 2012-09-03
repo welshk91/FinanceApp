@@ -303,7 +303,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//For Opening an Account
 	public void transactionOpen(MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		//Object itemName = adapter.getItem(itemInfo.position);
 
 		String sqlCommand = "SELECT * FROM " + tblTrans + 
 				" WHERE TransID = " + adapter.getItem(itemInfo.position).id;
@@ -917,63 +916,63 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					name.setVisibility(View.VISIBLE);
 				}
 				else{
-					name.setVisibility(View.INVISIBLE);
+					name.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
 					value.setVisibility(View.VISIBLE);
 				}
 				else{
-					value.setVisibility(View.INVISIBLE);
+					value.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_typeField", true)){
 					type.setVisibility(View.VISIBLE);
 				}
 				else{
-					type.setVisibility(View.INVISIBLE);
+					type.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_categoryField", true)){
 					category.setVisibility(View.VISIBLE);
 				}
 				else{
-					category.setVisibility(View.INVISIBLE);
+					category.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_checknumField", true)){
 					checknum.setVisibility(View.VISIBLE);
 				}
 				else{
-					checknum.setVisibility(View.INVISIBLE);
+					checknum.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_memoField", true)){
 					memo.setVisibility(View.VISIBLE);
 				}
 				else{
-					memo.setVisibility(View.INVISIBLE);
+					memo.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_dateField", true)){
 					date.setVisibility(View.VISIBLE);
 				}
 				else{
-					date.setVisibility(View.INVISIBLE);
+					date.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_timeField", true)){
 					time.setVisibility(View.VISIBLE);
 				}
 				else{
-					time.setVisibility(View.INVISIBLE);
+					time.setVisibility(View.GONE);
 				}
 
 				if(useDefaults||prefs.getBoolean("checkbox_transaction_clearedField", true)){
 					cleared.setVisibility(View.VISIBLE);
 				}
 				else{
-					cleared.setVisibility(View.INVISIBLE);
+					cleared.setVisibility(View.GONE);
 				}
 
 

@@ -53,18 +53,17 @@ public class SearchTime extends ListActivity {
 	//The Method that determines which searching methods to call
 	private void doSearch(String query) { 
 
+		Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+
 		if(SEARCH_CONTEXT.contains("ViewDB")){
-			Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_LONG).show();
 			searchAccounts(query);
 		}
 
 		else if(SEARCH_CONTEXT.contains("Transactions")){
-			Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_LONG).show();
 			searchTransactions(query);
 		}
 
 		else{
-			Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_LONG).show();
 			searchAccounts(query);
 			searchTransactions(query);
 		}
@@ -104,22 +103,22 @@ public class SearchTime extends ListActivity {
 
 		startManagingCursor(c);
 
-		int entry_id = 0;
-		String entry_name = null;
-		String entry_balance = null;
-		String entry_time = null;
-		String entry_date = null;
+		int id = 0;
+		String name = null;
+		String balance = null;
+		String time = null;
+		String date = null;
 
 		c.moveToFirst();
 		if(c!=null){
 			if (c.isFirst()) {
 				do{
-					entry_id = c.getInt(c.getColumnIndex("AcctID"));
-					entry_name = c.getString(c.getColumnIndex("AcctName"));
-					entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
-					entry_time = c.getString(c.getColumnIndex("AcctTime"));
-					entry_date = c.getString(c.getColumnIndex("AcctDate"));
-					Toast.makeText(this, "Id: "+ entry_id + "\nName: " + entry_name + "\nBalance: " + entry_balance, Toast.LENGTH_LONG).show();
+					id = c.getInt(c.getColumnIndex("AcctID"));
+					name = c.getString(c.getColumnIndex("AcctName"));
+					balance = c.getString(c.getColumnIndex("AcctBalance"));
+					time = c.getString(c.getColumnIndex("AcctTime"));
+					date = c.getString(c.getColumnIndex("AcctDate"));
+					Toast.makeText(this, "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_LONG).show();
 				}while(c.moveToNext());
 			}
 			else{

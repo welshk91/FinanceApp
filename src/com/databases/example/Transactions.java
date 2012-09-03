@@ -226,7 +226,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 						//Withdraws should subtract totalBalance
 						if(type.contains("Withdrawl")){
-							totalBalance = totalBalance + (Float.parseFloat(value)*-1);
+							totalBalance = totalBalance - (Float.parseFloat(value));
 						}
 						//Deposit should add to totalBalance
 						else{
@@ -236,7 +236,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 					}
 					catch(Exception e){
 						Toast.makeText(Transactions.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
-
 					}
 
 				} while (c.moveToNext());
@@ -302,7 +301,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		//Object itemName = adapter.getItem(itemInfo.position);
 
-		String sqlCommand = "SELECT * FROM " + tblTrans + " WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + " LIMIT " + (itemInfo.position) + ",1)AS tmp)";
+		String sqlCommand = "SELECT * FROM " + tblTrans + 
+				" WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + 
+				" LIMIT " + (itemInfo.position) + ",1)AS tmp)";
 
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -389,7 +390,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//For Editing an Account
 	public void transactionEdit(MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		//Object itemName = adapter.getItem(itemInfo.position);
 		final int tID = adapter.getItem(itemInfo.position).id;
 		final int aID = adapter.getItem(itemInfo.position).acctId;
 		final String name = adapter.getItem(itemInfo.position).name;
@@ -401,7 +401,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		final String date = adapter.getItem(itemInfo.position).date;
 		final String time = adapter.getItem(itemInfo.position).time;
 		final String cleared = adapter.getItem(itemInfo.position).cleared;
-
 
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(Transactions.this);
@@ -1107,8 +1106,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		if (myDB != null){
 			myDB.close();
 		}
-
-		//Toast.makeText(this, "AcctID: " + id, Toast.LENGTH_SHORT).show();
 
 	}
 

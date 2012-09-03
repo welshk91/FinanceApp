@@ -433,7 +433,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
 				" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
 				" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
-		
+
 		//Deletes all transactions in the account
 		String sqlDeleteTransactions = "DELETE FROM " + tblTrans + 
 				" WHERE ToAcctID = " + adapter.getItem(itemInfo.position).id;
@@ -497,14 +497,27 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				//Variables for adding Starting Balance transaction
 				final String transactionName = "STARTING BALANCE";
-				final String transactionValue = accountBalance;
-				final String transactionType = "Deposit";
+				float transactionValue = Float.parseFloat(accountBalance);
 				final String transactionCategory = "STARTING BALANCE";
 				final String transactionCheckNum = "None";
 				final String transactionMemo = "This is an automatically generated transaction created when you add an account";
 				final String transactionTime = accountTime;
 				final String transactionDate = accountDate;
 				final String transactionCleared = "true";
+				String transactionType = "Unknown";
+
+				try{
+					if(Float.parseFloat(accountBalance)>=0){
+						transactionType = "Deposit";
+					}
+					else{
+						transactionType = "Withdrawl";
+						transactionValue = transactionValue * -1;
+					}
+				}
+				catch(Exception e){
+					Toast.makeText(ViewDB.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
+				}
 
 				final String sqlCommand = "INSERT INTO " + tblAccounts
 						+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
@@ -532,7 +545,6 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						c.moveToFirst();
 						do{
 							entry_id = c.getInt(0);
-							Toast.makeText(ViewDB.this, "ID: "+entry_id, Toast.LENGTH_SHORT).show();
 						}while(c.moveToNext());
 
 						//Create Starting Balance transaction
@@ -846,12 +858,10 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					GradientDrawable defaultGradientPos = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {0xFF00FF33,0xFF000000});
-					//gd.setCornerRadius(0f);
 
 					GradientDrawable defaultGradientNeg = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {0xFFFF0000,0xFF000000});
-					//gd.setCornerRadius(0f);
 
 					if(useDefaults){
 						if(Float.parseFloat((user.balance)) >=0){

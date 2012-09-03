@@ -100,7 +100,9 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				//String item = (String) adapter.getItem(position).name;
 
 				//NOTE: LIMIT *position*,*how many after*
-				String sqlCommand = "SELECT * FROM " + tblAccounts + " WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + " LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
+				String sqlCommand = "SELECT * FROM " + tblAccounts + 
+						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
+						" LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
 
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -267,7 +269,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 		String sqlCommand = "SELECT * FROM " + tblAccounts + 
 				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
-		
+
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		Cursor c = myDB.rawQuery(sqlCommand, null);
@@ -430,9 +432,12 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
 		//NOTE: LIMIT *position*,*how many after*
+		//String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
+		//		" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
+		//		" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
+
 		String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
-				" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
-				" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
+				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
 
 		//Deletes all transactions in the account
 		String sqlDeleteTransactions = "DELETE FROM " + tblTrans + 

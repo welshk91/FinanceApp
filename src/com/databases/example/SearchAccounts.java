@@ -2,14 +2,11 @@ package com.databases.example;
 
 import java.util.ArrayList;
 
-import com.databases.example.ViewDB.AccountRecord;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -209,25 +206,9 @@ public class SearchAccounts extends Activity {
 
 			}
 			return v;
-		}
-	}
-
-	//An Object Class used to hold the data of each account record
-	public class AccountRecord {
-		private String id;
-		private String name;
-		private String balance;
-		private String date;
-		private String time;
-
-		public AccountRecord(String id, String name, String balance, String date, String time) {
-			this.id = id;
-			this.name = name;
-			this.balance = balance;
-			this.date = date;
-			this.time = time;
-		}
-	}
+		}//end getview
+		
+	}//end useritemclass
 
 	//Override method to send the search extra data, letting it know which class called it
 	@Override

@@ -1,40 +1,16 @@
 package com.databases.example;
 
-import java.util.ArrayList;
-
-import com.databases.example.ViewDB.AccountRecord;
-import com.databases.example.ViewDB.UserItemAdapter;
-
-import android.app.LocalActivityManager;
 import android.app.TabActivity;
-import android.app.Activity;
-import android.app.ListActivity;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
-import android.widget.TabWidget;
-import android.widget.TextView;
-import android.widget.Toast;
 
-public class SearchTime extends TabActivity {
+public class SearchMain extends TabActivity {
 
 	//Used in searching to id the last activity
 	private String SEARCH_CONTEXT = "SearchTime.java";
@@ -119,7 +95,7 @@ public class SearchTime extends TabActivity {
 		tabHost.addTab(tabSpecTransactions);
 
 		//set Windows tab as default (zero based)
-		if(SEARCH_CONTEXT.contains("ViewDB")){
+		if(SEARCH_CONTEXT.contains("Accounts")){
 			tabHost.setCurrentTab(0);
 		}
 

@@ -38,12 +38,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
-public class ViewDB extends Activity implements OnSharedPreferenceChangeListener {
+public class Accounts extends Activity implements OnSharedPreferenceChangeListener {
 
 	int page;
 
 	//Used in searching to id the last activity
-	final private String SEARCH_CONTEXT = "ViewDB.java";
+	final private String SEARCH_CONTEXT = "Accounts.java";
 
 	//Balance
 	float totalBalance;
@@ -126,7 +126,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					entry_balance = c.getString(2);
 					entry_time = c.getString(3);
 					entry_date = c.getString(4);
-					//Toast.makeText(ViewDB.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(Accounts.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 				}while(c.moveToNext());
 
 				//Close Database if Open
@@ -135,7 +135,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				}
 
 				//Call an Intent to go to Transactions Class
-				Intent i = new Intent(ViewDB.this, Transactions.class);
+				Intent i = new Intent(Accounts.this, Transactions.class);
 				i.putExtra("ID", entry_id);
 				i.putExtra("name", entry_name);
 				i.putExtra("balance", entry_balance);
@@ -208,7 +208,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 						totalBalance = totalBalance + Float.parseFloat(balance);
 					}
 					catch(Exception e){
-						Toast.makeText(ViewDB.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Accounts.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
 					}
 
 				} while (c.moveToNext());
@@ -300,11 +300,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		}
 
 
-		LayoutInflater li = LayoutInflater.from(ViewDB.this);
+		LayoutInflater li = LayoutInflater.from(Accounts.this);
 		accountStatsView = li.inflate(R.layout.account_stats, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				ViewDB.this);
+				Accounts.this);
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(accountStatsView);
@@ -343,11 +343,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		//Toast.makeText(this, "Editing Item:\n" + id, Toast.LENGTH_SHORT).show();  
 
 		// get account_add.xml view
-		LayoutInflater li = LayoutInflater.from(ViewDB.this);
+		LayoutInflater li = LayoutInflater.from(Accounts.this);
 		final View promptsView = li.inflate(R.layout.account_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				ViewDB.this);
+				Accounts.this);
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
@@ -405,12 +405,12 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 				page = R.layout.accounts;
 
-				ViewDB.this.populate();
+				Accounts.this.populate();
 
 			}//end onClick "OK"
 		})
@@ -470,11 +470,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 	//For Adding an Account
 	public void accountAdd(){
 		// get account_add.xml view
-		LayoutInflater li = LayoutInflater.from(ViewDB.this);
+		LayoutInflater li = LayoutInflater.from(Accounts.this);
 		final View promptsView = li.inflate(R.layout.account_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				ViewDB.this);
+				Accounts.this);
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
@@ -525,7 +525,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					}
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 				}
 
 				final String sqlCommand = "INSERT INTO " + tblAccounts
@@ -536,7 +536,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
 
 				//Open Database
-				myDB = ViewDB.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				myDB = Accounts.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 				try{
 					if (accountName != null && accountTime != null && accountDate != null
@@ -566,11 +566,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 					} 
 
 					else {
-						Toast.makeText(ViewDB.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Accounts.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
 					}
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 				//Close Database if Opened
@@ -580,7 +580,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				page = R.layout.accounts;
 
-				ViewDB.this.populate();
+				Accounts.this.populate();
 
 			}//end onClick "OK"
 		})
@@ -613,13 +613,13 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				//If the Transfer button on the Account list is pressed
 			case R.id.account_footer_Transfer:
 				//code here for transfer button
-				Toast.makeText(ViewDB.this, "Transfer Pressed", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Accounts.this, "Transfer Pressed", Toast.LENGTH_SHORT).show();
 				break;
 
 				//If the unknown button on the Account list is pressed
 			case R.id.account_footer_Unknown:
 				//code here for unknown button
-				Toast.makeText(ViewDB.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Accounts.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
 				break;
 
 			}//end Switch ViewByID
@@ -628,7 +628,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 			//Going to Accounts
 			case R.layout.accounts:
-				ViewDB.this.onCreate(null);
+				Accounts.this.onCreate(null);
 
 				break;
 
@@ -671,7 +671,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 		case R.id.account_menu_options:    
 			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			Intent v = new Intent(ViewDB.this, Options.class);
+			Intent v = new Intent(Accounts.this, Options.class);
 			startActivity(v);
 			break;
 
@@ -696,7 +696,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 			AccountRecord user = account.get(position);
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this);
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (v == null) {
@@ -707,8 +707,8 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 				try{
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.account_layout);
-					String startColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_startBackgroundColor), "#E8E8E8");
-					String endColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_endBackgroundColor), "#FFFFFF");
+					String startColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_startBackgroundColor), "#E8E8E8");
+					String endColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_endBackgroundColor), "#FFFFFF");
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
@@ -722,12 +722,12 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
 				//Change Size of main field
 				try{
-					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameSize), "16");
+					String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameSize), "16");
 					TextView t;
 					t=(TextView)v.findViewById(R.id.account_name);
 
@@ -740,11 +740,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
-					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_nameColor), "#000000");
+					String DefaultColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameColor), "#000000");
 					TextView t;
 					t=(TextView)v.findViewById(R.id.account_name);
 
@@ -757,11 +757,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
-					String DefaultSize = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_fieldSize), "10");
+					String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldSize), "10");
 					TextView tmp;
 
 					if(useDefaults){
@@ -783,11 +783,11 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
-					String DefaultColor = prefs.getString(ViewDB.this.getString(R.string.pref_key_account_fieldColor), "#0099CC");
+					String DefaultColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldColor), "#0099CC");
 					TextView tmp;
 
 					if(useDefaults){
@@ -809,7 +809,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
 				}
 
 
@@ -891,7 +891,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 				}
 				catch(Exception e){
-					Toast.makeText(ViewDB.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
 
@@ -916,27 +916,10 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		}
 	}
 
-	//An Object Class used to hold the data of each account record
-	public class AccountRecord {
-		private String id;
-		private String name;
-		private String balance;
-		private String date;
-		private String time;
-
-		public AccountRecord(String id, String name, String balance, String date, String time) {
-			this.id = id;
-			this.name = name;
-			this.balance = balance;
-			this.date = date;
-			this.time = time;
-		}
-	}
-
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Toast.makeText(this, "Options Just Changed: ViewDB.Java", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Options Just Changed: Accounts.Java", Toast.LENGTH_SHORT).show();
 		populate();
 	}
 
@@ -972,4 +955,4 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 		return true;
 	}
 
-}// end ViewDB
+}// end Accounts

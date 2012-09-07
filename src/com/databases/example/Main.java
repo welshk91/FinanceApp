@@ -81,7 +81,7 @@ public class Main extends Activity {
 
 			case R.id.View:
 				createDatabase();
-				Intent v = new Intent(Main.this, ViewDB.class);
+				Intent v = new Intent(Main.this, Accounts.class);
 				startActivity(v);
 				break;
 

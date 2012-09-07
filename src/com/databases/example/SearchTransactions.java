@@ -1,9 +1,6 @@
 package com.databases.example;
 
 import java.util.ArrayList;
-
-import com.databases.example.SearchAccounts.AccountRecord;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -245,35 +242,6 @@ public class SearchTransactions extends Activity {
 		}
 	}
 
-	//An Object Class used to hold the data of each transaction record
-	public class TransactionRecord {
-		private int id;
-		private int acctId;
-		private String name;
-		private String value;
-		private String type;
-		private String category;
-		private String checknum;
-		private String memo;
-		private String time;
-		private String date;
-		private String cleared;
-
-		public TransactionRecord(int id, int acctId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
-			this.id = id;
-			this.acctId = acctId;
-			this.name = name;
-			this.value = value;
-			this.type = type;
-			this.category = category;
-			this.checknum = checknum;
-			this.memo = memo;
-			this.time = time;
-			this.date = date;
-			this.cleared = cleared;
-		}
-	}
-
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
 	public boolean onSearchRequested() {
@@ -282,7 +250,5 @@ public class SearchTransactions extends Activity {
 		startSearch(null, false, appData, false);
 		return true;
 	}
-
-
 
 }//end SearchTransactions

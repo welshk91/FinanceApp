@@ -86,7 +86,7 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
+		setTitle("Accounts");
 		setContentView(R.layout.accounts);
 		page = R.layout.accounts;
 

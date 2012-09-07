@@ -32,10 +32,10 @@ public class SearchMain extends TabActivity {
 		setIntent(intent); 
 		handleIntent(intent); 
 	} 
-	public void onListItemClick(ListView l, 
-			View v, int position, long id) { 
-		// call detail activity for clicked entry 
-	} 
+//	public void onListItemClick(ListView l, 
+//			View v, int position, long id) { 
+//		// call detail activity for clicked entry 
+//	} 
 	private void handleIntent(Intent intent) { 
 
 		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
@@ -44,7 +44,8 @@ public class SearchMain extends TabActivity {
 		}
 
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) { 
-			query = intent.getStringExtra(SearchManager.QUERY); 
+			query = intent.getStringExtra(SearchManager.QUERY);
+			setTitle("Search <" + query + ">");
 			makeView();
 		}
 

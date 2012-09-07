@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-    
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/add_accounts" android:id="@+id/Start" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/delete_accounts" android:id="@+id/Stop" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/view_accounts" android:id="@+id/View" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/clear_database" android:id="@+id/Clear" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
-<Button android:layout_width="250dip" android:layout_height="75dip" android:text="@string/back" android:id="@+id/Main" android:layout_marginLeft="25dip" android:layout_marginTop="10dip"></Button>
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/View"
+        android:layout_width="250dip"
+        android:layout_height="75dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginTop="10dip"
+        android:text="@string/view_accounts" >
+    </Button>
+
+    <Button
+        android:id="@+id/Clear"
+        android:layout_width="250dip"
+        android:layout_height="75dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginTop="10dip"
+        android:text="@string/clear_database" >
+    </Button>
+
+    <Button
+        android:id="@+id/Main"
+        android:layout_width="250dip"
+        android:layout_height="75dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginTop="10dip"
+        android:text="@string/back" >
+    </Button>
+
 </LinearLayout>

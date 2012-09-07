@@ -61,7 +61,6 @@ public class SearchAccounts extends Activity {
 
 	}//end onCreate
 
-
 	public void populate(String query){
 		results = new ArrayList<AccountRecord>();
 
@@ -82,7 +81,14 @@ public class SearchAccounts extends Activity {
 				" LIKE '%" + query + "%'";
 
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		Cursor c = myDB.rawQuery(sqlCommand, null);
+		Cursor c = null;
+		try{
+			c = myDB.rawQuery(sqlCommand, null);
+		}
+		catch(Exception e){
+			Toast.makeText(this, "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
+			return;
+		}
 
 		startManagingCursor(c);
 
@@ -207,7 +213,7 @@ public class SearchAccounts extends Activity {
 			}
 			return v;
 		}//end getview
-		
+
 	}//end useritemclass
 
 	//Override method to send the search extra data, letting it know which class called it

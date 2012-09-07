@@ -55,7 +55,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//Used in searching to id the last activity
 	final private String SEARCH_CONTEXT = "Transactions.java";
 
-
 	//Used to keep Track of total Balance
 	float totalBalance;
 
@@ -138,10 +137,12 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 		}
 
 		account_id = getIntent().getExtras().getInt("ID");
-		//String account_name = getIntent().getExtras().getString("name");
+		String account_name = getIntent().getExtras().getString("name");
 		//String account_balance = getIntent().getExtras().getString("balance");
 		//String account_date = getIntent().getExtras().getString("date");
 		//String account_time = getIntent().getExtras().getString("time");
+
+		setTitle("Transactions <" + account_name +">");
 
 		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
 

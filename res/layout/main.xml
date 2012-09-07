@@ -14,24 +14,6 @@
     </Button>
 
     <Button
-        android:id="@+id/Track"
-        android:layout_width="250dip"
-        android:layout_height="70dip"
-        android:layout_marginLeft="35dip"
-        android:layout_marginTop="50dip"
-        android:text="Not Used Yet" >
-    </Button>
-
-    <Button
-        android:id="@+id/Options"
-        android:layout_width="250dip"
-        android:layout_height="70dip"
-        android:layout_marginLeft="35dip"
-        android:layout_marginTop="50dip"
-        android:text="@string/options" >
-    </Button>
-
-    <Button
         android:id="@+id/Exit"
         android:layout_width="250dip"
         android:layout_height="70dip"

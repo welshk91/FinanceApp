@@ -18,6 +18,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		setTitle("Options");
 		addPreferencesFromResource(R.layout.options);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);

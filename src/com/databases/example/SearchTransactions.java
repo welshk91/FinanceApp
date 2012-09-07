@@ -92,7 +92,14 @@ public class SearchTransactions extends Activity {
 				" LIKE '%" + query + "%'";
 
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		Cursor c = myDB.rawQuery(sqlCommand, null);
+		Cursor c = null;
+		try{
+			c = myDB.rawQuery(sqlCommand, null);
+		}
+		catch(Exception e){
+			Toast.makeText(this, "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
+			return;
+		}
 
 		//Toast.makeText(this, "Searching From " + Boolean.toString(jargon), Toast.LENGTH_LONG).show();
 

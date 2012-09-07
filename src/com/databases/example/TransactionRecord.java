@@ -2,17 +2,17 @@ package com.databases.example;
 
 //An Object Class used to hold the data of each transaction record
 public class TransactionRecord {
-	public int id;
-	public int acctId;
-	public String name;
-	public String value;
-	public String type;
-	public String category;
-	public String checknum;
-	public String memo;
-	public String time;
-	public String date;
-	public String cleared;
+	protected int id;
+	protected int acctId;
+	protected String name;
+	protected String value;
+	protected String type;
+	protected String category;
+	protected String checknum;
+	protected String memo;
+	protected String time;
+	protected String date;
+	protected String cleared;
 
 	public TransactionRecord(int id, int acctId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
 		this.id = id;

@@ -10,35 +10,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
 
 public class Main extends Activity {	
 	int page;
 
 	//Used in searching to id the last activity
 	final private String SEARCH_CONTEXT = "Main.java";
-	
+
 	//Variables for the Views
-	Button Track_Button;
 	Button Database_Button;
 	Button Exit_Button;
-	Button Start_Button;
-	Button Stop_Button;
 	Button View_Button;
 	Button Clear_Button;
 	Button Main_Button;
-	Button StartDone_Button;
-	Button StartBack_Button;
-	Button StopDone_Button;
-	Button StopBack_Button;
-	EditText startName;
-	EditText startTime;
-	EditText addAddress;
-	EditText removeName;
-	TextView startLabel;
 
 	//Variables for the Database
 	public final String tblAccounts = "tblAccounts";
@@ -59,9 +44,6 @@ public class Main extends Activity {
 	public OnClickListener buttonListener = new OnClickListener() {
 		public void onClick(View view) {
 			switch (view.getId()) {
-			case R.id.Track:
-				//code here for track button
-				break;
 
 			case R.id.Database:
 				page = R.layout.database;
@@ -73,10 +55,6 @@ public class Main extends Activity {
 				}
 
 				Main.this.finish();
-				break;
-
-			case R.id.Start:
-				page = R.layout.account_add;
 				break;
 
 			case R.id.View:
@@ -113,8 +91,6 @@ public class Main extends Activity {
 			switch (page) {
 			case R.layout.main:
 				setContentView(R.layout.main);
-				Track_Button = (Button) findViewById(R.id.Track);
-				Track_Button.setOnClickListener(buttonListener);
 				Database_Button = (Button) findViewById(R.id.Database);
 				Database_Button.setOnClickListener(buttonListener);
 				Exit_Button = (Button) findViewById(R.id.Exit);
@@ -123,10 +99,6 @@ public class Main extends Activity {
 
 			case R.layout.database:
 				setContentView(R.layout.database);
-				Start_Button = (Button) findViewById(R.id.Start);
-				Start_Button.setOnClickListener(buttonListener);
-				Stop_Button = (Button) findViewById(R.id.Stop);
-				Stop_Button.setOnClickListener(buttonListener);
 				View_Button = (Button) findViewById(R.id.View);
 				View_Button.setOnClickListener(buttonListener);
 				Clear_Button = (Button) findViewById(R.id.Clear);
@@ -147,8 +119,6 @@ public class Main extends Activity {
 		super.onCreate(savedInstanceState);
 		page = R.layout.main;
 		setContentView(R.layout.main);
-		Track_Button = (Button) findViewById(R.id.Track);
-		Track_Button.setOnClickListener(buttonListener);
 		Database_Button = (Button) findViewById(R.id.Database);
 		Database_Button.setOnClickListener(buttonListener);
 		Exit_Button = (Button) findViewById(R.id.Exit);
@@ -225,14 +195,14 @@ public class Main extends Activity {
 		}
 
 	}//end createDatabase
-	
+
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
 	public boolean onSearchRequested() {
-	     Bundle appData = new Bundle();
-	     appData.putString("appData.key", SEARCH_CONTEXT);
-	     startSearch(null, false, appData, false);
-	     return true;
-	 }
+		Bundle appData = new Bundle();
+		appData.putString("appData.key", SEARCH_CONTEXT);
+		startSearch(null, false, appData, false);
+		return true;
+	}
 
 }// end Main

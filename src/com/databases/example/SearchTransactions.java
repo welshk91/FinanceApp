@@ -50,8 +50,8 @@ public class SearchTransactions extends Activity {
 		lv.setClickable(true);
 		lv.setLongClickable(true);
 
-		int account_id = getIntent().getExtras().getInt("ID");
-		String account_name = getIntent().getExtras().getString("name");
+		//int account_id = getIntent().getExtras().getInt("ID");
+		//String account_name = getIntent().getExtras().getString("name");
 		//String account_balance = getIntent().getExtras().getString("balance");
 		//String account_date = getIntent().getExtras().getString("date");
 		//String account_time = getIntent().getExtras().getString("time");

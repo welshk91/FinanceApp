@@ -1,5 +1,6 @@
 package com.databases.example;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
@@ -15,6 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -41,6 +43,8 @@ import android.widget.ListView;
 public class Accounts extends Activity implements OnSharedPreferenceChangeListener {
 
 	int page;
+
+	final int PICKFILE_RESULT_CODE = 1;
 
 	//Used in searching to id the last activity
 	final private String SEARCH_CONTEXT = "Accounts.java";
@@ -620,6 +624,7 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 			case R.id.account_footer_Unknown:
 				//code here for unknown button
 				Toast.makeText(Accounts.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
+				pickFile(null);
 				break;
 
 			}//end Switch ViewByID
@@ -850,7 +855,6 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 					time.setVisibility(View.GONE);
 				}
 
-
 			}
 
 			if (user != null) {
@@ -953,6 +957,26 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 		appData.putString("appData.key", SEARCH_CONTEXT);
 		startSearch(null, false, appData, false);
 		return true;
+	}
+
+	//Method used to handle picking a file
+	void pickFile(File aFile) {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*");
+		startActivityForResult(intent,PICKFILE_RESULT_CODE);
+	}
+
+	//Method called after picking a file
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		switch (requestCode) {
+		case PICKFILE_RESULT_CODE:
+			if(resultCode==RESULT_OK){
+				String FilePath = data.getData().getPath();
+				Toast.makeText(this, "File Path : " + FilePath, Toast.LENGTH_LONG).show();
+			}
+			break;
+		}
 	}
 
 }// end Accounts

@@ -117,9 +117,5 @@ public class SearchMain extends TabActivity {
 		startSearch(null, false, appData, false);
 		return true;
 	}
-	//Override method to send the search extra data, letting it know which class called it
-
-
-
 
 }//end SearchTime

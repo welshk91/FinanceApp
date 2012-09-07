@@ -32,10 +32,10 @@ public class SearchMain extends TabActivity {
 		setIntent(intent); 
 		handleIntent(intent); 
 	} 
-//	public void onListItemClick(ListView l, 
-//			View v, int position, long id) { 
-//		// call detail activity for clicked entry 
-//	} 
+	//	public void onListItemClick(ListView l, 
+	//			View v, int position, long id) { 
+	//		// call detail activity for clicked entry 
+	//	} 
 	private void handleIntent(Intent intent) { 
 
 		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
@@ -68,9 +68,8 @@ public class SearchMain extends TabActivity {
 		intentTransactions.putExtra("Query", query);
 		intentAccounts.putExtra("Caller", SEARCH_CONTEXT);
 		intentTransactions.putExtra("Caller", SEARCH_CONTEXT);
-		intentAccounts.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intentTransactions.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+		intentAccounts.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intentTransactions.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
 		// Accounts tab
 		TabSpec tabSpecAccounts = null;
@@ -96,11 +95,11 @@ public class SearchMain extends TabActivity {
 		tabHost.addTab(tabSpecTransactions);
 
 		//set Windows tab as default (zero based)
-		if(SEARCH_CONTEXT.contains("Accounts")){
+		if(SEARCH_CONTEXT.contains("Account")){
 			tabHost.setCurrentTab(0);
 		}
 
-		else if(SEARCH_CONTEXT.contains("Transactions")){
+		else if(SEARCH_CONTEXT.contains("Transaction")){
 			tabHost.setCurrentTab(1);
 		}
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,11 +14,13 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class SearchAccounts extends Activity {
 
@@ -49,6 +52,58 @@ public class SearchAccounts extends Activity {
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
+
+		//Set Listener for regular mouse click
+		lv.setOnItemClickListener(new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+				int selectionRowID = (int) adapter.getItemId(position);
+				//String item = (String) adapter.getItem(position).name;
+
+				//NOTE: LIMIT *position*,*how many after*
+				String sqlCommand = "SELECT * FROM " + tblAccounts + 
+						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
+						" LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
+
+				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				Cursor c = myDB.rawQuery(sqlCommand, null);
+				startManagingCursor(c);
+
+				int entry_id = 0;
+				String entry_name = null;
+				String entry_balance = null;
+				String entry_time = null;
+				String entry_date = null;
+
+				c.moveToFirst();
+				do{
+					entry_id = c.getInt(0);
+					entry_name = c.getString(1);
+					entry_balance = c.getString(2);
+					entry_time = c.getString(3);
+					entry_date = c.getString(4);
+					//Toast.makeText(Accounts.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+				}while(c.moveToNext());
+
+				//Close Database if Open
+				if (myDB != null){
+					myDB.close();
+				}
+
+				//Call an Intent to go to Transactions Class
+				Intent i = new Intent(SearchAccounts.this, Transactions.class);
+				i.putExtra("ID", entry_id);
+				i.putExtra("name", entry_name);
+				i.putExtra("balance", entry_balance);
+				i.putExtra("time", entry_time);
+				i.putExtra("date", entry_date);
+				startActivity(i);
+
+			}// end onItemClick
+
+		}//end onItemClickListener
+				);//end setOnItemClickListener
 
 		setContentView(searchAccountView);
 		//Toast.makeText(this, "SearchAccounts Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
@@ -107,7 +162,7 @@ public class SearchAccounts extends Activity {
 					balance = c.getString(c.getColumnIndex("AcctBalance"));
 					time = c.getString(c.getColumnIndex("AcctTime"));
 					date = c.getString(c.getColumnIndex("AcctDate"));
-					//Toast.makeText(this, "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_LONG).show();					
+					//Toast.makeText(this, "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_SHORT).show();					
 					AccountRecord entry = new AccountRecord(id, name, balance,date,time);
 					results.add(entry);		
 

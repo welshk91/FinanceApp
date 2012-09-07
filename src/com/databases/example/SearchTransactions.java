@@ -12,11 +12,13 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class SearchTransactions extends Activity {
 	//For Searching
@@ -47,6 +49,28 @@ public class SearchTransactions extends Activity {
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
+
+		int account_id = getIntent().getExtras().getInt("ID");
+		String account_name = getIntent().getExtras().getString("name");
+		//String account_balance = getIntent().getExtras().getString("balance");
+		//String account_date = getIntent().getExtras().getString("date");
+		//String account_time = getIntent().getExtras().getString("time");
+
+		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
+
+		//Set Listener for regular mouse click
+		lv.setOnItemClickListener(new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+				int selectionRowID = (int) adapter.getItemId(position);
+				String item = adapter.getItem(position).name;
+
+				Toast.makeText(SearchTransactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
+
+			}// end onItemClick
+
+		}//end onItemClickListener
+				);//end setOnItemClickListener
 
 		setContentView(searchTransactionView);
 		//Toast.makeText(this, "SearchTransactions Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
@@ -122,7 +146,7 @@ public class SearchTransactions extends Activity {
 					String cleared = c.getString(c.getColumnIndex("TransCleared"));
 					TransactionRecord entry = new TransactionRecord(id, acctId, name, value, type, category, checknum, memo, date,time, cleared);
 					results.add(entry);	
-					//Toast.makeText(this, "Id: "+ id + "\nToAcctID: "+ acctId + "\nName: " + name + "\nValue: " + value, Toast.LENGTH_LONG).show();
+					//Toast.makeText(this, "Id: "+ id + "\nToAcctID: "+ acctId + "\nName: " + name + "\nValue: " + value, Toast.LENGTH_SHORT).show();
 				}while(c.moveToNext());
 			}
 			else{

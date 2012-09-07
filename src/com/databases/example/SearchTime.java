@@ -1,20 +1,44 @@
 package com.databases.example;
 
+import java.util.ArrayList;
+
+import com.databases.example.ViewDB.AccountRecord;
+import com.databases.example.ViewDB.UserItemAdapter;
+
+import android.app.LocalActivityManager;
+import android.app.TabActivity;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
+import android.widget.TabHost.TabContentFactory;
+import android.widget.TabHost.TabSpec;
+import android.widget.TabWidget;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class SearchTime extends ListActivity {
+public class SearchTime extends TabActivity {
 
 	//Used in searching to id the last activity
 	private String SEARCH_CONTEXT = "SearchTime.java";
+	private String query;
 
 	//Variables for the Database
 	public final String tblAccounts = "tblAccounts";
@@ -24,7 +48,7 @@ public class SearchTime extends ListActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
-		super.onCreate(savedInstanceState); 
+		super.onCreate(savedInstanceState);
 		handleIntent(getIntent()); 
 	} 
 
@@ -44,31 +68,70 @@ public class SearchTime extends ListActivity {
 		}
 
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) { 
-			String query = 
-					intent.getStringExtra(SearchManager.QUERY); 
-			doSearch(query); 
-		} 
+			query = intent.getStringExtra(SearchManager.QUERY); 
+			makeView();
+		}
+
 	}    
 
-	//The Method that determines which searching methods to call
-	private void doSearch(String query) { 
+	//Method that handles setting up the Tabs
+	public void makeView(){
+		setContentView(R.layout.search);
+		//Toast.makeText(this, "SearchTime Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+		TabHost tabHost = new TabHost(this);
+		tabHost = getTabHost();
+		tabHost.setCurrentTab(0);
+		tabHost.clearAllTabs();
 
-		Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+		//The Intents called for tab content
+		Intent intentAccounts = new Intent().setClass(this, SearchAccounts.class);
+		Intent intentTransactions = new Intent().setClass(this, SearchTransactions.class);
 
+		intentAccounts.putExtra("Query", query);
+		intentTransactions.putExtra("Query", query);
+		intentAccounts.putExtra("Caller", SEARCH_CONTEXT);
+		intentTransactions.putExtra("Caller", SEARCH_CONTEXT);
+		intentAccounts.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intentTransactions.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+
+		// Accounts tab
+		TabSpec tabSpecAccounts = null;
+		tabSpecAccounts = tabHost
+				.newTabSpec("Accounts")
+				.setIndicator("Accounts")
+				.setContent(intentAccounts);
+
+		// Transactions tab
+		TabSpec tabSpecTransactions = null;
+		tabSpecTransactions = tabHost
+				.newTabSpec("Transactions")
+				.setIndicator("Transactions")
+				.setContent(
+						new Intent().setClass(this, SearchTransactions.class)
+						.putExtra("Query", query)
+						.putExtra("Caller", SEARCH_CONTEXT)
+						);
+
+		// add all tabs
+		tabHost.setup();
+		tabHost.addTab(tabSpecAccounts);
+		tabHost.addTab(tabSpecTransactions);
+
+		//set Windows tab as default (zero based)
 		if(SEARCH_CONTEXT.contains("ViewDB")){
-			searchAccounts(query);
+			tabHost.setCurrentTab(0);
 		}
 
 		else if(SEARCH_CONTEXT.contains("Transactions")){
-			searchTransactions(query);
+			tabHost.setCurrentTab(1);
 		}
 
 		else{
-			searchAccounts(query);
-			searchTransactions(query);
+			tabHost.setCurrentTab(0);
 		}
 
-	}//end doSearch
+	}
 
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
@@ -78,128 +141,9 @@ public class SearchTime extends ListActivity {
 		startSearch(null, false, appData, false);
 		return true;
 	}
-
-	//Method that searches for Accounts
-	public void searchAccounts(String query){
-
-		String sqlCommand = " SELECT * FROM " + tblAccounts + 
-				" WHERE AcctName " + 
-				" LIKE '%" + query + "%'" + 
-				" UNION " + 
-				" SELECT * FROM " + tblAccounts +
-				" WHERE AcctBalance " + 
-				" LIKE '%" + query + "%'" + 
-				" UNION " + 
-				" SELECT * FROM " + tblAccounts +
-				" WHERE AcctDate " + 
-				" LIKE '%" + query + "%'" +
-				" UNION " +
-				" SELECT * FROM " + tblAccounts +
-				" WHERE AcctTime " + 
-				" LIKE '%" + query + "%'";
-
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		Cursor c = myDB.rawQuery(sqlCommand, null);
-
-		startManagingCursor(c);
-
-		int id = 0;
-		String name = null;
-		String balance = null;
-		String time = null;
-		String date = null;
-
-		c.moveToFirst();
-		if(c!=null){
-			if (c.isFirst()) {
-				do{
-					id = c.getInt(c.getColumnIndex("AcctID"));
-					name = c.getString(c.getColumnIndex("AcctName"));
-					balance = c.getString(c.getColumnIndex("AcctBalance"));
-					time = c.getString(c.getColumnIndex("AcctTime"));
-					date = c.getString(c.getColumnIndex("AcctDate"));
-					Toast.makeText(this, "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_LONG).show();
-				}while(c.moveToNext());
-			}
-			else{
-				Toast.makeText(this, "No Search Results for " + query, Toast.LENGTH_SHORT).show();
-			}
-		}
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
+	//Override method to send the search extra data, letting it know which class called it
 
 
-		return;
-	}//end searchAccounts
 
-
-	//Method that searches for Transactions
-	public void searchTransactions(String query){
-
-		String sqlCommand = " SELECT * FROM " + tblTrans + 
-				" WHERE TransName " + 
-				" LIKE '%" + query + "%'" +
-				" UNION " +
-				" SELECT * FROM " + tblTrans +
-				" WHERE TransValue " + 
-				" LIKE '%" + query + "%'" +
-				" UNION " +
-				" SELECT * FROM " + tblTrans +
-				" WHERE TransDate " + 
-				" LIKE '%" + query + "%'" +
-				" UNION " +
-				" SELECT * FROM " + tblTrans +
-				" WHERE TransTime " + 
-				" LIKE '%" + query + "%'" +
-				" UNION " +
-				" SELECT * FROM " + tblTrans +
-				" WHERE TransMemo " + 
-				" LIKE '%" + query + "%'" +
-				" UNION " +
-				" SELECT * FROM " + tblTrans +
-				" WHERE TransCheckNum " + 
-				" LIKE '%" + query + "%'";
-
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		Cursor c = myDB.rawQuery(sqlCommand, null);
-
-		//Toast.makeText(this, "Searching From " + Boolean.toString(jargon), Toast.LENGTH_LONG).show();
-
-		startManagingCursor(c);
-
-		c.moveToFirst();
-		if(c!=null){
-			if (c.isFirst()) {
-				do{
-					int id = c.getInt(c.getColumnIndex("TransID"));
-					int acctId = c.getInt(c.getColumnIndex("ToAcctID"));
-					String name = c.getString(c.getColumnIndex("TransName"));
-					String value = c.getString(c.getColumnIndex("TransValue"));
-					String type = c.getString(c.getColumnIndex("TransType"));
-					String category = c.getString(c.getColumnIndex("TransCategory"));
-					String checknum = c.getString(c.getColumnIndex("TransCheckNum"));
-					String memo = c.getString(c.getColumnIndex("TransMemo"));
-					String time = c.getString(c.getColumnIndex("TransTime"));
-					String date = c.getString(c.getColumnIndex("TransDate"));
-					String cleared = c.getString(c.getColumnIndex("TransCleared"));
-
-					Toast.makeText(this, "Id: "+ id + "\nToAcctID: "+ acctId + "\nName: " + name + "\nValue: " + value, Toast.LENGTH_LONG).show();
-				}while(c.moveToNext());
-			}
-			else{
-				Toast.makeText(this, "No Search Results for " + query, Toast.LENGTH_SHORT).show();
-			}
-		}
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
-		return;
-	}//end searchTransactions
 
 }//end SearchTime

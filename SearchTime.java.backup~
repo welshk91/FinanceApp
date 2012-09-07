@@ -1,0 +1,429 @@
+package com.databases.example;
+
+import java.util.ArrayList;
+
+import com.databases.example.ViewDB.AccountRecord;
+import com.databases.example.ViewDB.UserItemAdapter;
+import android.app.TabActivity;
+import android.app.Activity;
+import android.app.ListActivity;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class SearchTime extends TabActivity {
+
+	//Used in searching to id the last activity
+	private String SEARCH_CONTEXT = "SearchTime.java";
+
+	//ListViews
+	ListView lvAccounts = null;
+	ListView lvTransactions = null;
+	ArrayAdapter<SearchRecord> adapter = null;
+	ArrayList<SearchRecord> results = new ArrayList<SearchRecord>();
+
+	//Variables for the Database
+	public final String tblAccounts = "tblAccounts";
+	final String tblTrans = "tblTrans";
+	public final String dbFinance = "dbFinance";
+	public SQLiteDatabase myDB = null;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) { 
+		super.onCreate(savedInstanceState); 
+		setContentView(R.layout.search);
+		handleIntent(getIntent()); 
+	} 
+
+	public void onNewIntent(Intent intent) { 
+		setIntent(intent); 
+		handleIntent(intent); 
+	} 
+	public void onListItemClick(ListView l, 
+			View v, int position, long id) { 
+		// call detail activity for clicked entry 
+	} 
+	private void handleIntent(Intent intent) { 
+
+		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
+		if (appData != null) {
+			SEARCH_CONTEXT = appData.getString("appData.key");
+		}
+
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) { 
+			String query = 
+					intent.getStringExtra(SearchManager.QUERY); 
+			//doSearch(query); 
+		} 
+	}    
+
+	//The Method that determines which searching methods to call
+	private void doSearch(String query) { 
+
+		Toast.makeText(this, "Searching From " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+
+		setContentView(R.layout.search);
+
+		//TabHost tabhost = getTabHost();
+		TabHost tabhost = (TabHost)findViewById(android.R.id.tabhost);
+		ViewGroup parentViewGroup = (ViewGroup) tabhost.getParent();
+
+		try{
+
+			//lvAccounts = (ListView)findViewById(R.id.search_account_list);
+			//lvTransactions = (ListView)findViewById(R.id.search_transaction_list);
+			//Set up an adapter for the listView
+			//adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+			//lvAccounts.setAdapter(adapter);
+		}
+		catch(Exception e){
+			Toast.makeText(this, "ERROR HERE", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		//Tabs
+		TabSpec aSpec = null;
+		TabSpec tSpec = null;
+		aSpec = tabhost.newTabSpec("Accounts");
+		aSpec.setIndicator("Accounts",getResources().getDrawable(R.drawable.calculator));
+		tSpec = tabhost.newTabSpec("Transactions");
+		tSpec.setIndicator("Transactions",getResources().getDrawable(R.drawable.calculator));
+		aSpec.setContent(R.id.search_account_totals);
+		tSpec.setContent(R.id.search_value);
+
+		//If you called search from accounts page
+		if(SEARCH_CONTEXT.contains("ViewDB")){
+			try{
+				setContentView(R.layout.search_account);
+				//searchAccounts(query);
+			}
+			catch(Exception e){
+				Toast.makeText(this, "Error Here", Toast.LENGTH_SHORT).show();
+			}
+		}
+		//If you called search from transactions page
+		else if(SEARCH_CONTEXT.contains("Transactions")){
+			setContentView(R.layout.search_transaction);
+			//searchTransactions(query);
+		}
+		//You called from any other page
+		else{
+			setContentView(R.layout.search_account);
+			//searchAccounts(query);
+			//searchTransactions(query);
+		}
+
+		tabhost.addTab(aSpec);
+		tabhost.addTab(tSpec);
+		tabhost.setCurrentTab(0);
+
+	}//end doSearch
+
+	//Override method to send the search extra data, letting it know which class called it
+	@Override
+	public boolean onSearchRequested() {
+		Bundle appData = new Bundle();
+		appData.putString("appData.key", SEARCH_CONTEXT);
+		startSearch(null, false, appData, false);
+		return true;
+	}
+
+	//Method that searches for Accounts
+	public void searchAccounts(String query){
+		results = new ArrayList<SearchRecord>();
+
+		String sqlCommand = " SELECT * FROM " + tblAccounts + 
+				" WHERE AcctName " + 
+				" LIKE '%" + query + "%'" + 
+				" UNION " + 
+				" SELECT * FROM " + tblAccounts +
+				" WHERE AcctBalance " + 
+				" LIKE '%" + query + "%'" + 
+				" UNION " + 
+				" SELECT * FROM " + tblAccounts +
+				" WHERE AcctDate " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblAccounts +
+				" WHERE AcctTime " + 
+				" LIKE '%" + query + "%'";
+
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		Cursor c = myDB.rawQuery(sqlCommand, null);
+
+		startManagingCursor(c);
+
+		int id = 0;
+		String name = null;
+		String balance = null;
+		String time = null;
+		String date = null;
+
+		c.moveToFirst();
+		if(c!=null){
+			if (c.isFirst()) {
+				do{
+					id = c.getInt(c.getColumnIndex("AcctID"));
+					name = c.getString(c.getColumnIndex("AcctName"));
+					balance = c.getString(c.getColumnIndex("AcctBalance"));
+					time = c.getString(c.getColumnIndex("AcctTime"));
+					date = c.getString(c.getColumnIndex("AcctDate"));
+					//Toast.makeText(this, "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_LONG).show();
+					SearchRecord entry = new SearchRecord(id, name, balance,date,time);
+					results.add(entry);				
+				}while(c.moveToNext());
+			}
+			else{
+				Toast.makeText(this, "No Search Results for " + query, Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+
+		//Set up an adapter for the listView
+		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		lvAccounts.setAdapter(adapter);
+
+		return;
+	}//end searchAccounts
+
+	//Method that searches for Transactions
+	public void searchTransactions(String query){
+
+		String sqlCommand = " SELECT * FROM " + tblTrans + 
+				" WHERE TransName " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransValue " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransDate " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransTime " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransMemo " + 
+				" LIKE '%" + query + "%'" +
+				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransCheckNum " + 
+				" LIKE '%" + query + "%'";
+
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		Cursor c = myDB.rawQuery(sqlCommand, null);
+
+		//Toast.makeText(this, "Searching From " + Boolean.toString(jargon), Toast.LENGTH_LONG).show();
+
+		startManagingCursor(c);
+
+		c.moveToFirst();
+		if(c!=null){
+			if (c.isFirst()) {
+				do{
+					int id = c.getInt(c.getColumnIndex("TransID"));
+					int acctId = c.getInt(c.getColumnIndex("ToAcctID"));
+					String name = c.getString(c.getColumnIndex("TransName"));
+					String value = c.getString(c.getColumnIndex("TransValue"));
+					String type = c.getString(c.getColumnIndex("TransType"));
+					String category = c.getString(c.getColumnIndex("TransCategory"));
+					String checknum = c.getString(c.getColumnIndex("TransCheckNum"));
+					String memo = c.getString(c.getColumnIndex("TransMemo"));
+					String time = c.getString(c.getColumnIndex("TransTime"));
+					String date = c.getString(c.getColumnIndex("TransDate"));
+					String cleared = c.getString(c.getColumnIndex("TransCleared"));
+
+					Toast.makeText(this, "Id: "+ id + "\nToAcctID: "+ acctId + "\nName: " + name + "\nValue: " + value, Toast.LENGTH_LONG).show();
+				}while(c.moveToNext());
+			}
+			else{
+				Toast.makeText(this, "No Search Results for " + query, Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+
+		return;
+	}//end searchTransactions
+
+	//An Object Class used to hold the data of each account record
+	public class SearchRecord {
+		private int account_id;
+		private String account_name;
+		private String account_balance;
+		private String account_date;
+		private String account_time;
+		private int transaction_id;
+		private int transaction_acctId;
+		private String transaction_name;
+		private String transaction_value;
+		private String transaction_type;
+		private String transaction_category;
+		private String transaction_checknum;
+		private String transaction_memo;
+		private String transaction_time;
+		private String transaction_date;
+		private String transaction_cleared;
+
+		public SearchRecord(int account_id, String account_name, String account_balance, String account_date, String account_time) {
+			this.account_id = account_id;
+			this.account_name = account_name;
+			this.account_balance = account_balance;
+			this.account_date = account_date;
+			this.account_time = account_time;
+		}
+
+		public SearchRecord(int transaction_id, int transaction_acctId, String transaction_name, String transaction_value, String transaction_type, String transaction_category, String transaction_checknum, String transaction_memo, String transaction_time, String transaction_date, String transaction_cleared) {
+			this.transaction_id = transaction_id;
+			this.transaction_acctId = transaction_acctId;
+			this.transaction_name = transaction_name;
+			this.transaction_value = transaction_value;
+			this.transaction_type = transaction_type;
+			this.transaction_category = transaction_category;
+			this.transaction_checknum = transaction_checknum;
+			this.transaction_memo = transaction_memo;
+			this.transaction_time = transaction_time;
+			this.transaction_date = transaction_date;
+			this.transaction_cleared = transaction_cleared;
+		}
+
+	}
+
+	public class UserItemAdapter extends ArrayAdapter<SearchRecord> {
+		private ArrayList<SearchRecord> record;
+
+		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<SearchRecord> users) {
+			super(context, textViewResourceId, users);
+			this.record = users;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			SearchRecord user = record.get(position);
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SearchTime.this);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+
+
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.search_item, null);
+
+				//Change Background Colors
+				//				try{
+				//					LinearLayout l;
+				//					l=(LinearLayout)v.findViewById(R.id.account_layout);
+				//					String startColor = prefs.getString(SearchTime.this.getString(R.string.pref_key_account_startBackgroundColor), "#E8E8E8");
+				//					String endColor = prefs.getString(SearchTime.this.getString(R.string.pref_key_account_endBackgroundColor), "#FFFFFF");
+				//					GradientDrawable defaultGradient = new GradientDrawable(
+				//							GradientDrawable.Orientation.BOTTOM_TOP,
+				//							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
+				//
+				//					if(useDefaults){
+				//						l.setBackgroundResource(R.drawable.account_list_style);
+				//					}
+				//					else{
+				//						l.setBackgroundDrawable(defaultGradient);
+				//					}
+				//
+				//				}
+				//				catch(Exception e){
+				//					Toast.makeText(SearchTime.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+				//				}
+
+			}
+
+			if (user != null) {
+				TextView name = (TextView) v.findViewById(R.id.search_name);
+				TextView value = (TextView) v.findViewById(R.id.search_value);
+				TextView date = (TextView) v.findViewById(R.id.search_date);
+				TextView time = (TextView) v.findViewById(R.id.search_time);
+
+				//Change gradient
+				try{
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.search_gradient);
+					GradientDrawable defaultGradientPos = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFF00FF33,0xFF000000});
+
+					GradientDrawable defaultGradientNeg = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFFFF0000,0xFF000000});
+
+					if(useDefaults){
+						if(Float.parseFloat((user.account_balance)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+
+					}
+					else{
+						if(Float.parseFloat((user.account_balance)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(SearchTime.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+				}
+
+
+				if (user.account_name != null) {
+					name.setText(user.account_name);
+				}
+
+				if(user.account_balance != null) {
+					value.setText("Value: " + user.account_balance);
+				}
+
+				if(user.account_date != null) {
+					date.setText("Date: " + user.account_date );
+				}
+
+				if(user.account_time != null) {
+					time.setText("Time: " + user.account_time );
+				}
+
+			}
+			return v;
+		}
+	}
+
+
+}//end SearchTime

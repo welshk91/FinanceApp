@@ -697,8 +697,7 @@ public class ViewDB extends Activity implements OnSharedPreferenceChangeListener
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ViewDB.this);
-			boolean useDefaults = prefs.getBoolean("checkbox_default", false);
-
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);

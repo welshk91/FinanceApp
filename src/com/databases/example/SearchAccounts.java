@@ -60,7 +60,6 @@ public class SearchAccounts extends Activity {
 		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
-
 		populate(query);
 
 	}//end onCreate
@@ -148,20 +147,19 @@ public class SearchAccounts extends Activity {
 
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.search_item, null);
-
+				v = vi.inflate(R.layout.account_item, null);
 			}
 
 			if (user != null) {
-				TextView name = (TextView) v.findViewById(R.id.search_name);
-				TextView balance = (TextView) v.findViewById(R.id.search_value);
-				TextView date = (TextView) v.findViewById(R.id.search_date);
-				TextView time = (TextView) v.findViewById(R.id.search_time);
+				TextView name = (TextView) v.findViewById(R.id.account_name);
+				TextView balance = (TextView) v.findViewById(R.id.account_balance);
+				TextView date = (TextView) v.findViewById(R.id.account_date);
+				TextView time = (TextView) v.findViewById(R.id.account_time);
 
 				//Change gradient
 				try{
 					LinearLayout l;
-					l=(LinearLayout)v.findViewById(R.id.search_gradient);
+					l=(LinearLayout)v.findViewById(R.id.account_gradient);
 					GradientDrawable defaultGradientPos = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {0xFF00FF33,0xFF000000});

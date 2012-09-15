@@ -85,9 +85,9 @@ public final class R {
         public static final int account_total_balance=0x7f070015;
         public static final int layout_account_add=0x7f070000;
         public static final int list=0x7f070014;
-        public static final int myLayout=0x7f07001e;
         public static final int search_account_list=0x7f07001f;
         public static final int search_account_totals=0x7f070020;
+        public static final int search_pager=0x7f07001e;
         public static final int search_transaction_list=0x7f070021;
         public static final int search_transaction_totals=0x7f070022;
         public static final int spinner_transaction_category=0x7f07002a;

@@ -1,16 +1,28 @@
 package com.databases.example;
 
-import android.app.TabActivity;
+import java.util.ArrayList;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
-public class SearchMain extends TabActivity {
+/*
+ * NOTE TO MYSELF
+ * Adding "android:launchMode="singleTop"" for this activity makes it only be able
+ * to search once. Multiple attempts make the fragments not launch.
+ * Possible explanation: 
+ * http://stackoverflow.com/questions/6611504/android-fragment-lifecycle-of-single-instance-activity
+ */
+
+public class SearchMain extends FragmentActivity {
 
 	//Used in searching to id the last activity
 	private String SEARCH_CONTEXT = "SearchTime.java";
@@ -28,14 +40,12 @@ public class SearchMain extends TabActivity {
 		handleIntent(getIntent()); 
 	} 
 
-	public void onNewIntent(Intent intent) { 
+	@Override
+	public void onNewIntent(Intent intent) {	
 		setIntent(intent); 
 		handleIntent(intent); 
 	} 
-	//	public void onListItemClick(ListView l, 
-	//			View v, int position, long id) { 
-	//		// call detail activity for clicked entry 
-	//	} 
+
 	private void handleIntent(Intent intent) { 
 
 		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
@@ -54,59 +64,33 @@ public class SearchMain extends TabActivity {
 	//Method that handles setting up the Tabs
 	public void makeView(){
 		setContentView(R.layout.search);
-		//Toast.makeText(this, "SearchTime Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
-		TabHost tabHost = new TabHost(this);
-		tabHost = getTabHost();
-		tabHost.setCurrentTab(0);
-		tabHost.clearAllTabs();
+		Toast.makeText(this, "SearchTime Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
 
-		//The Intents called for tab content
-		Intent intentAccounts = new Intent().setClass(this, SearchAccounts.class);
-		Intent intentTransactions = new Intent().setClass(this, SearchTransactions.class);
+		ViewPager mViewPager = new ViewPager(this);
+		mViewPager.setId(R.id.search_pager);
+		mViewPager.setOffscreenPageLimit(1);
+		setContentView(mViewPager);
 
-		intentAccounts.putExtra("Query", query);
-		intentTransactions.putExtra("Query", query);
-		intentAccounts.putExtra("Caller", SEARCH_CONTEXT);
-		intentTransactions.putExtra("Caller", SEARCH_CONTEXT);
-		intentAccounts.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intentTransactions.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
-		// Accounts tab
-		TabSpec tabSpecAccounts = null;
-		tabSpecAccounts = tabHost
-				.newTabSpec("Accounts")
-				.setIndicator("Accounts")
-				.setContent(intentAccounts);
+		mTabsAdapter.addTab(SearchAccounts.class, null);
+		mTabsAdapter.addTab(SearchTransactions.class, null);
+		mTabsAdapter.notifyDataSetChanged();
 
-		// Transactions tab
-		TabSpec tabSpecTransactions = null;
-		tabSpecTransactions = tabHost
-				.newTabSpec("Transactions")
-				.setIndicator("Transactions")
-				.setContent(
-						new Intent().setClass(this, SearchTransactions.class)
-						.putExtra("Query", query)
-						.putExtra("Caller", SEARCH_CONTEXT)
-						);
+		//Toast.makeText(this, "Added tabs...", Toast.LENGTH_SHORT).show();
 
-		// add all tabs
-		tabHost.setup();
-		tabHost.addTab(tabSpecAccounts);
-		tabHost.addTab(tabSpecTransactions);
-
-		//set Windows tab as default (zero based)
+		//set Tab view based on where search was called
 		if(SEARCH_CONTEXT.contains("Account")){
-			tabHost.setCurrentTab(0);
+			mViewPager.setCurrentItem(0);
 		}
 
 		else if(SEARCH_CONTEXT.contains("Transaction")){
-			tabHost.setCurrentTab(1);
+			mViewPager.setCurrentItem(1);
 		}
 
 		else{
-			tabHost.setCurrentTab(0);
+			mViewPager.setCurrentItem(0);
 		}
-
 	}
 
 	//Override method to send the search extra data, letting it know which class called it
@@ -116,6 +100,89 @@ public class SearchMain extends TabActivity {
 		appData.putString("appData.key", SEARCH_CONTEXT);
 		startSearch(null, false, appData, false);
 		return true;
+	}
+
+	public static class MyPagerAdapter extends FragmentPagerAdapter
+	implements ViewPager.OnPageChangeListener{
+
+		private final Context mContext;
+		private final ViewPager mPager;
+		private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
+
+		static final class TabInfo {
+			private final Class<?> clss;
+			private final Bundle args;
+
+			TabInfo(Class<?> _class, Bundle _args) {
+				clss = _class;
+				args = _args;
+			}
+		}
+
+		public MyPagerAdapter(FragmentActivity activity, ViewPager pager) {
+
+			super(activity.getSupportFragmentManager());
+			mContext = activity;
+			mPager = pager;
+			mPager.setAdapter(this);
+			mPager.setOnPageChangeListener(this);
+		}
+
+		public void addTab(Class<?> clss, Bundle args) {
+			TabInfo info = new TabInfo(clss, args);
+			mTabs.add(info);
+			notifyDataSetChanged();
+		}
+
+		//Removes tab at certain position (zero-based)
+		public void removeTab(ViewPager pager, int position,MyPagerAdapter adapter){
+			mTabs.remove(position);
+			adapter.notifyDataSetChanged();
+		}
+
+		public int getCount() {
+			//One for Account tab, One for Transactions tab
+			return mTabs.size();
+			//return 2;
+		}
+
+		@Override
+		public void destroyItem(View arg0, int arg1, Object arg2) {
+			((ViewPager) arg0).removeView((View) arg2);
+		}
+
+		@Override
+		public Parcelable saveState() {
+			return null;
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int arg0) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onPageSelected(int arg0) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			TabInfo info = mTabs.get(position);
+			return Fragment.instantiate(mContext, info.clss.getName(), info.args);
+		}
+
+	}//end mypageadapter
+
+	@Override
+	public void onDestroy(){
+		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
+		super.onDestroy();
 	}
 
 }//end SearchTime

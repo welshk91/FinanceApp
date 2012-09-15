@@ -1,7 +1,7 @@
 package com.databases.example;
 
 import java.util.ArrayList;
-import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,20 +9,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class SearchTransactions extends Activity {
-	//For Searching
-	String SEARCH_CONTEXT=null;
+public class SearchTransactions extends Fragment {
 
 	//ListView
 	ListView lv = null;
@@ -35,60 +32,68 @@ public class SearchTransactions extends Activity {
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View myFragmentView = inflater.inflate(R.layout.search_transaction, container, false);
+		String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
+		//Toast.makeText(getActivity(), "I'm in transactions\nSearching for " + query, Toast.LENGTH_SHORT).show();
 
-		LayoutInflater li = LayoutInflater.from(this);
-		View searchTransactionView = li.inflate(R.layout.search_transaction, null);
-
-		String query = getIntent().getExtras().getString("Query");
-		SEARCH_CONTEXT = getIntent().getExtras().getString("Caller");
-
-		lv = (ListView)searchTransactionView.findViewById(R.id.search_transaction_list);
+		//Set up ListView
+		lv = (ListView)myFragmentView.findViewById(R.id.search_transaction_list);
 
 		//Turn clicks on
 		lv.setClickable(true);
-		lv.setLongClickable(true);
-
-		//int account_id = getIntent().getExtras().getInt("ID");
-		//String account_name = getIntent().getExtras().getString("name");
-		//String account_balance = getIntent().getExtras().getString("balance");
-		//String account_date = getIntent().getExtras().getString("date");
-		//String account_time = getIntent().getExtras().getString("time");
-
-		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
-
-		//Set Listener for regular mouse click
-		lv.setOnItemClickListener(new OnItemClickListener(){
-			@Override
-			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-				int selectionRowID = (int) adapter.getItemId(position);
-				String item = adapter.getItem(position).name;
-
-				Toast.makeText(SearchTransactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
-
-			}// end onItemClick
-
-		}//end onItemClickListener
-				);//end setOnItemClickListener
-
-		setContentView(searchTransactionView);
-		//Toast.makeText(this, "SearchTransactions Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+		lv.setLongClickable(true);		
 
 		//Set up an adapter for the listView
 		try{
-			adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+			adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 			lv.setAdapter(adapter);
 		}
 		catch(Exception e){
-			Toast.makeText(this, "Error Here\n" + e, Toast.LENGTH_LONG).show();
+			Toast.makeText(this.getActivity(), "Error Here\n" + e, Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		}
 
 		populate(query);
 
+		return myFragmentView;
+	}
 
-	}//end onCreate
+	//		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
+	//
+	//		//Set Listener for regular mouse click
+	//		lv.setOnItemClickListener(new OnItemClickListener(){
+	//			@Override
+	//			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+	//				int selectionRowID = (int) adapter.getItemId(position);
+	//				String item = adapter.getItem(position).name;
+	//
+	//				Toast.makeText(SearchTransactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
+	//
+	//			}// end onItemClick
+	//
+	//		}//end onItemClickListener
+	//				);//end setOnItemClickListener
+	//
+	//		setContentView(searchTransactionView);
+	//		//Toast.makeText(this, "SearchTransactions Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+	//
+	//		//Set up an adapter for the listView
+	//		try{
+	//			adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+	//			lv.setAdapter(adapter);
+	//		}
+	//		catch(Exception e){
+	//			Toast.makeText(this, "Error Here\n" + e, Toast.LENGTH_LONG).show();
+	//			e.printStackTrace();
+	//		}
+	//
+	//		populate(query);
+	//
+	//
+	//	}//end onCreate
 
 	public void populate(String query){
 		String sqlCommand = " SELECT * FROM " + tblTrans + 
@@ -115,19 +120,19 @@ public class SearchTransactions extends Activity {
 				" WHERE TransCheckNum " + 
 				" LIKE '%" + query + "%'";
 
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, this.getActivity().MODE_PRIVATE, null);
 		Cursor c = null;
 		try{
 			c = myDB.rawQuery(sqlCommand, null);
 		}
 		catch(Exception e){
-			Toast.makeText(this, "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getActivity(), "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
 			return;
 		}
 
 		//Toast.makeText(this, "Searching From " + Boolean.toString(jargon), Toast.LENGTH_LONG).show();
 
-		startManagingCursor(c);
+		getActivity().startManagingCursor(c);
 
 		c.moveToFirst();
 		if(c!=null){
@@ -150,7 +155,7 @@ public class SearchTransactions extends Activity {
 				}while(c.moveToNext());
 			}
 			else{
-				Toast.makeText(this, "Transactions: No Search Results for " + query, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this.getActivity(), "Transactions: No Search Results for " + query, Toast.LENGTH_SHORT).show();
 			}
 		}
 
@@ -162,8 +167,8 @@ public class SearchTransactions extends Activity {
 		return;		
 
 	}//end populate
-
-
+	//
+	//
 	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
 		private ArrayList<TransactionRecord> transaction;
 
@@ -177,11 +182,11 @@ public class SearchTransactions extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			TransactionRecord user = transaction.get(position);
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SearchTransactions.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.transaction_item, null);
 
 			}
@@ -229,7 +234,7 @@ public class SearchTransactions extends Activity {
 
 				}
 				catch(Exception e){
-					Toast.makeText(SearchTransactions.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+					Toast.makeText(SearchTransactions.this.getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
 				if (user.name != null) {
@@ -271,15 +276,6 @@ public class SearchTransactions extends Activity {
 			}
 			return v;
 		}
-	}
-
-	//Override method to send the search extra data, letting it know which class called it
-	@Override
-	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
-		appData.putString("appData.key", SEARCH_CONTEXT);
-		startSearch(null, false, appData, false);
-		return true;
 	}
 
 }//end SearchTransactions

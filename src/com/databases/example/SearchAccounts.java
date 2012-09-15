@@ -2,7 +2,7 @@ package com.databases.example;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class SearchAccounts extends Activity {
-
-	//For Searching
-	String SEARCH_CONTEXT=null;
+public class SearchAccounts extends Fragment {
 
 	//ListView
 	ListView lv = null;
@@ -36,22 +34,22 @@ public class SearchAccounts extends Activity {
 	final String tblAccounts = "tblAccounts";
 	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
+	View myFragmentView;
 	SQLiteDatabase myDB;
 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		myFragmentView = inflater.inflate(R.layout.search_account, container, false);
+		String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
+		//Toast.makeText(getActivity(), "I'm in accounts\nSearching for " + query, Toast.LENGTH_SHORT).show();
 
-		LayoutInflater li = LayoutInflater.from(this);
-		View searchAccountView = li.inflate(R.layout.search_account, null);
-
-		String query = getIntent().getExtras().getString("Query");
-		SEARCH_CONTEXT = getIntent().getExtras().getString("Caller");
-
-		lv = (ListView)searchAccountView.findViewById(R.id.search_account_list);
+		//Set up ListView
+		lv = (ListView)myFragmentView.findViewById(R.id.search_account_list);
 
 		//Turn clicks on
 		lv.setClickable(true);
-		lv.setLongClickable(true);
+		lv.setLongClickable(true);		
 
 		//Set Listener for regular mouse click
 		lv.setOnItemClickListener(new OnItemClickListener(){
@@ -65,10 +63,10 @@ public class SearchAccounts extends Activity {
 						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
 						" LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
 
-				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 				Cursor c = myDB.rawQuery(sqlCommand, null);
-				startManagingCursor(c);
+				getActivity().startManagingCursor(c);
 
 				int entry_id = 0;
 				String entry_name = null;
@@ -92,7 +90,7 @@ public class SearchAccounts extends Activity {
 				}
 
 				//Call an Intent to go to Transactions Class
-				Intent i = new Intent(SearchAccounts.this, Transactions.class);
+				Intent i = new Intent(SearchAccounts.this.getActivity(), Transactions.class);
 				i.putExtra("ID", entry_id);
 				i.putExtra("name", entry_name);
 				i.putExtra("balance", entry_balance);
@@ -105,17 +103,25 @@ public class SearchAccounts extends Activity {
 		}//end onItemClickListener
 				);//end setOnItemClickListener
 
-		setContentView(searchAccountView);
-		//Toast.makeText(this, "SearchAccounts Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
-
 		//Set up an adapter for the listView
-		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
 		populate(query);
 
-	}//end onCreate
+		return myFragmentView;
+	}
 
+	//Method called upon first creation
+	@Override
+	public void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
+
+		//populate();
+
+	}// end onCreate
+
+	//Method for getting the data from database and populating listview
 	public void populate(String query){
 		results = new ArrayList<AccountRecord>();
 
@@ -135,17 +141,17 @@ public class SearchAccounts extends Activity {
 				" WHERE AcctTime " + 
 				" LIKE '%" + query + "%'";
 
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, this.getActivity().MODE_PRIVATE, null);
 		Cursor c = null;
 		try{
 			c = myDB.rawQuery(sqlCommand, null);
 		}
 		catch(Exception e){
-			Toast.makeText(this, "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getActivity(), "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
 			return;
 		}
 
-		startManagingCursor(c);
+		this.getActivity().startManagingCursor(c);
 
 		String id = null;
 		String name = null;
@@ -162,14 +168,14 @@ public class SearchAccounts extends Activity {
 					balance = c.getString(c.getColumnIndex("AcctBalance"));
 					time = c.getString(c.getColumnIndex("AcctTime"));
 					date = c.getString(c.getColumnIndex("AcctDate"));
-					//Toast.makeText(this, "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_SHORT).show();					
+					//Toast.makeText(this.getActivity(), "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_SHORT).show();					
 					AccountRecord entry = new AccountRecord(id, name, balance,date,time);
 					results.add(entry);		
 
 				}while(c.moveToNext());
 			}
 			else{
-				Toast.makeText(this, "Accounts: No Search Results for " + query, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this.getActivity(), "Accounts: No Search Results for " + query, Toast.LENGTH_SHORT).show();
 			}
 		}
 
@@ -179,13 +185,13 @@ public class SearchAccounts extends Activity {
 		}
 
 		//Set up an adapter for the listView
-		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
 		return;
 
 	}//end populate
-
+	
 	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {
 		private ArrayList<AccountRecord> account;
 
@@ -200,11 +206,11 @@ public class SearchAccounts extends Activity {
 			AccountRecord user = account.get(position);
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SearchAccounts.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
 			}
 
@@ -246,7 +252,7 @@ public class SearchAccounts extends Activity {
 
 				}
 				catch(Exception e){
-					Toast.makeText(SearchAccounts.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this.getContext(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
 				if (user.name != null) {
@@ -270,14 +276,5 @@ public class SearchAccounts extends Activity {
 		}//end getview
 
 	}//end useritemclass
-
-	//Override method to send the search extra data, letting it know which class called it
-	@Override
-	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
-		appData.putString("appData.key", SEARCH_CONTEXT);
-		startSearch(null, false, appData, false);
-		return true;
-	}
 
 }//end SearchAccounts

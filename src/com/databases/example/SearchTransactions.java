@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 public class SearchTransactions extends Fragment {
 
+	//View
+	View myFragmentView;
+
 	//ListView
 	ListView lv = null;
 	ArrayAdapter<TransactionRecord> adapter = null;
@@ -35,7 +38,7 @@ public class SearchTransactions extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View myFragmentView = inflater.inflate(R.layout.search_transaction, container, false);
+		myFragmentView = inflater.inflate(R.layout.search_transaction, container, false);
 		String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
 		//Toast.makeText(getActivity(), "I'm in transactions\nSearching for " + query, Toast.LENGTH_SHORT).show();
 
@@ -60,40 +63,6 @@ public class SearchTransactions extends Fragment {
 
 		return myFragmentView;
 	}
-
-	//		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
-	//
-	//		//Set Listener for regular mouse click
-	//		lv.setOnItemClickListener(new OnItemClickListener(){
-	//			@Override
-	//			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-	//				int selectionRowID = (int) adapter.getItemId(position);
-	//				String item = adapter.getItem(position).name;
-	//
-	//				Toast.makeText(SearchTransactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
-	//
-	//			}// end onItemClick
-	//
-	//		}//end onItemClickListener
-	//				);//end setOnItemClickListener
-	//
-	//		setContentView(searchTransactionView);
-	//		//Toast.makeText(this, "SearchTransactions Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
-	//
-	//		//Set up an adapter for the listView
-	//		try{
-	//			adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
-	//			lv.setAdapter(adapter);
-	//		}
-	//		catch(Exception e){
-	//			Toast.makeText(this, "Error Here\n" + e, Toast.LENGTH_LONG).show();
-	//			e.printStackTrace();
-	//		}
-	//
-	//		populate(query);
-	//
-	//
-	//	}//end onCreate
 
 	public void populate(String query){
 		String sqlCommand = " SELECT * FROM " + tblTrans + 
@@ -155,7 +124,10 @@ public class SearchTransactions extends Fragment {
 				}while(c.moveToNext());
 			}
 			else{
-				Toast.makeText(this.getActivity(), "Transactions: No Search Results for " + query, Toast.LENGTH_SHORT).show();
+				//No Results Found For Search
+				TextView noResult = (TextView)myFragmentView.findViewById(R.id.search_noTransaction);
+				noResult.setVisibility(View.VISIBLE);
+				
 			}
 		}
 

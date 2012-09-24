@@ -22,6 +22,12 @@ import android.support.v4.view.ViewPager;
  * http://stackoverflow.com/questions/6611504/android-fragment-lifecycle-of-single-instance-activity
  */
 
+/*
+ * NOTE TO MYSELF
+ * Need to re-write search to avoid SQL Injections.
+ * Look at Dictionary example for reference (Virtual Tables)
+ */
+
 public class SearchMain extends FragmentActivity {
 
 	//Used in searching to id the last activity
@@ -66,10 +72,8 @@ public class SearchMain extends FragmentActivity {
 		setContentView(R.layout.search);
 		Toast.makeText(this, "SearchTime Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
 
-		ViewPager mViewPager = new ViewPager(this);
-		mViewPager.setId(R.id.search_pager);
+		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);
-		setContentView(mViewPager);
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
@@ -154,6 +158,11 @@ public class SearchMain extends FragmentActivity {
 		@Override
 		public Parcelable saveState() {
 			return null;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position){
+			return "Page # " + (position + 1);
 		}
 
 		@Override

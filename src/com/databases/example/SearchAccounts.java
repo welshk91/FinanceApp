@@ -25,6 +25,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class SearchAccounts extends Fragment {
 
+	//View
+	View myFragmentView;
+	
 	//ListView
 	ListView lv = null;
 	ArrayAdapter<AccountRecord> adapter = null;
@@ -34,7 +37,6 @@ public class SearchAccounts extends Fragment {
 	final String tblAccounts = "tblAccounts";
 	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
-	View myFragmentView;
 	SQLiteDatabase myDB;
 
 	@Override
@@ -175,7 +177,9 @@ public class SearchAccounts extends Fragment {
 				}while(c.moveToNext());
 			}
 			else{
-				Toast.makeText(this.getActivity(), "Accounts: No Search Results for " + query, Toast.LENGTH_SHORT).show();
+				//No Results Found For Search
+				TextView noResult = (TextView)myFragmentView.findViewById(R.id.search_noAccount);
+				noResult.setVisibility(View.VISIBLE);
 			}
 		}
 
@@ -191,7 +195,7 @@ public class SearchAccounts extends Fragment {
 		return;
 
 	}//end populate
-	
+
 	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {
 		private ArrayList<AccountRecord> account;
 

@@ -3,6 +3,7 @@
 	<name>FinanceApp</name>
 	<comment></comment>
 	<projects>
+		<project>Android-ViewPagerIndicator</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

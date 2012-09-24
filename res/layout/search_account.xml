@@ -12,6 +12,15 @@
         android:listSelector="@drawable/account_list_style" />
 
     <TextView
+        android:id="@+id/search_noAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="Nothing Found"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/search_account_totals"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

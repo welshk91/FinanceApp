@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -162,7 +163,17 @@ public class SearchMain extends FragmentActivity {
 
 		@Override
 		public CharSequence getPageTitle(int position){
-			return "Page # " + (position + 1);
+			switch (position) {
+			case 0:
+				return "Accounts";
+
+			case 1:
+				return "Transactions";
+
+			default:
+				return "Unknown Page!";
+			}
+
 		}
 
 		@Override

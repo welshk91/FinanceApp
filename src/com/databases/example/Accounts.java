@@ -46,9 +46,6 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 
 	final int PICKFILE_RESULT_CODE = 1;
 
-	//Used in searching to id the last activity
-	final private String SEARCH_CONTEXT = "Accounts.java";
-
 	//Balance
 	float totalBalance;
 
@@ -954,7 +951,6 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	@Override
 	public boolean onSearchRequested() {
 		Bundle appData = new Bundle();
-		appData.putString("appData.key", SEARCH_CONTEXT);
 		startSearch(null, false, appData, false);
 		return true;
 	}

@@ -52,9 +52,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//The View
 	int page;
 
-	//Used in searching to id the last activity
-	final private String SEARCH_CONTEXT = "Transactions.java";
-
 	//Used to keep Track of total Balance
 	float totalBalance;
 
@@ -1115,7 +1112,6 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	@Override
 	public boolean onSearchRequested() {
 		Bundle appData = new Bundle();
-		appData.putString("appData.key", SEARCH_CONTEXT);
 		startSearch(null, false, appData, false);
 		return true;
 	}

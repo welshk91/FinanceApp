@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
 /*
@@ -32,7 +33,7 @@ import android.support.v4.view.ViewPager;
 public class SearchMain extends FragmentActivity {
 
 	//Used in searching to id the last activity
-	private String SEARCH_CONTEXT = "SearchTime.java";
+	//private String SEARCH_CONTEXT = "SearchTime.java";
 	private String query;
 
 	//Variables for the Database
@@ -48,17 +49,12 @@ public class SearchMain extends FragmentActivity {
 	} 
 
 	@Override
-	public void onNewIntent(Intent intent) {	
+	public void onNewIntent(Intent intent) {
 		setIntent(intent); 
-		handleIntent(intent); 
+		handleIntent(intent);
 	} 
 
 	private void handleIntent(Intent intent) { 
-
-		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
-		if (appData != null) {
-			SEARCH_CONTEXT = appData.getString("appData.key");
-		}
 
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) { 
 			query = intent.getStringExtra(SearchManager.QUERY);
@@ -71,38 +67,24 @@ public class SearchMain extends FragmentActivity {
 	//Method that handles setting up the Tabs
 	public void makeView(){
 		setContentView(R.layout.search);
-		Toast.makeText(this, "SearchTime Query: " + query + "\nCaller: " + SEARCH_CONTEXT, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "SearchTime Query: " + query, Toast.LENGTH_SHORT).show();
 
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
-
+		
 		mTabsAdapter.addTab(SearchAccounts.class, null);
 		mTabsAdapter.addTab(SearchTransactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
-
+		
 		//Toast.makeText(this, "Added tabs...", Toast.LENGTH_SHORT).show();
-
-		//set Tab view based on where search was called
-		if(SEARCH_CONTEXT.contains("Account")){
-			mViewPager.setCurrentItem(0);
-		}
-
-		else if(SEARCH_CONTEXT.contains("Transaction")){
-			mViewPager.setCurrentItem(1);
-		}
-
-		else{
-			mViewPager.setCurrentItem(0);
-		}
 	}
 
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
 	public boolean onSearchRequested() {
 		Bundle appData = new Bundle();
-		appData.putString("appData.key", SEARCH_CONTEXT);
 		startSearch(null, false, appData, false);
 		return true;
 	}

@@ -191,7 +191,7 @@ public class SearchAccounts extends Fragment {
 		//Set up an adapter for the listView
 		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
-
+		
 		return;
 
 	}//end populate

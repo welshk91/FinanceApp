@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,7 +28,7 @@ public class SearchAccounts extends Fragment {
 
 	//View
 	View myFragmentView;
-	
+
 	//ListView
 	ListView lv = null;
 	ArrayAdapter<AccountRecord> adapter = null;
@@ -129,27 +130,27 @@ public class SearchAccounts extends Fragment {
 
 		String sqlCommand = " SELECT * FROM " + tblAccounts + 
 				" WHERE AcctName " + 
-				" LIKE '%" + query + "%'" + 
+				" LIKE ?" + 
 				" UNION " + 
 				" SELECT * FROM " + tblAccounts +
 				" WHERE AcctBalance " + 
-				" LIKE '%" + query + "%'" + 
+				" LIKE ?" + 
 				" UNION " + 
 				" SELECT * FROM " + tblAccounts +
 				" WHERE AcctDate " + 
-				" LIKE '%" + query + "%'" +
+				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblAccounts +
 				" WHERE AcctTime " + 
-				" LIKE '%" + query + "%'";
+				" LIKE ?";
 
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, this.getActivity().MODE_PRIVATE, null);
 		Cursor c = null;
 		try{
-			c = myDB.rawQuery(sqlCommand, null);
+			c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%" });
 		}
 		catch(Exception e){
-			Toast.makeText(this.getActivity(), "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -188,10 +189,13 @@ public class SearchAccounts extends Fragment {
 			myDB.close();
 		}
 
+		//Close Cursor
+		c.close();
+
 		//Set up an adapter for the listView
 		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
-		
+
 		return;
 
 	}//end populate

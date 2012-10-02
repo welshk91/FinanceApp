@@ -67,35 +67,35 @@ public class SearchTransactions extends Fragment {
 	public void populate(String query){
 		String sqlCommand = " SELECT * FROM " + tblTrans + 
 				" WHERE TransName " + 
-				" LIKE '%" + query + "%'" +
+				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblTrans +
 				" WHERE TransValue " + 
-				" LIKE '%" + query + "%'" +
+				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblTrans +
 				" WHERE TransDate " + 
-				" LIKE '%" + query + "%'" +
+				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblTrans +
 				" WHERE TransTime " + 
-				" LIKE '%" + query + "%'" +
+				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblTrans +
 				" WHERE TransMemo " + 
-				" LIKE '%" + query + "%'" +
+				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblTrans +
 				" WHERE TransCheckNum " + 
-				" LIKE '%" + query + "%'";
+				" LIKE ?";
 
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, this.getActivity().MODE_PRIVATE, null);
 		Cursor c = null;
 		try{
-			c = myDB.rawQuery(sqlCommand, null);
+			c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%" });
 		}
 		catch(Exception e){
-			Toast.makeText(this.getActivity(), "Detected possible SQL Injection\nNeed to write this search better", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -127,7 +127,7 @@ public class SearchTransactions extends Fragment {
 				//No Results Found For Search
 				TextView noResult = (TextView)myFragmentView.findViewById(R.id.search_noTransaction);
 				noResult.setVisibility(View.VISIBLE);
-				
+
 			}
 		}
 
@@ -136,11 +136,12 @@ public class SearchTransactions extends Fragment {
 			myDB.close();
 		}
 
+		c.close();
+
 		return;		
 
 	}//end populate
-	//
-	//
+
 	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
 		private ArrayList<TransactionRecord> transaction;
 

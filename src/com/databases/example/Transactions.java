@@ -859,6 +859,16 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						tmp.setTextSize(10);
 						tmp=(TextView)v.findViewById(R.id.transaction_time);
 						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_category);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_memo);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
+						tmp.setTextSize(10);
+						tmp=(TextView)v.findViewById(R.id.transaction_type);
+						tmp.setTextSize(10);
 					}
 					else{
 						tmp=(TextView)v.findViewById(R.id.transaction_value);
@@ -866,6 +876,16 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 						tmp=(TextView)v.findViewById(R.id.transaction_date);
 						tmp.setTextSize(Integer.parseInt(DefaultSize));
 						tmp=(TextView)v.findViewById(R.id.transaction_time);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_category);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_memo);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
+						tmp.setTextSize(Integer.parseInt(DefaultSize));
+						tmp=(TextView)v.findViewById(R.id.transaction_type);
 						tmp.setTextSize(Integer.parseInt(DefaultSize));
 					}
 

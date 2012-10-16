@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.databases.example"
     android:installLocation="auto"
+    android:theme="@android:style/Theme.Holo"
     android:versionCode="1"
     android:versionName="1.0" >
 

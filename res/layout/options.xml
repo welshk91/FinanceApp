@@ -273,35 +273,12 @@
         android:summary="Change behavior"
         android:title="Behavior" >
 
-        <EditTextPreference
-            android:defaultValue="LAME!"
-            android:key="blah"
-            android:summary="Here&apos;s a simple Textbox"
-            android:title="My Lame Text Box" >
-        </EditTextPreference>
-
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="haha"
             android:summary="Here&apos;s a simple Checkbox"
-            android:title="My Boring Checkbox" >
+            android:title="To Do..." >
         </CheckBoxPreference>
-
-        <ListPreference
-            android:entries="@array/pref_transaction_listOptions"
-            android:entryValues="@array/pref_transaction_listValues"
-            android:key="transaction_fields"
-            android:summary="Which transaction fields are visible"
-            android:title="Transaction Fields" >
-        </ListPreference>
-
-        <ListPreference
-            android:entries="@array/pref_account_listOptions"
-            android:entryValues="@array/pref_account_listValues"
-            android:key="account_fields"
-            android:summary="Which account fields are visible"
-            android:title="Account Fields" >
-        </ListPreference>
     </PreferenceCategory>
 
     <PreferenceCategory

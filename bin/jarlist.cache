@@ -1,3 +1,5 @@
 # cache for current jar dependecy. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
+1348087696000 349252 612846c9857077a039b533718f72db3bc041d389 /home/kev/Programs/FinanceApp/libs/android-support-v4.jar
+1349645376000 349252 612846c9857077a039b533718f72db3bc041d389 /home/kev/Programs/Android Third Party Libraries/JakeWharton-ActionBarSherlock-90939dc/library/libs/android-support-v4.jar

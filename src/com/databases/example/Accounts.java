@@ -507,7 +507,7 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 
 				//Variables for adding Starting Balance transaction
 				final String transactionName = "STARTING BALANCE";
-				float transactionValue = Float.parseFloat(accountBalance);
+				float transactionValue;
 				final String transactionCategory = "STARTING BALANCE";
 				final String transactionCheckNum = "None";
 				final String transactionMemo = "This is an automatically generated transaction created when you add an account";
@@ -515,6 +515,15 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 				final String transactionDate = accountDate;
 				final String transactionCleared = "true";
 				String transactionType = "Unknown";
+
+				//Needed in case value is null
+				try{
+					transactionValue = Float.parseFloat(accountBalance);
+				}
+				catch(Exception e){
+					//Toast.makeText(Accounts.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
+					transactionValue = (float) 0.00;
+				}				
 
 				try{
 					if(Float.parseFloat(accountBalance)>=0){
@@ -539,9 +548,18 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 				//Open Database
 				myDB = Accounts.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
+				//Check to see if balance is a number
+				boolean validBalance=false;
 				try{
-					if (accountName != null && accountTime != null && accountDate != null
-							&& accountName != " " && accountTime != " " && accountDate != " ") {
+					Float.parseFloat(accountBalance);
+					validBalance=true;
+				}
+				catch(Exception e){
+					validBalance=false;
+				}
+
+				try{
+					if (accountName.length()>0 && accountTime.length()>0 && accountDate.length()>0 && validBalance) {
 
 						//Create a new account
 						myDB.execSQL(sqlCommand);
@@ -563,7 +581,6 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 								+ entry_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";;
 
 								myDB.execSQL(sqlStartingBalance);
-
 					} 
 
 					else {

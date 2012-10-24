@@ -16,7 +16,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -35,7 +34,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
@@ -516,13 +514,13 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 				final String transactionCleared = "true";
 				String transactionType = "Unknown";
 
-				//Needed in case value is null
+				//Check Value to see if it's valid
 				try{
 					transactionValue = Float.parseFloat(accountBalance);
 				}
 				catch(Exception e){
-					//Toast.makeText(Accounts.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 					transactionValue = (float) 0.00;
+					accountBalance = "0";
 				}				
 
 				try{
@@ -538,28 +536,18 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 					Toast.makeText(Accounts.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 				}
 
-				final String sqlCommand = "INSERT INTO " + tblAccounts
-						+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
-						+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-						+ accountDate + "');";
-
 				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
 
 				//Open Database
 				myDB = Accounts.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-				//Check to see if balance is a number
-				boolean validBalance=false;
 				try{
-					Float.parseFloat(accountBalance);
-					validBalance=true;
-				}
-				catch(Exception e){
-					validBalance=false;
-				}
+					if (accountName.length()>0) {
 
-				try{
-					if (accountName.length()>0 && accountTime.length()>0 && accountDate.length()>0 && validBalance) {
+						final String sqlCommand = "INSERT INTO " + tblAccounts
+								+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
+								+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
+								+ accountDate + "');";
 
 						//Create a new account
 						myDB.execSQL(sqlCommand);

@@ -430,6 +430,9 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
 				tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
 				tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+				tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+				tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+
 
 				transactionName = tName.getText().toString().trim();
 				transactionValue = tValue.getText().toString().trim();
@@ -439,21 +442,40 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				transactionMemo = tMemo.getText().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";
 
-				String sqlCommand = "INSERT INTO " + tblTrans
-						+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-						+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+				//Set Time
+				transactionTime = tTime.getText().toString().trim();
+				transactionDate = tDate.getText().toString().trim();
+
+				//Check to see if value is a number
+				boolean validValue=false;
+				try{
+					Float.parseFloat(transactionValue);
+					validValue=true;
+				}
+				catch(Exception e){
+					validValue=false;
+				}
 
 				//Open Database
-				myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);				
+				myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 				try{
-					if (transactionName != null && transactionTime != null && transactionDate != null
-							&& transactionName != " " && transactionTime != " " && transactionDate != " ") {
+					if (transactionName.length()>0) {
+
+						if(!validValue){
+							transactionValue = "0";
+						}
+
+						String sqlCommand = "INSERT INTO " + tblTrans
+								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+								+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+
+
 						myDB.execSQL(sqlCommand);	
 					} 
 
 					else {
-						Toast.makeText(Transactions.this, " No Nulls Allowed ", Toast.LENGTH_LONG).show();
+						Toast.makeText(Transactions.this, "Needs a Name", Toast.LENGTH_LONG).show();
 					}
 				}
 				catch(Exception e){
@@ -558,24 +580,45 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 				transactionTime = tTime.getText().toString().trim();
 				transactionDate = tDate.getText().toString().trim();
 
+				//Check to see if value is a number
+				boolean validValue=false;
 				try{
-					String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
-					String insertCommand = "INSERT INTO " + tblTrans
-							+ " (TransID, ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-							+ tID + "', '" + aID + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+					Float.parseFloat(transactionValue);
+					validValue=true;
+				}
+				catch(Exception e){
+					validValue=false;
+				}
 
-					//Open Database
-					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				try{
+					if(transactionName.length()>0){
 
-					//Delete Old Record
-					myDB.execSQL(deleteCommand);
+						if(!validValue){
+							transactionValue = "0";
+						}
 
-					//Make new record with same ID
-					myDB.execSQL(insertCommand);
+						String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
+						String insertCommand = "INSERT INTO " + tblTrans
+								+ " (TransID, ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
+								+ tID + "', '" + aID + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
 
-					//Close Database if Opened
-					if (myDB != null){
-						myDB.close();
+						//Open Database
+						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+						//Delete Old Record
+						myDB.execSQL(deleteCommand);
+
+						//Make new record with same ID
+						myDB.execSQL(insertCommand);
+
+						//Close Database if Opened
+						if (myDB != null){
+							myDB.close();
+						}
+					}
+
+					else{
+						Toast.makeText(Transactions.this, "Needs a Name", Toast.LENGTH_SHORT).show();
 					}
 
 				}

@@ -24,9 +24,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -46,8 +44,12 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.DatePicker;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 
-public class Transactions extends FragmentActivity implements OnSharedPreferenceChangeListener{
+public class Transactions extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener{
 
 	//The View
 	int page;
@@ -279,7 +281,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 
 	//Handles which methods are called when using the long presses menu
 	@Override  
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 
 		if(item.getTitle()=="Open"){
 			transactionOpen(item);
@@ -299,7 +301,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	}
 
 	//For Opening an Account
-	public void transactionOpen(MenuItem item){  
+	public void transactionOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 
 		String sqlCommand = "SELECT * FROM " + tblTrans + 
@@ -511,7 +513,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	}
 
 	//For Editing an Transaction
-	public void transactionEdit(MenuItem item){
+	public void transactionEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		final int tID = adapter.getItem(itemInfo.position).id;
 		final int aID = adapter.getItem(itemInfo.position).acctId;
@@ -650,7 +652,7 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	}
 
 	//For Deleting an Transaction
-	public void transactionDelete(MenuItem item){
+	public void transactionDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
@@ -722,8 +724,11 @@ public class Transactions extends FragmentActivity implements OnSharedPreference
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.layout.transaction_menu, menu);
+		
+		//HAVE TO REDO THIS OPTIONS PARADIGM DUE TO ACTIONBAR
+		
+		//MenuInflater inflater = getMenuInflater();
+		//inflater.inflate(R.layout.transaction_menu, menu);
 		return true;
 	}
 

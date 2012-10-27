@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,11 +20,9 @@ import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -38,7 +35,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
-public class Accounts extends Activity implements OnSharedPreferenceChangeListener {
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
+
+public class Accounts extends SherlockActivity implements OnSharedPreferenceChangeListener {
 
 	int page;
 
@@ -246,8 +248,10 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	}  
 
 	@Override  
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 
+		
+		
 		if(item.getTitle()=="Open"){
 			accountOpen(item);
 		}  
@@ -266,7 +270,7 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	}  
 
 	//For Opening an Account
-	public void accountOpen(MenuItem item){  
+	public void accountOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		//Object itemName = adapter.getItem(itemInfo.position);
 
@@ -297,7 +301,6 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 		if (myDB != null){
 			myDB.close();
 		}
-
 
 		LayoutInflater li = LayoutInflater.from(Accounts.this);
 		accountStatsView = li.inflate(R.layout.account_stats, null);
@@ -334,7 +337,7 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	}  
 
 	//For Editing an Account
-	public void accountEdit(MenuItem item){
+	public void accountEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		final String name = adapter.getItem(itemInfo.position).name;
 		final String balance = adapter.getItem(itemInfo.position).balance;
@@ -430,7 +433,7 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	}
 
 	//For Deleting an Account
-	public void accountDelete(MenuItem item){
+	public void accountDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
@@ -660,8 +663,11 @@ public class Accounts extends Activity implements OnSharedPreferenceChangeListen
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.layout.account_menu, menu);
+		
+		//HAVE TO REDO THIS OPTIONS PARADIGM DUE TO ACTIONBAR
+		
+		//MenuInflater inflater = getMenuInflater();
+		//inflater.inflate(R.layout.account_menu, (android.view.Menu) menu);
 		return true;
 	}
 

@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/account_menu_search"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@android:drawable/ic_menu_search"
         android:showAsAction="ifRoom"
         android:title="Search"/>
 

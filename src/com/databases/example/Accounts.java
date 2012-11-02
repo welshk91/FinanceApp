@@ -672,6 +672,10 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.account_menu_search:    
+			onSearchRequested();
+			break;
+
 		case R.id.account_menu_logout:     
 			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
 			this.finish();

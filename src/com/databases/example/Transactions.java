@@ -726,7 +726,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getSupportMenuInflater();
-		inflater.inflate(R.layout.account_menu, menu);
+		inflater.inflate(R.layout.transaction_menu, menu);
 		return true;
 	}
 
@@ -734,6 +734,10 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.transaction_menu_search:    
+			onSearchRequested();
+			break;
+		
 		case R.id.transaction_menu_logout:     
 			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
 			this.finish();

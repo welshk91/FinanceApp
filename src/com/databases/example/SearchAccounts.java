@@ -39,6 +39,9 @@ public class SearchAccounts extends Fragment {
 	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
+	
+	//Statistics
+	int totalRecords;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,11 +126,20 @@ public class SearchAccounts extends Fragment {
 		//populate();
 
 	}// end onCreate
+	
+	//Calculates the total number of search records found that are accounts
+	public void calculateRecords(){
+		TextView records = (TextView)myFragmentView.findViewById(R.id.search_account_totals);
+		records.setText("Account Records Found: " + totalRecords);
+	}
 
 	//Method for getting the data from database and populating listview
 	public void populate(String query){
 		results = new ArrayList<AccountRecord>();
 
+		//Reset Statistics
+		totalRecords = 0;
+		
 		String sqlCommand = " SELECT * FROM " + tblAccounts + 
 				" WHERE AcctName " + 
 				" LIKE ?" + 
@@ -173,7 +185,9 @@ public class SearchAccounts extends Fragment {
 					date = c.getString(c.getColumnIndex("AcctDate"));
 					//Toast.makeText(this.getActivity(), "Id: "+ id + "\nName: " + name + "\nBalance: " + balance, Toast.LENGTH_SHORT).show();					
 					AccountRecord entry = new AccountRecord(id, name, balance,date,time);
-					results.add(entry);		
+					results.add(entry);
+					
+					totalRecords = totalRecords + 1;
 
 				}while(c.moveToNext());
 			}
@@ -195,6 +209,9 @@ public class SearchAccounts extends Fragment {
 		//Set up an adapter for the listView
 		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
+		
+		//Refresh Balance
+		calculateRecords();
 
 		return;
 

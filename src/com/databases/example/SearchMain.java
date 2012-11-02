@@ -29,7 +29,6 @@ import android.support.v4.view.ViewPager;
 
 /*
  * NOTE TO MYSELF
- * Need to re-write search to avoid SQL Injections.
  * Look at Dictionary example for reference (Virtual Tables)
  */
 

@@ -672,11 +672,17 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case android.R.id.home:    
+			Intent intentUp = new Intent(Accounts.this, Main.class);
+			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intentUp);
+			break;
+
 		case R.id.account_menu_search:    
 			onSearchRequested();
 			break;
 
-		case R.id.account_menu_logout:     
+		case R.id.account_menu_logout:
 			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
 			this.finish();
 			this.moveTaskToBack(true);

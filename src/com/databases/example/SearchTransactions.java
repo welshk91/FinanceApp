@@ -34,6 +34,9 @@ public class SearchTransactions extends Fragment {
 	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
+	
+	//Statistics
+	int totalRecords;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,7 +67,17 @@ public class SearchTransactions extends Fragment {
 		return myFragmentView;
 	}
 
+	//Calculates the total number of search records found that are accounts
+	public void calculateRecords(){
+		TextView records = (TextView)myFragmentView.findViewById(R.id.search_transaction_totals);
+		records.setText("Transaction Records Found: " + totalRecords);
+	}
+	
 	public void populate(String query){
+		
+		//Reset Statistics
+		totalRecords = 0;
+		
 		String sqlCommand = " SELECT * FROM " + tblTrans + 
 				" WHERE TransName " + 
 				" LIKE ?" +
@@ -120,7 +133,9 @@ public class SearchTransactions extends Fragment {
 					String cleared = c.getString(c.getColumnIndex("TransCleared"));
 					TransactionRecord entry = new TransactionRecord(id, acctId, name, value, type, category, checknum, memo, date,time, cleared);
 					results.add(entry);	
-					//Toast.makeText(this, "Id: "+ id + "\nToAcctID: "+ acctId + "\nName: " + name + "\nValue: " + value, Toast.LENGTH_SHORT).show();
+					
+					totalRecords = totalRecords + 1;
+					
 				}while(c.moveToNext());
 			}
 			else{
@@ -138,6 +153,9 @@ public class SearchTransactions extends Fragment {
 
 		c.close();
 
+		//Refresh Balance
+		calculateRecords();
+		
 		return;		
 
 	}//end populate

@@ -727,6 +727,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.layout.transaction_menu, menu);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		return true;
 	}
 
@@ -734,10 +737,16 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case android.R.id.home:    
+			Intent intentUp = new Intent(Transactions.this, Accounts.class);
+			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intentUp);
+			break;
+		
 		case R.id.transaction_menu_search:    
 			onSearchRequested();
 			break;
-		
+
 		case R.id.transaction_menu_logout:     
 			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
 			this.finish();
@@ -747,8 +756,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		case R.id.transaction_menu_options:    
 			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			Intent v = new Intent(Transactions.this, Options.class);
-			startActivity(v);
+			Intent intentOptions = new Intent(Transactions.this, Options.class);
+			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intentOptions);
 			break;
 
 		case R.id.transaction_menu_help:

@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -46,6 +45,7 @@ import android.widget.DatePicker;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
@@ -724,11 +724,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
-		//HAVE TO REDO THIS OPTIONS PARADIGM DUE TO ACTIONBAR
-		
-		//MenuInflater inflater = getMenuInflater();
-		//inflater.inflate(R.layout.transaction_menu, menu);
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.layout.account_menu, menu);
 		return true;
 	}
 

@@ -1,5 +1,7 @@
 package com.databases.example;
 
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -13,7 +15,7 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.widget.Toast;
 
-public class Options extends PreferenceActivity implements OnSharedPreferenceChangeListener{
+public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){

@@ -32,8 +32,8 @@
             android:layout_height="fill_parent"
             android:layout_weight="10"
             android:background="#CCCCCC"
-            android:padding="4dip"
-            android:text="Add" >
+            android:drawableTop="@android:drawable/ic_menu_add"
+            android:padding="6dip" >
         </Button>
 
         <Button

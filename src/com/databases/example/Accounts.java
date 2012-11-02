@@ -20,7 +20,7 @@ import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
+//import android.view.MenuInflater;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View;
@@ -37,6 +37,7 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
@@ -250,8 +251,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
-		
-		
 		if(item.getTitle()=="Open"){
 			accountOpen(item);
 		}  
@@ -663,11 +662,9 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
-		//HAVE TO REDO THIS OPTIONS PARADIGM DUE TO ACTIONBAR
-		
-		//MenuInflater inflater = getMenuInflater();
-		//inflater.inflate(R.layout.account_menu, (android.view.Menu) menu);
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.layout.account_menu, menu);
 		return true;
 	}
 

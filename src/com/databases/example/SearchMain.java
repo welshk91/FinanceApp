@@ -1,6 +1,9 @@
 package com.databases.example;
 
 import java.util.ArrayList;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +33,7 @@ import android.support.v4.view.ViewPager;
  * Look at Dictionary example for reference (Virtual Tables)
  */
 
-public class SearchMain extends FragmentActivity {
+public class SearchMain extends SherlockFragmentActivity {
 
 	//Used in searching to id the last activity
 	//private String SEARCH_CONTEXT = "SearchTime.java";

@@ -163,14 +163,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
 
-		//Buttons
-		Button addTransaction = (Button)findViewById(R.id.transaction_footer_Add); 
-		addTransaction.setOnClickListener(buttonListener);
-		Button scheduleTransaction = (Button)findViewById(R.id.transaction_footer_Schedule); 
-		scheduleTransaction.setOnClickListener(buttonListener);
-		Button unknownTransaction = (Button)findViewById(R.id.transaction_footer_Unknown); 
-		unknownTransaction.setOnClickListener(buttonListener);
-
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
@@ -680,47 +672,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 	}//end of accountDelete
 
-	//Method for handling Button 'mouse-clicks'
-	public OnClickListener buttonListener = new OnClickListener() {
-		public void onClick(View view) {
-			switch (view.getId()) {
-			//If the Add button on the Transaction list is pressed
-			case R.id.transaction_footer_Add:
-				//code here for add button
-				page = R.layout.transaction_add;
-				break;
-
-				//If the Transfer button on the Transaction list is pressed
-			case R.id.transaction_footer_Schedule:
-				//code here for transfer button
-				Toast.makeText(Transactions.this, "Schedule Pressed", Toast.LENGTH_SHORT).show();
-				break;
-
-				//If the unknown button on the Transaction list is pressed
-			case R.id.transaction_footer_Unknown:
-				//code here for unknown button
-				Toast.makeText(Transactions.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
-				break;
-
-			}//end Switch ViewByID
-
-			switch (page) {
-
-			//Going to Transactions
-			case R.layout.transactions:
-				Transactions.this.onCreate(null);
-
-				break;
-
-				//Going to Add Transaction
-			case R.layout.transaction_add:
-				transactionAdd();
-
-				break;
-			}
-		}
-	};//end of buttonListener
-
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -742,9 +693,21 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intentUp);
 			break;
-		
+
+		case R.id.transaction_menu_add:    
+			transactionAdd();
+			break;
+
 		case R.id.transaction_menu_search:    
 			onSearchRequested();
+			break;
+
+		case R.id.transaction_menu_schedule:    
+			//transactionSchedule
+			break;
+
+		case R.id.transaction_menu_unknown:    
+			//Insert Code Here
 			break;
 
 		case R.id.transaction_menu_logout:     

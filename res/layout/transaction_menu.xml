@@ -2,10 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/transaction_menu_add"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom"
+        android:title="Add"/>
+
+    <item
         android:id="@+id/transaction_menu_search"
         android:icon="@android:drawable/ic_menu_search"
         android:showAsAction="ifRoom"
         android:title="Search"/>
+
+    <item
+        android:id="@+id/transaction_menu_schedule"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="ifRoom"
+        android:title="Schedule"/>
+
+    <item
+        android:id="@+id/transaction_menu_unknown"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="ifRoom"
+        android:title="Unknown"/>
 
     <item
         android:id="@+id/transaction_menu_logout"

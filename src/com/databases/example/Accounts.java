@@ -204,12 +204,14 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				} while (c.moveToNext());
 			}
+
+			else {
+				//No Results Found
+				TextView noResult = (TextView)findViewById(R.id.account_noTransaction);
+				noResult.setVisibility(View.VISIBLE);
+			}
 		} 
 
-		else {
-			AccountRecord tmp = new AccountRecord(null,"DATABASE EMPTY",null,null,null);
-			results.add(tmp);		
-		}
 
 		//Close Database if Open
 		if (myDB != null){
@@ -596,7 +598,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		alertDialog.show();
 
 	}
-	
+
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {

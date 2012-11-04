@@ -20,15 +20,12 @@ import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-//import android.view.MenuInflater;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -153,14 +150,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
-
-		//Footer Buttons 
-		Button addAccount = (Button)findViewById(R.id.account_footer_Add); 
-		addAccount.setOnClickListener(buttonListener);
-		Button transferAccount = (Button)findViewById(R.id.account_footer_Transfer); 
-		transferAccount.setOnClickListener(buttonListener);
-		Button unknownAccount = (Button)findViewById(R.id.account_footer_Unknown); 
-		unknownAccount.setOnClickListener(buttonListener);
 
 		//Set up an adapter for the listView
 		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
@@ -607,49 +596,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		alertDialog.show();
 
 	}
-
-	//Method for handling Button 'mouse-clicks'
-	public OnClickListener buttonListener = new OnClickListener() {
-		public void onClick(View view) {
-			switch (view.getId()) {
-			//If the Add button on the Account list is pressed
-			case R.id.account_footer_Add:
-				//code here for add button
-				page = R.layout.account_add;
-				break;
-
-				//If the Transfer button on the Account list is pressed
-			case R.id.account_footer_Transfer:
-				//code here for transfer button
-				Toast.makeText(Accounts.this, "Transfer Pressed", Toast.LENGTH_SHORT).show();
-				break;
-
-				//If the unknown button on the Account list is pressed
-			case R.id.account_footer_Unknown:
-				//code here for unknown button
-				Toast.makeText(Accounts.this, "Unknown Pressed", Toast.LENGTH_SHORT).show();
-				pickFile(null);
-				break;
-
-			}//end Switch ViewByID
-
-			switch (page) {
-
-			//Going to Accounts
-			case R.layout.accounts:
-				Accounts.this.onCreate(null);
-
-				break;
-
-				//Going to Add Account
-			case R.layout.account_add:
-				accountAdd();
-
-				break;
-			}
-		}
-	};//end of buttonListener
-
+	
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {
@@ -678,8 +625,21 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			startActivity(intentUp);
 			break;
 
+		case R.id.account_menu_add:    
+			accountAdd();
+			break;
+
 		case R.id.account_menu_search:    
 			onSearchRequested();
+			break;
+
+		case R.id.account_menu_transfer:    
+			//accountTransfer();
+			break;
+
+		case R.id.account_menu_unknown:    
+			//Insert Unknown Code Here
+			pickFile(null);
 			break;
 
 		case R.id.account_menu_logout:

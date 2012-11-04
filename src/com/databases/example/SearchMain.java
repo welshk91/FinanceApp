@@ -69,7 +69,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	//Method that handles setting up the Tabs
 	public void makeView(){
 		setContentView(R.layout.search);
-		Toast.makeText(this, "SearchTime Query: " + query, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "SearchTime Query: " + query, Toast.LENGTH_SHORT).show();
 
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);

@@ -167,6 +167,10 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	protected void populate() {
 		results = new ArrayList<AccountRecord>();
 
+		//A textView alerting the user if database is empty
+		TextView noResult = (TextView)findViewById(R.id.account_noTransaction);
+		noResult.setVisibility(View.GONE);
+
 		//Reset Balance
 		totalBalance=0;
 
@@ -207,7 +211,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 			else {
 				//No Results Found
-				TextView noResult = (TextView)findViewById(R.id.account_noTransaction);
 				noResult.setVisibility(View.VISIBLE);
 			}
 		} 

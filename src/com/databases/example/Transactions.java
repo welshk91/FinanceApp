@@ -174,8 +174,11 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 	//Populate view with all the transactions of selected account
 	protected void populate(){
-
 		results = new ArrayList<TransactionRecord>();
+
+		//TextView instructing user if database is empty
+		TextView noResult = (TextView)findViewById(R.id.transaction_noTransaction);
+		noResult.setVisibility(View.GONE);
 
 		//Reset totalBalance
 		totalBalance = 0;
@@ -236,10 +239,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				} while (c.moveToNext());
 			}
-			
+
 			else {
 				//No Results Found
-				TextView noResult = (TextView)findViewById(R.id.transaction_noTransaction);
 				noResult.setVisibility(View.VISIBLE);
 			}
 		} 

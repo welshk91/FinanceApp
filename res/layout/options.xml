@@ -294,8 +294,14 @@
 
         <Preference
             android:key="pref_reset"
-            android:summary="Will reset all custom values to their defaults. May require restart"
+            android:summary="Will reset all custom values to their defaults."
             android:title="Reset Defaults" >
+        </Preference>
+
+        <Preference
+            android:key="pref_clearDB"
+            android:summary="Will delete all the checkbook data. Use with extreme caution."
+            android:title="Delete Checkbook" >
         </Preference>
     </PreferenceCategory>
 

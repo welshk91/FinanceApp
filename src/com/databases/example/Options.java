@@ -4,8 +4,10 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -17,6 +19,9 @@ import android.widget.Toast;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 
+	public final String dbFinance = "dbFinance";
+	public SQLiteDatabase myDB = null;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -27,12 +32,23 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		checkDefaults();
 
-		Preference customPref = (Preference) findPreference("pref_reset");
-		customPref
+		Preference prefReset = (Preference) findPreference("pref_reset");
+		prefReset
 		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
 			public boolean onPreferenceClick(Preference preference) {
 				prefsReset();
+				return true;
+			}
+
+		});
+
+		Preference prefClearDB = (Preference) findPreference("pref_clearDB");
+		prefClearDB
+		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				clearDB();
 				return true;
 			}
 
@@ -120,6 +136,58 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		// show it
 		alertDialog.show();
 	}//end of prefsReset
+
+	//Ask if user wants to delete checkbook
+	public void clearDB(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		// set title
+		builder.setTitle("Delete Your Checkbook?");
+
+		builder.setMessage(
+				"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface arg0,
+							int arg1) {
+						destroyDatabase();
+					}
+				})
+				.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface arg0, int arg1) {
+						// no action taken
+					}
+				}).show();
+
+	}//end of clearDB
+
+	//Method for Deleting Database
+	public void destroyDatabase(){
+
+		//Make sure database exist so you don't attempt to delete nothing
+		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+		//Make sure database is closed before deleting; not sure if necessary
+		if (myDB != null){
+			myDB.close();
+		}
+
+		try{
+			this.deleteDatabase(dbFinance);
+		}
+		catch(Exception e){
+			Toast.makeText(this, "Error Deleting Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
+		}
+
+		//Navigate User back to dashboard
+		Intent intentDashboard = new Intent(Options.this, Main.class);
+		intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intentDashboard);
+
+	}//end of destroyDatabase
+
 
 }//end of Options
 

@@ -5,21 +5,19 @@
     android:theme="@style/Theme.Sherlock" >
 
     <Button
-        android:id="@+id/Database"
-        android:layout_width="250dip"
-        android:layout_height="70dip"
-        android:layout_marginLeft="35dip"
-        android:layout_marginTop="25dip"
+        android:id="@+id/dashboard_checkbook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/dashboard_exit"
         android:text="@string/accounts" >
     </Button>
 
     <Button
-        android:id="@+id/Exit"
-        android:layout_width="250dip"
-        android:layout_height="70dip"
-        android:layout_below="@+id/Database"
-        android:layout_marginLeft="35dip"
-        android:layout_marginTop="50dip"
+        android:id="@+id/dashboard_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dashboard_checkbook"
+        android:drawableTop="@drawable/dashboard_exit"
         android:text="@string/exit" >
     </Button>
 

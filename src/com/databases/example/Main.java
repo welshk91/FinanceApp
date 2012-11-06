@@ -132,6 +132,12 @@ public class Main extends SherlockActivity {
 
 				//Create Category table
 				myDB.execSQL(sqlCommandCategory);
+				
+				//Add some default categories
+				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
+						+ " (CateName)" + " VALUES ('Gas');";
+
+				//myDB.execSQL(sqlDefaultCategories);
 
 			} 
 			catch (Exception e) {

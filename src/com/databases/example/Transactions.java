@@ -236,13 +236,13 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				} while (c.moveToNext());
 			}
+			
 			else {
 				//No Results Found
 				TextView noResult = (TextView)findViewById(R.id.transaction_noTransaction);
 				noResult.setVisibility(View.VISIBLE);
 			}
 		} 
-
 
 		//Close Database if Open
 		if (myDB != null){

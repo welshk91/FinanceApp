@@ -212,7 +212,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			}
 		} 
 
-
 		//Close Database if Open
 		if (myDB != null){
 			myDB.close();

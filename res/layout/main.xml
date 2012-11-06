@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:theme="@style/Theme.Sherlock" >
 
     <Button
         android:id="@+id/Database"
@@ -17,9 +17,10 @@
         android:id="@+id/Exit"
         android:layout_width="250dip"
         android:layout_height="70dip"
+        android:layout_below="@+id/Database"
         android:layout_marginLeft="35dip"
         android:layout_marginTop="50dip"
         android:text="@string/exit" >
     </Button>
 
-</LinearLayout>
+</RelativeLayout>

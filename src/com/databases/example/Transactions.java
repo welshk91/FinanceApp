@@ -70,6 +70,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	EditText tMemo;
 	static Button tTime;
 	static Button tDate;
+	Button tCategoryAdd;
 	CheckBox tCleared;
 
 	//TextView of Statistics
@@ -424,6 +425,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
 				tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
 				tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+				tCategoryAdd= (Button)promptsView.findViewById(R.id.transaction_add_category);
 				tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
 				tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
 				tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
@@ -1160,6 +1162,44 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		Bundle appData = new Bundle();
 		startSearch(null, false, appData, false);
 		return true;
+	}
+
+	//Alert for adding a new category
+	public void showCategoryAdd(View V){		
+		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				Transactions.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(categoryAddView);
+
+		//set Title
+		alertDialogBuilder.setTitle("Create A Category");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true)
+		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				//Create Category
+				//Add SQL Command
+			}
+		})
+		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		});
+
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
 	}
 
 }//end Transactions

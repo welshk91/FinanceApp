@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ScrollView01"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:fadeScrollbars="true" >
 
     <RelativeLayout
@@ -82,6 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/spinner_transaction_category"
             android:layout_toRightOf="@+id/spinner_transaction_category"
+            android:onClick="showCategoryAdd"
             android:text="@string/add" >
         </Button>
 

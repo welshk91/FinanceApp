@@ -18,6 +18,7 @@ public class Main extends SherlockActivity {
 	//Variables for the Database
 	public final String tblAccounts = "tblAccounts";
 	final String tblTrans = "tblTrans";
+	final String tblCategory = "tblCategory";
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 
@@ -115,6 +116,10 @@ public class Main extends SherlockActivity {
 				String sqlCommandTransactions = "CREATE TABLE IF NOT EXISTS "
 						+ tblTrans
 						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
+				
+				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
+						+ tblCategory
+						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR);";
 
 				//Create database and open
 				myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -124,6 +129,9 @@ public class Main extends SherlockActivity {
 
 				//Create Transactions table
 				myDB.execSQL(sqlCommandTransactions);
+
+				//Create Category table
+				myDB.execSQL(sqlCommandCategory);
 
 			} 
 			catch (Exception e) {

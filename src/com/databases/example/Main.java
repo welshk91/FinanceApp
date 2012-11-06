@@ -37,9 +37,28 @@ public class Main extends SherlockActivity {
 
 			case R.id.dashboard_checkbook:
 				createDatabase();
-				Intent v = new Intent(Main.this, Accounts.class);
-				startActivity(v);
+				Intent intentCheckbook = new Intent(Main.this, Accounts.class);
+				startActivity(intentCheckbook);
 				break;
+				
+			case R.id.dashboard_transfers:
+				createDatabase();
+				Intent intentTransfers = new Intent(Main.this, Accounts.class);
+				startActivity(intentTransfers);
+				break;
+				
+			case R.id.dashboard_schedules:
+				createDatabase();
+				Intent intentSchedules = new Intent(Main.this, Accounts.class);
+				startActivity(intentSchedules);
+				break;
+				
+			case R.id.dashboard_statistics:
+				createDatabase();
+				Intent intentStats = new Intent(Main.this, Accounts.class);
+				startActivity(intentStats);
+				break;
+				
 
 			case R.id.dashboard_exit:
 				if (myDB != null){

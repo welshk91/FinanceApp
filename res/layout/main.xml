@@ -13,10 +13,38 @@
     </Button>
 
     <Button
+        android:id="@+id/dashboard_transfers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/dashboard_exit"
+        android:layout_toRightOf="@+id/dashboard_checkbook"
+        android:text="Transfers" >
+    </Button>
+
+    <Button
+        android:id="@+id/dashboard_schedules"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/dashboard_exit"
+        android:layout_below="@+id/dashboard_checkbook"
+        android:text="Schedules" >
+    </Button>
+
+    <Button
+        android:id="@+id/dashboard_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/dashboard_exit"
+        android:layout_below="@+id/dashboard_checkbook"
+        android:layout_toRightOf="@+id/dashboard_schedules"
+        android:text="Statistics" >
+    </Button>
+
+    <Button
         android:id="@+id/dashboard_exit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/dashboard_checkbook"
+        android:layout_below="@+id/dashboard_schedules"
         android:drawableTop="@drawable/dashboard_exit"
         android:text="@string/exit" >
     </Button>

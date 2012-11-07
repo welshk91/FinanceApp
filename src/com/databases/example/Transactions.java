@@ -56,6 +56,8 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	//The View
 	int page;
 
+	SimpleCursorAdapter categorySpinnerAdapter = null;
+
 	//Used to keep Track of total Balance
 	float totalBalance;
 
@@ -409,21 +411,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
-		//Cursor storing the category information
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
-				+ ";";
-
-		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
-		startManagingCursor(categoryCursor);
-		String[] from = new String[] {"CateName"}; 
-		int[] to = new int[] { android.R.id.text1 }; 
-
-		final SimpleCursorAdapter categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
-		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		tCategory.setAdapter(categorySpinnerAdapter);
-
+		//Populate List
+		categoryPopulate();
+		
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				Transactions.this);
 
@@ -455,7 +445,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = tCategory.getSelectedItemPosition();
 				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-				
+
 				transactionName = tName.getText().toString().trim();
 				transactionValue = tValue.getText().toString().trim();
 				transactionType = tType.getSelectedItem().toString().trim();
@@ -531,7 +521,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		// show it
 		alertDialog.show();
 
-
 	}
 
 	//For Editing an Transaction
@@ -579,23 +568,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		int spinnerPosition = myAdap.getPosition(type);
 		tType.setSelection(spinnerPosition);
 
-
-		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
-				+ ";";
-
-		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
-		startManagingCursor(categoryCursor);
-		String[] from = new String[] {"CateName"}; 
-		int[] to = new int[] { android.R.id.text1 }; 
-
-		final SimpleCursorAdapter categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
-		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		tCategory.setAdapter(categorySpinnerAdapter);
-
-
+		//Populate Category Spinner
+		categoryPopulate();
+		
 		tCheckNum.setText(checknum);
 		tMemo.setText(memo);
 		tCleared.setChecked(Boolean.parseBoolean(cleared));
@@ -609,11 +584,11 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				// CODE FOR "OK"
-				
+
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = tCategory.getSelectedItemPosition();
 				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-				
+
 				transactionName = tName.getText().toString().trim();
 				transactionValue = tValue.getText().toString().trim();
 				transactionType = tType.getSelectedItem().toString().trim();
@@ -1245,6 +1220,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 					myDB.close();
 				}
 
+				//Refresh the categories list
+				categoryPopulate();
+
 			}
 		})
 		.setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -1253,13 +1231,37 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 			}
 		});
 
-
 		// create alert dialog
 		AlertDialog alertDialog = alertDialogBuilder.create();
 
 		// show it
 		alertDialog.show();
 
-	}
+	}//end of showCategoryAdd
+
+	//Method Called to refresh the list of categories if user changes the list
+	public void categoryPopulate(){
+
+		// Cursor is used to navigate the query results
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
+				+ ";";
+
+		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
+		startManagingCursor(categoryCursor);
+		String[] from = new String[] {"CateName"}; 
+		int[] to = new int[] { android.R.id.text1 }; 
+
+		categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
+		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		tCategory.setAdapter(categorySpinnerAdapter);
+		
+		//Make sure Database is closed even if try-catch fails
+		if (myDB != null){
+			myDB.close();
+		}
+		
+	}//end of categoryRefresh
 
 }//end Transactions

@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -30,6 +31,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -404,24 +406,24 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 		tTime.setText(hour + ":" + minute);
-		
+
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
-		// Cursor is used to navigate the query results
+		//Cursor storing the category information
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
 				+ ";";
-		
+
 		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		startManagingCursor(categoryCursor);
 		String[] from = new String[] {"CateName"}; 
 		int[] to = new int[] { android.R.id.text1 }; 
-		
-		SimpleCursorAdapter categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
+
+		final SimpleCursorAdapter categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
-		
+
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				Transactions.this);
 
@@ -450,14 +452,19 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 				tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 
-
+				//Needed to get category's name from DB-populated spinner
+				int categoryPosition = tCategory.getSelectedItemPosition();
+				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
+				
 				transactionName = tName.getText().toString().trim();
 				transactionValue = tValue.getText().toString().trim();
 				transactionType = tType.getSelectedItem().toString().trim();
-				transactionCategory = tCategory.getSelectedItem().toString().trim();
+				transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
 				transactionCheckNum = tCheckNum.getText().toString().trim();
 				transactionMemo = tMemo.getText().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";
+
+				Toast.makeText(Transactions.this, "Item:\n" + transactionCategory, Toast.LENGTH_LONG).show();
 
 				//Set Time
 				transactionTime = tTime.getText().toString().trim();
@@ -578,15 +585,16 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
 				+ ";";
-		
+
 		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		startManagingCursor(categoryCursor);
 		String[] from = new String[] {"CateName"}; 
 		int[] to = new int[] { android.R.id.text1 }; 
-		
-		SimpleCursorAdapter categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
+
+		final SimpleCursorAdapter categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
+
 
 		tCheckNum.setText(checknum);
 		tMemo.setText(memo);
@@ -601,10 +609,15 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				// CODE FOR "OK"
+				
+				//Needed to get category's name from DB-populated spinner
+				int categoryPosition = tCategory.getSelectedItemPosition();
+				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
+				
 				transactionName = tName.getText().toString().trim();
 				transactionValue = tValue.getText().toString().trim();
 				transactionType = tType.getSelectedItem().toString().trim();
-				transactionCategory = tCategory.getSelectedItem().toString().trim();
+				transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
 				transactionCheckNum = tCheckNum.getText().toString().trim();
 				transactionMemo = tMemo.getText().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";
@@ -1216,22 +1229,22 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 			public void onClick(DialogInterface dialog,int id) {
 				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
 				String category = categorySpinner.getText().toString().trim();
-				
+
 				//SQL Command
 				final String sqlCategoryAdd = "INSERT INTO " + tblCategory
 						+ " (CateName)" + " VALUES ('"+ category +"');";
-				
+
 				//Create database and open
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-				
+
 				//Add Category
 				myDB.execSQL(sqlCategoryAdd);
-				
+
 				//Make sure Database is closed even if try-catch fails
 				if (myDB != null){
 					myDB.close();
 				}
-				
+
 			}
 		})
 		.setNegativeButton("No",new DialogInterface.OnClickListener() {

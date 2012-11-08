@@ -40,8 +40,6 @@ import com.actionbarsherlock.view.SubMenu;
 
 public class Accounts extends SherlockActivity implements OnSharedPreferenceChangeListener {
 
-	int page;
-
 	final int PICKFILE_RESULT_CODE = 1;
 
 	//Balance
@@ -87,8 +85,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		super.onCreate(icicle);
 		setTitle("Accounts");
 		setContentView(R.layout.accounts);
-		page = R.layout.accounts;
-
+		
 		lv = (ListView)findViewById(R.id.list);
 
 		//Turn clicks on
@@ -402,8 +399,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					Toast.makeText(Accounts.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
-				page = R.layout.accounts;
-
 				Accounts.this.populate();
 
 			}//end onClick "OK"
@@ -578,8 +573,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				if (myDB != null){
 					myDB.close();
 				}
-
-				page = R.layout.accounts;
 
 				Accounts.this.populate();
 

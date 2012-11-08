@@ -67,7 +67,7 @@ public class SearchTransactions extends Fragment {
 		return myFragmentView;
 	}
 
-	//Calculates the total number of search records found that are accounts
+	//Calculates the total number of search records found that are transactions
 	public void calculateRecords(){
 		TextView records = (TextView)myFragmentView.findViewById(R.id.search_transaction_totals);
 		records.setText("Transaction Records Found: " + totalRecords);

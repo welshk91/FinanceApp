@@ -52,12 +52,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class Transactions extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener{
-
-	//The View
-	int page;
-
-	SimpleCursorAdapter categorySpinnerAdapter = null;
-
 	//Used to keep Track of total Balance
 	float totalBalance;
 
@@ -121,6 +115,8 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	static String transactionDate = null;
 	String transactionCleared = null;
 
+	//Adapter for category spinner
+	SimpleCursorAdapter categorySpinnerAdapter = null;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -413,7 +409,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		//Populate List
 		categoryPopulate();
-		
+
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				Transactions.this);
 
@@ -453,8 +449,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				transactionCheckNum = tCheckNum.getText().toString().trim();
 				transactionMemo = tMemo.getText().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";
-
-				Toast.makeText(Transactions.this, "Item:\n" + transactionCategory, Toast.LENGTH_LONG).show();
 
 				//Set Time
 				transactionTime = tTime.getText().toString().trim();
@@ -500,8 +494,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				if (myDB != null){
 					myDB.close();
 				}
-
-				page = R.layout.transactions;
 
 				Transactions.this.populate();
 
@@ -570,7 +562,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		//Populate Category Spinner
 		categoryPopulate();
-		
+
 		tCheckNum.setText(checknum);
 		tMemo.setText(memo);
 		tCleared.setChecked(Boolean.parseBoolean(cleared));
@@ -644,8 +636,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				catch(Exception e){
 					Toast.makeText(Transactions.this, "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
-
-				page = R.layout.transactions;
 
 				Transactions.this.populate();
 
@@ -1256,12 +1246,12 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
-		
+
 		//Make sure Database is closed even if try-catch fails
 		if (myDB != null){
 			myDB.close();
 		}
-		
+
 	}//end of categoryRefresh
 
 }//end Transactions

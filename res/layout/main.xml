@@ -6,46 +6,56 @@
 
     <Button
         android:id="@+id/dashboard_checkbook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_margin="15dp"
         android:drawableTop="@drawable/dashboard_exit"
+        android:padding="25dp"
         android:text="@string/accounts" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_transfers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_margin="15dp"
         android:layout_toRightOf="@+id/dashboard_checkbook"
         android:drawableTop="@drawable/dashboard_exit"
+        android:padding="25dp"
         android:text="Transfers" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_schedules"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_below="@+id/dashboard_checkbook"
+        android:layout_margin="15dp"
         android:drawableTop="@drawable/dashboard_exit"
+        android:padding="25dp"
         android:text="Schedules" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_statistics"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dashboard_checkbook"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_below="@+id/dashboard_transfers"
+        android:layout_margin="15dp"
         android:layout_toRightOf="@+id/dashboard_schedules"
         android:drawableTop="@drawable/dashboard_exit"
+        android:padding="25dp"
         android:text="Statistics" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_exit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_below="@+id/dashboard_schedules"
+        android:layout_margin="15dp"
         android:drawableTop="@drawable/dashboard_exit"
+        android:padding="25dp"
         android:text="@string/exit" >
     </Button>
 

@@ -41,25 +41,25 @@ public class Main extends SherlockActivity {
 				Intent intentCheckbook = new Intent(Main.this, Accounts.class);
 				startActivity(intentCheckbook);
 				break;
-				
+
 			case R.id.dashboard_transfers:
 				createDatabase();
 				Intent intentTransfers = new Intent(Main.this, Accounts.class);
 				startActivity(intentTransfers);
 				break;
-				
+
 			case R.id.dashboard_schedules:
 				createDatabase();
 				Intent intentSchedules = new Intent(Main.this, Accounts.class);
 				startActivity(intentSchedules);
 				break;
-				
+
 			case R.id.dashboard_statistics:
 				createDatabase();
 				Intent intentStats = new Intent(Main.this, Accounts.class);
 				startActivity(intentStats);
 				break;
-				
+
 
 			case R.id.dashboard_exit:
 				if (myDB != null){
@@ -67,6 +67,7 @@ public class Main extends SherlockActivity {
 				}
 
 				Main.this.finish();
+				onDestroy();
 				break;
 
 			}
@@ -116,7 +117,7 @@ public class Main extends SherlockActivity {
 				String sqlCommandTransactions = "CREATE TABLE IF NOT EXISTS "
 						+ tblTrans
 						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
-				
+
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
 						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR);";
@@ -132,7 +133,7 @@ public class Main extends SherlockActivity {
 
 				//Create Category table
 				myDB.execSQL(sqlCommandCategory);
-				
+
 				//Add some default categories
 				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
 						+ " (CateName)" + " VALUES ('Gas');";

@@ -591,8 +591,8 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		// show it
 		alertDialog.show();
 
-	}
-
+	}	
+	
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {

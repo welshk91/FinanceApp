@@ -13,6 +13,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 public class Main extends SherlockActivity {	
 	//Variables for the Views
 	Button Checkbook_Button;
+	Button Manage_Button;
 	Button Exit_Button;
 
 	//Variables for the Database
@@ -42,10 +43,10 @@ public class Main extends SherlockActivity {
 				startActivity(intentCheckbook);
 				break;
 
-			case R.id.dashboard_transfers:
-				createDatabase();
-				Intent intentTransfers = new Intent(Main.this, Accounts.class);
-				startActivity(intentTransfers);
+			case R.id.dashboard_manage:
+			//	createDatabase();
+				Intent intentManage = new Intent(Main.this, Manage.class);
+				startActivity(intentManage);
 				break;
 
 			case R.id.dashboard_schedules:
@@ -82,6 +83,8 @@ public class Main extends SherlockActivity {
 		setContentView(R.layout.main);
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
+		Manage_Button = (Button) findViewById(R.id.dashboard_manage);
+		Manage_Button.setOnClickListener(buttonListener);
 		Exit_Button = (Button) findViewById(R.id.dashboard_exit);
 		Exit_Button.setOnClickListener(buttonListener);
 

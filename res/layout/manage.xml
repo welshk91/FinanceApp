@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:theme="@style/Theme.Sherlock" >
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your current checkbook is " >
+    </TextView>
+
+    <Button
+        android:id="@+id/ButtonBackup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TextView01"
+        android:layout_margin="5dp"
+        android:onClick="backupDialog"
+        android:padding="15dp"
+        android:text="Backup" >
+    </Button>
+
+    <Button
+        android:id="@+id/ButtonRestore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TextView01"
+        android:layout_margin="5dp"
+        android:layout_toRightOf="@+id/ButtonBackup"
+        android:onClick="restoreDialog"
+        android:padding="15dp"
+        android:text="Restore" >
+    </Button>
+
+</RelativeLayout>

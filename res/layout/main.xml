@@ -15,34 +15,34 @@
     </Button>
 
     <Button
-        android:id="@+id/dashboard_transfers"
+        android:id="@+id/dashboard_schedules"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_margin="15dp"
         android:layout_toRightOf="@+id/dashboard_checkbook"
         android:drawableTop="@drawable/dashboard_exit"
         android:padding="25dp"
-        android:text="Transfers" >
+        android:text="Schedules" >
     </Button>
 
     <Button
-        android:id="@+id/dashboard_schedules"
+        android:id="@+id/dashboard_manage"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_below="@+id/dashboard_checkbook"
         android:layout_margin="15dp"
         android:drawableTop="@drawable/dashboard_exit"
         android:padding="25dp"
-        android:text="Schedules" >
+        android:text="Manage" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_statistics"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_below="@+id/dashboard_transfers"
+        android:layout_below="@+id/dashboard_schedules"
         android:layout_margin="15dp"
-        android:layout_toRightOf="@+id/dashboard_schedules"
+        android:layout_toRightOf="@+id/dashboard_manage"
         android:drawableTop="@drawable/dashboard_exit"
         android:padding="25dp"
         android:text="Statistics" >
@@ -52,7 +52,7 @@
         android:id="@+id/dashboard_exit"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_below="@+id/dashboard_schedules"
+        android:layout_below="@+id/dashboard_manage"
         android:layout_margin="15dp"
         android:drawableTop="@drawable/dashboard_exit"
         android:padding="25dp"

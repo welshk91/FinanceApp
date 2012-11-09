@@ -16,8 +16,8 @@
         android:id="@+id/dashboard_transfers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/dashboard_exit"
         android:layout_toRightOf="@+id/dashboard_checkbook"
+        android:drawableTop="@drawable/dashboard_exit"
         android:text="Transfers" >
     </Button>
 
@@ -25,8 +25,8 @@
         android:id="@+id/dashboard_schedules"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/dashboard_exit"
         android:layout_below="@+id/dashboard_checkbook"
+        android:drawableTop="@drawable/dashboard_exit"
         android:text="Schedules" >
     </Button>
 
@@ -34,9 +34,9 @@
         android:id="@+id/dashboard_statistics"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/dashboard_exit"
         android:layout_below="@+id/dashboard_checkbook"
         android:layout_toRightOf="@+id/dashboard_schedules"
+        android:drawableTop="@drawable/dashboard_exit"
         android:text="Statistics" >
     </Button>
 

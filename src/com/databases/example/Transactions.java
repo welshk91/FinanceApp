@@ -1213,7 +1213,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		// set dialog message
 		alertDialogBuilder
 		.setCancelable(true)
-		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
 				String category = categorySpinner.getText().toString().trim();
@@ -1221,11 +1221,16 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				//Create database and open
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-				//Insert values into accounts table
-				ContentValues categoryValues=new ContentValues();
-				categoryValues.put("CateName",category);
+				try{
+					//Insert values into accounts table
+					ContentValues categoryValues=new ContentValues();
+					categoryValues.put("CateName",category);
 
-				myDB.insert(tblCategory, null, categoryValues);
+					myDB.insert(tblCategory, null, categoryValues);
+				}
+				catch(Exception e){
+					Toast.makeText(Transactions.this, "Could Not Add Category\n" + e, Toast.LENGTH_SHORT).show();
+				}
 
 				//Make sure Database is closed
 				if (myDB != null){
@@ -1237,7 +1242,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 			}
 		})
-		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				dialog.cancel();
 			}

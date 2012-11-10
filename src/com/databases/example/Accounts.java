@@ -578,7 +578,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					} 
 
 					else {
-						Toast.makeText(Accounts.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Accounts.this, "Needs a Name", Toast.LENGTH_SHORT).show();
 					}
 
 				}

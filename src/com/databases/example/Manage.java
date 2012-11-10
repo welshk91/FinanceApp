@@ -41,7 +41,7 @@ public class Manage extends SherlockActivity{
 		// set dialog message
 		alertDialogBuilder
 		.setCancelable(true)
-		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+		.setPositiveButton("Backup",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				EditText backupTextBox = (EditText)categoryAddView.findViewById(R.id.EditBackupName);
 				String backupName = backupTextBox.getText().toString().trim();
@@ -50,7 +50,7 @@ public class Manage extends SherlockActivity{
 
 			}
 		})
-		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				dialog.cancel();
 			}
@@ -80,7 +80,7 @@ public class Manage extends SherlockActivity{
 		// set dialog message
 		alertDialogBuilder
 		.setCancelable(true)
-		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+		.setPositiveButton("Restore",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				EditText restoreTextBox = (EditText)categoryAddView.findViewById(R.id.EditRestoreName);
 				String restoreName = restoreTextBox.getText().toString().trim();
@@ -89,7 +89,7 @@ public class Manage extends SherlockActivity{
 
 			}
 		})
-		.setNegativeButton("No",new DialogInterface.OnClickListener() {
+		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				dialog.cancel();
 			}

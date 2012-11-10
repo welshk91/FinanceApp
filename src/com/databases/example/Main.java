@@ -61,7 +61,6 @@ public class Main extends SherlockActivity {
 				startActivity(intentStats);
 				break;
 
-
 			case R.id.dashboard_exit:
 				if (myDB != null){
 					myDB.close();

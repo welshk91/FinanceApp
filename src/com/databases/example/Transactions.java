@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -117,6 +117,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 	//Adapter for category spinner
 	SimpleCursorAdapter categorySpinnerAdapter = null;
+	Cursor categoryCursor;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -474,12 +475,21 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 							transactionValue = "0";
 						}
 
-						String sqlCommand = "INSERT INTO " + tblTrans
-								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-								+ account_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
+						//Insert values into accounts table
+						ContentValues transactionValues=new ContentValues();
+						transactionValues.put("ToAcctID",account_id);
+						transactionValues.put("TransName",transactionName);
+						transactionValues.put("TransValue",transactionValue);
+						transactionValues.put("TransType",transactionType);
+						transactionValues.put("TransCategory",transactionCategory);
+						transactionValues.put("TransCheckNum",transactionCheckNum);
+						transactionValues.put("TransMemo",transactionMemo);
+						transactionValues.put("TransTime",transactionTime);
+						transactionValues.put("TransDate",transactionDate);
+						transactionValues.put("TransCleared",transactionCleared);
 
+						myDB.insert(tblTrans, null, transactionValues);
 
-						myDB.execSQL(sqlCommand);	
 					} 
 
 					else {
@@ -489,6 +499,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				catch(Exception e){
 					Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
+
+				//Close cursor
+				cursor.close();
 
 				//Close Database if Opened
 				if (myDB != null){
@@ -609,9 +622,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 						}
 
 						String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
-						String insertCommand = "INSERT INTO " + tblTrans
-								+ " (TransID, ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-								+ tID + "', '" + aID + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";
 
 						//Open Database
 						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -620,7 +630,20 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 						myDB.execSQL(deleteCommand);
 
 						//Make new record with same ID
-						myDB.execSQL(insertCommand);
+						ContentValues transactionValues=new ContentValues();
+						transactionValues.put("TransID",tID);
+						transactionValues.put("ToAcctID",aID);
+						transactionValues.put("TransName",transactionName);
+						transactionValues.put("TransValue",transactionValue);
+						transactionValues.put("TransType",transactionType);
+						transactionValues.put("TransCategory",transactionCategory);
+						transactionValues.put("TransCheckNum",transactionCheckNum);
+						transactionValues.put("TransMemo",transactionMemo);
+						transactionValues.put("TransTime",transactionTime);
+						transactionValues.put("TransDate",transactionDate);
+						transactionValues.put("TransCleared",transactionCleared);
+
+						myDB.insert(tblTrans, null, transactionValues);
 
 						//Close Database if Opened
 						if (myDB != null){
@@ -1195,17 +1218,16 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
 				String category = categorySpinner.getText().toString().trim();
 
-				//SQL Command
-				final String sqlCategoryAdd = "INSERT INTO " + tblCategory
-						+ " (CateName)" + " VALUES ('"+ category +"');";
-
 				//Create database and open
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-				//Add Category
-				myDB.execSQL(sqlCategoryAdd);
+				//Insert values into accounts table
+				ContentValues categoryValues=new ContentValues();
+				categoryValues.put("CateName",category);
 
-				//Make sure Database is closed even if try-catch fails
+				myDB.insert(tblCategory, null, categoryValues);
+
+				//Make sure Database is closed
 				if (myDB != null){
 					myDB.close();
 				}
@@ -1227,6 +1249,9 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		// show it
 		alertDialog.show();
 
+		//Close cursor
+		categoryCursor.close();
+
 	}//end of showCategoryAdd
 
 	//Method Called to refresh the list of categories if user changes the list
@@ -1238,7 +1263,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
 				+ ";";
 
-		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
+		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		startManagingCursor(categoryCursor);
 		String[] from = new String[] {"CateName"}; 
 		int[] to = new int[] { android.R.id.text1 }; 
@@ -1247,7 +1272,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
 
-		//Make sure Database is closed even if try-catch fails
+		//Close Database
 		if (myDB != null){
 			myDB.close();
 		}

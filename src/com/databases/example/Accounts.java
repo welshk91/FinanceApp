@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -84,7 +85,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		super.onCreate(icicle);
 		setTitle("Accounts");
 		setContentView(R.layout.accounts);
-		
+
 		lv = (ListView)findViewById(R.id.list);
 
 		//Turn clicks on
@@ -106,6 +107,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 				Cursor c = myDB.rawQuery(sqlCommand, null);
+
 				startManagingCursor(c);
 
 				int entry_id = 0;
@@ -268,6 +270,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		Cursor c = myDB.rawQuery(sqlCommand, null);
+
 		startManagingCursor(c);
 
 		int entry_id = 0;
@@ -375,10 +378,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				try{
 					final String ID = adapter.getItem(itemInfo.position).id;
 					String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
-					String insertCommand= "INSERT INTO " + tblAccounts
-							+ " (AcctID, AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
-							+ ID + "', '" + accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-							+ accountDate + "');";
+
 					//Open Database
 					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
@@ -386,7 +386,14 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					myDB.execSQL(deleteCommand);
 
 					//Make new record with same ID
-					myDB.execSQL(insertCommand);
+					ContentValues accountValues=new ContentValues();
+					accountValues.put("AcctID",ID);
+					accountValues.put("AcctName",accountName);
+					accountValues.put("AcctBalance",accountBalance);
+					accountValues.put("AcctTime",accountTime);
+					accountValues.put("AcctDate",accountDate);
+
+					myDB.insert(tblAccounts, null, accountValues);
 
 					//Close Database if Opened
 					if (myDB != null){
@@ -445,9 +452,6 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		if (myDB != null){
 			myDB.close();
 		}
-
-		//results.remove(itemInfo.position);
-		//adapter.notifyDataSetChanged();
 
 		populate();
 
@@ -525,7 +529,8 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					Toast.makeText(Accounts.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 				}
 
-				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
+				//String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
+				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName = ? AND AcctBalance = ? AND AcctTime = ? AND AcctDate = ?;";
 
 				//Open Database
 				myDB = Accounts.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -533,16 +538,17 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				try{
 					if (accountName.length()>0) {
 
-						final String sqlCommand = "INSERT INTO " + tblAccounts
-								+ " (AcctName, AcctBalance, AcctTime, AcctDate)" + " VALUES ('"
-								+ accountName + "', '" + accountBalance + "', '" + accountTime + "', '"
-								+ accountDate + "');";
+						//Insert values into accounts table
+						ContentValues accountValues=new ContentValues();
+						accountValues.put("AcctName",accountName);
+						accountValues.put("AcctBalance",accountBalance);
+						accountValues.put("AcctTime",accountTime);
+						accountValues.put("AcctDate",accountDate);
 
-						//Create a new account
-						myDB.execSQL(sqlCommand);
+						myDB.insert(tblAccounts, null, accountValues);
 
 						//Query the Newly created account
-						Cursor c = myDB.rawQuery(sqlQuery, null);
+						Cursor c = myDB.rawQuery(sqlQuery, new String[] {accountName, accountBalance, accountTime, accountDate});
 						startManagingCursor(c);
 
 						int entry_id = 0;
@@ -552,17 +558,29 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 							entry_id = c.getInt(0);
 						}while(c.moveToNext());
 
-						//Create Starting Balance transaction
-						final String sqlStartingBalance = "INSERT INTO " + tblTrans
-								+ " (ToAcctID, TransName, TransValue, TransType, TransCategory, TransCheckNum, TransMemo, TransTime, TransDate, TransCleared)" + " VALUES ('"
-								+ entry_id + "', '" + transactionName + "', '" + transactionValue + "', '" + transactionType + "', '" + transactionCategory + "', '" + transactionCheckNum + "', '" + transactionMemo + "', '" + transactionTime + "', '" + transactionDate + "', '" + transactionCleared + "');";;
+						//Insert values into accounts table
+						ContentValues transactionValues=new ContentValues();
+						transactionValues.put("ToAcctID",entry_id);
+						transactionValues.put("TransName",transactionName);
+						transactionValues.put("TransValue",transactionValue);
+						transactionValues.put("TransType",transactionType);
+						transactionValues.put("TransCategory",transactionCategory);
+						transactionValues.put("TransCheckNum",transactionCheckNum);
+						transactionValues.put("TransMemo",transactionMemo);
+						transactionValues.put("TransTime",transactionTime);
+						transactionValues.put("TransDate",transactionDate);
+						transactionValues.put("TransCleared",transactionCleared);
 
-								myDB.execSQL(sqlStartingBalance);
+						myDB.insert(tblTrans, null, transactionValues);
+
+						//Close Cursor object
+						c.close();
 					} 
 
 					else {
 						Toast.makeText(Accounts.this, " No Nulls Allowed ", Toast.LENGTH_SHORT).show();
 					}
+
 				}
 				catch(Exception e){
 					Toast.makeText(Accounts.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
@@ -592,7 +610,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		alertDialog.show();
 
 	}	
-	
+
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {

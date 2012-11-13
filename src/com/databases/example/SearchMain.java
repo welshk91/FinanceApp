@@ -3,6 +3,9 @@ package com.databases.example;
 import java.util.ArrayList;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -75,11 +78,11 @@ public class SearchMain extends SherlockFragmentActivity {
 		mViewPager.setOffscreenPageLimit(1);
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
-		
+
 		mTabsAdapter.addTab(SearchAccounts.class, null);
 		mTabsAdapter.addTab(SearchTransactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
-		
+
 		//Toast.makeText(this, "Added tabs...", Toast.LENGTH_SHORT).show();
 	}
 
@@ -187,6 +190,47 @@ public class SearchMain extends SherlockFragmentActivity {
 	public void onDestroy(){
 		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
 		super.onDestroy();
+	}
+
+	//For Menu
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.layout.search_menu, menu);
+		return true;
+	}
+
+	//For Menu Items
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:    
+			Intent intentUp = new Intent(SearchMain.this, Main.class);
+			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intentUp);
+			break;
+
+		case R.id.search_menu_search:    
+			onSearchRequested();
+			break;
+
+		case R.id.search_menu_logout:
+			this.finish();
+			this.moveTaskToBack(true);
+			//super.onDestroy();
+			break;
+
+		case R.id.search_menu_options:    
+			Intent v = new Intent(SearchMain.this, Options.class);
+			startActivity(v);
+			break;
+
+		case R.id.search_menu_help:    
+			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
+			break;
+		}
+		return true;
 	}
 
 }//end SearchTime

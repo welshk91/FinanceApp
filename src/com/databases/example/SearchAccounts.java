@@ -159,7 +159,7 @@ public class SearchAccounts extends Fragment {
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, this.getActivity().MODE_PRIVATE, null);
 		Cursor c = null;
 		try{
-			c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%" });
+			c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
 		}
 		catch(Exception e){
 			Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();

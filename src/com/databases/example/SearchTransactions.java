@@ -34,7 +34,7 @@ public class SearchTransactions extends Fragment {
 	final String tblTrans = "tblTrans";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
-	
+
 	//Statistics
 	int totalRecords;
 
@@ -72,12 +72,12 @@ public class SearchTransactions extends Fragment {
 		TextView records = (TextView)myFragmentView.findViewById(R.id.search_transaction_totals);
 		records.setText("Transaction Records Found: " + totalRecords);
 	}
-	
+
 	public void populate(String query){
-		
+
 		//Reset Statistics
 		totalRecords = 0;
-		
+
 		String sqlCommand = " SELECT * FROM " + tblTrans + 
 				" WHERE TransName " + 
 				" LIKE ?" +
@@ -87,9 +87,13 @@ public class SearchTransactions extends Fragment {
 				" LIKE ?" +
 				" UNION " +
 				" SELECT * FROM " + tblTrans +
-				" WHERE TransDate " + 
+				" WHERE TransCategory " + 
 				" LIKE ?" +
 				" UNION " +
+				" SELECT * FROM " + tblTrans +
+				" WHERE TransDate " + 
+				" LIKE ?" +
+				" UNION " +				
 				" SELECT * FROM " + tblTrans +
 				" WHERE TransTime " + 
 				" LIKE ?" +
@@ -105,7 +109,7 @@ public class SearchTransactions extends Fragment {
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, this.getActivity().MODE_PRIVATE, null);
 		Cursor c = null;
 		try{
-			c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%" });
+			c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
 		}
 		catch(Exception e){
 			Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
@@ -133,9 +137,9 @@ public class SearchTransactions extends Fragment {
 					String cleared = c.getString(c.getColumnIndex("TransCleared"));
 					TransactionRecord entry = new TransactionRecord(id, acctId, name, value, type, category, checknum, memo, date,time, cleared);
 					results.add(entry);	
-					
+
 					totalRecords = totalRecords + 1;
-					
+
 				}while(c.moveToNext());
 			}
 			else{
@@ -155,7 +159,7 @@ public class SearchTransactions extends Fragment {
 
 		//Refresh Balance
 		calculateRecords();
-		
+
 		return;		
 
 	}//end populate

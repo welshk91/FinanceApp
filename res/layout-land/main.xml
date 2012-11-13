@@ -6,60 +6,60 @@
 
     <Button
         android:id="@+id/dashboard_checkbook"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_margin="15dp"
+        android:layout_width="120dp"
+        android:layout_height="110dp"
+        android:layout_margin="5dp"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="10dp"
         android:text="@string/accounts"
         android:textColor="#FFFFFF" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_schedules"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_margin="15dp"
+        android:layout_width="120dp"
+        android:layout_height="110dp"
+        android:layout_margin="5dp"
         android:layout_toRightOf="@+id/dashboard_checkbook"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="10dp"
         android:text="Schedules"
         android:textColor="#FFFFFF" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_manage"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_below="@+id/dashboard_checkbook"
-        android:layout_margin="15dp"
+        android:layout_width="120dp"
+        android:layout_height="110dp"
+        android:layout_margin="5dp"
+        android:layout_toRightOf="@+id/dashboard_schedules"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="10dp"
         android:text="Manage"
         android:textColor="#FFFFFF" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_statistics"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_below="@+id/dashboard_schedules"
-        android:layout_margin="15dp"
+        android:layout_width="120dp"
+        android:layout_height="110dp"
+        android:layout_margin="5dp"
         android:layout_toRightOf="@+id/dashboard_manage"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="10dp"
         android:text="Statistics"
         android:textColor="#FFFFFF" >
     </Button>
 
     <Button
         android:id="@+id/dashboard_exit"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_below="@+id/dashboard_manage"
-        android:layout_margin="15dp"
+        android:layout_width="120dp"
+        android:layout_height="110dp"
+        android:layout_below="@+id/dashboard_statistics"
+        android:layout_alignRight="@+id/dashboard_statistics"
+        android:layout_marginTop="0dp"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="10dp"
         android:text="@string/exit"
         android:textColor="#FFFFFF" >
     </Button>

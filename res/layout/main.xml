@@ -9,9 +9,8 @@
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_margin="15dp"
-        android:background="@android:color/transparent"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="15dp"
         android:text="@string/accounts"
         android:textColor="#FFFFFF" >
     </Button>
@@ -22,9 +21,8 @@
         android:layout_height="125dp"
         android:layout_margin="15dp"
         android:layout_toRightOf="@+id/dashboard_checkbook"
-        android:background="@android:color/transparent"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="15dp"
         android:text="Schedules"
         android:textColor="#FFFFFF" >
     </Button>
@@ -37,7 +35,7 @@
         android:layout_margin="15dp"
         android:background="@android:color/transparent"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="15dp"
         android:text="Manage"
         android:textColor="#FFFFFF" >
     </Button>
@@ -49,9 +47,8 @@
         android:layout_below="@+id/dashboard_schedules"
         android:layout_margin="15dp"
         android:layout_toRightOf="@+id/dashboard_manage"
-        android:background="@android:color/transparent"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="15dp"
         android:text="Statistics"
         android:textColor="#FFFFFF" >
     </Button>
@@ -60,11 +57,11 @@
         android:id="@+id/dashboard_exit"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_below="@+id/dashboard_manage"
-        android:layout_margin="15dp"
-        android:background="@android:color/transparent"
+        android:layout_alignRight="@+id/dashboard_statistics"
+        android:layout_below="@+id/dashboard_statistics"
+        android:layout_marginTop="15dp"
         android:drawableTop="@drawable/dashboard_exit"
-        android:padding="25dp"
+        android:padding="15dp"
         android:text="@string/exit"
         android:textColor="#FFFFFF" >
     </Button>

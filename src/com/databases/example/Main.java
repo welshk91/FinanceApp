@@ -9,6 +9,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 public class Main extends SherlockActivity {	
 	//Variables for the Views
@@ -156,6 +159,43 @@ public class Main extends SherlockActivity {
 
 	}//end createDatabase
 
+	//For Menu
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.layout.main_menu, menu);
+		return true;
+	}
+
+	//For Menu Items
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.main_menu_search:    
+			onSearchRequested();
+			break;
+
+		case R.id.main_menu_logout:
+			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
+			this.finish();
+			this.moveTaskToBack(true);
+			super.onDestroy();
+			break;
+
+		case R.id.main_menu_options:    
+			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			Intent v = new Intent(Main.this, Options.class);
+			startActivity(v);
+			break;
+
+		case R.id.main_menu_help:    
+			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
+			break;
+		}
+		return true;
+	}
+	
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
 	public boolean onSearchRequested() {

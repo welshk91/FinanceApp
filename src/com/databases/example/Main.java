@@ -23,6 +23,7 @@ public class Main extends SherlockActivity {
 	public final String tblAccounts = "tblAccounts";
 	final String tblTrans = "tblTrans";
 	final String tblCategory = "tblCategory";
+	final String tblLinks = "tblLinks";
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 
@@ -53,13 +54,13 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_schedules:
-				createDatabase();
+			//	createDatabase();
 				Intent intentSchedules = new Intent(Main.this, Accounts.class);
 				startActivity(intentSchedules);
 				break;
 
 			case R.id.dashboard_statistics:
-				createDatabase();
+			//	createDatabase();
 				Intent intentStats = new Intent(Main.this, Accounts.class);
 				startActivity(intentStats);
 				break;
@@ -126,6 +127,10 @@ public class Main extends SherlockActivity {
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
 						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR);";
+				
+				String sqlCommandLinks = "CREATE TABLE IF NOT EXISTS "
+						+ tblLinks
+						+ " (LinkID INTEGER PRIMARY KEY, ToID VARCHAR, LinkName VARCHAR, LinkMemo VARCHAR, ParentType VARCHAR);";
 
 				//Create database and open
 				myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -138,10 +143,13 @@ public class Main extends SherlockActivity {
 
 				//Create Category table
 				myDB.execSQL(sqlCommandCategory);
+				
+				//Create Category table
+				myDB.execSQL(sqlCommandLinks);
 
 				//Add some default categories
 				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
-						+ " (CateName)" + " VALUES ('Gas');";
+						+ " (CateName)" + " VALUES ('STARTING BALANCE', 'Gift',  Gas', 'Rent', 'Utilities');";
 
 				//myDB.execSQL(sqlDefaultCategories);
 
@@ -175,6 +183,12 @@ public class Main extends SherlockActivity {
 		case R.id.main_menu_search:    
 			onSearchRequested();
 			break;
+			
+		case R.id.main_menu_links:    
+		//	Toast.makeText(this, "You pressed Links!", Toast.LENGTH_SHORT).show();
+			Intent intentLinks = new Intent(Main.this, Links.class);
+			startActivity(intentLinks);			
+			break;
 
 		case R.id.main_menu_logout:
 			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
@@ -184,7 +198,6 @@ public class Main extends SherlockActivity {
 			break;
 
 		case R.id.main_menu_options:    
-			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
 			Intent v = new Intent(Main.this, Options.class);
 			startActivity(v);
 			break;

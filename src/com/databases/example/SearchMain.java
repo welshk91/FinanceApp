@@ -36,9 +36,7 @@ import android.support.v4.view.ViewPager;
  */
 
 public class SearchMain extends SherlockFragmentActivity {
-
-	//Used in searching to id the last activity
-	//private String SEARCH_CONTEXT = "SearchTime.java";
+	//The word being searched
 	private String query;
 
 	//Variables for the Database
@@ -51,7 +49,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
 		handleIntent(getIntent()); 
-	} 
+	}
 
 	@Override
 	public void onNewIntent(Intent intent) {

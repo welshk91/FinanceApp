@@ -41,6 +41,6 @@
         android:layout_below="@+id/ButtonViewLink"
         android:adjustViewBounds="true"
         android:contentDescription="Your Last Link"
-        android:src="@drawable/red" />
+        android:src="@android:drawable/stat_notify_sdcard" />
 
 </RelativeLayout>

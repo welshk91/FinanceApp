@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:theme="@style/Theme.Sherlock" >
+
+    <ListView
+        android:id="@+id/linkchooser_types"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:entries="@array/link_type"
+        android:padding="5dp" >
+    </ListView>
+
+</RelativeLayout>

@@ -4,20 +4,23 @@ import java.io.File;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,9 @@ public class Links extends SherlockActivity{
 	final int PICKFILE_RESULT_CODE = 1;
 	Intent lastLink;
 	String linkFilePath = null;
+	int linkItem;
+	Intent intent = null;
+	AlertDialog alertDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -39,15 +45,92 @@ public class Links extends SherlockActivity{
 
 	//Method for when you click the Add button
 	public void linkAdd(View v){
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType("*/*");
 
-		try{
-			startActivityForResult(intent,PICKFILE_RESULT_CODE);		
-		}
-		catch(Exception e){
-			Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
-		}
+		LayoutInflater li = LayoutInflater.from(Links.this);
+		View linkChooser = li.inflate(R.layout.link_chooser, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				Links.this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(linkChooser);
+
+		//set Title
+		alertDialogBuilder.setTitle("Attachment");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true);
+
+		// create alert dialog
+		alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+		ListView linkTypes = (ListView)linkChooser.findViewById(R.id.linkchooser_types);
+		linkTypes.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				linkItem = position;
+				//Toast.makeText(getApplicationContext(),"LinkItem: " + position, Toast.LENGTH_SHORT).show();
+				
+				//Call an intent based on what type of link
+				switch (linkItem) {
+
+				//Picture
+				case 0:
+					intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("image/*");
+					break;
+
+				//Video
+				case 1:
+					intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("video/*");
+					break;
+
+				//Audio
+				case 2:
+					intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("audio/*");
+					break;
+
+				//File	
+				case 3:
+					intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("file/*");
+					break;
+
+				//Contact	
+				case 4:
+
+					break;
+
+				//Any	
+				default:
+					intent = new Intent(Intent.ACTION_GET_CONTENT);
+					intent.setType("*/*");
+					break;
+					
+				}//end switch
+
+				try{
+					startActivityForResult(intent,PICKFILE_RESULT_CODE);		
+				}
+				catch(ActivityNotFoundException e){
+					Toast.makeText(Links.this, "No Program Found", Toast.LENGTH_SHORT).show();
+				}
+				catch(Exception e){
+					Toast.makeText(Links.this, "Error: " + e, Toast.LENGTH_LONG).show();
+				}
+				
+				alertDialog.cancel();
+				
+			}
+		});
+
 	}//end of linkAdd
 
 	//Method for when you click the View button

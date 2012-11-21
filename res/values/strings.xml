@@ -39,6 +39,14 @@
         <item>Withdrawl</item>
         <item>Deposit</item>
     </string-array>
+    <string-array name="link_type">
+        <item>Picture</item>
+        <item>Video</item>
+        <item>Audio</item>
+        <item>File</item>
+        <item>Contact</item>
+        <item>Any</item>
+    </string-array>
     <string-array name="transaction_category">
         <item>ALLOWANCE</item>
         <item>ATM</item>

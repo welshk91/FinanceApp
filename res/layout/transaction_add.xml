@@ -112,7 +112,7 @@
             android:text="@string/memo:" >
         </TextView>
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/EditTransactionMemo"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
             android:maxLength="200"
             android:maxLines="2" >
-        </EditText>
+        </AutoCompleteTextView>
 
         <TextView
             android:id="@+id/TextView07"

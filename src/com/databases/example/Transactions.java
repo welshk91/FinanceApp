@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -65,7 +66,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	Spinner tType;	
 	Spinner tCategory;
 	EditText tCheckNum;
-	EditText tMemo;
+	AutoCompleteTextView tMemo;
 	static Button tTime;
 	static Button tDate;
 	Button tCategoryAdd;
@@ -103,7 +104,8 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
 	ArrayList<TransactionRecord> results = new ArrayList<TransactionRecord>();
-
+	ArrayList<String> dropdownResults = new ArrayList<String>();
+	
 	//Variables for the transaction Table
 	String transactionName = null;
 	String transactionValue = null;
@@ -178,6 +180,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	//Populate view with all the transactions of selected account
 	protected void populate(){
 		results = new ArrayList<TransactionRecord>();
+		dropdownResults = new ArrayList<String>();
 
 		//TextView instructing user if database is empty
 		TextView noResult = (TextView)findViewById(R.id.transaction_noTransaction);
@@ -222,6 +225,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 					TransactionRecord entry = new TransactionRecord(id, acctId, name, value,type,category,checknum,memo,time,date,cleared);
 					results.add(entry);
+					dropdownResults.add(memo);
 
 					//Add account balance to total balance
 					try{
@@ -393,6 +397,24 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		LayoutInflater li = LayoutInflater.from(Transactions.this);
 		promptsView = li.inflate(R.layout.transaction_add, null);
 
+		tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+		tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+		tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+		tCategoryAdd= (Button)promptsView.findViewById(R.id.transaction_add_category);
+		tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
+		tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+
+		//Adapter for memo's autocomplete
+		//final String[] COUNTRIES = new String[] {
+		//	"Belgium", "France", "Italy", "Germany", "Spain"
+		//};
+		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
+		tMemo.setAdapter(dropdownAdapter);
+		
 		final Calendar c = Calendar.getInstance();
 		final int year = c.get(Calendar.YEAR);
 		final int month = c.get(Calendar.MONTH);
@@ -416,7 +438,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
-
+		
 		//set Title
 		alertDialogBuilder.setTitle("Add A Transaction");
 
@@ -427,18 +449,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				// CODE FOR "OK"
-
-				tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-				tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-				tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-				tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-				tCategoryAdd= (Button)promptsView.findViewById(R.id.transaction_add_category);
-				tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-				tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
-				tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-				tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-				tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-
+				
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = tCategory.getSelectedItemPosition();
 				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
@@ -562,11 +573,18 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 		tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-		tMemo = (EditText)promptsView.findViewById(R.id.EditTransactionMemo);
+		tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
 
+		//Set the adapter for memo's autocomplete
+		final String[] COUNTRIES = new String[] {
+			"Belgium", "France", "Italy", "Germany", "Spain"
+		};
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+		tMemo.setAdapter(adapter);
+		
 		tName.setText(name);
 		tValue.setText(value);
 		ArrayAdapter<String> myAdap = (ArrayAdapter<String>) tType.getAdapter();

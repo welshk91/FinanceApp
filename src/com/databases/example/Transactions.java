@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
+import android.text.method.TextKeyListener;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -412,6 +413,10 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
 		
+		//Add dictionary back to autocomplete
+		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+		tMemo.setKeyListener(input);
+		
 		final Calendar c = Calendar.getInstance();
 		final int year = c.get(Calendar.YEAR);
 		final int month = c.get(Calendar.MONTH);
@@ -578,6 +583,10 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		//Set the adapter for memo's autocomplete
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
+		
+		//Add dictionary back to autocomplete
+		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+		tMemo.setKeyListener(input);
 		
 		tName.setText(name);
 		tValue.setText(value);

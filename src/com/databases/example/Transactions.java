@@ -409,9 +409,6 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 
 		//Adapter for memo's autocomplete
-		//final String[] COUNTRIES = new String[] {
-		//	"Belgium", "France", "Italy", "Germany", "Spain"
-		//};
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
 		
@@ -579,11 +576,8 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
 
 		//Set the adapter for memo's autocomplete
-		final String[] COUNTRIES = new String[] {
-			"Belgium", "France", "Italy", "Germany", "Spain"
-		};
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
-		tMemo.setAdapter(adapter);
+		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
+		tMemo.setAdapter(dropdownAdapter);
 		
 		tName.setText(name);
 		tValue.setText(value);

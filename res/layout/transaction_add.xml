@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView06"
             android:layout_toRightOf="@+id/TextView05"
-            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
             android:maxLength="200"
             android:maxLines="2" >
         </AutoCompleteTextView>

@@ -701,11 +701,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				try{
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.account_layout);
-					String startColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_startBackgroundColor), "#E8E8E8");
-					String endColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_endBackgroundColor), "#FFFFFF");
+					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
+							new int[] {startColor,endColor});
 
 					if(useDefaults){
 						l.setBackgroundResource(R.drawable.account_list_style);
@@ -738,7 +738,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				}
 
 				try{
-					String DefaultColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameColor), "#000000");
+					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
 					TextView t;
 					t=(TextView)v.findViewById(R.id.account_name);
 
@@ -746,7 +746,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 						t.setTextColor(Color.parseColor("#000000"));
 					}
 					else{
-						t.setTextColor(Color.parseColor(DefaultColor));
+						t.setTextColor(DefaultColor);
 					}
 
 				}
@@ -781,7 +781,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				}
 
 				try{
-					String DefaultColor = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldColor), "#0099CC");
+					int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
 					TextView tmp;
 
 					if(useDefaults){
@@ -794,11 +794,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					}
 					else{
 						tmp=(TextView)v.findViewById(R.id.account_balance);
-						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp.setTextColor(DefaultColor);
 						tmp=(TextView)v.findViewById(R.id.account_date);
-						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp.setTextColor(DefaultColor);
 						tmp=(TextView)v.findViewById(R.id.account_time);
-						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp.setTextColor(DefaultColor);
 					}
 
 				}

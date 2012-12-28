@@ -1238,18 +1238,10 @@ containing a value of this type.
         /**  Preferences 
          */
         public static final int pref_category=0x7f060004;
-        public static final int pref_key_account_endBackgroundColor=0x7f060037;
-        public static final int pref_key_account_fieldColor=0x7f06003b;
-        public static final int pref_key_account_fieldSize=0x7f06003a;
-        public static final int pref_key_account_nameColor=0x7f060039;
-        public static final int pref_key_account_nameSize=0x7f060038;
-        public static final int pref_key_account_startBackgroundColor=0x7f060036;
-        public static final int pref_key_transaction_endBackgroundColor=0x7f060031;
-        public static final int pref_key_transaction_fieldColor=0x7f060035;
-        public static final int pref_key_transaction_fieldSize=0x7f060034;
-        public static final int pref_key_transaction_nameColor=0x7f060033;
-        public static final int pref_key_transaction_nameSize=0x7f060032;
-        public static final int pref_key_transaction_startBackgroundColor=0x7f060030;
+        public static final int pref_key_account_fieldSize=0x7f060033;
+        public static final int pref_key_account_nameSize=0x7f060032;
+        public static final int pref_key_transaction_fieldSize=0x7f060031;
+        public static final int pref_key_transaction_nameSize=0x7f060030;
         public static final int press_color_to_apply=0x7f060003;
         public static final int search_hint=0x7f06001c;
         public static final int type_=0x7f060029;

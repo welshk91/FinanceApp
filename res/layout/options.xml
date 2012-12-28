@@ -22,21 +22,20 @@
                 android:summary="Change background"
                 android:title="Background" >
 
-                <EditTextPreference
-                    android:defaultValue="#E8E8E8"
-                    android:inputType="text|phone"
-                    android:key="@string/pref_key_transaction_startBackgroundColor"
-                    android:summary="Starting background color of each transaction row. Default is &apos;#E8E8E8&apos;"
-                    android:title="Background Starting Color" >
-                </EditTextPreference>
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-1513240"
+                    android:key="key_transaction_startBackgroundColor"
+                    android:summary="Starting background color of each transaction row."
+                    android:title="Background Starting Color" />
 
-                <EditTextPreference
-                    android:defaultValue="#FFFFFF"
-                    android:inputType="text|phone"
-                    android:key="@string/pref_key_transaction_endBackgroundColor"
-                    android:summary="Ending background color of each transaction row. Default is &apos;#FFFFFF&apos;"
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-1"
+                    android:key="key_transaction_endBackgroundColor"
+                    android:summary="Ending background color of each transaction row."
                     android:title="Background Ending Color" >
-                </EditTextPreference>
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
             </PreferenceCategory>
 
             <PreferenceCategory
@@ -52,13 +51,13 @@
                     android:title="Size of main field" >
                 </EditTextPreference>
 
-                <EditTextPreference
-                    android:defaultValue="#000000"
-                    android:inputType="number|phone"
-                    android:key="@string/pref_key_transaction_nameColor"
-                    android:summary="Change the color of Name field. Default is &apos;#000000&apos;"
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-16777216"
+                    android:key="key_transaction_nameColor"
+                    android:summary="Change the color of Name field."
                     android:title="Color of main field" >
-                </EditTextPreference>
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
                 <EditTextPreference
                     android:defaultValue="10"
@@ -69,13 +68,13 @@
                     android:title="Size of secondary fields" >
                 </EditTextPreference>
 
-                <EditTextPreference
-                    android:defaultValue="#0099CC"
-                    android:inputType="number|phone"
-                    android:key="@string/pref_key_transaction_fieldColor"
-                    android:summary="Change the color of Name field. Default is &apos;#0099CC&apos;"
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-16737844"
+                    android:key="key_transaction_fieldColor"
+                    android:summary="Change the color of Name field."
                     android:title="Color of secondary fields" >
-                </EditTextPreference>
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
             </PreferenceCategory>
 
             <PreferenceCategory
@@ -169,21 +168,21 @@
             android:summary="Change background"
             android:title="Background" >
 
-            <EditTextPreference
-                android:defaultValue="#E8E8E8"
-                android:inputType="text|phone"
-                android:key="@string/pref_key_account_startBackgroundColor"
-                android:summary="Starting background color of each account row. Default is &apos;#E8E8E8&apos;"
+            <net.margaritov.preference.colorpicker.ColorPickerPreference
+                alphaSlider="true"
+                android:defaultValue="-1513240"
+                android:key="key_account_startBackgroundColor"
+                android:summary="Starting background color of each account row."
                 android:title="Background Starting color" >
-            </EditTextPreference>
+            </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
-            <EditTextPreference
-                android:defaultValue="#FFFFFF"
-                android:inputType="text|phone"
-                android:key="@string/pref_key_account_endBackgroundColor"
-                android:summary="Ending background color of each account row. Default is &apos;#FFFFFF&apos;"
+            <net.margaritov.preference.colorpicker.ColorPickerPreference
+                alphaSlider="true"
+                android:defaultValue="-1"
+                android:key="key_account_endBackgroundColor"
+                android:summary="Ending background color of each account row."
                 android:title="Background Ending Color" >
-            </EditTextPreference>
+            </net.margaritov.preference.colorpicker.ColorPickerPreference>
         </PreferenceCategory>
 
         <PreferenceCategory
@@ -199,13 +198,13 @@
                 android:title="Size of main field" >
             </EditTextPreference>
 
-            <EditTextPreference
-                android:defaultValue="#000000"
-                android:inputType="number|phone"
-                android:key="@string/pref_key_account_nameColor"
-                android:summary="Change the color of Name field. Default is &apos;#000000&apos;"
+            <net.margaritov.preference.colorpicker.ColorPickerPreference
+                alphaSlider="true"
+                android:defaultValue="-16777216"
+                android:key="key_account_nameColor"
+                android:summary="Change the color of Name field."
                 android:title="Color of main field" >
-            </EditTextPreference>
+            </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
             <EditTextPreference
                 android:defaultValue="10"
@@ -216,13 +215,13 @@
                 android:title="Size of secondary fields" >
             </EditTextPreference>
 
-            <EditTextPreference
-                android:defaultValue="#0099CC"
-                android:inputType="number|phone"
-                android:key="@string/pref_key_account_fieldColor"
-                android:summary="Change the color of secondary fields. Default is &apos;#0099CC&apos;"
+            <net.margaritov.preference.colorpicker.ColorPickerPreference
+                alphaSlider="true"
+                android:defaultValue="-16737844"
+                android:key="key_account_fieldColor"
+                android:summary="Change the color of secondary fields."
                 android:title="Color of secondary fields" >
-            </EditTextPreference>
+            </net.margaritov.preference.colorpicker.ColorPickerPreference>
         </PreferenceCategory>
 
         <!-- VISIBILITY -->
@@ -303,13 +302,6 @@
             android:summary="Will delete all the checkbook data. Use with extreme caution."
             android:title="Delete Checkbook" >
         </Preference>
-
-        <net.margaritov.preference.colorpicker.ColorPickerPreference
-            alphaSlider="true"
-            android:defaultValue="00999999"
-            android:key="pref_colorPicker"
-            android:summary="Testing ColorPicker..."
-            android:title="ColorPicker" />
     </PreferenceCategory>
 
 </PreferenceScreen>

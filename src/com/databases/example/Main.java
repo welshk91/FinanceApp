@@ -2,8 +2,11 @@ package com.databases.example;
 
 import java.util.ArrayList;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -84,6 +87,13 @@ public class Main extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		//For Clear preferences!!!!!! REMOVE EVENTUALLY
+	    //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		//Editor editor = settings.edit();
+		//editor.clear();
+		//editor.commit();
+		
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
 		Manage_Button = (Button) findViewById(R.id.dashboard_manage);

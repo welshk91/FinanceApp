@@ -22,18 +22,10 @@
     <string name="memo:">MEMO:</string>
     <string name="date:">DATE:</string>
     <string name="cleared:">CLEARED:</string>
-    <string name="pref_key_transaction_startBackgroundColor">key_transaction_startBackgroundColor</string>
-    <string name="pref_key_transaction_endBackgroundColor">key_transaction_endBackgroundColor</string>
     <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
-    <string name="pref_key_transaction_nameColor">key_transaction_nameColor</string>
     <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
-    <string name="pref_key_transaction_fieldColor">key_transaction_fieldColor</string>
-    <string name="pref_key_account_startBackgroundColor">key_account_startBackgroundColor</string>
-    <string name="pref_key_account_endBackgroundColor">key_account_endBackgroundColor</string>
     <string name="pref_key_account_nameSize">key_account_nameSize</string>
-    <string name="pref_key_account_nameColor">key_account_nameColor</string>
     <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
-    <string name="pref_key_account_fieldColor">key_account_fieldColor</string>
 
     <string-array name="transaction_type">
         <item>Withdrawl</item>

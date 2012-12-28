@@ -106,7 +106,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	SQLiteDatabase myDB;
 	ArrayList<TransactionRecord> results = new ArrayList<TransactionRecord>();
 	ArrayList<String> dropdownResults = new ArrayList<String>();
-	
+
 	//Variables for the transaction Table
 	String transactionName = null;
 	String transactionValue = null;
@@ -412,11 +412,11 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		//Adapter for memo's autocomplete
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
-		
+
 		//Add dictionary back to autocomplete
 		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
 		tMemo.setKeyListener(input);
-		
+
 		final Calendar c = Calendar.getInstance();
 		final int year = c.get(Calendar.YEAR);
 		final int month = c.get(Calendar.MONTH);
@@ -440,7 +440,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
-		
+
 		//set Title
 		alertDialogBuilder.setTitle("Add A Transaction");
 
@@ -451,7 +451,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				// CODE FOR "OK"
-				
+
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = tCategory.getSelectedItemPosition();
 				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
@@ -583,11 +583,11 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		//Set the adapter for memo's autocomplete
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
-		
+
 		//Add dictionary back to autocomplete
 		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
 		tMemo.setKeyListener(input);
-		
+
 		tName.setText(name);
 		tValue.setText(value);
 		ArrayAdapter<String> myAdap = (ArrayAdapter<String>) tType.getAdapter();
@@ -875,11 +875,12 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				try{
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.transaction_layout);
-					String startColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_startBackgroundColor), "#E8E8E8");
-					String endColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_endBackgroundColor), "#FFFFFF");
+					int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
+
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {Color.parseColor(startColor),Color.parseColor(endColor)});
+							new int[] {startColor,endColor});
 
 					if(useDefaults){
 						l.setBackgroundResource(R.drawable.transaction_list_style);
@@ -913,7 +914,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				}
 
 				try{
-					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameColor), "#000000");
+					int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#000000"));
 					TextView t;
 					t=(TextView)v.findViewById(R.id.transaction_name);
 
@@ -921,7 +922,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 						t.setTextColor(Color.parseColor("#000000"));
 					}
 					else{
-						t.setTextColor(Color.parseColor(DefaultColor));
+						t.setTextColor(DefaultColor);
 					}
 
 				}
@@ -976,7 +977,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				}
 
 				try{
-					String DefaultColor = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldColor), "#0099CC");
+					int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#0099CC"));
 					TextView tmp;
 
 					if(useDefaults){
@@ -986,14 +987,34 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 						tmp.setTextColor(Color.parseColor("#0099CC"));
 						tmp=(TextView)v.findViewById(R.id.transaction_time);
 						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_category);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_memo);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
+						tmp=(TextView)v.findViewById(R.id.transaction_type);
+						tmp.setTextColor(Color.parseColor("#0099CC"));
 					}
 					else{
 						tmp=(TextView)v.findViewById(R.id.transaction_value);
-						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp.setTextColor(DefaultColor);
 						tmp=(TextView)v.findViewById(R.id.transaction_date);
-						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp.setTextColor(DefaultColor);
 						tmp=(TextView)v.findViewById(R.id.transaction_time);
-						tmp.setTextColor(Color.parseColor(DefaultColor));
+						tmp.setTextColor(DefaultColor);
+						tmp=(TextView)v.findViewById(R.id.transaction_category);
+						tmp.setTextColor(DefaultColor);
+						tmp=(TextView)v.findViewById(R.id.transaction_memo);
+						tmp.setTextColor(DefaultColor);
+						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
+						tmp.setTextColor(DefaultColor);
+						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
+						tmp.setTextColor(DefaultColor);
+						tmp=(TextView)v.findViewById(R.id.transaction_type);
+						tmp.setTextColor(DefaultColor);
 					}
 
 				}

@@ -303,6 +303,13 @@
             android:summary="Will delete all the checkbook data. Use with extreme caution."
             android:title="Delete Checkbook" >
         </Preference>
+
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
+            alphaSlider="true"
+            android:defaultValue="00999999"
+            android:key="pref_colorPicker"
+            android:summary="Testing ColorPicker..."
+            android:title="ColorPicker" />
     </PreferenceCategory>
 
 </PreferenceScreen>

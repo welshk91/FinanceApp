@@ -1,6 +1,7 @@
 package com.databases.example;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import net.margaritov.preference.colorpicker.ColorPickerPreference;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,13 +11,15 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.widget.Toast;
 
-public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
+public class Options extends PreferenceActivity implements OnSharedPreferenceChangeListener{
 
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
@@ -31,6 +34,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		checkDefaults();
 
+		//Reset Preferences
 		Preference prefReset = (Preference) findPreference("pref_reset");
 		prefReset
 		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -42,6 +46,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		});
 
+		//Clear Database
 		Preference prefClearDB = (Preference) findPreference("pref_clearDB");
 		prefClearDB
 		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -52,6 +57,18 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			}
 
 		});
+		
+		//Color Picker	
+		
+//		((ColorPickerPreference)findPreference("pref_colorPicker")).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+//
+//			@Override
+//			public boolean onPreferenceChange(Preference preference, Object newValue) {
+//				preference.setSummary(ColorPickerPreference.convertToARGB(Integer.valueOf(String.valueOf(newValue))));
+//				return true;
+//			}
+//
+//        });
 
 	}//end onCreate
 
@@ -189,7 +206,3 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 
 }//end of Options
-
-
-
-

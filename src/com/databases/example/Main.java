@@ -1,5 +1,7 @@
 package com.databases.example;
 
+import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
+
 import java.util.ArrayList;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,9 +19,17 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class Main extends SherlockActivity {	
+	// this is your preferred flag
+	private static final int _ReqCreatePattern = 0;
+	// this is your preferred flag
+	private static final int _ReqSignIn = 1;
+	String savedPattern = null;
+
 	//Variables for the Views
 	Button Checkbook_Button;
 	Button Manage_Button;
+	Button Stats_Button;
+	Button Schedule_Button;
 	Button Exit_Button;
 
 	//Variables for the Database
@@ -51,21 +61,23 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_manage:
-			//	createDatabase();
+				//	createDatabase();
 				Intent intentManage = new Intent(Main.this, Manage.class);
 				startActivity(intentManage);
 				break;
 
 			case R.id.dashboard_schedules:
-			//	createDatabase();
-				Intent intentSchedules = new Intent(Main.this, Accounts.class);
-				startActivity(intentSchedules);
+				//	createDatabase();
+				//Intent intentSchedules = new Intent(Main.this, Accounts.class);
+				//startActivity(intentSchedules);
+				confirmPattern();
 				break;
 
 			case R.id.dashboard_statistics:
-			//	createDatabase();
-				Intent intentStats = new Intent(Main.this, Accounts.class);
-				startActivity(intentStats);
+				//	createDatabase();
+				//	Intent intentStats = new Intent(Main.this, Accounts.class);
+				//	startActivity(intentStats);
+				drawPattern();
 				break;
 
 			case R.id.dashboard_exit:
@@ -87,17 +99,21 @@ public class Main extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		//For Clear preferences!!!!!! REMOVE EVENTUALLY
-	    //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		//SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		//Editor editor = settings.edit();
 		//editor.clear();
 		//editor.commit();
-		
+
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
 		Manage_Button = (Button) findViewById(R.id.dashboard_manage);
 		Manage_Button.setOnClickListener(buttonListener);
+		Schedule_Button = (Button) findViewById(R.id.dashboard_schedules);
+		Schedule_Button.setOnClickListener(buttonListener);
+		Stats_Button = (Button) findViewById(R.id.dashboard_statistics);
+		Stats_Button.setOnClickListener(buttonListener);
 		Exit_Button = (Button) findViewById(R.id.dashboard_exit);
 		Exit_Button.setOnClickListener(buttonListener);
 
@@ -137,7 +153,7 @@ public class Main extends SherlockActivity {
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
 						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR);";
-				
+
 				String sqlCommandLinks = "CREATE TABLE IF NOT EXISTS "
 						+ tblLinks
 						+ " (LinkID INTEGER PRIMARY KEY, ToID VARCHAR, LinkName VARCHAR, LinkMemo VARCHAR, ParentType VARCHAR);";
@@ -153,7 +169,7 @@ public class Main extends SherlockActivity {
 
 				//Create Category table
 				myDB.execSQL(sqlCommandCategory);
-				
+
 				//Create Category table
 				myDB.execSQL(sqlCommandLinks);
 
@@ -193,9 +209,9 @@ public class Main extends SherlockActivity {
 		case R.id.main_menu_search:    
 			onSearchRequested();
 			break;
-			
+
 		case R.id.main_menu_links:    
-		//	Toast.makeText(this, "You pressed Links!", Toast.LENGTH_SHORT).show();
+			//	Toast.makeText(this, "You pressed Links!", Toast.LENGTH_SHORT).show();
 			Intent intentLinks = new Intent(Main.this, Links.class);
 			startActivity(intentLinks);			
 			break;
@@ -218,7 +234,7 @@ public class Main extends SherlockActivity {
 		}
 		return true;
 	}
-	
+
 	//Override method to send the search extra data, letting it know which class called it
 	@Override
 	public boolean onSearchRequested() {
@@ -226,5 +242,42 @@ public class Main extends SherlockActivity {
 		startSearch(null, false, appData, false);
 		return true;
 	}
+
+	public void drawPattern(){
+		Intent intent = new Intent(Main.this, LockPatternActivity.class);
+		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
+		startActivityForResult(intent, _ReqCreatePattern);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case _ReqCreatePattern:
+			if (resultCode == RESULT_OK) {
+				savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
+			}
+			break;
+		case _ReqSignIn:
+			if (resultCode == RESULT_OK) {
+				// signing in ok
+				Toast.makeText(Main.this, "Sign In\nAccepted", Toast.LENGTH_SHORT).show();
+			} else {
+				// signing in failed
+				Toast.makeText(Main.this, "Sign In\nFailed", Toast.LENGTH_SHORT).show();
+			}
+			break;
+
+		}
+
+	}
+
+	public void confirmPattern(){
+		Intent intent = new Intent(Main.this, LockPatternActivity.class);
+		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.ComparePattern);
+		intent.putExtra(LockPatternActivity._Pattern, savedPattern);
+		startActivityForResult(intent, _ReqSignIn);
+	}
+
+
 
 }// end Main

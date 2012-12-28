@@ -1,8 +1,6 @@
 package com.databases.example;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import net.margaritov.preference.colorpicker.ColorPickerPreference;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,15 +9,13 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.widget.Toast;
 
-public class Options extends PreferenceActivity implements OnSharedPreferenceChangeListener{
+public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
@@ -57,25 +53,12 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
 			}
 
 		});
-		
-		//Color Picker	
-		
-//		((ColorPickerPreference)findPreference("pref_colorPicker")).setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-//
-//			@Override
-//			public boolean onPreferenceChange(Preference preference, Object newValue) {
-//				preference.setSummary(ColorPickerPreference.convertToARGB(Integer.valueOf(String.valueOf(newValue))));
-//				return true;
-//			}
-//
-//        });
 
 	}//end onCreate
 
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Toast.makeText(this, "Options Just Changed: ViewDB.Java", Toast.LENGTH_SHORT).show();
 		checkDefaults();
 	}
 

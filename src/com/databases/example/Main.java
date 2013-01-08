@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,7 +24,7 @@ public class Main extends SherlockActivity {
 	private static final int _ReqCreatePattern = 0;
 	// this is your preferred flag
 	private static final int _ReqSignIn = 1;
-	String savedPattern = null;
+	//String savedPattern = null;
 
 	//Variables for the Views
 	Button Checkbook_Button;
@@ -77,7 +78,7 @@ public class Main extends SherlockActivity {
 				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
 				//	startActivity(intentStats);
-				drawPattern();
+				//drawPattern();
 				break;
 
 			case R.id.dashboard_exit:
@@ -98,13 +99,21 @@ public class Main extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
 		//For Clear preferences!!!!!! REMOVE EVENTUALLY
 		//SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		//Editor editor = settings.edit();
 		//editor.clear();
 		//editor.commit();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
+		boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
+		
+		if(lockEnabled){
+			confirmPattern();
+		}
+
+		setContentView(R.layout.main);
 
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
@@ -243,20 +252,26 @@ public class Main extends SherlockActivity {
 		return true;
 	}
 
-	public void drawPattern(){
+	//Confirm Lockscreen
+	public void confirmPattern(){
 		Intent intent = new Intent(Main.this, LockPatternActivity.class);
-		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
-		startActivityForResult(intent, _ReqCreatePattern);
+		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.ComparePattern);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
+		String savedPattern = prefs.getString("myPattern", null);
+		
+		if(savedPattern!=null){
+			intent.putExtra(LockPatternActivity._Pattern, savedPattern);
+			startActivityForResult(intent, _ReqSignIn);
+		}
+		else{
+			Toast.makeText(Main.this, "Cannot Use Lockscreen\nNo Pattern Set Yet", Toast.LENGTH_LONG).show();
+		}
 	}
-
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case _ReqCreatePattern:
-			if (resultCode == RESULT_OK) {
-				savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
-			}
-			break;
 		case _ReqSignIn:
 			if (resultCode == RESULT_OK) {
 				// signing in ok
@@ -264,6 +279,9 @@ public class Main extends SherlockActivity {
 			} else {
 				// signing in failed
 				Toast.makeText(Main.this, "Sign In\nFailed", Toast.LENGTH_SHORT).show();
+				this.finish();
+				this.moveTaskToBack(true);
+				super.onDestroy();
 			}
 			break;
 
@@ -271,13 +289,4 @@ public class Main extends SherlockActivity {
 
 	}
 
-	public void confirmPattern(){
-		Intent intent = new Intent(Main.this, LockPatternActivity.class);
-		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.ComparePattern);
-		intent.putExtra(LockPatternActivity._Pattern, savedPattern);
-		startActivityForResult(intent, _ReqSignIn);
-	}
-
-
-
-}// end Main
+}// end Main 

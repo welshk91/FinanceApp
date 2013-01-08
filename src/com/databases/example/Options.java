@@ -1,5 +1,7 @@
 package com.databases.example;
 
+import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
+
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -19,6 +21,9 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
+	// this is your preferred flag
+	private static final int _ReqCreatePattern = 0;
+	String savedPattern = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -49,6 +54,18 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 			public boolean onPreferenceClick(Preference preference) {
 				clearDB();
+				return true;
+			}
+
+		});
+
+		//Draw Pattern
+		Preference prefDraw = (Preference) findPreference("pref_setlock");
+		prefDraw
+		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				drawPattern();
 				return true;
 			}
 
@@ -120,7 +137,8 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 				//Reset Preferences
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);
 				prefs.edit().clear().commit();
-				prefs.edit().putBoolean("checkbox_default", true).commit();
+				finish();
+				startActivity(getIntent());
 			}
 		})
 		.setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -187,5 +205,24 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 	}//end of destroyDatabase
 
+	//Draw a lockscreen pattern
+	public void drawPattern(){
+		Intent intent = new Intent(this, LockPatternActivity.class);
+		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
+		startActivityForResult(intent, _ReqCreatePattern);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case _ReqCreatePattern:
+			if (resultCode == RESULT_OK) {
+				savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
+				SharedPreferences preferences = getPreferenceManager().getSharedPreferences();
+				preferences.edit().putString("myPattern", savedPattern).commit();
+			}
+			break;
+		}
+	}
 
 }//end of Options

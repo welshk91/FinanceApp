@@ -4,6 +4,8 @@
     android:layout_height="fill_parent"
     android:key="pref_screen_default" >
 
+    <!-- APPEARANCE -->
+
     <PreferenceCategory
         android:key="category_appearance"
         android:summary="Change looks"
@@ -224,8 +226,6 @@
             </net.margaritov.preference.colorpicker.ColorPickerPreference>
         </PreferenceCategory>
 
-        <!-- VISIBILITY -->
-
         <PreferenceCategory
             android:summary="Change fields"
             android:title="Fields" >
@@ -268,9 +268,32 @@
         </PreferenceCategory>
     </PreferenceScreen>
 
+    <!-- BEHAVIOR -->
+
     <PreferenceCategory
         android:summary="Change behavior"
         android:title="Behavior" >
+
+        <PreferenceScreen
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:key="pref_screen_lock"
+            android:summary="Lockscreen options"
+            android:title="Lockscreen" >
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="checkbox_lock_enabled"
+                android:summary="Enable lockscreen"
+                android:title="Lockscreen" >
+            </CheckBoxPreference>
+
+            <Preference
+                android:key="pref_setlock"
+                android:summary="Define a pattern for your lockscreen"
+                android:title="Set a Pattern" >
+            </Preference>
+        </PreferenceScreen>
 
         <CheckBoxPreference
             android:defaultValue="true"

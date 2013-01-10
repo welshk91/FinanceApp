@@ -34,6 +34,7 @@ import android.widget.Toast;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -86,7 +87,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		setTitle("Accounts");
 		setContentView(R.layout.accounts);
 
-		lv = (ListView)findViewById(R.id.list);
+		lv = (ListView)findViewById(R.id.account_list);
 
 		//Turn clicks on
 		lv.setClickable(true);

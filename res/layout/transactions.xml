@@ -4,7 +4,7 @@
     android:layout_height="fill_parent" >
 
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/transaction_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/transaction_total_balance"

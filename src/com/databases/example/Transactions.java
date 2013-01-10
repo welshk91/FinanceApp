@@ -129,7 +129,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		setContentView(R.layout.transactions);
 
-		lv = (ListView)findViewById(R.id.list);
+		lv = (ListView)findViewById(R.id.transaction_list);
 
 		//Turn clicks on
 		lv.setClickable(true);

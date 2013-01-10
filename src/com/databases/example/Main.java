@@ -20,11 +20,8 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 public class Main extends SherlockActivity {	
-	// this is your preferred flag
-	private static final int _ReqCreatePattern = 0;
-	// this is your preferred flag
+	//Flag used for lockscreen
 	private static final int _ReqSignIn = 1;
-	//String savedPattern = null;
 
 	//Variables for the Views
 	Button Checkbook_Button;
@@ -50,6 +47,39 @@ public class Main extends SherlockActivity {
 	//Variables for the ListView
 	public ArrayList<String> results = new ArrayList<String>();
 
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		//For Clear preferences!!!!!! REMOVE EVENTUALLY
+		//SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		//Editor editor = settings.edit();
+		//editor.clear();
+		//editor.commit();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
+		boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
+		
+		if(lockEnabled){
+			confirmPattern();
+		}
+
+		setContentView(R.layout.main);
+
+		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
+		Checkbook_Button.setOnClickListener(buttonListener);
+		Manage_Button = (Button) findViewById(R.id.dashboard_manage);
+		Manage_Button.setOnClickListener(buttonListener);
+		Schedule_Button = (Button) findViewById(R.id.dashboard_schedules);
+		Schedule_Button.setOnClickListener(buttonListener);
+		Stats_Button = (Button) findViewById(R.id.dashboard_statistics);
+		Stats_Button.setOnClickListener(buttonListener);
+		Exit_Button = (Button) findViewById(R.id.dashboard_exit);
+		Exit_Button.setOnClickListener(buttonListener);
+
+	}// end onCreate
+	
 	//Method handling 'mouse-click'
 	public OnClickListener buttonListener = new OnClickListener() {
 		public void onClick(View view) {
@@ -94,39 +124,6 @@ public class Main extends SherlockActivity {
 
 		}// end onClick
 	};// end onClickListener
-
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		//For Clear preferences!!!!!! REMOVE EVENTUALLY
-		//SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		//Editor editor = settings.edit();
-		//editor.clear();
-		//editor.commit();
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
-		boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
-		
-		if(lockEnabled){
-			confirmPattern();
-		}
-
-		setContentView(R.layout.main);
-
-		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
-		Checkbook_Button.setOnClickListener(buttonListener);
-		Manage_Button = (Button) findViewById(R.id.dashboard_manage);
-		Manage_Button.setOnClickListener(buttonListener);
-		Schedule_Button = (Button) findViewById(R.id.dashboard_schedules);
-		Schedule_Button.setOnClickListener(buttonListener);
-		Stats_Button = (Button) findViewById(R.id.dashboard_statistics);
-		Stats_Button.setOnClickListener(buttonListener);
-		Exit_Button = (Button) findViewById(R.id.dashboard_exit);
-		Exit_Button.setOnClickListener(buttonListener);
-
-	}// end onCreate
 
 	//Over-rode method to handle database closing, prevent corruption
 	@Override

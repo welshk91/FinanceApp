@@ -42,6 +42,12 @@ public class SearchAccounts extends Fragment {
 	//Statistics
 	int totalRecords;
 
+	//Method called upon first creation
+	@Override
+	public void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
+	}// end onCreate
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -116,15 +122,6 @@ public class SearchAccounts extends Fragment {
 
 		return myFragmentView;
 	}
-
-	//Method called upon first creation
-	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-
-		//populate();
-
-	}// end onCreate
 	
 	//Calculates the total number of search records found that are accounts
 	public void calculateRecords(){

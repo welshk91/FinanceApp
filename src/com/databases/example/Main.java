@@ -87,7 +87,7 @@ public class Main extends SherlockActivity {
 
 			case R.id.dashboard_checkbook:
 				createDatabase();
-				Intent intentCheckbook = new Intent(Main.this, Accounts.class);
+				Intent intentCheckbook = new Intent(Main.this, Checkbook.class);
 				startActivity(intentCheckbook);
 				break;
 
@@ -181,7 +181,7 @@ public class Main extends SherlockActivity {
 
 				//Add some default categories
 				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
-						+ " (CateName)" + " VALUES ('STARTING BALANCE', 'Gift',  Gas', 'Rent', 'Utilities');";
+						+ " (CateName) " + "VALUES ('Gift');";
 
 				//myDB.execSQL(sqlDefaultCategories);
 

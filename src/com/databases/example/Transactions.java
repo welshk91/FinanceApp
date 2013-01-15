@@ -21,6 +21,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.text.method.TextKeyListener;
@@ -48,18 +49,23 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.DatePicker;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class Transactions extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener{
+public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
 	//Used to keep Track of total Balance
 	float totalBalance;
+
+	//Used to determine if fragment should show all transactions
+	boolean showAllTransactions=false;
 
 	//Dialog for Adding Transaction
 	static View promptsView;
 	View transStatsView;
+	View myFragmentView;
 
 	//Widgets for Adding Accounts
 	EditText tName;
@@ -126,31 +132,40 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 
-		setContentView(R.layout.transactions);
+	}//end onCreate
 
-		lv = (ListView)findViewById(R.id.transaction_list);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		myFragmentView = inflater.inflate(R.layout.transactions, container, false);		
+
+		lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
 
 		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
 
-		//No Parameters used in calling Intent
-		if(getIntent().getExtras()==null){
-			Toast.makeText(this, "Could Not Find Account Information", Toast.LENGTH_LONG).show();
-			return;
+		//Arguments sent by Account Fragment
+		Bundle bundle=getArguments();
+
+		if(bundle.isEmpty()){
+			//Toast.makeText(this.getActivity(), "Could Not Find Account Information", Toast.LENGTH_SHORT).show();
+			showAllTransactions = true;
 		}
+		else{
+			account_id = bundle.getInt("ID");
+			//        String account_name = bundle.getString("name");
+			//        String account_balance = bundle.getString("balance");
+			//        String account_date = bundle.getString("date");
+			//        String account_time = bundle.getString("time");
 
-		account_id = getIntent().getExtras().getInt("ID");
-		String account_name = getIntent().getExtras().getString("name");
-		//String account_balance = getIntent().getExtras().getString("balance");
-		//String account_date = getIntent().getExtras().getString("date");
-		//String account_time = getIntent().getExtras().getString("time");
+			//getActivity().setTitle("Transactions <" + account_name +">");
 
-		setTitle("Transactions <" + account_name +">");
-
-		//Toast.makeText(this, "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
-
+			//Toast.makeText(this.getActivity(), "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
+		}
 		//Set Listener for regular mouse click
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			@Override
@@ -158,7 +173,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				int selectionRowID = (int) adapter.getItemId(position);
 				String item = adapter.getItem(position).name;
 
-				Toast.makeText(Transactions.this, "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
+				Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
 
 			}// end onItemClick
 
@@ -170,13 +185,14 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		registerForContextMenu(lv);
 
 		//Set up a listener for changes in settings menu
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		//Populate List with Entries
 		populate();
 
-	}//end onCreate
+		return myFragmentView;
+	}
 
 	//Populate view with all the transactions of selected account
 	protected void populate(){
@@ -184,18 +200,27 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		dropdownResults = new ArrayList<String>();
 
 		//TextView instructing user if database is empty
-		TextView noResult = (TextView)findViewById(R.id.transaction_noTransaction);
+		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
 		noResult.setVisibility(View.GONE);
 
 		//Reset totalBalance
 		totalBalance = 0;
 
 		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
-				null, null, null, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
-		startManagingCursor(c);
+		if(showAllTransactions){
+			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
+					null, null, null, null);
+		}
+		else{
+			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
+					null, null, null, null);
+		}
+
+		//"ToAcctID = " + account_id
+
+		getActivity().startManagingCursor(c);
 		int idColumn = c.getColumnIndex("TransID");
 		int acctIDColumn = c.getColumnIndex("ToAcctID");
 		int nameColumn = c.getColumnIndex("TransName");
@@ -242,7 +267,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 					}
 					catch(Exception e){
-						Toast.makeText(Transactions.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Transactions.this.getActivity(), "Could not calculate total balance", Toast.LENGTH_SHORT).show();
 					}
 
 				} while (c.moveToNext());
@@ -260,7 +285,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		}
 
 		//Set up an adapter for listView
-		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
@@ -310,10 +335,10 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		String sqlCommand = "SELECT * FROM " + tblTrans + 
 				" WHERE TransID = " + adapter.getItem(itemInfo.position).id;
 
-		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		Cursor c = myDB.rawQuery(sqlCommand, null);
-		startManagingCursor(c);
+		getActivity().startManagingCursor(c);
 
 		int entry_id = 0;
 		int entry_acctId = 0;
@@ -349,10 +374,10 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		}
 
 		// get transaction_add.xml view
-		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
 		transStatsView = li.inflate(R.layout.transaction_stats, null);
 
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Transactions.this);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Transactions.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(transStatsView);
@@ -395,7 +420,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	//For Adding a Transaction
 	public void transactionAdd(){
 		// get transaction_add.xml view
-		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
 		promptsView = li.inflate(R.layout.transaction_add, null);
 
 		tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
@@ -410,7 +435,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 
 		//Adapter for memo's autocomplete
-		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
+		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
 
 		//Add dictionary back to autocomplete
@@ -436,7 +461,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		categoryPopulate();
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this);
+				Transactions.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
@@ -479,7 +504,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				}
 
 				//Open Database
-				myDB = Transactions.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				myDB = Transactions.this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 				try{
 					if (transactionName.length()>0) {
@@ -506,11 +531,11 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 					} 
 
 					else {
-						Toast.makeText(Transactions.this, "Needs a Name", Toast.LENGTH_LONG).show();
+						Toast.makeText(Transactions.this.getActivity(), "Needs a Name", Toast.LENGTH_LONG).show();
 					}
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 				//Close cursor
@@ -557,11 +582,11 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		final String cleared = adapter.getItem(itemInfo.position).cleared;
 
 		// get transaction_add.xml view
-		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
 		promptsView = li.inflate(R.layout.transaction_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this);
+				Transactions.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
@@ -581,7 +606,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
 
 		//Set the adapter for memo's autocomplete
-		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
+		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
 		tMemo.setAdapter(dropdownAdapter);
 
 		//Add dictionary back to autocomplete
@@ -645,7 +670,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 						String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
 
 						//Open Database
-						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+						myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 						//Delete Old Record
 						myDB.execSQL(deleteCommand);
@@ -673,12 +698,12 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 					}
 
 					else{
-						Toast.makeText(Transactions.this, "Needs a Name", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Transactions.this.getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
 					}
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 				Transactions.this.populate();
@@ -715,7 +740,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				" WHERE TransID = " + adapter.getItem(itemInfo.position).id;
 
 		//Open Database
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		myDB.execSQL(sqlCommand);
 
@@ -726,20 +751,15 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 		Transactions.this.populate();
 
-		Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
 	}//end of accountDelete
 
 	//For Menu
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getSupportMenuInflater();
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.layout.transaction_menu, menu);
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-		return true;
 	}
 
 	//For Menu Items
@@ -747,7 +767,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			Intent intentUp = new Intent(Transactions.this, Accounts.class);
+			Intent intentUp = new Intent(Transactions.this.getActivity(), Main.class);
 			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intentUp);
 			break;
@@ -757,7 +777,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 			break;
 
 		case R.id.transaction_menu_search:    
-			onSearchRequested();
+			getActivity().onSearchRequested();
 			break;
 
 		case R.id.transaction_menu_schedule:    
@@ -769,22 +789,21 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 			break;
 
 		case R.id.transaction_menu_logout:     
-			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
-			this.finish();
-			this.moveTaskToBack(true);
+			Toast.makeText(this.getActivity(), "You pressed Logout!", Toast.LENGTH_SHORT).show();
+			this.getActivity().finish();
+			this.getActivity().moveTaskToBack(true);
 			super.onDestroy();
 			break;
 
 		case R.id.transaction_menu_options:    
 			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			Intent intentOptions = new Intent(Transactions.this, Options.class);
+			Intent intentOptions = new Intent(Transactions.this.getActivity(), Options.class);
 			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intentOptions);
 			break;
 
 		case R.id.transaction_menu_help:
-
-			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getActivity(), "You pressed Help!", Toast.LENGTH_SHORT).show();
 			break;
 		}
 		return true;
@@ -817,7 +836,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	//Method called to show the TimePicker when adding a transaction
 	public void showTimePickerDialog(View v) {
 		DialogFragment newFragment = new TimePickerFragment();
-		newFragment.show(getSupportFragmentManager(), "timePicker");
+		newFragment.show(this.getActivity().getSupportFragmentManager(), "timePicker");
 	}
 
 	//Method to help create DatePicker
@@ -847,7 +866,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	//Method called to show DatePicker when adding transaction
 	public void showDatePickerDialog(View v) {
 		DialogFragment newFragment = new DatePickerFragment();
-		newFragment.show(getSupportFragmentManager(), "datePicker");
+		newFragment.show(this.getActivity().getSupportFragmentManager(), "datePicker");
 	}
 
 	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
@@ -863,12 +882,12 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			TransactionRecord user = transaction.get(position);
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 
 			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.transaction_item, null);
 
 				//Change Background Colors
@@ -892,7 +911,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -910,7 +929,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -927,7 +946,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -973,7 +992,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -1019,7 +1038,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
 				}
 
 				//For User-Defined Field Visibility
@@ -1141,7 +1160,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
 				if (user.name != null) {
@@ -1192,26 +1211,16 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		populate();
 	}
 
-	//If android version supports it, smooth gradient
-	@TargetApi(5)
-	@Override
-	public void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		Window window = getWindow();
-		window.setFormat(PixelFormat.RGBA_8888);
-
-	}
-
 	//Calculates the balance
 	public void calculateBalance(int id){
-		TextView balance = (TextView)this.findViewById(R.id.transaction_total_balance);
+		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
 
 		//Update account with accurate balance
 		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
 
 		//Open Database
-		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		//Update Record
 		myDB.execSQL(sqlCommand);
@@ -1230,21 +1239,21 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 		super.onResume();
 	}
 
-	//Override method to send the search extra data, letting it know which class called it
-	@Override
-	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
-		startSearch(null, false, appData, false);
-		return true;
-	}
+	//	//Override method to send the search extra data, letting it know which class called it
+	//	@Override
+	//	public boolean onSearchRequested() {
+	//		Bundle appData = new Bundle();
+	//		startSearch(null, false, appData, false);
+	//		return true;
+	//	}
 
 	//Alert for adding a new category
 	public void showCategoryAdd(View V){		
-		LayoutInflater li = LayoutInflater.from(Transactions.this);
+		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
 		final View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this);
+				Transactions.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(categoryAddView);
@@ -1261,7 +1270,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 				String category = categorySpinner.getText().toString().trim();
 
 				//Create database and open
-				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 				try{
 					//Insert values into accounts table
@@ -1271,7 +1280,7 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 					myDB.insert(tblCategory, null, categoryValues);
 				}
 				catch(Exception e){
-					Toast.makeText(Transactions.this, "Could Not Add Category\n" + e, Toast.LENGTH_SHORT).show();
+					Toast.makeText(Transactions.this.getActivity(), "Could Not Add Category\n" + e, Toast.LENGTH_SHORT).show();
 				}
 
 				//Make sure Database is closed
@@ -1305,17 +1314,17 @@ public class Transactions extends SherlockFragmentActivity implements OnSharedPr
 	public void categoryPopulate(){
 
 		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
 				+ ";";
 
 		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
-		startManagingCursor(categoryCursor);
+		getActivity().startManagingCursor(categoryCursor);
 		String[] from = new String[] {"CateName"}; 
 		int[] to = new int[] { android.R.id.text1 }; 
 
-		categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
+		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
 

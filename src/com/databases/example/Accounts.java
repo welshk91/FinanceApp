@@ -18,6 +18,8 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -39,7 +41,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class Accounts extends SherlockActivity implements OnSharedPreferenceChangeListener {
+public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
 
 	final int PICKFILE_RESULT_CODE = 1;
 
@@ -56,6 +58,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	EditText aBalance;
 
 	View accountStatsView;
+	View myFragmentView;
 
 	//Variables for the Account Table
 	String accountName = null;
@@ -84,10 +87,17 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		setTitle("Accounts");
-		setContentView(R.layout.accounts);
+		setHasOptionsMenu(true);
 
-		lv = (ListView)findViewById(R.id.account_list);
+	}// end onCreate
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		myFragmentView = inflater.inflate(R.layout.accounts, container, false);		
+
+		lv = (ListView)myFragmentView.findViewById(R.id.account_list);
 
 		//Turn clicks on
 		lv.setClickable(true);
@@ -105,11 +115,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
 						" LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
 
-				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 				Cursor c = myDB.rawQuery(sqlCommand, null);
 
-				startManagingCursor(c);
+				getActivity().startManagingCursor(c);
 
 				int entry_id = 0;
 				String entry_name = null;
@@ -132,14 +142,51 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					myDB.close();
 				}
 
-				//Call an Intent to go to Transactions Class
-				Intent i = new Intent(Accounts.this, Transactions.class);
-				i.putExtra("ID", entry_id);
-				i.putExtra("name", entry_name);
-				i.putExtra("balance", entry_balance);
-				i.putExtra("time", entry_time);
-				i.putExtra("date", entry_date);
-				startActivity(i);
+				boolean dualPane = false;
+				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+
+				if(checkbook_frame!=null){
+					dualPane=false;
+
+					//Data to send to transaction fragment
+					Bundle args = new Bundle();
+					args.putInt("ID",entry_id);
+					args.putString("name", entry_name);
+					args.putString("balance", entry_balance);
+					args.putString("time", entry_time);
+					args.putString("date", entry_date);
+
+					// Add the fragment to the activity, pushing this transaction
+					// on to the back stack.
+					Transactions tran_frag = new Transactions();
+					tran_frag.setArguments(args);
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.replace(R.id.checkbook_frag_frame, tran_frag);
+					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+					ft.addToBackStack(null);
+					ft.commit();
+				}
+				else{
+					dualPane=true;
+
+					//Data to send to transaction fragment
+					Bundle args = new Bundle();
+					args.putInt("ID",entry_id);
+					args.putString("name", entry_name);
+					args.putString("balance", entry_balance);
+					args.putString("time", entry_time);
+					args.putString("date", entry_date);
+
+					// Add the fragment to the activity, pushing this transaction
+					// on to the back stack.
+					Transactions tran_frag = new Transactions();
+					tran_frag.setArguments(args);
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.replace(R.id.transaction_frag_frame, tran_frag);
+					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+					ft.commit();
+
+				}
 
 			}// end onItemClick
 
@@ -151,33 +198,34 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		registerForContextMenu(lv);
 
 		//Set up an adapter for the listView
-		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
 		//Set up a listener for changes in settings menu
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		populate();
 
-	}// end onCreate
+		return myFragmentView;
+	}
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
 		results = new ArrayList<AccountRecord>();
 
 		//A textView alerting the user if database is empty
-		TextView noResult = (TextView)findViewById(R.id.account_noTransaction);
+		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
 		noResult.setVisibility(View.GONE);
 
 		//Reset Balance
 		totalBalance=0;
 
 		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 		c = myDB.query(tblAccounts, new String[] { "AcctID", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
 				null, null, null, null);
-		startManagingCursor(c);
+		getActivity().startManagingCursor(c);
 		int IDColumn = c.getColumnIndex("AcctID");
 		int NameColumn = c.getColumnIndex("AcctName");
 		int BalanceColumn = c.getColumnIndex("AcctBalance");
@@ -202,7 +250,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 						totalBalance = totalBalance + Float.parseFloat(balance);
 					}
 					catch(Exception e){
-						Toast.makeText(Accounts.this, "Could not calculate total balance", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Accounts.this.getActivity(), "Could not calculate total balance", Toast.LENGTH_SHORT).show();
 					}
 
 				} while (c.moveToNext());
@@ -219,7 +267,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			myDB.close();
 		}
 
-		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
@@ -268,11 +316,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		String sqlCommand = "SELECT * FROM " + tblAccounts + 
 				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
 
-		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		Cursor c = myDB.rawQuery(sqlCommand, null);
 
-		startManagingCursor(c);
+		getActivity().startManagingCursor(c);
 
 		int entry_id = 0;
 		String entry_name = null;
@@ -294,11 +342,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			myDB.close();
 		}
 
-		LayoutInflater li = LayoutInflater.from(Accounts.this);
+		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
 		accountStatsView = li.inflate(R.layout.account_stats, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Accounts.this);
+				Accounts.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(accountStatsView);
@@ -337,11 +385,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		//Toast.makeText(this, "Editing Item:\n" + id, Toast.LENGTH_SHORT).show();  
 
 		// get account_add.xml view
-		LayoutInflater li = LayoutInflater.from(Accounts.this);
+		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
 		final View promptsView = li.inflate(R.layout.account_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Accounts.this);
+				Accounts.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
@@ -381,7 +429,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
 
 					//Open Database
-					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 					//Delete Old Record
 					myDB.execSQL(deleteCommand);
@@ -403,7 +451,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 				Accounts.this.populate();
@@ -444,7 +492,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 				" WHERE ToAcctID = " + adapter.getItem(itemInfo.position).id;
 
 		//Open Database
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		myDB.execSQL(sqlDeleteAccount);
 		myDB.execSQL(sqlDeleteTransactions);	
@@ -456,18 +504,18 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 		populate();
 
-		Toast.makeText(this, "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
 	}//end of accountDelete
 
 	//For Adding an Account
 	public void accountAdd(){
 		// get account_add.xml view
-		LayoutInflater li = LayoutInflater.from(Accounts.this);
+		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
 		final View promptsView = li.inflate(R.layout.account_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Accounts.this);
+				Accounts.this.getActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(promptsView);
@@ -527,14 +575,14 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					}
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 				}
 
 				//String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
 				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName = ? AND AcctBalance = ? AND AcctTime = ? AND AcctDate = ?;";
 
 				//Open Database
-				myDB = Accounts.this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+				myDB = Accounts.this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 				try{
 					if (accountName.length()>0) {
@@ -550,7 +598,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 						//Query the Newly created account
 						Cursor c = myDB.rawQuery(sqlQuery, new String[] {accountName, accountBalance, accountTime, accountDate});
-						startManagingCursor(c);
+						getActivity().startManagingCursor(c);
 
 						int entry_id = 0;
 
@@ -579,12 +627,12 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 					} 
 
 					else {
-						Toast.makeText(Accounts.this, "Needs a Name", Toast.LENGTH_SHORT).show();
+						Toast.makeText(Accounts.this.getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
 					}
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 				//Close Database if Opened
@@ -621,13 +669,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		super.onDestroy();
 	}
 
-	//For Menu
+	//	//For Menu
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getSupportMenuInflater();
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.layout.account_menu, menu);
-		return true;
 	}
 
 	//For Menu Items
@@ -635,7 +681,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			Intent intentUp = new Intent(Accounts.this, Main.class);
+			Intent intentUp = new Intent(Accounts.this.getActivity(), Main.class);
 			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intentUp);
 			break;
@@ -645,7 +691,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			break;
 
 		case R.id.account_menu_search:    
-			onSearchRequested();
+			getActivity().onSearchRequested();
 			break;
 
 		case R.id.account_menu_transfer:    
@@ -658,20 +704,20 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			break;
 
 		case R.id.account_menu_logout:
-			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
-			this.finish();
-			this.moveTaskToBack(true);
+			Toast.makeText(this.getActivity(), "You pressed Logout!", Toast.LENGTH_SHORT).show();
+			this.getActivity().finish();
+			this.getActivity().moveTaskToBack(true);
 			super.onDestroy();
 			break;
 
 		case R.id.account_menu_options:    
 			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			Intent v = new Intent(Accounts.this, Options.class);
+			Intent v = new Intent(Accounts.this.getActivity(), Options.class);
 			startActivity(v);
 			break;
 
 		case R.id.account_menu_help:    
-			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this.getActivity(), "You pressed Help!", Toast.LENGTH_SHORT).show();
 			break;
 		}
 		return true;
@@ -691,11 +737,11 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 			AccountRecord user = account.get(position);
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
 
 				//Change Background Colors
@@ -717,7 +763,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
 				//Change Size of main field
@@ -735,7 +781,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -752,7 +798,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -778,7 +824,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -804,7 +850,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
 				}
 
 
@@ -885,7 +931,7 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 				}
 				catch(Exception e){
-					Toast.makeText(Accounts.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
 
@@ -917,19 +963,9 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		populate();
 	}
 
-	//If android version supports it, smooth gradient
-	@TargetApi(5)
-	@Override
-	public void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		Window window = getWindow();
-		window.setFormat(PixelFormat.RGBA_8888);
-
-	}
-
 	//Calculates the balance
 	public void calculateBalance(){
-		TextView balance = (TextView)this.findViewById(R.id.account_total_balance);
+		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
 	}
 
@@ -940,13 +976,13 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 		super.onResume();
 	}
 
-	//Override method to send the search extra data, letting it know which class called it
-	@Override
-	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
-		startSearch(null, false, appData, false);
-		return true;
-	}
+	//	//Override method to send the search extra data, letting it know which class called it
+	//	@Override
+	//	public boolean onSearchRequested() {
+	//		Bundle appData = new Bundle();
+	//		startSearch(null, false, appData, false);
+	//		return true;
+	//	}
 
 	//Method used to handle picking a file
 	void pickFile(File aFile) {
@@ -957,12 +993,12 @@ public class Accounts extends SherlockActivity implements OnSharedPreferenceChan
 
 	//Method called after picking a file
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		switch (requestCode) {
 		case PICKFILE_RESULT_CODE:
-			if(resultCode==RESULT_OK){
+			if(resultCode==getActivity().RESULT_OK){
 				String FilePath = data.getData().getPath();
-				Toast.makeText(this, "File Path : " + FilePath, Toast.LENGTH_LONG).show();
+				Toast.makeText(this.getActivity(), "File Path : " + FilePath, Toast.LENGTH_LONG).show();
 			}
 			break;
 		}

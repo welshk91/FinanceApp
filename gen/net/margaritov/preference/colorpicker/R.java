@@ -32,7 +32,7 @@ public final class R {
 		public static final int color3_summary = 0x7f06001a;
 	}
 	public static final class layout {
-		public static final int dialog_color_picker = 0x7f03001d;
+		public static final int dialog_color_picker = 0x7f03001e;
 	}
 	public static final class drawable {
 		public static final int icon = 0x7f02007d;

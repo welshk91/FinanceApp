@@ -8,11 +8,11 @@ package group.pals.android.lib.ui.lockpattern;
 
 public final class R {
 	public static final class id {
-		public static final int alp_lpa_text_info = 0x7f080052;
-		public static final int alp_lpa_button_confirm = 0x7f080056;
-		public static final int alp_lpa_lockPattern = 0x7f080053;
-		public static final int alp_lpa_button_cancel = 0x7f080055;
-		public static final int alp_lpa_layout_footer = 0x7f080054;
+		public static final int alp_lpa_text_info = 0x7f08004f;
+		public static final int alp_lpa_button_confirm = 0x7f080053;
+		public static final int alp_lpa_lockPattern = 0x7f080050;
+		public static final int alp_lpa_button_cancel = 0x7f080052;
+		public static final int alp_lpa_layout_footer = 0x7f080051;
 	}
 	public static final class string {
 		public static final int alp_msg_pattern_recorded = 0x7f06000b;

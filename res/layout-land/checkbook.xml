@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <FrameLayout
+        android:id="@+id/account_frag_frame"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_margin="2dp"
+        android:layout_weight=".5" />
+
+    <FrameLayout
+        android:id="@+id/transaction_frag_frame"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_margin="2dp"
+        android:layout_weight=".5" />
+
+</LinearLayout>

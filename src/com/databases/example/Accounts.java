@@ -291,21 +291,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
-		if(item.getTitle()=="Open"){
+		if(item.getItemId()==CONTEXT_MENU_OPEN){
+			//Toast.makeText(Accounts.this.getActivity(), "Open in account", Toast.LENGTH_SHORT).show();
 			accountOpen(item);
 		}  
-		else if(item.getTitle()=="Edit"){
+		else if(item.getItemId()==CONTEXT_MENU_EDIT){
 			accountEdit(item);
 		}
-		else if(item.getTitle()=="Delete"){
+		else if(item.getItemId()==CONTEXT_MENU_DELETE){
 			accountDelete(item);
 		}
 		else {
 			System.out.print("ERROR on ContextMenu; function not found");
-			return false;
+			return super.onContextItemSelected(item);
 		}  
 
-		return true;  
+		return super.onContextItemSelected(item);  
 	}  
 
 	//For Opening an Account
@@ -342,11 +343,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			myDB.close();
 		}
 
-		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
+		LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
 		accountStatsView = li.inflate(R.layout.account_stats, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Accounts.this.getActivity());
+				this.getSherlockActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(accountStatsView);

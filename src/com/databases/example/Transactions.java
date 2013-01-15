@@ -95,9 +95,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	int account_id;
 
 	//Constants for ContextMenu
-	int CONTEXT_MENU_OPEN=1;
-	int CONTEXT_MENU_EDIT=2;
-	int CONTEXT_MENU_DELETE=3;
+	int CONTEXT_MENU_OPEN=4;
+	int CONTEXT_MENU_EDIT=5;
+	int CONTEXT_MENU_DELETE=6;
 
 	//ListView and Adapter
 	ListView lv = null;
@@ -311,21 +311,22 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
-		if(item.getTitle()=="Open"){
+		if(item.getItemId()==CONTEXT_MENU_OPEN){
+			//Toast.makeText(Transactions.this.getActivity(), "Open in trans", Toast.LENGTH_SHORT).show();
 			transactionOpen(item);
 		}  
-		else if(item.getTitle()=="Edit"){
+		else if(item.getItemId()==CONTEXT_MENU_EDIT){
 			transactionEdit(item);
 		}
-		else if(item.getTitle()=="Delete"){
+		else if(item.getItemId()==CONTEXT_MENU_DELETE){
 			transactionDelete(item);
 		}
 		else {
 			System.out.print("ERROR on ContextMenu; function not found");
-			return false;
+			return super.onContextItemSelected(item);
 		}  
 
-		return true;  
+		return super.onContextItemSelected(item);  
 	}
 
 	//For Opening an Account
@@ -373,11 +374,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			myDB.close();
 		}
 
-		// get transaction_add.xml view
-		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
+		// get transaction_stats.xml view
+		LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
 		transStatsView = li.inflate(R.layout.transaction_stats, null);
 
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Transactions.this.getActivity());
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(transStatsView);
@@ -1238,14 +1239,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		populate();
 		super.onResume();
 	}
-
-	//	//Override method to send the search extra data, letting it know which class called it
-	//	@Override
-	//	public boolean onSearchRequested() {
-	//		Bundle appData = new Bundle();
-	//		startSearch(null, false, appData, false);
-	//		return true;
-	//	}
 
 	//Alert for adding a new category
 	public void showCategoryAdd(View V){		

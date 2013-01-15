@@ -807,7 +807,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Toast.makeText(this.getActivity(), "You pressed Help!", Toast.LENGTH_SHORT).show();
 			break;
 		}
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	//Method to help create TimePicker

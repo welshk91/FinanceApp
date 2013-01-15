@@ -721,7 +721,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			Toast.makeText(this.getActivity(), "You pressed Help!", Toast.LENGTH_SHORT).show();
 			break;
 		}
-		return true;
+		return super.onOptionsItemSelected(item);
 	}
 
 	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {

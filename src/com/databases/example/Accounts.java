@@ -85,9 +85,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method called upon first creation
 	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 
 	}// end onCreate
 
@@ -143,9 +144,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 				boolean dualPane = false;
-				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+				View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
-				if(checkbook_frame!=null){
+				if(transaction_frame==null){
 					dualPane=false;
 
 					//Data to send to transaction fragment
@@ -161,7 +162,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.checkbook_frag_frame, tran_frag);
+					ft.replace(R.id.account_frag_frame, tran_frag);
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.addToBackStack(null);
 					ft.commit();

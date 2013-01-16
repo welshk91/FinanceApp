@@ -133,6 +133,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		//setRetainInstance(true);
 
 	}//end onCreate
 

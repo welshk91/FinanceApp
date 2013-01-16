@@ -8,9 +8,9 @@ package net.margaritov.preference.colorpicker;
 
 public final class R {
 	public static final class id {
-		public static final int old_color_panel = 0x7f080058;
-		public static final int color_picker_view = 0x7f080057;
-		public static final int new_color_panel = 0x7f080059;
+		public static final int old_color_panel = 0x7f080057;
+		public static final int color_picker_view = 0x7f080056;
+		public static final int new_color_panel = 0x7f080058;
 	}
 	public static final class integer {
 		public static final int COLOR_GREEN = 0x7f070001;

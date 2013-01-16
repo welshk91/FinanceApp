@@ -26,68 +26,41 @@ public class Checkbook extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.checkbook);
 
-		boolean dualPane = false;
-		View checkbook_frame;
-		checkbook_frame = findViewById(R.id.checkbook_frag_frame);
+		View transaction_frame = findViewById(R.id.transaction_frag_frame);
 
-		if(checkbook_frame!=null){
-			dualPane=false;
-
-			// However, if we're being restored from a previous state,
-			// then we don't need to do anything and should return or else
-			// we could end up with overlapping fragments.
-			if (savedInstanceState != null) {
-				return;
-			}
+		if (savedInstanceState==null){
 
 			Accounts account_frag = new Accounts();
-
-			getSupportFragmentManager().beginTransaction()
-			.add(R.id.checkbook_frag_frame, account_frag).commit();
-
-		}
-		else{
-			dualPane=true;
-
-			// However, if we're being restored from a previous state,
-			// then we don't need to do anything and should return or else
-			// we could end up with overlapping fragments.
-			if (savedInstanceState != null) {
-				return;
-			}
-
-			Accounts account_frag = new Accounts();
-			Accounts account_frag2 = new Accounts();
 			Transactions transaction_frag = new Transactions();
 			Bundle args = new Bundle();
 			transaction_frag.setArguments(args);
 
-			getSupportFragmentManager().beginTransaction()
-			.add(R.id.account_frag_frame, account_frag).add(R.id.transaction_frag_frame, transaction_frag).commit();
-
-			//getSupportFragmentManager().beginTransaction()
-			//.add(R.id.transaction_frag_frame, transaction_frag).commit();
-
+			if(transaction_frame!=null){
+				getSupportFragmentManager().beginTransaction()
+				.add(R.id.account_frag_frame, account_frag,"account_frag_tag").add(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
+			}
+			else{
+				getSupportFragmentManager().beginTransaction()
+				.add(R.id.account_frag_frame, account_frag,"account_frag_tag").commit();
+			}
 		}
 
-		Toast.makeText(this, "DualPane: " + dualPane, Toast.LENGTH_SHORT).show();
 
 	}
 
 	@Override
 	public void onDestroy(){
-		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
 		super.onDestroy();
 	}
 
 	//For Menu
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		super.onCreateOptionsMenu(menu);
-	//		MenuInflater inflater = getSupportMenuInflater();
-	//		inflater.inflate(R.layout.search_menu, menu);
-	//		return true;
-	//	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getSupportMenuInflater();
+		return true;
+
+	}
 
 	//	//If android version supports it, smooth gradient
 	//	@TargetApi(5)

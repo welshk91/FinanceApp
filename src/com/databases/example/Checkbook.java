@@ -54,13 +54,13 @@ public class Checkbook extends SherlockFragmentActivity {
 	}
 
 	//For Menu
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getSupportMenuInflater();
-		return true;
-
-	}
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		super.onCreateOptionsMenu(menu);
+	//		MenuInflater inflater = getSupportMenuInflater();
+	//		return true;
+	//
+	//	}
 
 	//	//If android version supports it, smooth gradient
 	//	@TargetApi(5)

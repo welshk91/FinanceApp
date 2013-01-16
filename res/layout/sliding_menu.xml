@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:background="#999999"
+    android:theme="@style/Theme.Sherlock" >
+
+    <Button
+        android:id="@+id/dashboard_checkbook"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/dashboard_exit"
+        android:padding="15dp"
+        android:text="Checkbook"
+        android:textColor="#FFFFFF" >
+    </Button>
+
+    <Button
+        android:id="@+id/dashboard_schedules"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/dashboard_checkbook"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/dashboard_exit"
+        android:padding="15dp"
+        android:text="Schedules"
+        android:textColor="#FFFFFF" >
+    </Button>
+
+    <Button
+        android:id="@+id/dashboard_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/dashboard_schedules"
+        android:layout_margin="5dp"
+        android:background="@android:color/transparent"
+        android:drawableLeft="@drawable/dashboard_exit"
+        android:padding="15dp"
+        android:text="Manage"
+        android:textColor="#FFFFFF" >
+    </Button>
+
+    <Button
+        android:id="@+id/dashboard_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/dashboard_manage"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/dashboard_exit"
+        android:padding="15dp"
+        android:text="Statistics"
+        android:textColor="#FFFFFF" >
+    </Button>
+
+    <Button
+        android:id="@+id/dashboard_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/dashboard_statistics"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/dashboard_exit"
+        android:padding="15dp"
+        android:text="@string/exit"
+        android:textColor="#FFFFFF" >
+    </Button>
+
+</RelativeLayout>

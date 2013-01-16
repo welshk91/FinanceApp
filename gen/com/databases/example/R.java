@@ -925,6 +925,9 @@ containing a value of this type.
          */
         public static final int action_button_min_width=0x7f060011;
         public static final int alp_lockpatternview_max_size=0x7f060000;
+        public static final int list_padding=0x7f060013;
+        public static final int shadow_width=0x7f060014;
+        public static final int slidingmenu_offset=0x7f060012;
     }
     public static final class drawable {
         public static final int abs__ab_bottom_solid_dark_holo=0x7f020000;
@@ -1054,10 +1057,11 @@ containing a value of this type.
         public static final int green=0x7f02007c;
         public static final int icon=0x7f02007d;
         public static final int red=0x7f02007e;
-        public static final int transaction_background_gradient=0x7f02007f;
-        public static final int transaction_hover_gradient=0x7f020080;
-        public static final int transaction_id_gradient=0x7f020081;
-        public static final int transaction_list_style=0x7f020082;
+        public static final int shadow=0x7f02007f;
+        public static final int transaction_background_gradient=0x7f020080;
+        public static final int transaction_hover_gradient=0x7f020081;
+        public static final int transaction_id_gradient=0x7f020082;
+        public static final int transaction_list_style=0x7f020083;
     }
     public static final class id {
         public static final int BalanceTexts=0x7f05003c;
@@ -1239,6 +1243,7 @@ containing a value of this type.
         public static final int COLOR_BLACK=0x7f080000;
         public static final int COLOR_GREEN=0x7f080001;
         public static final int abs__max_action_buttons=0x7f080002;
+        public static final int num_cols=0x7f080003;
     }
     public static final class layout {
         public static final int abs__action_bar_home=0x7f030000;
@@ -1286,13 +1291,14 @@ containing a value of this type.
         public static final int search_transaction=0x7f03002a;
         public static final int sherlock_spinner_dropdown_item=0x7f03002b;
         public static final int sherlock_spinner_item=0x7f03002c;
-        public static final int slidingmenumain=0x7f03002d;
-        public static final int transaction_add=0x7f03002e;
-        public static final int transaction_category_add=0x7f03002f;
-        public static final int transaction_item=0x7f030030;
-        public static final int transaction_menu=0x7f030031;
-        public static final int transaction_stats=0x7f030032;
-        public static final int transactions=0x7f030033;
+        public static final int sliding_menu=0x7f03002d;
+        public static final int slidingmenumain=0x7f03002e;
+        public static final int transaction_add=0x7f03002f;
+        public static final int transaction_category_add=0x7f030030;
+        public static final int transaction_item=0x7f030031;
+        public static final int transaction_menu=0x7f030032;
+        public static final int transaction_stats=0x7f030033;
+        public static final int transactions=0x7f030034;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

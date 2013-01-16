@@ -18,10 +18,14 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
 
 public class Main extends SherlockActivity {	
 	//Flag used for lockscreen
 	private static final int _ReqSignIn = 1;
+
+	//SlidingMenu
+	private SlidingMenu menu;
 
 	//Variables for the Views
 	Button Checkbook_Button;
@@ -60,12 +64,23 @@ public class Main extends SherlockActivity {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
 		boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
-		
+
 		if(lockEnabled){
 			confirmPattern();
 		}
 
 		setContentView(R.layout.main);
+
+		// configure the SlidingMenu
+		menu = new SlidingMenu(this);
+		menu.setMode(SlidingMenu.LEFT);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setFadeDegree(0.35f);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu.setMenu(R.layout.sliding_menu);
 
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
@@ -79,7 +94,7 @@ public class Main extends SherlockActivity {
 		Exit_Button.setOnClickListener(buttonListener);
 
 	}// end onCreate
-	
+
 	//Method handling 'mouse-click'
 	public OnClickListener buttonListener = new OnClickListener() {
 		public void onClick(View view) {
@@ -212,6 +227,11 @@ public class Main extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+
+		case android.R.id.home:
+			menu.toggle();
+			break;
+
 		case R.id.main_menu_search:    
 			onSearchRequested();
 			break;
@@ -253,10 +273,10 @@ public class Main extends SherlockActivity {
 	public void confirmPattern(){
 		Intent intent = new Intent(Main.this, LockPatternActivity.class);
 		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.ComparePattern);
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
 		String savedPattern = prefs.getString("myPattern", null);
-		
+
 		if(savedPattern!=null){
 			intent.putExtra(LockPatternActivity._Pattern, savedPattern);
 			startActivityForResult(intent, _ReqSignIn);
@@ -265,7 +285,7 @@ public class Main extends SherlockActivity {
 			Toast.makeText(Main.this, "Cannot Use Lockscreen\nNo Pattern Set Yet", Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {

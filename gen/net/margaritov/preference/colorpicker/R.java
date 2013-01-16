@@ -8,28 +8,28 @@ package net.margaritov.preference.colorpicker;
 
 public final class R {
 	public static final class id {
-		public static final int old_color_panel = 0x7f080057;
-		public static final int color_picker_view = 0x7f080056;
-		public static final int new_color_panel = 0x7f080058;
+		public static final int old_color_panel = 0x7f05005c;
+		public static final int color_picker_view = 0x7f05005b;
+		public static final int new_color_panel = 0x7f05005d;
 	}
 	public static final class integer {
-		public static final int COLOR_GREEN = 0x7f070001;
-		public static final int COLOR_BLACK = 0x7f070000;
+		public static final int COLOR_GREEN = 0x7f080001;
+		public static final int COLOR_BLACK = 0x7f080000;
 	}
 	public static final class string {
-		public static final int hello = 0x7f060010;
-		public static final int pref_category = 0x7f060014;
-		public static final int color1_title = 0x7f060015;
-		public static final int color2_summary = 0x7f060018;
-		public static final int color2_title = 0x7f060017;
-		public static final int color4_summary = 0x7f06001c;
-		public static final int dialog_color_picker = 0x7f060012;
-		public static final int color1_summary = 0x7f060016;
-		public static final int color4_title = 0x7f06001b;
-		public static final int press_color_to_apply = 0x7f060013;
-		public static final int app_name = 0x7f060011;
-		public static final int color3_title = 0x7f060019;
-		public static final int color3_summary = 0x7f06001a;
+		public static final int hello = 0x7f070010;
+		public static final int pref_category = 0x7f070014;
+		public static final int color1_title = 0x7f070015;
+		public static final int color2_summary = 0x7f070018;
+		public static final int color2_title = 0x7f070017;
+		public static final int color4_summary = 0x7f07001c;
+		public static final int dialog_color_picker = 0x7f070012;
+		public static final int color1_summary = 0x7f070016;
+		public static final int color4_title = 0x7f07001b;
+		public static final int press_color_to_apply = 0x7f070013;
+		public static final int app_name = 0x7f070011;
+		public static final int color3_title = 0x7f070019;
+		public static final int color3_summary = 0x7f07001a;
 	}
 	public static final class layout {
 		public static final int dialog_color_picker = 0x7f03001e;

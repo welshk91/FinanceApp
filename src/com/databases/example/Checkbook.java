@@ -45,8 +45,7 @@ public class Checkbook extends SherlockFragmentActivity {
 			}
 		}
 
-
-	}
+	}//end onCreate
 
 	@Override
 	public void onDestroy(){

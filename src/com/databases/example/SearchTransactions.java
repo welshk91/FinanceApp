@@ -38,6 +38,14 @@ public class SearchTransactions extends Fragment {
 	//Statistics
 	int totalRecords;
 
+	//Method called upon first creation
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+
+	}// end onCreate
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

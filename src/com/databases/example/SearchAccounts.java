@@ -44,8 +44,10 @@ public class SearchAccounts extends Fragment {
 
 	//Method called upon first creation
 	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+
 	}// end onCreate
 	
 	@Override

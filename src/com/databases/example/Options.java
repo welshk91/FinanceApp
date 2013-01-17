@@ -3,6 +3,9 @@ package com.databases.example;
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +28,9 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	private static final int _ReqCreatePattern = 0;
 	String savedPattern = null;
 
+	//SlidingMenu
+	private SlidingMenu menu;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -34,6 +40,17 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		checkDefaults();
+
+		// configure the SlidingMenu
+		menu = new SlidingMenu(this);
+		menu.setMode(SlidingMenu.LEFT);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setFadeDegree(0.35f);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu.setMenu(R.layout.sliding_menu);
 
 		//Reset Preferences
 		Preference prefReset = (Preference) findPreference("pref_reset");
@@ -223,6 +240,18 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			}
 			break;
 		}
+	}
+
+	//For Menu Items
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:    
+			menu.toggle();
+			break;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 }//end of Options

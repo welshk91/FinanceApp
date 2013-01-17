@@ -103,13 +103,15 @@ public class SearchAccounts extends Fragment {
 				}
 
 				//Call an Intent to go to Transactions Class
-				Intent i = new Intent(SearchAccounts.this.getActivity(), Transactions.class);
-				i.putExtra("ID", entry_id);
-				i.putExtra("name", entry_name);
-				i.putExtra("balance", entry_balance);
-				i.putExtra("time", entry_time);
-				i.putExtra("date", entry_date);
-				startActivity(i);
+//				Intent i = new Intent(SearchAccounts.this.getActivity(), Transactions.class);
+//				i.putExtra("ID", entry_id);
+//				i.putExtra("name", entry_name);
+//				i.putExtra("balance", entry_balance);
+//				i.putExtra("time", entry_time);
+//				i.putExtra("date", entry_date);
+//				startActivity(i);
+				
+				
 
 			}// end onItemClick
 

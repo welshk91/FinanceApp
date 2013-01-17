@@ -6,6 +6,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -45,6 +46,9 @@ public class SearchMain extends SherlockFragmentActivity {
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 
+	//SlidingMenu
+	private SlidingMenu menu;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
@@ -72,6 +76,17 @@ public class SearchMain extends SherlockFragmentActivity {
 		setContentView(R.layout.search);
 		//Toast.makeText(this, "SearchTime Query: " + query, Toast.LENGTH_SHORT).show();
 
+		// configure the SlidingMenu
+		menu = new SlidingMenu(this);
+		menu.setMode(SlidingMenu.LEFT);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setFadeDegree(0.35f);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu.setMenu(R.layout.sliding_menu);
+		
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);
 
@@ -204,9 +219,10 @@ public class SearchMain extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			Intent intentUp = new Intent(SearchMain.this, Main.class);
-			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intentUp);
+			//Intent intentUp = new Intent(SearchMain.this, Main.class);
+			//intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			//startActivity(intentUp);
+			menu.toggle();
 			break;
 
 		case R.id.search_menu_search:    

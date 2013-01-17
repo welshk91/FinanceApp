@@ -25,16 +25,4 @@
         android:showAsAction="ifRoom"
         android:title="Unknown"/>
 
-    <item
-        android:id="@+id/account_menu_logout"
-        android:title="Logout"/>
-
-    <item
-        android:id="@+id/account_menu_options"
-        android:title="Options"/>
-
-    <item
-        android:id="@+id/account_menu_help"
-        android:title="Help"/>
-
 </menu>

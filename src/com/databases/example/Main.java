@@ -74,9 +74,10 @@ public class Main extends SherlockActivity {
 		// configure the SlidingMenu
 		menu = new SlidingMenu(this);
 		menu.setMode(SlidingMenu.LEFT);
-		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 		menu.setShadowWidthRes(R.dimen.shadow_width);
 		menu.setShadowDrawable(R.drawable.shadow);
+		//menu.setAboveOffsetRes(R.dimen.slidingmenu_offset);
 		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		menu.setFadeDegree(0.35f);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
@@ -101,18 +102,21 @@ public class Main extends SherlockActivity {
 			switch (view.getId()) {
 
 			case R.id.dashboard_checkbook:
+				menu.toggle();
 				createDatabase();
 				Intent intentCheckbook = new Intent(Main.this, Checkbook.class);
 				startActivity(intentCheckbook);
 				break;
 
 			case R.id.dashboard_manage:
+				menu.toggle();
 				//	createDatabase();
 				Intent intentManage = new Intent(Main.this, Manage.class);
 				startActivity(intentManage);
 				break;
 
 			case R.id.dashboard_schedules:
+				menu.toggle();
 				//	createDatabase();
 				//Intent intentSchedules = new Intent(Main.this, Accounts.class);
 				//startActivity(intentSchedules);
@@ -120,6 +124,7 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_statistics:
+				menu.toggle();
 				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
 				//	startActivity(intentStats);
@@ -127,6 +132,7 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_exit:
+				menu.toggle();
 				if (myDB != null){
 					myDB.close();
 				}

@@ -7,6 +7,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.slidingmenu.lib.SlidingMenu;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -21,10 +22,25 @@ import android.support.v4.app.FragmentTransaction;
 
 public class Checkbook extends SherlockFragmentActivity {
 
+	//SlidingMenu
+	private SlidingMenu menu;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.checkbook);
+
+		// configure the SlidingMenu
+		menu = new SlidingMenu(this);
+		menu.setMode(SlidingMenu.LEFT);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		//menu.setAboveOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setFadeDegree(0.35f);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu.setMenu(R.layout.sliding_menu);
 
 		View transaction_frame = findViewById(R.id.transaction_frag_frame);
 
@@ -69,5 +85,17 @@ public class Checkbook extends SherlockFragmentActivity {
 	//		Window window = (Window) getWindow();
 	//		window.setFormat(PixelFormat.RGBA_8888);
 	//	}
+
+	//For Menu Items
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:    
+			menu.toggle();
+			break;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
 
 }//end SearchTime

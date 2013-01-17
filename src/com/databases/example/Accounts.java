@@ -40,11 +40,12 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
 
 	final int PICKFILE_RESULT_CODE = 1;
-
+	
 	//Balance
 	float totalBalance;
 
@@ -95,7 +96,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
+		
 		myFragmentView = inflater.inflate(R.layout.accounts, container, false);		
 
 		lv = (ListView)myFragmentView.findViewById(R.id.account_list);
@@ -683,9 +684,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			Intent intentUp = new Intent(Accounts.this.getActivity(), Main.class);
-			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intentUp);
+			//Intent intentUp = new Intent(Accounts.this.getActivity(), Main.class);
+			//intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			//startActivity(intentUp);
+			//menu.toggle();
 			break;
 
 		case R.id.account_menu_add:    
@@ -705,22 +707,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			pickFile(null);
 			break;
 
-		case R.id.account_menu_logout:
-			Toast.makeText(this.getActivity(), "You pressed Logout!", Toast.LENGTH_SHORT).show();
-			this.getActivity().finish();
-			this.getActivity().moveTaskToBack(true);
-			super.onDestroy();
-			break;
+//		case R.id.account_menu_options:    
+//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+//			Intent v = new Intent(Accounts.this.getActivity(), Options.class);
+//			startActivity(v);
+//			break;
 
-		case R.id.account_menu_options:    
-			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			Intent v = new Intent(Accounts.this.getActivity(), Options.class);
-			startActivity(v);
-			break;
-
-		case R.id.account_menu_help:    
-			Toast.makeText(this.getActivity(), "You pressed Help!", Toast.LENGTH_SHORT).show();
-			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}

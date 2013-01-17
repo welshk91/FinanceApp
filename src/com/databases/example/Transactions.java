@@ -54,8 +54,10 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
+
 	//Used to keep Track of total Balance
 	float totalBalance;
 
@@ -769,9 +771,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			Intent intentUp = new Intent(Transactions.this.getActivity(), Main.class);
-			intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intentUp);
+			//Intent intentUp = new Intent(Transactions.this.getActivity(), Main.class);
+			//intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			//startActivity(intentUp);
+			//menu.toggle();
 			break;
 
 		case R.id.transaction_menu_add:    
@@ -786,27 +789,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			//transactionSchedule
 			break;
 
-		case R.id.transaction_menu_unknown:    
-			//Insert Code Here
-			break;
+//		case R.id.transaction_menu_options:    
+//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+//			Intent intentOptions = new Intent(Transactions.this.getActivity(), Options.class);
+//			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			startActivity(intentOptions);
+//			break;
 
-		case R.id.transaction_menu_logout:     
-			Toast.makeText(this.getActivity(), "You pressed Logout!", Toast.LENGTH_SHORT).show();
-			this.getActivity().finish();
-			this.getActivity().moveTaskToBack(true);
-			super.onDestroy();
-			break;
-
-		case R.id.transaction_menu_options:    
-			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			Intent intentOptions = new Intent(Transactions.this.getActivity(), Options.class);
-			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intentOptions);
-			break;
-
-		case R.id.transaction_menu_help:
-			Toast.makeText(this.getActivity(), "You pressed Help!", Toast.LENGTH_SHORT).show();
-			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}

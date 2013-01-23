@@ -1,6 +1,7 @@
 package com.databases.example;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ public class Manage extends SherlockActivity{
 
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
+	private SliderMenu menu;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -23,6 +25,10 @@ public class Manage extends SherlockActivity{
 		setTitle("Manage");
 		setContentView(R.layout.manage);
 
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
 	}//end onCreate
 
 	public void backupDialog(View v){

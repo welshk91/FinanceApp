@@ -3,6 +3,7 @@ package com.databases.example;
 import java.io.File;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -29,6 +30,7 @@ public class Links extends SherlockActivity{
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 	final int PICKFILE_RESULT_CODE = 1;
+	private SliderMenu menu;
 	Intent lastLink;
 	String linkFilePath = null;
 	int linkItem;
@@ -41,6 +43,10 @@ public class Links extends SherlockActivity{
 		setTitle("Attachments");
 		setContentView(R.layout.links);
 
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
 	}//end onCreate
 
 	//Method for when you click the Add button

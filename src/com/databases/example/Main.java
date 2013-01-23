@@ -10,6 +10,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -25,9 +26,9 @@ public class Main extends SherlockActivity {
 	private static final int _ReqSignIn = 1;
 
 	//SlidingMenu
-	private SlidingMenu menu;
+	private SliderMenu menu;
 
-	//Variables for the Views
+	//Dashboard Buttons
 	Button Checkbook_Button;
 	Button Manage_Button;
 	Button Stats_Button;
@@ -69,20 +70,13 @@ public class Main extends SherlockActivity {
 			confirmPattern();
 		}
 
-		setContentView(R.layout.main);
+		setContentView(R.layout.dashboard);
 
-		// configure the SlidingMenu
-		menu = new SlidingMenu(this);
-		menu.setMode(SlidingMenu.LEFT);
-		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-		menu.setShadowWidthRes(R.dimen.shadow_width);
-		menu.setShadowDrawable(R.drawable.shadow);
-		//menu.setAboveOffsetRes(R.dimen.slidingmenu_offset);
-		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-		menu.setFadeDegree(0.35f);
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		menu.setMenu(R.layout.sliding_menu);
 
+		//Dashboard Buttons
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
 		Manage_Button = (Button) findViewById(R.id.dashboard_manage);
@@ -102,21 +96,22 @@ public class Main extends SherlockActivity {
 			switch (view.getId()) {
 
 			case R.id.dashboard_checkbook:
-				menu.toggle();
 				createDatabase();
 				Intent intentCheckbook = new Intent(Main.this, Checkbook.class);
 				startActivity(intentCheckbook);
 				break;
 
+			case R.id.slidingmenu_checkbook:
+				Toast.makeText(Main.this, "Here...", Toast.LENGTH_LONG).show();
+				break;
+
 			case R.id.dashboard_manage:
-				menu.toggle();
 				//	createDatabase();
 				Intent intentManage = new Intent(Main.this, Manage.class);
 				startActivity(intentManage);
 				break;
 
 			case R.id.dashboard_schedules:
-				menu.toggle();
 				//	createDatabase();
 				//Intent intentSchedules = new Intent(Main.this, Accounts.class);
 				//startActivity(intentSchedules);
@@ -124,7 +119,6 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_statistics:
-				menu.toggle();
 				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
 				//	startActivity(intentStats);
@@ -132,14 +126,25 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_exit:
-				menu.toggle();
 				if (myDB != null){
 					myDB.close();
 				}
 
 				Main.this.finish();
+				//android.os.Process.killProcess(android.os.Process.myPid());				
 				onDestroy();
-				break;
+				
+				//Intent i = new Intent();
+				//i.setAction(Intent.ACTION_MAIN);
+				//i.addCategory(Intent.CATEGORY_HOME);
+				//startActivity(i); 
+				finish(); 
+				
+				break;	
+
+			default:
+				//	Toast.makeText(Main.this, "Oh No, default listener condition :(", Toast.LENGTH_SHORT).show();
+				break;	
 
 			}
 

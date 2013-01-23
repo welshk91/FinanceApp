@@ -29,7 +29,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	String savedPattern = null;
 
 	//SlidingMenu
-	private SlidingMenu menu;
+	private SliderMenu menu;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -41,16 +41,9 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		checkDefaults();
 
-		// configure the SlidingMenu
-		menu = new SlidingMenu(this);
-		menu.setMode(SlidingMenu.LEFT);
-		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-		menu.setShadowWidthRes(R.dimen.shadow_width);
-		menu.setShadowDrawable(R.drawable.shadow);
-		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-		menu.setFadeDegree(0.35f);
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		menu.setMenu(R.layout.sliding_menu);
 
 		//Reset Preferences
 		Preference prefReset = (Preference) findPreference("pref_reset");

@@ -741,6 +741,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.layout.account_menu, menu);
+		
 	}
 
 	//For Menu Items

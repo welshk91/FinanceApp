@@ -135,15 +135,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		//Arguments
 		Bundle bundle=getArguments();
-		 
+
 		//bundle is empty if from search, so don't add extra menu options
 		if(bundle!=null){
 			setHasOptionsMenu(true);
 		}
-		
+
 		//setRetainInstance(true);
 
 	}//end onCreate
@@ -488,6 +488,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//For Adding a Transaction
 	public void transactionAdd(){
+		if(account_id==0){
+			Toast.makeText(Transactions.this.getActivity(), "Please Select an Account First", Toast.LENGTH_LONG).show();
+			return;
+		}
+				
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
 		promptsView = li.inflate(R.layout.transaction_add, null);
@@ -553,7 +558,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				transactionName = tName.getText().toString().trim();
 				transactionValue = tValue.getText().toString().trim();
 				transactionType = tType.getSelectedItem().toString().trim();
-				transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
+
+				try{
+					transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
+				}
+				catch(Exception e){
+					//Usually caused if no category exists
+
+				}
+
 				transactionCheckNum = tCheckNum.getText().toString().trim();
 				transactionMemo = tMemo.getText().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,7 +46,7 @@ import com.slidingmenu.lib.SlidingMenu;
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
 
 	final int PICKFILE_RESULT_CODE = 1;
-	
+
 	//Balance
 	float totalBalance;
 
@@ -96,7 +97,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		myFragmentView = inflater.inflate(R.layout.accounts, container, false);		
 
 		lv = (ListView)myFragmentView.findViewById(R.id.account_list);
@@ -173,6 +174,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					//Data to send to transaction fragment
 					Bundle args = new Bundle();
+					args.putBoolean("showAll", false);
+					args.putBoolean("boolSearch", false);
+					args.putString("searchQuery", null);
+
 					args.putInt("ID",entry_id);
 					args.putString("name", entry_name);
 					args.putString("balance", entry_balance);
@@ -223,10 +228,58 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//Reset Balance
 		totalBalance=0;
 
+		//Arguments sent by Account Fragment
+		Bundle bundle=getArguments();
+		boolean searchFragment=true;
+		
+		if(bundle!=null){
+			searchFragment = bundle.getBoolean("boolSearch");
+		}
+		
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-		c = myDB.query(tblAccounts, new String[] { "AcctID", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
-				null, null, null, null);
+
+		//Fragment is a search fragment
+		if(searchFragment){
+
+			//Word being searched
+			//String query = bundle.getString("searchQuery");			
+			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
+
+			//Command used to search
+			String sqlCommand = " SELECT * FROM " + tblAccounts + 
+					" WHERE AcctName " + 
+					" LIKE ?" + 
+					" UNION " + 
+					" SELECT * FROM " + tblAccounts +
+					" WHERE AcctBalance " + 
+					" LIKE ?" + 
+					" UNION " + 
+					" SELECT * FROM " + tblAccounts +
+					" WHERE AcctDate " + 
+					" LIKE ?" +
+					" UNION " +
+					" SELECT * FROM " + tblAccounts +
+					" WHERE AcctTime " + 
+					" LIKE ?";
+
+			try{
+				c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
+			}
+			catch(Exception e){
+				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+		}
+
+		//Not A Search Fragment
+		else{
+			c = myDB.query(tblAccounts, new String[] { "AcctID", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
+					null, null, null, null);			
+		}
+
+
 		getActivity().startManagingCursor(c);
 		int IDColumn = c.getColumnIndex("AcctID");
 		int NameColumn = c.getColumnIndex("AcctName");
@@ -261,6 +314,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			else {
 				//No Results Found
 				noResult.setVisibility(View.VISIBLE);
+				
+				//No Search Results
+				if(bundle==null){
+					noResult.setText("Nothing Found");
+				}
+				
 			}
 		} 
 
@@ -707,11 +766,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			pickFile(null);
 			break;
 
-//		case R.id.account_menu_options:    
-//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-//			Intent v = new Intent(Accounts.this.getActivity(), Options.class);
-//			startActivity(v);
-//			break;
+			//		case R.id.account_menu_options:    
+			//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			//			Intent v = new Intent(Accounts.this.getActivity(), Options.class);
+			//			startActivity(v);
+			//			break;
 
 		}
 		return super.onOptionsItemSelected(item);

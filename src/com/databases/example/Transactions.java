@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -154,11 +155,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
 
-		if(bundle.isEmpty()){
+		if(bundle!=null && bundle.getBoolean("showAll")){
 			//Toast.makeText(this.getActivity(), "Could Not Find Account Information", Toast.LENGTH_SHORT).show();
 			showAllTransactions = true;
 		}
-		else{
+		else if(bundle!=null && showAllTransactions==false) {
 			account_id = bundle.getInt("ID");
 			//        String account_name = bundle.getString("name");
 			//        String account_balance = bundle.getString("balance");
@@ -209,12 +210,62 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//Reset totalBalance
 		totalBalance = 0;
 
+		//Arguments for fragment
+		Bundle bundle=getArguments();
+		boolean searchFragment=true;
+
+		if(bundle!=null){
+			searchFragment = bundle.getBoolean("boolSearch");
+		}
+
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		if(showAllTransactions){
 			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
 					null, null, null, null);
+		}
+		else if(searchFragment){
+			//Word being searched
+			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
+
+			//SQL for searching
+			String sqlCommand = " SELECT * FROM " + tblTrans + 
+					" WHERE TransName " + 
+					" LIKE ?" +
+					" UNION " +
+					" SELECT * FROM " + tblTrans +
+					" WHERE TransValue " + 
+					" LIKE ?" +
+					" UNION " +
+					" SELECT * FROM " + tblTrans +
+					" WHERE TransCategory " + 
+					" LIKE ?" +
+					" UNION " +
+					" SELECT * FROM " + tblTrans +
+					" WHERE TransDate " + 
+					" LIKE ?" +
+					" UNION " +				
+					" SELECT * FROM " + tblTrans +
+					" WHERE TransTime " + 
+					" LIKE ?" +
+					" UNION " +
+					" SELECT * FROM " + tblTrans +
+					" WHERE TransMemo " + 
+					" LIKE ?" +
+					" UNION " +
+					" SELECT * FROM " + tblTrans +
+					" WHERE TransCheckNum " + 
+					" LIKE ?";
+
+			try{
+				c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
+			}
+			catch(Exception e){
+				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
+				return;
+			}
+
 		}
 		else{
 			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
@@ -279,6 +330,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			else {
 				//No Results Found
 				noResult.setVisibility(View.VISIBLE);
+
+				//No Search Result
+				if(bundle==null){
+					noResult.setText("Nothing Found");
+				}
+
 			}
 		} 
 
@@ -789,12 +846,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			//transactionSchedule
 			break;
 
-//		case R.id.transaction_menu_options:    
-//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-//			Intent intentOptions = new Intent(Transactions.this.getActivity(), Options.class);
-//			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//			startActivity(intentOptions);
-//			break;
+			//		case R.id.transaction_menu_options:    
+			//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
+			//			Intent intentOptions = new Intent(Transactions.this.getActivity(), Options.class);
+			//			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			//			startActivity(intentOptions);
+			//			break;
 
 		}
 		return super.onOptionsItemSelected(item);

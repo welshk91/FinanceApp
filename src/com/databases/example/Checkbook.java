@@ -34,14 +34,27 @@ public class Checkbook extends SherlockFragmentActivity {
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
+		//The transaction frame, if null it means we can't see transactions in this particular view
 		View transaction_frame = findViewById(R.id.transaction_frag_frame);
 
 		if (savedInstanceState==null){
 
 			Accounts account_frag = new Accounts();
 			Transactions transaction_frag = new Transactions();
-			Bundle args = new Bundle();
-			transaction_frag.setArguments(args);
+
+			//Bundle for Transaction fragment
+			Bundle argsTran = new Bundle();
+			argsTran.putBoolean("showAll", true);
+			argsTran.putBoolean("boolSearch", false);
+			argsTran.putString("searchQuery", null);
+			
+			//Bundle for Account fragment
+			Bundle argsAccount = new Bundle();
+			argsAccount.putBoolean("boolSearch", false);
+			argsAccount.putString("searchQuery", null);
+
+			transaction_frag.setArguments(argsTran);
+			account_frag.setArguments(argsAccount);
 
 			if(transaction_frame!=null){
 				getSupportFragmentManager().beginTransaction()

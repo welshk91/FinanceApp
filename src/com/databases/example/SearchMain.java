@@ -48,7 +48,7 @@ public class SearchMain extends SherlockFragmentActivity {
 
 	//SlidingMenu
 	private SliderMenu menu;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
@@ -79,14 +79,19 @@ public class SearchMain extends SherlockFragmentActivity {
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
-		mTabsAdapter.addTab(SearchAccounts.class, null);
-		mTabsAdapter.addTab(SearchTransactions.class, null);
+
+		/*SearchAccounts.class & SearchTransactions.class don't produce errors
+		 *Might want to check up on that
+		 */
+
+		mTabsAdapter.addTab(Accounts.class, null);
+		mTabsAdapter.addTab(Transactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
 
 		//Toast.makeText(this, "Added tabs...", Toast.LENGTH_SHORT).show();

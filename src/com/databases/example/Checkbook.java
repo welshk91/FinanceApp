@@ -7,6 +7,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.databases.example.Transactions.DatePickerFragment;
+import com.databases.example.Transactions.TimePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
 import android.annotation.TargetApi;
@@ -16,6 +18,7 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -47,7 +50,7 @@ public class Checkbook extends SherlockFragmentActivity {
 			argsTran.putBoolean("showAll", true);
 			argsTran.putBoolean("boolSearch", false);
 			argsTran.putString("searchQuery", null);
-			
+
 			//Bundle for Account fragment
 			Bundle argsAccount = new Bundle();
 			argsAccount.putBoolean("boolSearch", false);
@@ -103,4 +106,16 @@ public class Checkbook extends SherlockFragmentActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-}//end SearchTime
+	//Method for selecting a Time when adding a transaction
+	public void showTimePickerDialog(View v){
+		DialogFragment newFragment = new TimePickerFragment();
+		newFragment.show(this.getSupportFragmentManager(), "timePicker");	
+	}
+	
+	//Method for selecting a Date when adding a transaction
+	public void showDatePickerDialog(View v) {
+		DialogFragment newFragment = new DatePickerFragment();
+		newFragment.show(this.getSupportFragmentManager(), "datePicker");
+	}
+
+}//end Checkbook

@@ -492,7 +492,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Toast.makeText(Transactions.this.getActivity(), "Please Select an Account First", Toast.LENGTH_LONG).show();
 			return;
 		}
-				
+
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
 		promptsView = li.inflate(R.layout.transaction_add, null);
@@ -903,10 +903,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	}
 
 	//Method called to show the TimePicker when adding a transaction
-	public void showTimePickerDialog(View v) {
-		DialogFragment newFragment = new TimePickerFragment();
-		newFragment.show(this.getActivity().getSupportFragmentManager(), "timePicker");
-	}
+	//public void showTimePickerDialog(View v) {
+	//	DialogFragment newFragment = new TimePickerFragment();
+	//	newFragment.show(this.getActivity().getSupportFragmentManager(), "timePicker");
+	//}
 
 	//Method to help create DatePicker
 	public static class DatePickerFragment extends DialogFragment
@@ -933,10 +933,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	}
 
 	//Method called to show DatePicker when adding transaction
-	public void showDatePickerDialog(View v) {
-		DialogFragment newFragment = new DatePickerFragment();
-		newFragment.show(this.getActivity().getSupportFragmentManager(), "datePicker");
-	}
+	//public void showDatePickerDialog(View v) {
+	//	DialogFragment newFragment = new DatePickerFragment();
+	//	newFragment.show(this.getActivity().getSupportFragmentManager(), "datePicker");
+	//}
 
 	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
 		private ArrayList<TransactionRecord> transaction;

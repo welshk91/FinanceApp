@@ -89,7 +89,15 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+
+		//Arguments
+		Bundle bundle=getArguments();
+
+		//bundle is empty if from search, so don't add extra menu options
+		if(bundle!=null){
+			setHasOptionsMenu(true);
+		}
+
 		setRetainInstance(true);
 
 	}// end onCreate
@@ -145,11 +153,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					myDB.close();
 				}
 
-				boolean dualPane = false;
 				View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
 				if(transaction_frame==null){
-					dualPane=false;
 
 					//Data to send to transaction fragment
 					Bundle args = new Bundle();
@@ -170,7 +176,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					ft.commit();
 				}
 				else{
-					dualPane=true;
 
 					//Data to send to transaction fragment
 					Bundle args = new Bundle();
@@ -231,11 +236,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
-		
+
 		if(bundle!=null){
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
-		
+
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -314,12 +319,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			else {
 				//No Results Found
 				noResult.setVisibility(View.VISIBLE);
-				
+
 				//No Search Results
 				if(bundle==null){
 					noResult.setText("Nothing Found");
 				}
-				
+
 			}
 		} 
 
@@ -731,7 +736,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		super.onDestroy();
 	}
 
-	//	//For Menu
+	//For Menu
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);

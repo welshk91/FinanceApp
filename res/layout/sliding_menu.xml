@@ -1,91 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:background="#E8E8E8" >
+    android:fadeScrollbars="true" >
 
-    <Button
-        android:id="@+id/slidingmenu_checkbook"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_margin="5dp"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="Checkbook"
-        android:textColor="#FFFFFF" >
-    </Button>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#E8E8E8" >
 
-    <Button
-        android:id="@+id/slidingmenu_schedules"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/slidingmenu_checkbook"
-        android:layout_margin="5dp"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="Schedules"
-        android:textColor="#FFFFFF" >
-    </Button>
+        <Button
+            android:id="@+id/slidingmenu_checkbook"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Checkbook"
+            android:textColor="#FFFFFF" >
+        </Button>
 
-    <Button
-        android:id="@+id/slidingmenu_manage"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/slidingmenu_schedules"
-        android:layout_margin="5dp"
-        android:background="@android:color/transparent"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="Manage"
-        android:textColor="#FFFFFF" >
-    </Button>
+        <Button
+            android:id="@+id/slidingmenu_schedules"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_checkbook"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Schedules"
+            android:textColor="#FFFFFF" >
+        </Button>
 
-    <Button
-        android:id="@+id/slidingmenu_statistics"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/slidingmenu_manage"
-        android:layout_margin="5dp"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="Statistics"
-        android:textColor="#FFFFFF" >
-    </Button>
+        <Button
+            android:id="@+id/slidingmenu_manage"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_schedules"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Manage"
+            android:textColor="#FFFFFF" >
+        </Button>
 
-    <Button
-        android:id="@+id/slidingmenu_options"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/slidingmenu_statistics"
-        android:layout_margin="5dp"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="Options"
-        android:textColor="#FFFFFF" >
-    </Button>
+        <Button
+            android:id="@+id/slidingmenu_statistics"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_manage"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Statistics"
+            android:textColor="#FFFFFF" >
+        </Button>
 
-    <Button
-        android:id="@+id/slidingmenu_help"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/slidingmenu_options"
-        android:layout_margin="5dp"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="Help"
-        android:textColor="#FFFFFF" >
-    </Button>
+        <Button
+            android:id="@+id/slidingmenu_options"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_statistics"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Options"
+            android:textColor="#FFFFFF" >
+        </Button>
 
-    <Button
-        android:id="@+id/slidingmenu_exit"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/slidingmenu_help"
-        android:layout_margin="5dp"
-        android:drawableLeft="@drawable/slidingmenu_exit"
-        android:padding="15dp"
-        android:text="@string/exit"
-        android:textColor="#FFFFFF" >
-    </Button>
+        <Button
+            android:id="@+id/slidingmenu_help"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_options"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Help"
+            android:textColor="#FFFFFF" >
+        </Button>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/slidingmenu_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_help"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="@string/exit"
+            android:textColor="#FFFFFF" >
+        </Button>
+    </RelativeLayout>
+
+</ScrollView>

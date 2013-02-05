@@ -36,8 +36,9 @@ public class SliderMenu extends SlidingMenu{
 		setShadowWidthRes(R.dimen.shadow_width);
 		setShadowDrawable(R.drawable.shadow);
 		//setAboveOffsetRes(R.dimen.slidingmenu_offset);
-		setBehindOffsetRes(R.dimen.slidingmenu_offset);
-		setFadeDegree(0.35f);
+		//setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		setBehindWidth(250);
+		setFadeDegree(0.50f);
 
 		//SlidingMenu Buttons
 		SlidingMenu_Checkbook_Button = (Button)findViewById(R.id.slidingmenu_checkbook);

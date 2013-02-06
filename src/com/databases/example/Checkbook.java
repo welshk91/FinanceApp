@@ -31,11 +31,12 @@ public class Checkbook extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.checkbook);
 
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
+		setContentView(R.layout.checkbook);
 
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View transaction_frame = findViewById(R.id.transaction_frag_frame);
@@ -49,12 +50,10 @@ public class Checkbook extends SherlockFragmentActivity {
 			Bundle argsTran = new Bundle();
 			argsTran.putBoolean("showAll", true);
 			argsTran.putBoolean("boolSearch", false);
-			argsTran.putString("searchQuery", null);
 
 			//Bundle for Account fragment
 			Bundle argsAccount = new Bundle();
 			argsAccount.putBoolean("boolSearch", false);
-			argsAccount.putString("searchQuery", null);
 
 			transaction_frag.setArguments(argsTran);
 			account_frag.setArguments(argsAccount);
@@ -75,24 +74,6 @@ public class Checkbook extends SherlockFragmentActivity {
 	public void onDestroy(){
 		super.onDestroy();
 	}
-
-	//For Menu
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		super.onCreateOptionsMenu(menu);
-	//		MenuInflater inflater = getSupportMenuInflater();
-	//		return true;
-	//
-	//	}
-
-	//	//If android version supports it, smooth gradient
-	//	@TargetApi(5)
-	//	@Override
-	//	public void onAttachedToWindow() {
-	//		super.onAttachedToWindow();
-	//		Window window = (Window) getWindow();
-	//		window.setFormat(PixelFormat.RGBA_8888);
-	//	}
 
 	//For Menu Items
 	@Override

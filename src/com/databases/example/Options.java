@@ -33,17 +33,21 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-		setTitle("Options");
-		addPreferencesFromResource(R.layout.options);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-
-		checkDefaults();
 
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
+		super.onCreate(savedInstanceState);
+
+		setTitle("Options");
+
+		addPreferencesFromResource(R.layout.options);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		
+		checkDefaults();
 
 		//Reset Preferences
 		Preference prefReset = (Preference) findPreference("pref_reset");

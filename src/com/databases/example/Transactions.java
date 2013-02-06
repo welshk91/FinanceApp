@@ -55,6 +55,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
@@ -841,7 +842,23 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.layout.transaction_menu, menu);
+
+		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
+
+
+		
+		if(transaction_frame!=null){
+			SubMenu subMMenuTransaction = menu.addSubMenu("Transaction");
+			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
+			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_schedule, com.actionbarsherlock.view.Menu.NONE, "Schedule");
+
+			MenuItem subMenu1Item = subMMenuTransaction.getItem();
+			subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		}
+		else{
+			inflater.inflate(R.layout.transaction_menu, menu);
+		}
+
 	}
 
 	//For Menu Items

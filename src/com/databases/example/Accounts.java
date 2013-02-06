@@ -41,6 +41,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
@@ -740,8 +741,28 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.layout.account_menu, menu);
-		
+
+		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
+
+		if(transaction_frame!=null){
+
+			//Show Search
+			MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+			menuSearch.setIcon(android.R.drawable.ic_menu_search);
+			menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+			SubMenu subMenu1 = menu.addSubMenu("Account");
+			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
+			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_transfer, com.actionbarsherlock.view.Menu.NONE, "Transfer");
+			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_unknown, com.actionbarsherlock.view.Menu.NONE, "Unknown");
+
+			MenuItem subMenu1Item = subMenu1.getItem();
+			subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		}
+		else{
+			inflater.inflate(R.layout.account_menu, menu);
+		}
+
 	}
 
 	//For Menu Items

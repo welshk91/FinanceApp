@@ -52,6 +52,11 @@ public class SearchMain extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
+		
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
 		handleIntent(getIntent()); 
 	}
 
@@ -75,10 +80,6 @@ public class SearchMain extends SherlockFragmentActivity {
 	public void makeView(){
 		setContentView(R.layout.search);
 		//Toast.makeText(this, "SearchTime Query: " + query, Toast.LENGTH_SHORT).show();
-
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);

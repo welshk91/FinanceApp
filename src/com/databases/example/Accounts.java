@@ -99,7 +99,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			setHasOptionsMenu(true);
 		}
 
-		setRetainInstance(true);
+		//setRetainInstance(true);
 
 	}// end onCreate
 
@@ -154,9 +154,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					myDB.close();
 				}
 
-				View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
-
-				if(transaction_frame==null){
+				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+				
+				if(checkbook_frame!=null){
 
 					//Data to send to transaction fragment
 					Bundle args = new Bundle();
@@ -171,7 +171,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.account_frag_frame, tran_frag);
+					ft.replace(R.id.checkbook_frag_frame, tran_frag);
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.addToBackStack(null);
 					ft.commit();

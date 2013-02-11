@@ -43,7 +43,6 @@ public class Checkbook extends SherlockFragmentActivity {
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
 
-<<<<<<< HEAD
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
 		 *  in transaction fragment staying in accountsFrame
@@ -51,10 +50,6 @@ public class Checkbook extends SherlockFragmentActivity {
 		 *  Removing if forces the frags to be replaced every time so not very efficient
 		 */
 		//if (savedInstanceState==null){
-=======
-		if (savedInstanceState == null){
->>>>>>> d30ba87aa66a73c1f60a54a095bf33b25d6e5468
-
 			Accounts account_frag = new Accounts();
 			Transactions transaction_frag = new Transactions();
 
@@ -71,18 +66,12 @@ public class Checkbook extends SherlockFragmentActivity {
 			account_frag.setArguments(argsAccount);
 
 			if(checkbook_frame==null){
-				Toast.makeText(this, "Dual?", Toast.LENGTH_SHORT).show();
 				getSupportFragmentManager().beginTransaction()
 				.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 			}
 			else{
-				Toast.makeText(this, "Single?", Toast.LENGTH_SHORT).show();
-				getSupportFragmentManager().beginTransaction()
-<<<<<<< HEAD
-				.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").commit();
-=======
-				.add(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
->>>>>>> d30ba87aa66a73c1f60a54a095bf33b25d6e5468
+				getSupportFragmentManager().beginTransaction().
+				replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
 			}
 
 			getSupportFragmentManager().executePendingTransactions();

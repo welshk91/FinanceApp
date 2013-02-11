@@ -843,9 +843,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
+<<<<<<< HEAD
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
 		if(transaction_frame!=null){
+=======
+		View account_frame = getActivity().findViewById(R.id.account_frag_frame);
+		
+		if(account_frame!=null){
+>>>>>>> d30ba87aa66a73c1f60a54a095bf33b25d6e5468
 			SubMenu subMMenuTransaction = menu.addSubMenu("Transaction");
 			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
 			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_schedule, com.actionbarsherlock.view.Menu.NONE, "Schedule");

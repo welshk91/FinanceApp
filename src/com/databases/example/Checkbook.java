@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.DialogFragment;
@@ -36,12 +37,13 @@ public class Checkbook extends SherlockFragmentActivity {
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		setContentView(R.layout.checkbook);
 
 		//The transaction frame, if null it means we can't see transactions in this particular view
-		View transaction_frame = findViewById(R.id.transaction_frag_frame);
+		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
 
+<<<<<<< HEAD
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
 		 *  in transaction fragment staying in accountsFrame
@@ -49,6 +51,9 @@ public class Checkbook extends SherlockFragmentActivity {
 		 *  Removing if forces the frags to be replaced every time so not very efficient
 		 */
 		//if (savedInstanceState==null){
+=======
+		if (savedInstanceState == null){
+>>>>>>> d30ba87aa66a73c1f60a54a095bf33b25d6e5468
 
 			Accounts account_frag = new Accounts();
 			Transactions transaction_frag = new Transactions();
@@ -65,18 +70,25 @@ public class Checkbook extends SherlockFragmentActivity {
 			transaction_frag.setArguments(argsTran);
 			account_frag.setArguments(argsAccount);
 
-			if(transaction_frame!=null){
+			if(checkbook_frame==null){
+				Toast.makeText(this, "Dual?", Toast.LENGTH_SHORT).show();
 				getSupportFragmentManager().beginTransaction()
 				.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 			}
 			else{
+				Toast.makeText(this, "Single?", Toast.LENGTH_SHORT).show();
 				getSupportFragmentManager().beginTransaction()
+<<<<<<< HEAD
 				.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").commit();
+=======
+				.add(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
+>>>>>>> d30ba87aa66a73c1f60a54a095bf33b25d6e5468
 			}
 
 			getSupportFragmentManager().executePendingTransactions();
 
 		//}
+
 
 	}//end onCreate
 
@@ -102,7 +114,7 @@ public class Checkbook extends SherlockFragmentActivity {
 		DialogFragment newFragment = new TimePickerFragment();
 		newFragment.show(this.getSupportFragmentManager(), "timePicker");	
 	}
-	
+
 	//Method for selecting a Date when adding a transaction
 	public void showDatePickerDialog(View v) {
 		DialogFragment newFragment = new DatePickerFragment();

@@ -175,6 +175,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.addToBackStack(null);
 					ft.commit();
+					getFragmentManager().executePendingTransactions();
 				}
 				else{
 
@@ -198,6 +199,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					ft.replace(R.id.transaction_frag_frame, tran_frag);
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.commit();
+					getFragmentManager().executePendingTransactions();
 
 				}
 
@@ -743,6 +745,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		super.onCreateOptionsMenu(menu, inflater);
 
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
+
+		//Clear any leftover junk
+		menu.clear();
 
 		if(transaction_frame!=null){
 

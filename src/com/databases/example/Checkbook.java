@@ -6,6 +6,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.view.Window;
 import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
@@ -41,7 +42,13 @@ public class Checkbook extends SherlockFragmentActivity {
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View transaction_frame = findViewById(R.id.transaction_frag_frame);
 
-		if (savedInstanceState==null){
+		/*NOTE To Self
+		 * took out the if because changing orientation resulted
+		 *  in transaction fragment staying in accountsFrame
+		 *  if you went to transactions in a single pane and then rotated
+		 *  Removing if forces the frags to be replaced every time so not very efficient
+		 */
+		//if (savedInstanceState==null){
 
 			Accounts account_frag = new Accounts();
 			Transactions transaction_frag = new Transactions();
@@ -60,13 +67,16 @@ public class Checkbook extends SherlockFragmentActivity {
 
 			if(transaction_frame!=null){
 				getSupportFragmentManager().beginTransaction()
-				.add(R.id.account_frag_frame, account_frag,"account_frag_tag").add(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
+				.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 			}
 			else{
 				getSupportFragmentManager().beginTransaction()
-				.add(R.id.account_frag_frame, account_frag,"account_frag_tag").commit();
+				.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").commit();
 			}
-		}
+
+			getSupportFragmentManager().executePendingTransactions();
+
+		//}
 
 	}//end onCreate
 
@@ -86,7 +96,7 @@ public class Checkbook extends SherlockFragmentActivity {
 
 		return super.onOptionsItemSelected(item);
 	}
-
+	
 	//Method for selecting a Time when adding a transaction
 	public void showTimePickerDialog(View v){
 		DialogFragment newFragment = new TimePickerFragment();

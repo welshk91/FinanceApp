@@ -145,7 +145,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			setHasOptionsMenu(true);
 		}
 
-		//setRetainInstance(true);
+		setRetainInstance(false);
 
 	}//end onCreate
 
@@ -845,8 +845,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
-
-		
 		if(transaction_frame!=null){
 			SubMenu subMMenuTransaction = menu.addSubMenu("Transaction");
 			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
@@ -856,6 +854,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		}
 		else{
+			menu.clear();
 			inflater.inflate(R.layout.transaction_menu, menu);
 		}
 

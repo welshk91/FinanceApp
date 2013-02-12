@@ -521,15 +521,21 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		final int year = c.get(Calendar.YEAR);
 		final int month = c.get(Calendar.MONTH);
 		final int day = c.get(Calendar.DAY_OF_MONTH);
-		final int hour = c.get(Calendar.HOUR_OF_DAY);
+		final int hour = c.get(Calendar.HOUR);
 		final int minute = c.get(Calendar.MINUTE);
 
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 		tDate.setText((month+1) + "/" + day + "/" + year);
 
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-		tTime.setText(hour + ":" + minute);
-
+		
+		if(Calendar.getInstance().get(Calendar.AM_PM)==1){
+			tTime.setText(hour + ":" + minute + " PM");
+		}
+		else{
+			tTime.setText(hour + ":" + minute + " AM");
+		}	
+		
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
 		//Populate List

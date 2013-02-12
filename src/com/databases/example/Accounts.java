@@ -606,6 +606,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				accountName = aName.getText().toString().trim();
 				accountBalance = aBalance.getText().toString().trim();
 
+				final Calendar cal = Calendar.getInstance();
+				final int year = cal.get(Calendar.YEAR);
+				final int month = cal.get(Calendar.MONTH);
+				final int day = cal.get(Calendar.DAY_OF_MONTH);
+				
 				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
 				}
@@ -613,8 +618,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
 				}				
 
-				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
-
+				accountDate = ((month+1) + "/" + day + "/" + year);
+				
 				//Variables for adding Starting Balance transaction
 				final String transactionName = "STARTING BALANCE";
 				float transactionValue;

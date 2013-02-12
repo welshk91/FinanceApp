@@ -19,6 +19,10 @@ public class Manage extends SherlockActivity{
 	public SQLiteDatabase myDB = null;
 	private SliderMenu menu;
 
+	//Dialogs that need to be dismissed
+	AlertDialog alertDialogCreate;
+	AlertDialog alertDialogRestore;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -28,7 +32,7 @@ public class Manage extends SherlockActivity{
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 	}//end onCreate
 
 	public void backupDialog(View v){
@@ -63,10 +67,10 @@ public class Manage extends SherlockActivity{
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogCreate = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogCreate.show();
 
 	}//end of backup
 
@@ -102,11 +106,23 @@ public class Manage extends SherlockActivity{
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogRestore = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogRestore.show();
 
 	}//end of restore
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogCreate!=null){
+			alertDialogCreate.dismiss();
+		}
+		if(alertDialogRestore!=null){
+			alertDialogRestore.dismiss();
+		}
+		super.onPause();
+	}
 
 }//end of Manage

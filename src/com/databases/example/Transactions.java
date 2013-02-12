@@ -71,6 +71,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	View transStatsView;
 	View myFragmentView;
 
+	//Need to be global so I can dismiss and avoid leaks
+	AlertDialog alertDialogView;
+	AlertDialog alertDialogAdd;
+	AlertDialog alertDialogEdit;
+
 	//Widgets for Adding Accounts
 	EditText tName;
 	EditText tValue;
@@ -460,7 +465,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		.setCancelable(true);
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogView = alertDialogBuilder.create();
 
 		//Set Statistics
 		statsName = (TextView)transStatsView.findViewById(R.id.TextTransactionName);
@@ -483,7 +488,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		statsCleared.setText(entry_cleared);
 
 		// show it
-		alertDialog.show();
+		alertDialogView.show();
 
 	}  
 
@@ -528,14 +533,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		tDate.setText((month+1) + "/" + day + "/" + year);
 
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-		
+
 		if(Calendar.getInstance().get(Calendar.AM_PM)==1){
 			tTime.setText(hour + ":" + minute + " PM");
 		}
 		else{
 			tTime.setText(hour + ":" + minute + " AM");
 		}	
-		
+
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
 		//Populate List
@@ -648,10 +653,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogAdd = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogAdd.show();
 
 	}
 
@@ -808,10 +813,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogEdit = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogEdit.show();
 
 	}
 
@@ -1420,5 +1425,20 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 	}//end of categoryRefresh
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogView!=null){
+			alertDialogView.dismiss();
+		}
+		if(alertDialogEdit!=null){
+			alertDialogEdit.dismiss();
+		}
+		if(alertDialogAdd!=null){
+			alertDialogAdd.dismiss();
+		}
+		super.onPause();
+	}
 
 }//end Transactions

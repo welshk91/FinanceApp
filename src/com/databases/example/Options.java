@@ -28,6 +28,10 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	private static final int _ReqCreatePattern = 0;
 	String savedPattern = null;
 
+	//Dialogs to be dismissed
+	AlertDialog alertDialogReset;
+	AlertDialog.Builder builderDelete;
+
 	//SlidingMenu
 	private SliderMenu menu;
 
@@ -37,16 +41,16 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		super.onCreate(savedInstanceState);
 
 		setTitle("Options");
 
 		addPreferencesFromResource(R.layout.options);
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
-		
+
 		checkDefaults();
 
 		//Reset Preferences
@@ -162,20 +166,21 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogReset = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogReset.show();
+
 	}//end of prefsReset
 
 	//Ask if user wants to delete checkbook
 	public void clearDB(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builderDelete = new AlertDialog.Builder(this);
 
 		// set title
-		builder.setTitle("Delete Your Checkbook?");
+		builderDelete.setTitle("Delete Your Checkbook?");
 
-		builder.setMessage(
+		builderDelete.setMessage(
 				"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
 				.setCancelable(false)
 				.setPositiveButton("Yes",
@@ -249,6 +254,15 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogReset!=null){
+			alertDialogReset.dismiss();
+		}
+		super.onPause();
 	}
 
 }//end of Options

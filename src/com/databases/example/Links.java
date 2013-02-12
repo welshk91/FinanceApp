@@ -35,7 +35,7 @@ public class Links extends SherlockActivity{
 	String linkFilePath = null;
 	int linkItem;
 	Intent intent = null;
-	AlertDialog alertDialog;
+	AlertDialog alertDialogAttachment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -69,10 +69,10 @@ public class Links extends SherlockActivity{
 		.setCancelable(true);
 
 		// create alert dialog
-		alertDialog = alertDialogBuilder.create();
+		alertDialogAttachment = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogAttachment.show();
 
 		ListView linkTypes = (ListView)linkChooser.findViewById(R.id.linkchooser_types);
 		linkTypes.setOnItemClickListener(new OnItemClickListener() {
@@ -132,7 +132,7 @@ public class Links extends SherlockActivity{
 					Toast.makeText(Links.this, "Error: " + e, Toast.LENGTH_LONG).show();
 				}
 				
-				alertDialog.cancel();
+				alertDialogAttachment.cancel();
 				
 			}
 		});
@@ -218,6 +218,15 @@ public class Links extends SherlockActivity{
 		}
 
 		return linkFilePath;
+	}
+	
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogAttachment!=null){
+			alertDialogAttachment.dismiss();
+		}
+		super.onPause();
 	}
 
 }//end of Manage

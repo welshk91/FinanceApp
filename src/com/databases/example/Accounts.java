@@ -63,6 +63,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	View accountStatsView;
 	View myFragmentView;
 
+	//Need to be global so I can dismiss and avoid leaks
+	AlertDialog alertDialogView;
+	AlertDialog alertDialogAdd;
+	AlertDialog alertDialogEdit;
+
 	//Variables for the Account Table
 	String accountName = null;
 	String accountTime = null;
@@ -155,7 +160,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
-				
+
 				if(checkbook_frame!=null){
 
 					//Data to send to transaction fragment
@@ -429,10 +434,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		.setCancelable(true);
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogView = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogView.show();
 
 		//Set Statistics
 		statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
@@ -537,10 +542,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogEdit = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogEdit.show();
 
 	}
 
@@ -610,7 +615,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				final int year = cal.get(Calendar.YEAR);
 				final int month = cal.get(Calendar.MONTH);
 				final int day = cal.get(Calendar.DAY_OF_MONTH);
-				
+
 				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
 					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
 				}
@@ -619,7 +624,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}				
 
 				accountDate = ((month+1) + "/" + day + "/" + year);
-				
+
 				//Variables for adding Starting Balance transaction
 				final String transactionName = "STARTING BALANCE";
 				float transactionValue;
@@ -728,10 +733,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialogAdd = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogAdd.show();
 
 	}	
 
@@ -1092,6 +1097,21 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			}
 			break;
 		}
+	}
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogView!=null){
+			alertDialogView.dismiss();
+		}
+		if(alertDialogEdit!=null){
+			alertDialogEdit.dismiss();
+		}
+		if(alertDialogAdd!=null){
+			alertDialogAdd.dismiss();
+		}
+		super.onPause();
 	}
 
 }// end Accounts

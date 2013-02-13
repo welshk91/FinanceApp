@@ -24,6 +24,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
 import android.text.method.TextKeyListener;
 import android.view.ContextMenu;
@@ -150,6 +151,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			setHasOptionsMenu(true);
 		}
 
+		/*
+		 * Set to true if you want to keep instance during rotation change
+		 * can't do it because containers are named differently for the xmls
+		 */
+		
 		setRetainInstance(false);
 
 	}//end onCreate
@@ -854,9 +860,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
-
-		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
-
 		View account_frame = getActivity().findViewById(R.id.account_frag_frame);
 
 		if(account_frame!=null){
@@ -1438,6 +1441,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
 		}
+		
+
+		
 		super.onPause();
 	}
 

@@ -48,9 +48,6 @@ public class SliderMenu extends SlidingMenu{
 		SlidingMenu_Help_Button.setOnClickListener(myListener);
 		SlidingMenu_Exit_Button = (Button)findViewById(R.id.slidingmenu_exit);
 		SlidingMenu_Exit_Button.setOnClickListener(myListener);
-		
-		//setOnClickListener(myListener);
-		//this.setOnClickListener(myListener);
 
 	}//end constructor
 

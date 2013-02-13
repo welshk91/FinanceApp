@@ -9,7 +9,7 @@
         android:layout_height="fill_parent"
         android:layout_margin="2dp"
         android:layout_weight=".5"
-        android:background="#E8E8E8" />
+        android:background="#555555" />
 
     <FrameLayout
         android:id="@+id/transaction_frag_frame"

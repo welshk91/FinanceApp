@@ -27,6 +27,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.format.DateFormat;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,7 +151,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(bundle!=null){
 			setHasOptionsMenu(true);
 		}
-		
+
 		/*
 		 * Set to true if you want to keep instance during rotation change
 		 * can't do it because containers are named differently for the xmls
@@ -394,16 +395,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(item.getItemId()==CONTEXT_MENU_OPEN){
 			//Toast.makeText(Transactions.this.getActivity(), "Open in trans", Toast.LENGTH_SHORT).show();
 			transactionOpen(item);
+			return true;
 		}  
 		else if(item.getItemId()==CONTEXT_MENU_EDIT){
 			transactionEdit(item);
+			return true;
 		}
 		else if(item.getItemId()==CONTEXT_MENU_DELETE){
 			transactionDelete(item);
+			return true;
 		}
 		else {
-			System.out.print("ERROR on ContextMenu; function not found");
-			return super.onContextItemSelected(item);
+			//return super.onContextItemSelected(item);
 		}  
 
 		return super.onContextItemSelected(item);  
@@ -890,24 +893,17 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		case R.id.transaction_menu_add:    
 			transactionAdd();
-			break;
+			return true;
 
 		case R.id.transaction_menu_search:    
 			getActivity().onSearchRequested();
-			break;
+			return true;
 
 		case R.id.transaction_menu_schedule:    
 			//transactionSchedule
-			break;
-
-			//		case R.id.transaction_menu_options:    
-			//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			//			Intent intentOptions = new Intent(Transactions.this.getActivity(), Options.class);
-			//			intentOptions.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			//			startActivity(intentOptions);
-			//			break;
-
+			return true;
 		}
+
 		return super.onOptionsItemSelected(item);
 	}
 

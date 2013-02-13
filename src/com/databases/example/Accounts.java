@@ -232,6 +232,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
+		//Log.e("Accounts", "Populate");
 		results = new ArrayList<AccountRecord>();
 
 		//A textView alerting the user if database is empty
@@ -370,20 +371,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		if(item.getItemId()==CONTEXT_MENU_OPEN){
 			accountOpen(item);
+			return true;
 		}  
 		else if(item.getItemId()==CONTEXT_MENU_EDIT){
 			accountEdit(item);
+			return true;
 		}
 		else if(item.getItemId()==CONTEXT_MENU_DELETE){
 			accountDelete(item);
+			return true;
 		}
 		else {
-			return false;
+			//return false;
 			//return super.onContextItemSelected(item);
 		}  
 
-		return true;
-		//return super.onContextItemSelected(item);  
+		return super.onContextItemSelected(item);  
 	}  
 
 	//For Opening an Account
@@ -530,7 +533,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Toast.makeText(Accounts.this.getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
+				//Update Accounts ListView
 				Accounts.this.populate();
+
 
 			}//end onClick "OK"
 		})
@@ -555,11 +560,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		Object itemName = adapter.getItem(itemInfo.position).name;
 
-		//NOTE: LIMIT *position*,*how many after*
-		//String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
-		//		" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
-		//		" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
-
 		String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
 				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
 
@@ -578,6 +578,32 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			myDB.close();
 		}
 
+		//Reload transaction fragment if shown
+		View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+
+		if(checkbook_frame==null){
+			Accounts account_frag = new Accounts();
+			Transactions transaction_frag = new Transactions();
+
+			//Bundle for Transaction fragment
+			Bundle argsTran = new Bundle();
+			argsTran.putBoolean("showAll", true);
+			argsTran.putBoolean("boolSearch", false);
+
+			//Bundle for Account fragment
+			Bundle argsAccount = new Bundle();
+			argsAccount.putBoolean("boolSearch", false);
+
+			transaction_frag.setArguments(argsTran);
+			account_frag.setArguments(argsAccount);
+
+			getFragmentManager().beginTransaction()
+			.replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
+
+			getFragmentManager().executePendingTransactions();
+
+		}
+		
 		populate();
 
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
@@ -794,28 +820,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		case R.id.account_menu_add:    
 			accountAdd();
-			break;
+			return true;
 
 		case R.id.account_menu_search:    
 			getActivity().onSearchRequested();
-			break;
+			return true;
 
 		case R.id.account_menu_transfer:    
 			//accountTransfer();
-			break;
+			return true;
 
 		case R.id.account_menu_unknown:    
 			//Insert Unknown Code Here
 			pickFile(null);
-			break;
-
-			//		case R.id.account_menu_options:    
-			//			//Toast.makeText(this, "You pressed Options!", Toast.LENGTH_SHORT).show();
-			//			Intent v = new Intent(Accounts.this.getActivity(), Options.class);
-			//			startActivity(v);
-			//			break;
-
+			return true;
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -1068,7 +1088,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Override default resume to also call populate in case view needs refreshing
 	@Override
 	public void onResume(){
-		populate();
+		//populate();
 		super.onResume();
 	}
 

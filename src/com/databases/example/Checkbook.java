@@ -1,30 +1,16 @@
 package com.databases.example;
 
-import java.util.ArrayList;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
-import com.actionbarsherlock.view.Window;
 import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 public class Checkbook extends SherlockFragmentActivity {
 
@@ -48,10 +34,13 @@ public class Checkbook extends SherlockFragmentActivity {
 		 * Hack fix for when in transactions (single pane), rotating keeps the account back stack
 		 * so dual pane users have to hit back twice to leave checkbook
 		 */
-		if(checkbook_frame==null){
-			getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		if(savedInstanceState!=null){
+			//Clear BackStack
+			while(getSupportFragmentManager().getBackStackEntryCount()>0){
+				getSupportFragmentManager().popBackStackImmediate();
+			}
 		}
-		
+
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
 		 *  in transaction fragment staying in accountsFrame

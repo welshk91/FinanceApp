@@ -150,12 +150,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(bundle!=null){
 			setHasOptionsMenu(true);
 		}
-
+		
 		/*
 		 * Set to true if you want to keep instance during rotation change
 		 * can't do it because containers are named differently for the xmls
 		 */
-		
+
 		setRetainInstance(false);
 
 	}//end onCreate
@@ -409,7 +409,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		return super.onContextItemSelected(item);  
 	}
 
-	//For Opening an Account
+	//For Opening a Transaction
 	public void transactionOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 
@@ -460,7 +460,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
 
-		// set account_add.xml to AlertDialog builder
+		// set xml to AlertDialog builder
 		alertDialogBuilder.setView(transStatsView);
 
 		//set Title
@@ -1441,9 +1441,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
 		}
-		
 
-		
+
+
 		super.onPause();
 	}
 

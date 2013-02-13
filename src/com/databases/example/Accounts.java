@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -348,7 +349,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		calculateBalance();
 
 	}//end populate
-
+	//Creates menu for long presses
 	@Override  
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);
@@ -362,11 +363,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
 	}  
 
+	//Handles which methods are called when using the long presses menu
+	/* NOTE: Not sure whether to use return false/true or return super.onContextItemSelected(item)
+	 * Using 'super' causes a bug that performs an action twice if you single pane->dual pane->context menu
+	 */
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
 		if(item.getItemId()==CONTEXT_MENU_OPEN){
-			//Toast.makeText(Accounts.this.getActivity(), "Open in account", Toast.LENGTH_SHORT).show();
 			accountOpen(item);
 		}  
 		else if(item.getItemId()==CONTEXT_MENU_EDIT){
@@ -376,17 +380,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			accountDelete(item);
 		}
 		else {
-			System.out.print("ERROR on ContextMenu; function not found");
-			return super.onContextItemSelected(item);
+			return false;
+			//return super.onContextItemSelected(item);
 		}  
 
-		return super.onContextItemSelected(item);  
+		return true;
+		//return super.onContextItemSelected(item);  
 	}  
 
 	//For Opening an Account
 	public void accountOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		//Object itemName = adapter.getItem(itemInfo.position);
 
 		String sqlCommand = "SELECT * FROM " + tblAccounts + 
 				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
@@ -394,7 +398,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		Cursor c = myDB.rawQuery(sqlCommand, null);
-
 		getActivity().startManagingCursor(c);
 
 		int entry_id = 0;
@@ -423,7 +426,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				this.getSherlockActivity());
 
-		// set account_add.xml to AlertDialog builder
+		// set xml to AlertDialog builder
 		alertDialogBuilder.setView(accountStatsView);
 
 		//set Title
@@ -436,9 +439,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		// create alert dialog
 		alertDialogView = alertDialogBuilder.create();
 
-		// show it
-		alertDialogView.show();
-
 		//Set Statistics
 		statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
 		statsName.setText(entry_name);
@@ -448,6 +448,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		statsDate.setText(entry_date);
 		statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
 		statsTime.setText(entry_time);
+
+		// show it
+		alertDialogView.show();
 
 	}  
 

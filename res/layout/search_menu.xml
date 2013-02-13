@@ -7,16 +7,4 @@
         android:showAsAction="ifRoom"
         android:title="Search"/>
 
-    <item
-        android:id="@+id/search_menu_logout"
-        android:title="Logout"/>
-
-    <item
-        android:id="@+id/search_menu_options"
-        android:title="Options"/>
-
-    <item
-        android:id="@+id/search_menu_help"
-        android:title="Help"/>
-
 </menu>

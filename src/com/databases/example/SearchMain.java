@@ -15,12 +15,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 /*
@@ -52,11 +49,11 @@ public class SearchMain extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
-		
+
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		handleIntent(getIntent()); 
 	}
 
@@ -86,11 +83,9 @@ public class SearchMain extends SherlockFragmentActivity {
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
-
-		/*SearchAccounts.class & SearchTransactions.class don't produce errors
+		/*Accounts.class & Transactions.class don't produce errors
 		 *Might want to check up on that
 		 */
-
 		mTabsAdapter.addTab(Accounts.class, null);
 		mTabsAdapter.addTab(Transactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
@@ -106,7 +101,7 @@ public class SearchMain extends SherlockFragmentActivity {
 		return true;
 	}
 
-	public static class MyPagerAdapter extends FragmentPagerAdapter
+	public static class MyPagerAdapter extends FragmentStatePagerAdapter
 	implements ViewPager.OnPageChangeListener{
 
 		private final Context mContext;
@@ -201,6 +196,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	@Override
 	public void onDestroy(){
 		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
+		
 		super.onDestroy();
 	}
 
@@ -217,10 +213,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:    
-			//Intent intentUp = new Intent(SearchMain.this, Main.class);
-			//intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			//startActivity(intentUp);
+		case android.R.id.home:
 			menu.toggle();
 			break;
 
@@ -228,20 +221,6 @@ public class SearchMain extends SherlockFragmentActivity {
 			onSearchRequested();
 			break;
 
-		case R.id.search_menu_logout:
-			this.finish();
-			this.moveTaskToBack(true);
-			//super.onDestroy();
-			break;
-
-		case R.id.search_menu_options:    
-			Intent v = new Intent(SearchMain.this, Options.class);
-			startActivity(v);
-			break;
-
-		case R.id.search_menu_help:    
-			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
-			break;
 		}
 		return true;
 	}

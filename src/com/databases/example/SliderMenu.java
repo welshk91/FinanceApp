@@ -64,6 +64,7 @@ public class SliderMenu extends SlidingMenu{
 				//Toast.makeText(SliderMenu.this.getContext(), "Clicked Checkbook", Toast.LENGTH_SHORT).show();
 				//	createDatabase();
 				Intent intentCheckbook = new Intent(getContext(), Checkbook.class);
+				intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				getContext().startActivity(intentCheckbook);
 				break;
 

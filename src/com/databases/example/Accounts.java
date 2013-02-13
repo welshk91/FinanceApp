@@ -189,7 +189,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Bundle args = new Bundle();
 					args.putBoolean("showAll", false);
 					args.putBoolean("boolSearch", false);
-					args.putString("searchQuery", null);
 
 					args.putInt("ID",entry_id);
 					args.putString("name", entry_name);
@@ -257,7 +256,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(searchFragment){
 
 			//Word being searched
-			//String query = bundle.getString("searchQuery");			
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			//Command used to search

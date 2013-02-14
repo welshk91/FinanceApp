@@ -536,7 +536,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				//Update Accounts ListView
 				Accounts.this.populate();
 
-
 			}//end onClick "OK"
 		})
 		.setNegativeButton("Cancel",
@@ -579,10 +578,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 
 		//Reload transaction fragment if shown
-		View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
-		if(checkbook_frame==null){
-			Accounts account_frag = new Accounts();
+		if(transaction_frame==null){
 			Transactions transaction_frag = new Transactions();
 
 			//Bundle for Transaction fragment
@@ -590,12 +588,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			argsTran.putBoolean("showAll", true);
 			argsTran.putBoolean("boolSearch", false);
 
-			//Bundle for Account fragment
-			Bundle argsAccount = new Bundle();
-			argsAccount.putBoolean("boolSearch", false);
-
 			transaction_frag.setArguments(argsTran);
-			account_frag.setArguments(argsAccount);
 
 			getFragmentManager().beginTransaction()
 			.replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
@@ -603,7 +596,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			getFragmentManager().executePendingTransactions();
 
 		}
-		
+
 		populate();
 
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
@@ -835,7 +828,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			pickFile(null);
 			return true;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 

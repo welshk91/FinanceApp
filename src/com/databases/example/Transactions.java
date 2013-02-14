@@ -651,6 +651,25 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 				Transactions.this.populate();
 
+				//Reload account fragment if shown
+				View account_frame = getActivity().findViewById(R.id.account_frag_frame);
+
+				if(account_frame!=null){
+					Accounts account_frag = new Accounts();
+
+					//Bundle for Account fragment
+					Bundle argsAccount = new Bundle();
+					argsAccount.putBoolean("boolSearch", false);
+
+					account_frag.setArguments(argsAccount);
+
+					getFragmentManager().beginTransaction()
+					.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
+
+					getFragmentManager().executePendingTransactions();
+
+				}
+
 			}//end onClick "OK"
 		})
 		.setNegativeButton("Cancel",
@@ -667,7 +686,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		// show it
 		alertDialogAdd.show();
 
-	}
+	}//end of transactionAdd
 
 	//For Editing an Transaction
 	public void transactionEdit(android.view.MenuItem item){
@@ -810,6 +829,25 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				}
 
 				Transactions.this.populate();
+
+				//Reload account fragment if shown
+				View account_frame = getActivity().findViewById(R.id.account_frag_frame);
+
+				if(account_frame!=null){
+					Accounts account_frag = new Accounts();
+
+					//Bundle for Account fragment
+					Bundle argsAccount = new Bundle();
+					argsAccount.putBoolean("boolSearch", false);
+
+					account_frag.setArguments(argsAccount);
+
+					getFragmentManager().beginTransaction()
+					.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
+
+					getFragmentManager().executePendingTransactions();
+
+				}
 
 			}//end onClick "OK"
 		})

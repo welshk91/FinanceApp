@@ -107,5 +107,12 @@ public class Checkbook extends SherlockFragmentActivity {
 		DialogFragment newFragment = new DatePickerFragment();
 		newFragment.show(this.getSupportFragmentManager(), "datePicker");
 	}
+	
+	//Method for category
+	public void showCategoryAdd(View V){
+		
+		
+	}
+
 
 }//end Checkbook

@@ -23,10 +23,22 @@
         </Button>
 
         <Button
-            android:id="@+id/slidingmenu_schedules"
+            android:id="@+id/slidingmenu_categories"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_below="@+id/slidingmenu_checkbook"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/slidingmenu_exit"
+            android:padding="15dp"
+            android:text="Categories"
+            android:textColor="#FFFFFF" >
+        </Button>
+
+        <Button
+            android:id="@+id/slidingmenu_schedules"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_below="@+id/slidingmenu_categories"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"

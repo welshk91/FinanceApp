@@ -10,6 +10,7 @@ import com.slidingmenu.lib.SlidingMenu;
 public class SliderMenu extends SlidingMenu{
 	//Slidingmenu Buttons
 	Button SlidingMenu_Checkbook_Button;
+	Button SlidingMenu_Categories_Button;
 	Button SlidingMenu_Schedule_Button;
 	Button SlidingMenu_Manage_Button;
 	Button SlidingMenu_Stats_Button;
@@ -36,6 +37,8 @@ public class SliderMenu extends SlidingMenu{
 		//SlidingMenu Buttons
 		SlidingMenu_Checkbook_Button = (Button)findViewById(R.id.slidingmenu_checkbook);
 		SlidingMenu_Checkbook_Button.setOnClickListener(myListener);
+		SlidingMenu_Categories_Button = (Button)findViewById(R.id.slidingmenu_categories);
+		SlidingMenu_Categories_Button.setOnClickListener(myListener);
 		SlidingMenu_Schedule_Button = (Button)findViewById(R.id.slidingmenu_schedules);
 		SlidingMenu_Schedule_Button.setOnClickListener(myListener);
 		SlidingMenu_Manage_Button = (Button)findViewById(R.id.slidingmenu_manage);
@@ -58,13 +61,19 @@ public class SliderMenu extends SlidingMenu{
 			case R.id.slidingmenu_checkbook:
 				//Log.e("SliderMenu", "Checkbook Listener Fired");
 				SliderMenu.this.toggle();
-				//Toast.makeText(SliderMenu.this.getContext(), "Clicked Checkbook", Toast.LENGTH_SHORT).show();
-				//	createDatabase();
 				Intent intentCheckbook = new Intent(getContext(), Checkbook.class);
 				intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				getContext().startActivity(intentCheckbook);
 				break;
 
+			case R.id.slidingmenu_categories:
+				//Log.e("SliderMenu", "Schedules Listener Fired");
+				SliderMenu.this.toggle();
+				Intent intentCategories = new Intent(getContext(), Categories.class);
+				intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				getContext().startActivity(intentCategories);				
+				break;
+				
 			case R.id.slidingmenu_schedules:
 				//Log.e("SliderMenu", "Schedules Listener Fired");
 				SliderMenu.this.toggle();

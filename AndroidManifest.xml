@@ -68,6 +68,10 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name=".Categories"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name=".Links"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name" >

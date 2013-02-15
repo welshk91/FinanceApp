@@ -248,7 +248,20 @@ public class Categories extends SherlockActivity{
 	}//end of subcategoryPopulate
 
 	//Alert for adding a new category
-	public void categoryAdd(int catId){		
+	public void categoryAdd(android.view.MenuItem item){		
+		boolean isCategory = true;
+		String itemID = "0";
+
+		if(item != null){
+			isCategory = false;
+			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+			itemID = adapterCategory.getItem(itemInfo.position).id;
+		}
+
+		final boolean isCat = isCategory;
+		final String catID = itemID;
+		//Log.e("Categories","catID = " + catID);
+
 		LayoutInflater li = LayoutInflater.from(this);
 		final View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
 
@@ -257,8 +270,14 @@ public class Categories extends SherlockActivity{
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(categoryAddView);
 
-		//set Title
-		alertDialogBuilder.setTitle("Create A Category");
+		if(isCat){
+			//set Title
+			alertDialogBuilder.setTitle("Create A Category");
+		}
+		else{
+			//set Title
+			alertDialogBuilder.setTitle("Create A SubCategory");			
+		}
 
 		// set dialog message
 		alertDialogBuilder
@@ -272,11 +291,29 @@ public class Categories extends SherlockActivity{
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 				try{
-					//Insert values into accounts table
-					ContentValues categoryValues=new ContentValues();
-					categoryValues.put("CateName",category);
 
-					myDB.insert(tblCategory, null, categoryValues);
+					//Insert values into category table
+					//Add a category
+					if(isCat){
+						Log.e("Category Add", "Adding a normal category : " + category);
+
+						ContentValues categoryValues=new ContentValues();
+						categoryValues.put("CateName",category);
+
+						myDB.insert(tblCategory, null, categoryValues);
+
+					}
+					//Add a subcategory
+					else{
+						Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
+
+						ContentValues subcategoryValues=new ContentValues();
+						subcategoryValues.put("SubCateName",category);
+						subcategoryValues.put("ToCatID",catID);
+
+						myDB.insert(tblSubCategory, null, subcategoryValues);
+
+					}
 
 				}
 				catch(Exception e){
@@ -336,7 +373,7 @@ public class Categories extends SherlockActivity{
 			break;
 
 		case ACTIONBAR_MENU_ADD_CATEGORY_ID:
-			categoryAdd(0);
+			categoryAdd(null);
 			break;
 
 		case R.id.account_menu_search:    
@@ -368,7 +405,8 @@ public class Categories extends SherlockActivity{
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
 		if(item.getItemId()==CONTEXT_MENU_ADD){
-			Log.e("Categories","Context Menu ADD pressed");
+			Log.e("Categories","Context Menu ADD pressed") ;
+			categoryAdd(item);
 			return true;
 		}
 		else if(item.getItemId()==CONTEXT_MENU_VIEW){

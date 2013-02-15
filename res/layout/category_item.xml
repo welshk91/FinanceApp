@@ -38,7 +38,7 @@
 
     <!-- this is the expandable view that is initially hidden and will slide out when the more button is pressed -->
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/expandable"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -50,14 +50,15 @@
         <ListView
             android:id="@+id/subcategory_list"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/subcategory_noSubCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No SubCategories"
+            android:gravity="center"
+            android:text="No SubCategories\n\n To Add A SubCategory, Long-Press A Category"
             android:visibility="gone" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

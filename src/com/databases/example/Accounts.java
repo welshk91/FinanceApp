@@ -348,6 +348,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		calculateBalance();
 
 	}//end populate
+
 	//Creates menu for long presses
 	@Override  
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  

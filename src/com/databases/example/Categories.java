@@ -12,9 +12,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,9 +34,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Accounts.UserItemAdapter;
-import com.databases.example.Transactions.DatePickerFragment;
-import com.databases.example.Transactions.TimePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 import com.tjerkw.slideexpandable.library.ActionSlideExpandableListView;
 import com.tjerkw.slideexpandable.library.SlideExpandableListAdapter;
@@ -43,8 +42,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.view.ContextMenu.ContextMenuInfo;
+
 
 public class Categories extends SherlockActivity{
 
@@ -55,16 +54,20 @@ public class Categories extends SherlockActivity{
 
 	private SliderMenu menu;
 
-	ActionSlideExpandableListView lvCategory = null;
+	ListView lvCategory = null;
 	ListView lvSubCategory = null;
 	ArrayAdapter<CategoryRecord> adapterCategory = null;
 	//ArrayAdapter<SubCategoryRecord> adapterSubCategory = null;
 	SimpleCursorAdapter adapterSubCategory = null;
 
-	ViewGroup vg;
-	
 	//Constant for ActionbarId
-	final int ACTIONBAR_MENU_ADD_ID = 8675309;
+	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
+	
+	//Constants for ContextMenu
+	int CONTEXT_MENU_ADD=1;
+	int CONTEXT_MENU_VIEW=2;
+	int CONTEXT_MENU_EDIT=3;
+	int CONTEXT_MENU_DELETE=4;
 
 	ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
 	ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
@@ -76,17 +79,17 @@ public class Categories extends SherlockActivity{
 		super.onCreate(savedInstanceState);
 
 		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//menu = new SliderMenu(this);
+		//menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
 		setTitle("Categories");
 		setContentView(R.layout.categories);
 
-		lvCategory = (ActionSlideExpandableListView)this.findViewById(R.id.category_list);
+		lvCategory = (ListView)this.findViewById(R.id.category_list);
 
 		//Turn clicks on
-		//lv.setClickable(true);
-		//lv.setLongClickable(true);
+		lvCategory.setClickable(true);
+		lvCategory.setLongClickable(true);
 
 		categoryPopulate();
 
@@ -123,10 +126,6 @@ public class Categories extends SherlockActivity{
 					CategoryRecord entry = new CategoryRecord(id, name, note);
 					resultsCategory.add(entry);
 
-					//Log.e("Categories","Going in to subcategoryPopulate(" + id +")");
-					//subcategoryPopulate(id);
-					//Log.e("Categories","Going out to subcategoryPopulate(" + id +")");
-
 				} while (cursorCategory.moveToNext());
 			}
 
@@ -141,6 +140,9 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
+		//Allows Context Menus for each item of the list view
+		registerForContextMenu(lvCategory);
+		
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory);		
 
 		lvCategory.setAdapter(new SlideExpandableListAdapter(
@@ -234,7 +236,6 @@ public class Categories extends SherlockActivity{
 				//No Results Found
 				Log.e("Category", "No Subcategories found");
 				noResult.setVisibility(View.VISIBLE);
-				noResult.setText("No SubCategories found!!!!");
 			}
 		} 
 
@@ -257,7 +258,7 @@ public class Categories extends SherlockActivity{
 	//For Menu Items
 
 	//Alert for adding a new category
-	public void categoryAdd(){		
+	public void categoryAdd(int catId){		
 		LayoutInflater li = LayoutInflater.from(this);
 		final View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
 
@@ -286,6 +287,7 @@ public class Categories extends SherlockActivity{
 					categoryValues.put("CateName",category);
 
 					myDB.insert(tblCategory, null, categoryValues);
+					
 				}
 				catch(Exception e){
 					Log.e("Categories", "Error adding Categories");
@@ -313,12 +315,8 @@ public class Categories extends SherlockActivity{
 		// show it
 		alertDialog.show();
 
-		//Close cursor
-		//categoryCursor.close();
-
 	}//end of showCategoryAdd
 
-	
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -328,9 +326,9 @@ public class Categories extends SherlockActivity{
 		MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
 		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		
+
 		SubMenu subMenu1 = menu.addSubMenu("Categories");
-		subMenu1.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
+		subMenu1.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_CATEGORY_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
 
 		MenuItem subMenu1Item = subMenu1.getItem();
 		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -338,28 +336,73 @@ public class Categories extends SherlockActivity{
 		return true;
 
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
 			menu.toggle();
 			break;
-			
-		case ACTIONBAR_MENU_ADD_ID:
-			
-			categoryAdd();
 
+		case ACTIONBAR_MENU_ADD_CATEGORY_ID:
+			categoryAdd(0);
 			break;
 			
 		case R.id.account_menu_search:    
 			onSearchRequested();
 			return true;
-			
+
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
+	
+	//Creates menu for long presses
+		@Override  
+		public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
+			super.onCreateContextMenu(menu, v, menuInfo);
+
+			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
+			String name = "" + (itemInfo.position);
+
+			menu.setHeaderTitle(name);  
+			menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
+			menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
+			menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
+			menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+		}  
+
+		//Handles which methods are called when using the long presses menu
+		/* NOTE: Not sure whether to use return false/true or return super.onContextItemSelected(item)
+		 * Using 'super' causes a bug that performs an action twice if you single pane->dual pane->context menu
+		 */
+		@Override  
+		public boolean onContextItemSelected(android.view.MenuItem item) {
+
+			if(item.getItemId()==CONTEXT_MENU_ADD){
+				Log.e("Categories","Context Menu ADD pressed");
+				return true;
+			}
+			else if(item.getItemId()==CONTEXT_MENU_VIEW){
+				Log.e("Categories","Context Menu View pressed");
+				return true;
+			}
+			else if(item.getItemId()==CONTEXT_MENU_EDIT){
+				Log.e("Categories","Context Menu Edit pressed");
+				return true;
+			}
+			else if(item.getItemId()==CONTEXT_MENU_DELETE){
+				Log.e("Categories","Context Menu Delete pressed");
+				return true;
+			}
+			else {
+				//return false;
+				//return super.onContextItemSelected(item);
+			}  
+
+			return super.onContextItemSelected(item);  
+		}  
+
 
 	public class UserItemAdapter extends ArrayAdapter<CategoryRecord> {
 		private ArrayList<CategoryRecord> category;
@@ -377,11 +420,13 @@ public class Categories extends SherlockActivity{
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
-
+			
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.category_item, null);
 
+				//Log.e("Categories","id: " + user.id);
+				
 				//Populate SubCategory List
 				subcategoryPopulate(v, user.id);
 

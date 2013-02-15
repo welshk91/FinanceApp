@@ -113,7 +113,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		myFragmentView = inflater.inflate(R.layout.accounts, container, false);		
+		myFragmentView = inflater.inflate(R.layout.accounts, container, false);	
 
 		lv = (ListView)myFragmentView.findViewById(R.id.account_list);
 

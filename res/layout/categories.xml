@@ -3,9 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <FrameLayout
-        android:id="@+id/checkbook_frag_frame"
-        android:background="#123456"
+    <ListView
+        android:id="@+id/category_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

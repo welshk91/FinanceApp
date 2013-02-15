@@ -1,6 +1,7 @@
 package com.databases.example;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlertDialog;
@@ -113,6 +114,18 @@ public class Manage extends SherlockActivity{
 
 	}//end of restore
 
+	//For Menu Items
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:    
+			menu.toggle();
+			break;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+	
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {

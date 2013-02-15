@@ -999,12 +999,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 	}
 
-	//Method called to show DatePicker when adding transaction
-	//public void showDatePickerDialog(View v) {
-	//	DialogFragment newFragment = new DatePickerFragment();
-	//	newFragment.show(this.getActivity().getSupportFragmentManager(), "datePicker");
-	//}
-
 	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
 		private ArrayList<TransactionRecord> transaction;
 
@@ -1461,7 +1455,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			myDB.close();
 		}
 
-	}//end of categoryRefresh
+	}//end of categoryPopulate
 
 	//Close dialogs to prevent window leaks
 	@Override
@@ -1475,8 +1469,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
 		}
-
-
 
 		super.onPause();
 	}

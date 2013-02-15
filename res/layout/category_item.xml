@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/category_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center"
             android:textColor="#000000"
             android:textSize="20sp"
@@ -47,19 +47,17 @@
 
         <!-- put whatever you want in the expandable view -->
 
-        <Button
-            android:id="@+id/ButtonA"
+        <ListView
+            android:id="@+id/subcategory_list"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.5"
-            android:text="Action A" />
+            android:layout_height="fill_parent" />
 
-        <Button
-            android:id="@+id/ButtonB"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.5"
-            android:text="Action B" />
+        <TextView
+            android:id="@+id/subcategory_noSubCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No SubCategories"
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>

@@ -516,7 +516,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
 		tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-		tCategoryAdd= (Button)promptsView.findViewById(R.id.transaction_add_category);
 		tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
 		tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
 		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
@@ -534,9 +533,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		final Calendar c = Calendar.getInstance();
 		final int year = c.get(Calendar.YEAR);
 		final int month = c.get(Calendar.MONTH);
-		final int day = c.get(Calendar.DAY_OF_MONTH);
-		final int hour = c.get(Calendar.HOUR);
-		final int minute = c.get(Calendar.MINUTE);
+		final int day = c.get(Calendar.DAY_OF_MONTH); 
+		int hour = c.get(Calendar.HOUR);
+		int minute = c.get(Calendar.MINUTE);
+		String AmPm = "";
 
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 		tDate.setText((month+1) + "/" + day + "/" + year);
@@ -544,11 +544,22 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 
 		if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-			tTime.setText(hour + ":" + minute + " PM");
+			AmPm = "PM";
 		}
 		else{
-			tTime.setText(hour + ":" + minute + " AM");
-		}	
+			AmPm = "AM";
+		}
+
+		String newMinute = "";
+
+		if(minute<10){
+			newMinute = "0" + minute; 
+		}
+		else{
+			newMinute=""+minute;
+		}
+
+		tTime.setText(hour + ":" + newMinute + " " + AmPm);
 
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
@@ -953,7 +964,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current time as the default values for the picker
 			final Calendar c = Calendar.getInstance();
-			int hour = c.get(Calendar.HOUR_OF_DAY);
+			int hour = c.get(Calendar.HOUR);
 			int minute = c.get(Calendar.MINUTE);
 
 			// Create a new instance of TimePickerDialog and return it
@@ -964,8 +975,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			// Do something with the time chosen by the user
 			transactionTime = hourOfDay + ":" + minute;
+
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 			tTime.setText(transactionTime);
+
 		}
 	}
 
@@ -1369,69 +1382,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		super.onResume();
 	}
 
-	//Alert for adding a new category
-	public void showCategoryAdd(View V){		
-		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
-		final View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this.getActivity());
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(categoryAddView);
-
-		//set Title
-		alertDialogBuilder.setTitle("Create A Category");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true)
-		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-				String category = categorySpinner.getText().toString().trim();
-
-				//Create database and open
-				myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-				try{
-					//Insert values into accounts table
-					ContentValues categoryValues=new ContentValues();
-					categoryValues.put("CateName",category);
-
-					myDB.insert(tblCategory, null, categoryValues);
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Could Not Add Category\n" + e, Toast.LENGTH_SHORT).show();
-				}
-
-				//Make sure Database is closed
-				if (myDB != null){
-					myDB.close();
-				}
-
-				//Refresh the categories list
-				categoryPopulate();
-
-			}
-		})
-		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
-
-		// show it
-		alertDialog.show();
-
-		//Close cursor
-		categoryCursor.close();
-
-	}//end of showCategoryAdd
-
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
 
@@ -1468,6 +1418,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
+		}
+		if(categoryCursor!=null){
+			categoryCursor.close();
 		}
 
 		super.onPause();

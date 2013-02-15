@@ -2,7 +2,10 @@ package com.databases.example;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -24,7 +28,10 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.slidingmenu.lib.SlidingMenu;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.databases.example.Accounts.UserItemAdapter;
 import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
@@ -44,30 +51,38 @@ public class Categories extends SherlockActivity{
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 	final String tblCategory = "tblCategory";
+	final String tblSubCategory = "tblSubCategory";
 
 	private SliderMenu menu;
 
-	ActionSlideExpandableListView lv = null;
-	ArrayAdapter<CategoryRecord> adapter = null;
-	//ListAdapter adapter = null;
+	ActionSlideExpandableListView lvCategory = null;
+	ListView lvSubCategory = null;
+	ArrayAdapter<CategoryRecord> adapterCategory = null;
+	//ArrayAdapter<SubCategoryRecord> adapterSubCategory = null;
+	SimpleCursorAdapter adapterSubCategory = null;
 
-	//Adapter for category spinner
-	SimpleCursorAdapter categoryAdapter = null;
-	ArrayList<CategoryRecord> results = new ArrayList<CategoryRecord>();
-	Cursor categoryCursor;
+	ViewGroup vg;
+	
+	//Constant for ActionbarId
+	final int ACTIONBAR_MENU_ADD_ID = 8675309;
+
+	ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
+	ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
+	Cursor cursorCategory;
+	Cursor cursorSubCategory;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		
+
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		setTitle("Categories");
 		setContentView(R.layout.categories);
 
-		lv = (ActionSlideExpandableListView)this.findViewById(R.id.category_list);        
+		lvCategory = (ActionSlideExpandableListView)this.findViewById(R.id.category_list);
 
 		//Turn clicks on
 		//lv.setClickable(true);
@@ -79,7 +94,7 @@ public class Categories extends SherlockActivity{
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
-		results = new ArrayList<CategoryRecord>();
+		resultsCategory = new ArrayList<CategoryRecord>();
 
 		//A textView alerting the user if database is empty
 		TextView noResult = (TextView)this.findViewById(R.id.category_noCategory);
@@ -88,30 +103,31 @@ public class Categories extends SherlockActivity{
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
 
-		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
-				+ ";";
-
 		//categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
-		categoryCursor = myDB.query(tblCategory, new String[] { "CateID", "CateName", "CateNote"}, null,
+		cursorCategory = myDB.query(tblCategory, new String[] { "CateID", "CateName", "CateNote"}, null,
 				null, null, null, null);
 
-		startManagingCursor(categoryCursor);
-		int IDColumn = categoryCursor.getColumnIndex("CateID");
-		int NameColumn = categoryCursor.getColumnIndex("CateName");
-		int NoteColumn = categoryCursor.getColumnIndex("CateNote");
+		startManagingCursor(cursorCategory);
+		int IDColumn = cursorCategory.getColumnIndex("CateID");
+		int NameColumn = cursorCategory.getColumnIndex("CateName");
+		int NoteColumn = cursorCategory.getColumnIndex("CateNote");
 
-		categoryCursor.moveToFirst();
-		if (categoryCursor != null) {
-			if (categoryCursor.isFirst()) {
+		cursorCategory.moveToFirst();
+		if (cursorCategory != null) {
+			if (cursorCategory.isFirst()) {
 				do {
-					String id = categoryCursor.getString(IDColumn);
-					String name = categoryCursor.getString(NameColumn);
-					String note = categoryCursor.getString(NoteColumn);
+					String id = cursorCategory.getString(IDColumn);
+					String name = cursorCategory.getString(NameColumn);
+					String note = cursorCategory.getString(NoteColumn);
 
 					CategoryRecord entry = new CategoryRecord(id, name, note);
-					results.add(entry);
+					resultsCategory.add(entry);
 
-				} while (categoryCursor.moveToNext());
+					//Log.e("Categories","Going in to subcategoryPopulate(" + id +")");
+					//subcategoryPopulate(id);
+					//Log.e("Categories","Going out to subcategoryPopulate(" + id +")");
+
+				} while (cursorCategory.moveToNext());
 			}
 
 			else {
@@ -125,44 +141,42 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
-		adapter = new UserItemAdapter(this, android.R.layout.simple_list_item_1, results);		
+		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory);		
 
-		lv.setAdapter(new SlideExpandableListAdapter(
-				adapter,
+		lvCategory.setAdapter(new SlideExpandableListAdapter(
+				adapterCategory,
 				R.id.expandable_toggle_button,
 				R.id.expandable
 				));
 
-		// listen for events in the two buttons for every list item.
-		// the 'position' var will tell which list item is clicked
-		lv.setItemActionListener(new ActionSlideExpandableListView.OnActionClickListener() {
+		//		// listen for events in the two buttons for every list item.
+		//		// the 'position' var will tell which list item is clicked
+		//		lvCategory.setItemActionListener(new ActionSlideExpandableListView.OnActionClickListener() {
+		//
+		//			@Override
+		//			public void onClick(View listView, View buttonview, int position) {
+		//
+		//				/**
+		//				 * Normally you would put a switch
+		//				 * statement here, and depending on
+		//				 * view.getId() you would perform a
+		//				 * different action.
+		//				 */
+		//				String actionName = "";
+		//				if(buttonview.getId()==R.id.ButtonA) {
+		//					actionName = "buttonA";
+		//				} else {
+		//					actionName = "ButtonB";
+		//				}
+		//
+		//				Log.e("Categories", "Clicked Action: "+actionName+" in list item "+position);
+		//
+		//			}
+		//
+		//			// note that we also add 1 or more ids to the setItemActionListener
+		//			// this is needed in order for the listview to discover the buttons
+		//		}, R.id.ButtonA, R.id.ButtonB);
 
-			@Override
-			public void onClick(View listView, View buttonview, int position) {
-
-				/**
-				 * Normally you would put a switch
-				 * statement here, and depending on
-				 * view.getId() you would perform a
-				 * different action.
-				 */
-				String actionName = "";
-				if(buttonview.getId()==R.id.ButtonA) {
-					actionName = "buttonA";
-				} else {
-					actionName = "ButtonB";
-				}
-				/**
-				 * For testing sake we just show a toast
-				 */
-
-				Log.e("Categories", "Clicked Action: "+actionName+" in list item "+position);
-
-			}
-
-			// note that we also add 1 or more ids to the setItemActionListener
-			// this is needed in order for the listview to discover the buttons
-		}, R.id.ButtonA, R.id.ButtonB);
 
 
 		//categoryCursor.close();
@@ -172,15 +186,176 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
+		Log.e("Categories","out of category populate");
+
 	}//end of categoryPopulate
 
+	//Method for filling subcategories
+	public void subcategoryPopulate(View v, String catId){
+		Log.e("Categories","In subcategoryPopulate(" + catId +")");
+		resultsSubCategory = new ArrayList<SubCategoryRecord>();
+
+		//A textView alerting the user if database is empty
+		TextView noResult = (TextView)v.findViewById(R.id.subcategory_noSubCategory);
+		noResult.setVisibility(View.GONE);
+
+		lvSubCategory = (ListView)v.findViewById(R.id.subcategory_list);
+
+		// Cursor is used to navigate the query results
+		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
+
+		//cursorSubCategory = myDB.rawQuery(sqlSubCategoryPopulate, null);
+		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCateID as _id", "ToCatID", "SubCateName", "SubCateNote"}, "ToCatID = " + catId,
+				null, null, null, null);
+
+		startManagingCursor(cursorSubCategory);
+		int IDColumn = cursorSubCategory.getColumnIndex("SubCateID");
+		int ToIDColumn = cursorSubCategory.getColumnIndex("ToCatID");
+		int NameColumn = cursorSubCategory.getColumnIndex("SubCateName");
+		int NoteColumn = cursorSubCategory.getColumnIndex("SubCateNote");
+
+		cursorSubCategory.moveToFirst();
+		if (cursorSubCategory != null) {
+			if (cursorSubCategory.isFirst()) {
+				do {
+					String id = cursorSubCategory.getString(0);
+					String to_id = cursorSubCategory.getString(ToIDColumn);
+					String name = cursorSubCategory.getString(NameColumn);
+					String note = cursorSubCategory.getString(NoteColumn);
+
+					SubCategoryRecord entry = new SubCategoryRecord(id, catId, name, note);
+					resultsSubCategory.add(entry);
+					Log.e("Category", "Added SubCategory: " + id + " " + catId + " " + name + " " + note);
+
+				} while (cursorSubCategory.moveToNext());
+			}
+
+			else {
+				//No Results Found
+				Log.e("Category", "No Subcategories found");
+				noResult.setVisibility(View.VISIBLE);
+				noResult.setText("No SubCategories found!!!!");
+			}
+		} 
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+
+		String[] from = new String[] {"SubCateName"}; 
+		int[] to = new int[] { android.R.id.text1 };
+
+		adapterSubCategory = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorSubCategory, from, to);		
+
+		lvSubCategory.setAdapter(adapterSubCategory);
+
+		//Log.e("Categories","Out of subcategoryPopulate(" + catId +")");
+
+	}//end of subcategoryPopulate
+
 	//For Menu Items
+
+	//Alert for adding a new category
+	public void categoryAdd(){		
+		LayoutInflater li = LayoutInflater.from(this);
+		final View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(categoryAddView);
+
+		//set Title
+		alertDialogBuilder.setTitle("Create A Category");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true)
+		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
+				String category = categorySpinner.getText().toString().trim();
+
+				//Create database and open
+				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+				try{
+					//Insert values into accounts table
+					ContentValues categoryValues=new ContentValues();
+					categoryValues.put("CateName",category);
+
+					myDB.insert(tblCategory, null, categoryValues);
+				}
+				catch(Exception e){
+					Log.e("Categories", "Error adding Categories");
+				}
+
+				//Make sure Database is closed
+				if (myDB != null){
+					myDB.close();
+				}
+
+				//Refresh the categories list
+				categoryPopulate();
+
+			}
+		})
+		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
+		//Close cursor
+		//categoryCursor.close();
+
+	}//end of showCategoryAdd
+
+	
+	//For Menu
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+
+		//Show Search
+		MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+		menuSearch.setIcon(android.R.drawable.ic_menu_search);
+		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		SubMenu subMenu1 = menu.addSubMenu("Categories");
+		subMenu1.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
+
+		MenuItem subMenu1Item = subMenu1.getItem();
+		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+		return true;
+
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
 			menu.toggle();
 			break;
+			
+		case ACTIONBAR_MENU_ADD_ID:
+			
+			categoryAdd();
+
+			break;
+			
+		case R.id.account_menu_search:    
+			onSearchRequested();
+			return true;
+			
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -206,6 +381,9 @@ public class Categories extends SherlockActivity{
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.category_item, null);
+
+				//Populate SubCategory List
+				subcategoryPopulate(v, user.id);
 
 				//Change Background Colors
 				try{

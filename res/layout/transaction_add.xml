@@ -77,16 +77,6 @@
             android:layout_alignTop="@+id/TextView04"
             android:layout_toRightOf="@+id/TextView05" />
 
-        <Button
-            android:id="@+id/transaction_add_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/spinner_transaction_category"
-            android:layout_toRightOf="@+id/spinner_transaction_category"
-            android:onClick="showCategoryAdd"
-            android:text="@string/add" >
-        </Button>
-
         <TextView
             android:id="@+id/TextView05"
             android:layout_width="wrap_content"

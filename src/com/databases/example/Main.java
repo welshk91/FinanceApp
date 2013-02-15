@@ -39,6 +39,7 @@ public class Main extends SherlockActivity {
 	public final String tblAccounts = "tblAccounts";
 	final String tblTrans = "tblTrans";
 	final String tblCategory = "tblCategory";
+	final String tblSubCategory = "tblSubCategory";
 	final String tblLinks = "tblLinks";
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
@@ -184,7 +185,11 @@ public class Main extends SherlockActivity {
 
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
-						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR);";
+						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR, CateNote VARCHAR);";
+				
+				String sqlCommandSubCategory = "CREATE TABLE IF NOT EXISTS "
+						+ tblSubCategory
+						+ " (SubCateID INTEGER PRIMARY KEY, ToCatID VARCHAR, SubCateName VARCHAR, SubCateNote VARCHAR);";
 
 				String sqlCommandLinks = "CREATE TABLE IF NOT EXISTS "
 						+ tblLinks
@@ -201,15 +206,32 @@ public class Main extends SherlockActivity {
 
 				//Create Category table
 				myDB.execSQL(sqlCommandCategory);
+				
+				//Create Category table
+				myDB.execSQL(sqlCommandSubCategory);
 
 				//Create Category table
 				myDB.execSQL(sqlCommandLinks);
 
 				//Add some default categories
-				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
-						+ " (CateName) " + "VALUES ('Gift');";
+				//final String sqlDefaultCategories = "INSERT INTO " + tblCategory
+				//		+ " (CateName) " + "VALUES ('STARTING BALANCE');";
+				
+				//Add some default categories
+				//final String sqlDefaultCategories2 = "INSERT INTO " + tblCategory
+				//		+ " (CateName) " + "VALUES ('Utils');";
+				
+				//Add some default categories
+				//final String sqlDefaultSubCategories = "INSERT INTO " + tblSubCategory
+				//		+ " (SubCateName) " + "VALUES ('Gas');";
+				//Add some default categories
+				//final String sqlDefaultSubCategories2 = "INSERT INTO " + tblSubCategory
+				//		+ " (SubCateName) " + "VALUES ('Electricty');";
 
 				//myDB.execSQL(sqlDefaultCategories);
+				//myDB.execSQL(sqlDefaultCategories2);
+				//myDB.execSQL(sqlDefaultSubCategories);
+				//myDB.execSQL(sqlDefaultSubCategories2);
 
 			} 
 			catch (Exception e) {

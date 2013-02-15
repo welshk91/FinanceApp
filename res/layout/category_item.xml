@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:id="@+id/category_layout"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:background="#E8E8E8"
+    android:gravity="left|center"
+    android:orientation="vertical"
+    android:paddingBottom="2dp"
+    android:paddingLeft="4dp"
+    android:paddingTop="2dp" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -10,10 +16,13 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/text"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:text="Hello World" />
+            android:id="@+id/category_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <!-- this is the button that will trigger sliding of the expandable view -->
 
@@ -21,9 +30,9 @@
             android:id="@+id/expandable_toggle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/text"
+            android:layout_alignBottom="@id/category_name"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@id/text"
+            android:layout_alignTop="@id/category_name"
             android:text="More" />
     </RelativeLayout>
 
@@ -33,19 +42,20 @@
         android:id="@+id/expandable"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#000000"
+        android:background="#666666"
         android:orientation="horizontal" >
 
         <!-- put whatever you want in the expandable view -->
 
         <Button
+            android:id="@+id/ButtonA"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.5"
             android:text="Action A" />
 
         <Button
-            android:id="@+id/details"
+            android:id="@+id/ButtonB"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="0.5"

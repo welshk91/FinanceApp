@@ -3,9 +3,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <ListView
+    <com.tjerkw.slideexpandable.library.ActionSlideExpandableListView
         android:id="@+id/category_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
+
+    <TextView
+        android:id="@+id/category_noCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="No Categories\n\n To Add A Category, Please Use The ActionBar On The Top"
+        android:visibility="gone" />
 
 </LinearLayout>

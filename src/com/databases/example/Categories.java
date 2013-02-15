@@ -18,10 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -29,15 +27,11 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.slidingmenu.lib.SlidingMenu;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.tjerkw.slideexpandable.library.SlideExpandableListAdapter;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.slidingmenu.lib.SlidingMenu;
-import com.tjerkw.slideexpandable.library.ActionSlideExpandableListView;
-import com.tjerkw.slideexpandable.library.SlideExpandableListAdapter;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -62,7 +56,7 @@ public class Categories extends SherlockActivity{
 
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
-	
+
 	//Constants for ContextMenu
 	int CONTEXT_MENU_ADD=1;
 	int CONTEXT_MENU_VIEW=2;
@@ -91,6 +85,12 @@ public class Categories extends SherlockActivity{
 		lvCategory.setClickable(true);
 		lvCategory.setLongClickable(true);
 
+		//Allows Context Menus for each item of the list view
+		registerForContextMenu(lvCategory);
+
+		//adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory);
+		//lvCategory.setAdapter(adapterCategory);
+
 		categoryPopulate();
 
 	}
@@ -106,7 +106,6 @@ public class Categories extends SherlockActivity{
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
 
-		//categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		cursorCategory = myDB.query(tblCategory, new String[] { "CateID", "CateName", "CateNote"}, null,
 				null, null, null, null);
 
@@ -140,9 +139,6 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
-		//Allows Context Menus for each item of the list view
-		registerForContextMenu(lvCategory);
-		
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory);		
 
 		lvCategory.setAdapter(new SlideExpandableListAdapter(
@@ -179,8 +175,6 @@ public class Categories extends SherlockActivity{
 		//			// this is needed in order for the listview to discover the buttons
 		//		}, R.id.ButtonA, R.id.ButtonB);
 
-
-
 		//categoryCursor.close();
 
 		//Close Database
@@ -188,7 +182,7 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
-		Log.e("Categories","out of category populate");
+		//Log.e("Categories","out of category populate");
 
 	}//end of categoryPopulate
 
@@ -206,7 +200,6 @@ public class Categories extends SherlockActivity{
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
 
-		//cursorSubCategory = myDB.rawQuery(sqlSubCategoryPopulate, null);
 		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCateID as _id", "ToCatID", "SubCateName", "SubCateNote"}, "ToCatID = " + catId,
 				null, null, null, null);
 
@@ -227,7 +220,7 @@ public class Categories extends SherlockActivity{
 
 					SubCategoryRecord entry = new SubCategoryRecord(id, catId, name, note);
 					resultsSubCategory.add(entry);
-					Log.e("Category", "Added SubCategory: " + id + " " + catId + " " + name + " " + note);
+					//Log.e("Category", "Added SubCategory: " + id + " " + catId + " " + name + " " + note);
 
 				} while (cursorSubCategory.moveToNext());
 			}
@@ -247,15 +240,12 @@ public class Categories extends SherlockActivity{
 		String[] from = new String[] {"SubCateName"}; 
 		int[] to = new int[] { android.R.id.text1 };
 
-		adapterSubCategory = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorSubCategory, from, to);		
-
+		adapterSubCategory = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorSubCategory, from, to);
 		lvSubCategory.setAdapter(adapterSubCategory);
 
 		//Log.e("Categories","Out of subcategoryPopulate(" + catId +")");
 
 	}//end of subcategoryPopulate
-
-	//For Menu Items
 
 	//Alert for adding a new category
 	public void categoryAdd(int catId){		
@@ -287,7 +277,7 @@ public class Categories extends SherlockActivity{
 					categoryValues.put("CateName",category);
 
 					myDB.insert(tblCategory, null, categoryValues);
-					
+
 				}
 				catch(Exception e){
 					Log.e("Categories", "Error adding Categories");
@@ -317,7 +307,7 @@ public class Categories extends SherlockActivity{
 
 	}//end of showCategoryAdd
 
-	//For Menu
+	//For ActionBar Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -337,6 +327,7 @@ public class Categories extends SherlockActivity{
 
 	}
 
+	//For ActionBar Menu Items (and home icon)
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -347,7 +338,7 @@ public class Categories extends SherlockActivity{
 		case ACTIONBAR_MENU_ADD_CATEGORY_ID:
 			categoryAdd(0);
 			break;
-			
+
 		case R.id.account_menu_search:    
 			onSearchRequested();
 			return true;
@@ -356,53 +347,49 @@ public class Categories extends SherlockActivity{
 
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	//Creates menu for long presses
-		@Override  
-		public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
-			super.onCreateContextMenu(menu, v, menuInfo);
+	@Override  
+	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
+		super.onCreateContextMenu(menu, v, menuInfo);
 
-			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-			String name = "" + (itemInfo.position);
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		String name = "" + adapterCategory.getItem(itemInfo.position).name;
 
-			menu.setHeaderTitle(name);  
-			menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
-			menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
-			menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
-			menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+		menu.setHeaderTitle(name);  
+		menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
+		menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
+		menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
+		menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+	}  
+
+	//Handles which methods are called when using the long presses menu
+	@Override  
+	public boolean onContextItemSelected(android.view.MenuItem item) {
+
+		if(item.getItemId()==CONTEXT_MENU_ADD){
+			Log.e("Categories","Context Menu ADD pressed");
+			return true;
+		}
+		else if(item.getItemId()==CONTEXT_MENU_VIEW){
+			Log.e("Categories","Context Menu View pressed");
+			return true;
+		}
+		else if(item.getItemId()==CONTEXT_MENU_EDIT){
+			Log.e("Categories","Context Menu Edit pressed");
+			return true;
+		}
+		else if(item.getItemId()==CONTEXT_MENU_DELETE){
+			Log.e("Categories","Context Menu Delete pressed");
+			return true;
+		}
+		else {
+			//return false;
+			//return super.onContextItemSelected(item);
 		}  
 
-		//Handles which methods are called when using the long presses menu
-		/* NOTE: Not sure whether to use return false/true or return super.onContextItemSelected(item)
-		 * Using 'super' causes a bug that performs an action twice if you single pane->dual pane->context menu
-		 */
-		@Override  
-		public boolean onContextItemSelected(android.view.MenuItem item) {
-
-			if(item.getItemId()==CONTEXT_MENU_ADD){
-				Log.e("Categories","Context Menu ADD pressed");
-				return true;
-			}
-			else if(item.getItemId()==CONTEXT_MENU_VIEW){
-				Log.e("Categories","Context Menu View pressed");
-				return true;
-			}
-			else if(item.getItemId()==CONTEXT_MENU_EDIT){
-				Log.e("Categories","Context Menu Edit pressed");
-				return true;
-			}
-			else if(item.getItemId()==CONTEXT_MENU_DELETE){
-				Log.e("Categories","Context Menu Delete pressed");
-				return true;
-			}
-			else {
-				//return false;
-				//return super.onContextItemSelected(item);
-			}  
-
-			return super.onContextItemSelected(item);  
-		}  
-
+		return super.onContextItemSelected(item);  
+	}  
 
 	public class UserItemAdapter extends ArrayAdapter<CategoryRecord> {
 		private ArrayList<CategoryRecord> category;
@@ -420,14 +407,16 @@ public class Categories extends SherlockActivity{
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
-			
+
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.category_item, null);
 
-				//Log.e("Categories","id: " + user.id);
-				
-				//Populate SubCategory List
+				//Log.e("Categories","category: " + user.id + " " + user.name);
+
+				/**Populate SubCategory List
+				 * HERE
+				 */
 				subcategoryPopulate(v, user.id);
 
 				//Change Background Colors

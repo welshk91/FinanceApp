@@ -33,6 +33,7 @@
             android:layout_alignBottom="@id/category_name"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/category_name"
+            android:focusable="false"
             android:text="More" />
     </RelativeLayout>
 
@@ -41,8 +42,8 @@
     <RelativeLayout
         android:id="@+id/expandable"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#666666"
+        android:layout_height="wrap_content"
+        android:background="#333333"
         android:orientation="horizontal" >
 
         <!-- put whatever you want in the expandable view -->
@@ -50,7 +51,7 @@
         <ListView
             android:id="@+id/subcategory_list"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="fill_parent" />
 
         <TextView
             android:id="@+id/subcategory_noSubCategory"

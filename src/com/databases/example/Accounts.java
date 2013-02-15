@@ -845,7 +845,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			AccountRecord user = account.get(position);
-
+			
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
@@ -854,6 +854,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
 
+				//Log.e("Accounts","account: " + user.id + " " + user.name);
+				
 				//Change Background Colors
 				try{
 					LinearLayout l;

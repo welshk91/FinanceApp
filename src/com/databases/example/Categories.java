@@ -91,7 +91,7 @@ public class Categories extends SherlockActivity{
 		categoryPopulate();
 
 		//Give the item adapter a list of all categories and subcategories
-		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory, resultsCursor);		
+		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
 		lvCategory.setAdapter(adapterCategory);
 
 	}
@@ -216,7 +216,7 @@ public class Categories extends SherlockActivity{
 		if(item != null){
 			isCategory = false;
 			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-			itemID = adapterCategory.getItem(itemInfo.position).id;
+			itemID = adapterCategory.getCategory(itemInfo.position).id;
 		}
 
 		final boolean isCat = isCategory;
@@ -252,11 +252,9 @@ public class Categories extends SherlockActivity{
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 				try{
-
-					//Insert values into category table
 					//Add a category
 					if(isCat){
-					//	Log.e("Category Add", "Adding a normal category : " + category);
+						//	Log.e("Category Add", "Adding a normal category : " + category);
 
 						ContentValues categoryValues=new ContentValues();
 						categoryValues.put("CateName",category);
@@ -266,7 +264,7 @@ public class Categories extends SherlockActivity{
 					}
 					//Add a subcategory
 					else{
-					//	Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
+						//	Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
 
 						ContentValues subcategoryValues=new ContentValues();
 						subcategoryValues.put("SubCateName",category);
@@ -350,27 +348,52 @@ public class Categories extends SherlockActivity{
 	@Override  
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);
+		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
 
-        ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-		
-		//AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		//String name = "" + adapterCategory.getItem(info.).name;
-		
-		Log.e("context menu", "info.id: " + info.id);
-		
-		String name = "Boo!";
-		
-		//menu.setHeaderTitle(name);  
-		menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
-		menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
-		menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
-		menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+
+
+		int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+		int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+		//Toast.makeText(this, groupPos + " - " + childPos, Toast.LENGTH_LONG).show();
+
+
+		switch (type) {
+		case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
+			Log.e("Categories", "Context Menu type CHILD");
+			String nameSubCategory = adapterCategory.getSubCategory(groupPos,childPos).name;
+			menu.setHeaderTitle(nameSubCategory);  
+			menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
+			menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
+			menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
+			menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+			break;
+
+		case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
+			Log.e("Categories", "Context Menu type GROUP");
+			String nameCategory = adapterCategory.getCategory(groupPos).name;
+			menu.setHeaderTitle(nameCategory);  
+			menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
+			menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
+			menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
+			menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+			break;
+
+		default:
+			Log.e("Categories", "Context Menu type is not child or group");
+			break;	
+
+		}
+
+		Log.e("context menu", "groupPos:" + groupPos + " childPos: " + childPos);
+
+
 	}  
 
 	//Handles which methods are called when using the long presses menu
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-		
+
 		if(item.getItemId()==CONTEXT_MENU_ADD){
 			Log.e("Categories","Context Menu ADD pressed") ;
 			categoryAdd(item);
@@ -397,27 +420,58 @@ public class Categories extends SherlockActivity{
 	}  
 
 	public class UserItemAdapter extends BaseExpandableListAdapter {
-		private ArrayList<CategoryRecord> category;
+		private Cursor category;
 		private ArrayList<Cursor> subcategory;
 		private Context context;
 
-		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<CategoryRecord> cats, ArrayList<Cursor> subcats) {
+		public UserItemAdapter(Context context, int textViewResourceId, Cursor cats, ArrayList<Cursor> subcats) {
 			this.category = cats;
 			this.subcategory = subcats;
 			this.context = context;
 		}
 
 		//My method for getting a Category Record at a certain position
-		//NEEDS FIXING -> NOT CORRECT
-		public CategoryRecord getItem(long id){
-			CategoryRecord user = category.get((int) id);
-			return user;
+		public CategoryRecord getCategory(long id){
+			Cursor group = category;
+
+			group.moveToPosition((int) id);
+			int IDColumn = group.getColumnIndex("CateID");
+			int NameColumn = group.getColumnIndex("CateName");
+			int NoteColumn = group.getColumnIndex("CateNote");
+
+			String itemId = group.getString(IDColumn);
+			String itemName = group.getString(NameColumn);
+			String itemNote = group.getString(NoteColumn);
+
+			CategoryRecord record = new CategoryRecord(itemId, itemName, itemNote);
+
+			return record;
+		}
+
+		//My method for getting a Category Record at a certain position
+		public SubCategoryRecord getSubCategory(int groupId, int childId){
+			Cursor group = subcategory.get(groupId);
+
+			int IDColumn = group.getColumnIndex("SubCateID");
+			int ToIDColumn = group.getColumnIndex("ToCatID");
+			int NameColumn = group.getColumnIndex("SubCateName");
+			int NoteColumn = group.getColumnIndex("SubCateNote");
+
+			group.moveToPosition(childId);
+			String itemId = group.getString(0);
+			String itemTo_id = group.getString(ToIDColumn);
+			String itemSubname = group.getString(NameColumn);
+			String itemNote = group.getString(NoteColumn);
+
+			SubCategoryRecord record = new SubCategoryRecord(itemId, itemTo_id, itemSubname, itemNote);
+
+			return record;
 		}
 
 		@Override
 		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			View v = convertView;
-			CategoryRecord user = category.get(groupPosition);
+			Cursor user = category;
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -426,7 +480,7 @@ public class Categories extends SherlockActivity{
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.category_item, null);
-				
+
 				//Change Background Colors
 				try{
 					LinearLayout l;
@@ -483,17 +537,24 @@ public class Categories extends SherlockActivity{
 				catch(Exception e){
 					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}				
-				
-			}
-
-			if (user != null) {
-				TextView name = (TextView) v.findViewById(R.id.category_name);
-
-				if (user.name != null) {
-					name.setText(user.name);
-				}
 
 			}
+
+			TextView name = (TextView) v.findViewById(R.id.category_name);
+			int IDColumn = user.getColumnIndex("CateID");
+			int NameColumn = user.getColumnIndex("CateName");
+			int NoteColumn = user.getColumnIndex("CateNote");
+
+			user.moveToPosition(groupPosition);
+			String itemId = user.getString(0);
+			String itemName = user.getString(NameColumn);
+			String itemNote = user.getString(NoteColumn);
+			//Log.e("getGroupView", "Found Category: " + itemName);
+
+			if (itemName != null) {
+				name.setText(itemName);
+			}
+
 			return v;
 		}//end getView
 
@@ -503,20 +564,23 @@ public class Categories extends SherlockActivity{
 			return null;
 		}
 
-		//Possibly Wrong; not sure if CateID or SubCateID
+		//NOT CORRECT...
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
 			// TODO Auto-generated method stub
 			Cursor temp = subcategory.get(groupPosition);
 			temp.moveToPosition(childPosition);
-			return temp.getLong(temp.getColumnIndexOrThrow("CateID"));
+			int IDColumn = temp.getColumnIndex("SubCateID");
+			String itemId = temp.getString(0);
+
+			return Long.parseLong(itemId);
 		}
 
 		@Override
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
-			Log.e("Cagtegories","groupPos: " + groupPosition + " childPos: " + childPosition + " isLastChild: " + isLastChild + " parent: " + parent);
+			//Log.e("Cagtegories","groupPos: " + groupPosition + " childPos: " + childPosition + " isLastChild: " + isLastChild + " parent: " + parent);
 
 			View v = convertView;
 			Cursor user = subcategory.get(groupPosition);
@@ -585,7 +649,7 @@ public class Categories extends SherlockActivity{
 				catch(Exception e){
 					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
-				
+
 			}
 
 			TextView name = (TextView) v.findViewById(R.id.subcategory_name);
@@ -615,7 +679,6 @@ public class Categories extends SherlockActivity{
 		public int getChildrenCount(int groupPosition) {
 			// TODO Auto-generated method stub
 			Cursor temp = subcategory.get(groupPosition);
-
 			return temp.getCount();
 		}
 
@@ -628,12 +691,13 @@ public class Categories extends SherlockActivity{
 		@Override
 		public int getGroupCount() {
 			// TODO Auto-generated method stub
-			return category.size();
+			return category.getCount();
 		}
 
 		@Override
 		public long getGroupId(int groupPosition) {
 			// TODO Auto-generated method stub
+
 			return 0;
 		}
 

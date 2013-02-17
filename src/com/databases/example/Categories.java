@@ -15,31 +15,23 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.slidingmenu.lib.SlidingMenu;
-import com.tjerkw.slideexpandable.library.SlideExpandableListAdapter;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Categories.SubCategoryRecord;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
-
 
 public class Categories extends SherlockActivity{
 
@@ -142,6 +134,7 @@ public class Categories extends SherlockActivity{
 			else {
 				//No Results Found
 				noResult.setVisibility(View.VISIBLE);
+				Log.d("Category", "No Categories found");
 			}
 		} 
 
@@ -153,7 +146,7 @@ public class Categories extends SherlockActivity{
 		//Give the item adapter a list of all categories and subcategories
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
 		lvCategory.setAdapter(adapterCategory);
-		
+
 		//Log.e("Categories","out of category populate");
 
 	}//end of categoryPopulate
@@ -161,10 +154,10 @@ public class Categories extends SherlockActivity{
 	//Method for filling subcategories
 	public void subcategoryPopulate(String catId){		
 		//Database myDB is already open
-		
+
 		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCateID as _id", "ToCatID", "SubCateName", "SubCateNote"}, "ToCatID = " + catId,
 				null, null, null, null);
-		
+
 		resultsCursor.add(cursorSubCategory);
 
 		startManagingCursor(cursorSubCategory);
@@ -191,17 +184,17 @@ public class Categories extends SherlockActivity{
 
 			else {
 				//No Results Found
-				Log.e("Category", "No Subcategories found");
+				Log.d("Category", "No Subcategories found");
 			}
 		} 
 
 	}//end of subcategoryPopulate
 
-	//Alert for adding a new category
+	//Adding a new category
 	public void categoryAdd(android.view.MenuItem item){		
 		boolean isCategory = true;
 		String itemID = "0";
-		
+
 		if(item != null){
 			isCategory = false;
 			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
@@ -294,6 +287,50 @@ public class Categories extends SherlockActivity{
 
 	}//end of showCategoryAdd
 
+	//Delete Category
+	public void categoryDelete(android.view.MenuItem item){
+		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+		int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+		int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+
+		//Open Database
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+		
+		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+			String subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
+			String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
+					" WHERE SubCateID = " + subcategoryID;
+			
+			Log.e("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
+			
+			myDB.execSQL(sqlDeleteSubCategory);
+			
+		}
+		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+			String categoryID = adapterCategory.getCategory(groupPos).id;
+			String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
+					" WHERE CateID = " + categoryID;
+			String sqlDeleteSubCategories = "DELETE FROM " + tblSubCategory + 
+					" WHERE ToCatID = " + categoryID;
+
+			Log.e("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
+			
+			myDB.execSQL(sqlDeleteCategory);
+			myDB.execSQL(sqlDeleteSubCategories);	
+			
+		}
+
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
+		}
+
+		//Refresh the categories list
+		categoryPopulate();
+
+	}//end categoryDelete
+
 	//For ActionBar Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -359,10 +396,10 @@ public class Categories extends SherlockActivity{
 			//Log.d("Categories", "Context Menu type GROUP");
 			String nameCategory = adapterCategory.getCategory(groupPos).name;
 			menu.setHeaderTitle(nameCategory);  
-			menu.add(0, CONTEXT_MENU_CATEGORY_ADD, 0, "Add");
-			menu.add(0, CONTEXT_MENU_CATEGORY_VIEW, 1, "View");  
-			menu.add(0, CONTEXT_MENU_CATEGORY_EDIT, 2, "Edit");
-			menu.add(0, CONTEXT_MENU_CATEGORY_DELETE, 3, "Delete");
+			menu.add(1, CONTEXT_MENU_CATEGORY_ADD, 0, "Add");
+			menu.add(1, CONTEXT_MENU_CATEGORY_VIEW, 1, "View");  
+			menu.add(1, CONTEXT_MENU_CATEGORY_EDIT, 2, "Edit");
+			menu.add(1, CONTEXT_MENU_CATEGORY_DELETE, 3, "Delete");
 			break;
 
 		default:
@@ -379,7 +416,7 @@ public class Categories extends SherlockActivity{
 
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_CATEGORY_ADD:
-			Log.e("Categories","Category Add pressed") ;
+			//Log.e("Categories","Category Add pressed") ;
 			categoryAdd(item);
 			return true;
 
@@ -392,19 +429,21 @@ public class Categories extends SherlockActivity{
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_DELETE:
-			Log.e("Categories","Category Delete pressed");
+			//Log.e("Categories","Category Delete pressed");
+			categoryDelete(item);
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_VIEW:
-			Log.e("Categories","SubCategory Delete pressed");
+			Log.e("Categories","SubCategory View pressed");
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_EDIT:
-			Log.e("Categories","SubCategory Delete pressed");
+			Log.e("Categories","SubCategory Edit pressed");
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_DELETE:
-			Log.e("Categories","SubCategory Delete pressed");
+			//Log.e("Categories","SubCategory Delete pressed");
+			categoryDelete(item);
 			return true;
 
 		default:
@@ -442,6 +481,7 @@ public class Categories extends SherlockActivity{
 			String itemNote = group.getString(NoteColumn);
 
 			CategoryRecord record = new CategoryRecord(itemId, itemName, itemNote);
+			//group.close();
 
 			return record;
 		}
@@ -462,6 +502,7 @@ public class Categories extends SherlockActivity{
 			String itemNote = group.getString(NoteColumn);
 
 			SubCategoryRecord record = new SubCategoryRecord(itemId, itemTo_id, itemSubname, itemNote);
+			//group.close();
 
 			return record;
 		}
@@ -562,7 +603,6 @@ public class Categories extends SherlockActivity{
 			return null;
 		}
 
-		//NOT CORRECT...
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
 			// TODO Auto-generated method stub
@@ -571,14 +611,17 @@ public class Categories extends SherlockActivity{
 			int IDColumn = temp.getColumnIndex("SubCateID");
 			String itemId = temp.getString(0);
 
+			//Log.e("getChildID", "returning " + Long.parseLong(itemId));
+
 			return Long.parseLong(itemId);
+
 		}
 
 		@Override
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
-			//Log.e("Cagtegories","groupPos: " + groupPosition + " childPos: " + childPosition + " isLastChild: " + isLastChild + " parent: " + parent);
+			//Log.d("Cagtegories","groupPos: " + groupPosition + " childPos: " + childPosition + " isLastChild: " + isLastChild + " parent: " + parent);
 
 			View v = convertView;
 			Cursor user = subcategory.get(groupPosition);
@@ -656,19 +699,18 @@ public class Categories extends SherlockActivity{
 			int NameColumn = user.getColumnIndex("SubCateName");
 			int NoteColumn = user.getColumnIndex("SubCateNote");
 
-			//user.moveToFirst();
-
 			user.moveToPosition(childPosition);
 			String itemId = user.getString(0);
 			String itemTo_id = user.getString(ToIDColumn);
 			String itemSubname = user.getString(NameColumn);
 			String itemNote = user.getString(NoteColumn);
-			Log.e("getChildView", "Found SubCategory: " + itemSubname);
+			//Log.d("getChildView", "Found SubCategory: " + itemSubname);
 
 			if (itemSubname != null) {
 				name.setText(itemSubname);
 			}
 
+			//user.close();
 			return v;
 
 		}
@@ -746,33 +788,28 @@ public class Categories extends SherlockActivity{
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-//		if(alertDialogView!=null){
-//			alertDialogView.dismiss();
-//		}
-//		if(alertDialogEdit!=null){
-//			alertDialogEdit.dismiss();
-//		}
-//		if(alertDialogAdd!=null){
-//			alertDialogAdd.dismiss();
-//		}
-		if(!cursorCategory.isClosed()){
-			cursorCategory.close();
-		}
-		
-		if(!cursorSubCategory.isClosed()){
-			cursorSubCategory.close();
-		}
-		if(!resultsCursor.isEmpty()){
-			resultsCursor.clear();
-			resultsCursor = null;
-		}
-		
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-		
+		//		if(alertDialogView!=null){
+		//			alertDialogView.dismiss();
+		//		}
+		//		if(alertDialogEdit!=null){
+		//			alertDialogEdit.dismiss();
+		//		}
+		//		if(alertDialogAdd!=null){
+		//			alertDialogAdd.dismiss();
+		//		}
+
+		//if(!cursorCategory.isClosed()){
+		//	cursorCategory.close();
+		//}
+		//if(!cursorSubCategory.isClosed()){
+		//	cursorSubCategory.close();
+		//}
+		//if(!resultsCursor.isEmpty()){
+		//	resultsCursor.clear();
+		//	resultsCursor = null;
+		//}
+
 		super.onPause();
 	}
-	
+
 }//end category

@@ -56,11 +56,16 @@ public class Categories extends SherlockActivity{
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
 
-	//Constants for ContextMenu
-	int CONTEXT_MENU_ADD=1;
-	int CONTEXT_MENU_VIEW=2;
-	int CONTEXT_MENU_EDIT=3;
-	int CONTEXT_MENU_DELETE=4;
+	//Constants for ContextMenu (Category)
+	final int CONTEXT_MENU_CATEGORY_ADD=1;
+	final int CONTEXT_MENU_CATEGORY_VIEW=2;
+	final int CONTEXT_MENU_CATEGORY_EDIT=3;
+	final int CONTEXT_MENU_CATEGORY_DELETE=4;
+
+	//Constants for ContextMenu (SubCategory)
+	final int CONTEXT_MENU_SUBCATEGORY_VIEW=5;
+	final int CONTEXT_MENU_SUBCATEGORY_EDIT=6;
+	final int CONTEXT_MENU_SUBCATEGORY_DELETE=7;
 
 	ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
 	ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
@@ -91,8 +96,8 @@ public class Categories extends SherlockActivity{
 		categoryPopulate();
 
 		//Give the item adapter a list of all categories and subcategories
-		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
-		lvCategory.setAdapter(adapterCategory);
+		//adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
+		//lvCategory.setAdapter(adapterCategory);
 
 	}
 
@@ -102,8 +107,6 @@ public class Categories extends SherlockActivity{
 		resultsCategory = new ArrayList<CategoryRecord>();
 		resultsSubCategory = new ArrayList<SubCategoryRecord>();
 		resultsCursor = new ArrayList<Cursor>();
-		//resultsCategory.clear();
-		//resultsSubCategory.clear();
 
 		//A textView alerting the user if database is empty
 		TextView noResult = (TextView)this.findViewById(R.id.category_noCategory);
@@ -154,6 +157,10 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
+		//Give the item adapter a list of all categories and subcategories
+		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
+		lvCategory.setAdapter(adapterCategory);
+		
 		//Log.e("Categories","out of category populate");
 
 	}//end of categoryPopulate
@@ -212,11 +219,13 @@ public class Categories extends SherlockActivity{
 	public void categoryAdd(android.view.MenuItem item){		
 		boolean isCategory = true;
 		String itemID = "0";
-
+		
 		if(item != null){
 			isCategory = false;
-			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-			itemID = adapterCategory.getCategory(itemInfo.position).id;
+			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+			itemID = adapterCategory.getCategory(groupPos).id;
+			Log.e("categoryAdd", "itemID: " + itemID);
 		}
 
 		final boolean isCat = isCategory;
@@ -350,33 +359,28 @@ public class Categories extends SherlockActivity{
 		super.onCreateContextMenu(menu, v, menuInfo);
 		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
 
-
-
 		int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 		int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-		//Toast.makeText(this, groupPos + " - " + childPos, Toast.LENGTH_LONG).show();
-
 
 		switch (type) {
 		case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
-			Log.e("Categories", "Context Menu type CHILD");
+			//Log.d("Categories", "Context Menu type CHILD");
 			String nameSubCategory = adapterCategory.getSubCategory(groupPos,childPos).name;
-			menu.setHeaderTitle(nameSubCategory);  
-			menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
-			menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
-			menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
-			menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+			menu.setHeaderTitle(nameSubCategory);
+			menu.add(0, CONTEXT_MENU_SUBCATEGORY_VIEW, 1, "View");  
+			menu.add(0, CONTEXT_MENU_SUBCATEGORY_EDIT, 2, "Edit");
+			menu.add(0, CONTEXT_MENU_SUBCATEGORY_DELETE, 3, "Delete");
 			break;
 
 		case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
-			Log.e("Categories", "Context Menu type GROUP");
+			//Log.d("Categories", "Context Menu type GROUP");
 			String nameCategory = adapterCategory.getCategory(groupPos).name;
 			menu.setHeaderTitle(nameCategory);  
-			menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
-			menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
-			menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
-			menu.add(0, CONTEXT_MENU_DELETE, 3, "Delete");
+			menu.add(0, CONTEXT_MENU_CATEGORY_ADD, 0, "Add");
+			menu.add(0, CONTEXT_MENU_CATEGORY_VIEW, 1, "View");  
+			menu.add(0, CONTEXT_MENU_CATEGORY_EDIT, 2, "Edit");
+			menu.add(0, CONTEXT_MENU_CATEGORY_DELETE, 3, "Delete");
 			break;
 
 		default:
@@ -385,38 +389,50 @@ public class Categories extends SherlockActivity{
 
 		}
 
-		Log.e("context menu", "groupPos:" + groupPos + " childPos: " + childPos);
-
-
 	}  
 
 	//Handles which methods are called when using the long presses menu
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
-		if(item.getItemId()==CONTEXT_MENU_ADD){
-			Log.e("Categories","Context Menu ADD pressed") ;
+		switch (item.getItemId()) {
+		case CONTEXT_MENU_CATEGORY_ADD:
+			Log.e("Categories","Category Add pressed") ;
 			categoryAdd(item);
 			return true;
-		}
-		else if(item.getItemId()==CONTEXT_MENU_VIEW){
-			Log.e("Categories","Context Menu View pressed");
-			return true;
-		}
-		else if(item.getItemId()==CONTEXT_MENU_EDIT){
-			Log.e("Categories","Context Menu Edit pressed");
-			return true;
-		}
-		else if(item.getItemId()==CONTEXT_MENU_DELETE){
-			Log.e("Categories","Context Menu Delete pressed");
-			return true;
-		}
-		else {
-			//return false;
-			//return super.onContextItemSelected(item);
-		}  
 
-		return super.onContextItemSelected(item);  
+		case CONTEXT_MENU_CATEGORY_VIEW:
+			Log.e("Categories","Category View pressed");
+			return true;
+
+		case CONTEXT_MENU_CATEGORY_EDIT:
+			Log.e("Categories","Category Edit pressed");
+			return true;
+
+		case CONTEXT_MENU_CATEGORY_DELETE:
+			Log.e("Categories","Category Delete pressed");
+			return true;
+
+		case CONTEXT_MENU_SUBCATEGORY_VIEW:
+			Log.e("Categories","SubCategory Delete pressed");
+			return true;
+
+		case CONTEXT_MENU_SUBCATEGORY_EDIT:
+			Log.e("Categories","SubCategory Delete pressed");
+			return true;
+
+		case CONTEXT_MENU_SUBCATEGORY_DELETE:
+			Log.e("Categories","SubCategory Delete pressed");
+			return true;
+
+		default:
+			Log.e("Categories", "Context Menu type is not child or group");
+			break;	
+
+		}
+
+		return super.onContextItemSelected(item);
+
 	}  
 
 	public class UserItemAdapter extends BaseExpandableListAdapter {

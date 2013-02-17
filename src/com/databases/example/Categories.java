@@ -78,8 +78,8 @@ public class Categories extends SherlockActivity{
 		super.onCreate(savedInstanceState);
 
 		//Add Sliding Menu
-		//menu = new SliderMenu(this);
-		//menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
 		setTitle("Categories");
 		setContentView(R.layout.categories);
@@ -150,13 +150,6 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
-		//categoryCursor.close();
-
-		//Close Database
-		if (myDB != null){
-			myDB.close();
-		}
-
 		//Give the item adapter a list of all categories and subcategories
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
 		lvCategory.setAdapter(adapterCategory);
@@ -166,15 +159,12 @@ public class Categories extends SherlockActivity{
 	}//end of categoryPopulate
 
 	//Method for filling subcategories
-	public void subcategoryPopulate(String catId){
-		//Log.e("Categories","In subcategoryPopulate(" + catId +")");
-
-		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
-
+	public void subcategoryPopulate(String catId){		
+		//Database myDB is already open
+		
 		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCateID as _id", "ToCatID", "SubCateName", "SubCateNote"}, "ToCatID = " + catId,
 				null, null, null, null);
-
+		
 		resultsCursor.add(cursorSubCategory);
 
 		startManagingCursor(cursorSubCategory);
@@ -194,7 +184,7 @@ public class Categories extends SherlockActivity{
 
 					SubCategoryRecord entry = new SubCategoryRecord(id, to_id, name, note);
 					resultsSubCategory.add(entry);
-					//Log.e("Category", "Added SubCategory: " + id + " " + to_id + " " + name + " " + note);
+					//Log.d("Category", "Added SubCategory: " + id + " " + to_id + " " + name + " " + note);
 
 				} while (cursorSubCategory.moveToNext());
 			}
@@ -202,16 +192,8 @@ public class Categories extends SherlockActivity{
 			else {
 				//No Results Found
 				Log.e("Category", "No Subcategories found");
-				//noResult.setVisibility(View.VISIBLE);
 			}
 		} 
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
-		//Log.e("Categories","Out of subcategoryPopulate(" + catId +")");
 
 	}//end of subcategoryPopulate
 
@@ -761,4 +743,36 @@ public class Categories extends SherlockActivity{
 
 	}
 
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+//		if(alertDialogView!=null){
+//			alertDialogView.dismiss();
+//		}
+//		if(alertDialogEdit!=null){
+//			alertDialogEdit.dismiss();
+//		}
+//		if(alertDialogAdd!=null){
+//			alertDialogAdd.dismiss();
+//		}
+		if(!cursorCategory.isClosed()){
+			cursorCategory.close();
+		}
+		
+		if(!cursorSubCategory.isClosed()){
+			cursorSubCategory.close();
+		}
+		if(!resultsCursor.isEmpty()){
+			resultsCursor.clear();
+			resultsCursor = null;
+		}
+		
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+		
+		super.onPause();
+	}
+	
 }//end category

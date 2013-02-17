@@ -853,8 +853,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
-
-				//Log.e("Accounts","account: " + user.id + " " + user.name);
 				
 				//Change Background Colors
 				try{

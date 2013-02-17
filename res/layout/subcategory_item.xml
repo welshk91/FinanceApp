@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/category_layout"
+    android:id="@+id/subcategory_item_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="#E8E8E8"
     android:gravity="left|center"
+    android:orientation="vertical"
     android:paddingBottom="2dp"
     android:paddingLeft="4dp"
     android:paddingTop="2dp" >
 
     <TextView
-        android:id="@+id/category_name"
+        android:id="@+id/subcategory_name"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:gravity="center"
-        android:paddingLeft="40dip"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold" />

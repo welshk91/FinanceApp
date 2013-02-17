@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,11 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +33,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Categories.SubCategoryRecord;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 
 
@@ -48,11 +50,8 @@ public class Categories extends SherlockActivity{
 
 	private SliderMenu menu;
 
-	ListView lvCategory = null;
-	ListView lvSubCategory = null;
-	ArrayAdapter<CategoryRecord> adapterCategory = null;
-	//ArrayAdapter<SubCategoryRecord> adapterSubCategory = null;
-	SimpleCursorAdapter adapterSubCategory = null;
+	ExpandableListView lvCategory = null;
+	UserItemAdapter adapterCategory = null;
 
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
@@ -65,6 +64,7 @@ public class Categories extends SherlockActivity{
 
 	ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
 	ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
+	ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
 	Cursor cursorCategory;
 	Cursor cursorSubCategory;
 
@@ -79,7 +79,7 @@ public class Categories extends SherlockActivity{
 		setTitle("Categories");
 		setContentView(R.layout.categories);
 
-		lvCategory = (ListView)this.findViewById(R.id.category_list);
+		lvCategory = (ExpandableListView)this.findViewById(R.id.category_list);
 
 		//Turn clicks on
 		lvCategory.setClickable(true);
@@ -88,16 +88,22 @@ public class Categories extends SherlockActivity{
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lvCategory);
 
-		//adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory);
-		//lvCategory.setAdapter(adapterCategory);
-
 		categoryPopulate();
+
+		//Give the item adapter a list of all categories and subcategories
+		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory, resultsCursor);		
+		lvCategory.setAdapter(adapterCategory);
 
 	}
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
+		//Reinitialize arrays to start fresh
 		resultsCategory = new ArrayList<CategoryRecord>();
+		resultsSubCategory = new ArrayList<SubCategoryRecord>();
+		resultsCursor = new ArrayList<Cursor>();
+		//resultsCategory.clear();
+		//resultsSubCategory.clear();
 
 		//A textView alerting the user if database is empty
 		TextView noResult = (TextView)this.findViewById(R.id.category_noCategory);
@@ -123,6 +129,8 @@ public class Categories extends SherlockActivity{
 					String note = cursorCategory.getString(NoteColumn);
 
 					CategoryRecord entry = new CategoryRecord(id, name, note);
+					//Log.e("Category", "Added Category: " + id + " " + name + " " + note);
+					subcategoryPopulate(id);
 					resultsCategory.add(entry);
 
 				} while (cursorCategory.moveToNext());
@@ -139,42 +147,6 @@ public class Categories extends SherlockActivity{
 			myDB.close();
 		}
 
-		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, resultsCategory);		
-
-		lvCategory.setAdapter(new SlideExpandableListAdapter(
-				adapterCategory,
-				R.id.expandable_toggle_button,
-				R.id.expandable
-				));
-
-		//		// listen for events in the two buttons for every list item.
-		//		// the 'position' var will tell which list item is clicked
-		//		lvCategory.setItemActionListener(new ActionSlideExpandableListView.OnActionClickListener() {
-		//
-		//			@Override
-		//			public void onClick(View listView, View buttonview, int position) {
-		//
-		//				/**
-		//				 * Normally you would put a switch
-		//				 * statement here, and depending on
-		//				 * view.getId() you would perform a
-		//				 * different action.
-		//				 */
-		//				String actionName = "";
-		//				if(buttonview.getId()==R.id.ButtonA) {
-		//					actionName = "buttonA";
-		//				} else {
-		//					actionName = "ButtonB";
-		//				}
-		//
-		//				Log.e("Categories", "Clicked Action: "+actionName+" in list item "+position);
-		//
-		//			}
-		//
-		//			// note that we also add 1 or more ids to the setItemActionListener
-		//			// this is needed in order for the listview to discover the buttons
-		//		}, R.id.ButtonA, R.id.ButtonB);
-
 		//categoryCursor.close();
 
 		//Close Database
@@ -187,21 +159,16 @@ public class Categories extends SherlockActivity{
 	}//end of categoryPopulate
 
 	//Method for filling subcategories
-	public void subcategoryPopulate(View v, String catId){
-		Log.e("Categories","In subcategoryPopulate(" + catId +")");
-		resultsSubCategory = new ArrayList<SubCategoryRecord>();
-
-		//A textView alerting the user if database is empty
-		TextView noResult = (TextView)v.findViewById(R.id.subcategory_noSubCategory);
-		noResult.setVisibility(View.GONE);
-
-		lvSubCategory = (ListView)v.findViewById(R.id.subcategory_list);
+	public void subcategoryPopulate(String catId){
+		//Log.e("Categories","In subcategoryPopulate(" + catId +")");
 
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
 
 		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCateID as _id", "ToCatID", "SubCateName", "SubCateNote"}, "ToCatID = " + catId,
 				null, null, null, null);
+
+		resultsCursor.add(cursorSubCategory);
 
 		startManagingCursor(cursorSubCategory);
 		int IDColumn = cursorSubCategory.getColumnIndex("SubCateID");
@@ -218,9 +185,9 @@ public class Categories extends SherlockActivity{
 					String name = cursorSubCategory.getString(NameColumn);
 					String note = cursorSubCategory.getString(NoteColumn);
 
-					SubCategoryRecord entry = new SubCategoryRecord(id, catId, name, note);
+					SubCategoryRecord entry = new SubCategoryRecord(id, to_id, name, note);
 					resultsSubCategory.add(entry);
-					//Log.e("Category", "Added SubCategory: " + id + " " + catId + " " + name + " " + note);
+					//Log.e("Category", "Added SubCategory: " + id + " " + to_id + " " + name + " " + note);
 
 				} while (cursorSubCategory.moveToNext());
 			}
@@ -228,7 +195,7 @@ public class Categories extends SherlockActivity{
 			else {
 				//No Results Found
 				Log.e("Category", "No Subcategories found");
-				noResult.setVisibility(View.VISIBLE);
+				//noResult.setVisibility(View.VISIBLE);
 			}
 		} 
 
@@ -236,12 +203,6 @@ public class Categories extends SherlockActivity{
 		if (myDB != null){
 			myDB.close();
 		}
-
-		String[] from = new String[] {"SubCateName"}; 
-		int[] to = new int[] { android.R.id.text1 };
-
-		adapterSubCategory = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursorSubCategory, from, to);
-		lvSubCategory.setAdapter(adapterSubCategory);
 
 		//Log.e("Categories","Out of subcategoryPopulate(" + catId +")");
 
@@ -295,7 +256,7 @@ public class Categories extends SherlockActivity{
 					//Insert values into category table
 					//Add a category
 					if(isCat){
-						Log.e("Category Add", "Adding a normal category : " + category);
+					//	Log.e("Category Add", "Adding a normal category : " + category);
 
 						ContentValues categoryValues=new ContentValues();
 						categoryValues.put("CateName",category);
@@ -305,7 +266,7 @@ public class Categories extends SherlockActivity{
 					}
 					//Add a subcategory
 					else{
-						Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
+					//	Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
 
 						ContentValues subcategoryValues=new ContentValues();
 						subcategoryValues.put("SubCateName",category);
@@ -390,10 +351,16 @@ public class Categories extends SherlockActivity{
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapterCategory.getItem(itemInfo.position).name;
-
-		menu.setHeaderTitle(name);  
+        ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
+		
+		//AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		//String name = "" + adapterCategory.getItem(info.).name;
+		
+		Log.e("context menu", "info.id: " + info.id);
+		
+		String name = "Boo!";
+		
+		//menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_ADD, 0, "Add");
 		menu.add(0, CONTEXT_MENU_VIEW, 1, "View");  
 		menu.add(0, CONTEXT_MENU_EDIT, 2, "Edit");
@@ -403,7 +370,7 @@ public class Categories extends SherlockActivity{
 	//Handles which methods are called when using the long presses menu
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-
+		
 		if(item.getItemId()==CONTEXT_MENU_ADD){
 			Log.e("Categories","Context Menu ADD pressed") ;
 			categoryAdd(item);
@@ -429,34 +396,37 @@ public class Categories extends SherlockActivity{
 		return super.onContextItemSelected(item);  
 	}  
 
-	public class UserItemAdapter extends ArrayAdapter<CategoryRecord> {
+	public class UserItemAdapter extends BaseExpandableListAdapter {
 		private ArrayList<CategoryRecord> category;
+		private ArrayList<Cursor> subcategory;
+		private Context context;
 
-		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<CategoryRecord> users) {
-			super(context, textViewResourceId, users);
-			this.category = users;
+		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<CategoryRecord> cats, ArrayList<Cursor> subcats) {
+			this.category = cats;
+			this.subcategory = subcats;
+			this.context = context;
+		}
+
+		//My method for getting a Category Record at a certain position
+		//NEEDS FIXING -> NOT CORRECT
+		public CategoryRecord getItem(long id){
+			CategoryRecord user = category.get((int) id);
+			return user;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			View v = convertView;
-			CategoryRecord user = category.get(position);
+			CategoryRecord user = category.get(groupPosition);
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.category_item, null);
-
-				//Log.e("Categories","category: " + user.id + " " + user.name);
-
-				/**Populate SubCategory List
-				 * HERE
-				 */
-				subcategoryPopulate(v, user.id);
-
+				
 				//Change Background Colors
 				try{
 					LinearLayout l;
@@ -476,12 +446,12 @@ public class Categories extends SherlockActivity{
 
 				}
 				catch(Exception e){
-					Toast.makeText(this.getContext(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
 				//Change Size of main field
 				try{
-					String DefaultSize = prefs.getString(this.getContext().getString(R.string.pref_key_account_nameSize), "16");
+					String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "16");
 					TextView t;
 					t=(TextView)v.findViewById(R.id.category_name);
 
@@ -494,7 +464,7 @@ public class Categories extends SherlockActivity{
 
 				}
 				catch(Exception e){
-					Toast.makeText(this.getContext(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 				}
 
 				try{
@@ -511,116 +481,173 @@ public class Categories extends SherlockActivity{
 
 				}
 				catch(Exception e){
-					Toast.makeText(this.getContext(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				//				try{
-				//					String DefaultSize = prefs.getString(this.getContext().getString(R.string.pref_key_account_fieldSize), "10");
-				//					TextView tmp;
-				//
-				//					if(useDefaults){
-				//						tmp=(TextView)v.findViewById(R.id.account_balance);
-				//						tmp.setTextSize(10);
-				//						tmp=(TextView)v.findViewById(R.id.account_date);
-				//						tmp.setTextSize(10);
-				//						tmp=(TextView)v.findViewById(R.id.account_time);
-				//						tmp.setTextSize(10);
-				//					}
-				//					else{
-				//						tmp=(TextView)v.findViewById(R.id.account_balance);
-				//						tmp.setTextSize(Integer.parseInt(DefaultSize));
-				//						tmp=(TextView)v.findViewById(R.id.account_date);
-				//						tmp.setTextSize(Integer.parseInt(DefaultSize));
-				//						tmp=(TextView)v.findViewById(R.id.account_time);
-				//						tmp.setTextSize(Integer.parseInt(DefaultSize));
-				//					}
-				//
-				//				}
-				//				catch(Exception e){
-				//					Toast.makeText(this.getContext(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
-				//				}
-				//
-				//				try{
-				//					int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
-				//					TextView tmp;
-				//
-				//					if(useDefaults){
-				//						tmp=(TextView)v.findViewById(R.id.account_balance);
-				//						tmp.setTextColor(Color.parseColor("#0099CC"));
-				//						tmp=(TextView)v.findViewById(R.id.account_date);
-				//						tmp.setTextColor(Color.parseColor("#0099CC"));
-				//						tmp=(TextView)v.findViewById(R.id.account_time);
-				//						tmp.setTextColor(Color.parseColor("#0099CC"));
-				//					}
-				//					else{
-				//						tmp=(TextView)v.findViewById(R.id.account_balance);
-				//						tmp.setTextColor(DefaultColor);
-				//						tmp=(TextView)v.findViewById(R.id.account_date);
-				//						tmp.setTextColor(DefaultColor);
-				//						tmp=(TextView)v.findViewById(R.id.account_time);
-				//						tmp.setTextColor(DefaultColor);
-				//					}
-				//
-				//				}
-				//				catch(Exception e){
-				//					Toast.makeText(this.getContext(), "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
-				//				}
-
-
-				//For User-Defined Field Visibility
-				//				if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
-				//					TextView name = (TextView) v.findViewById(R.id.account_name);
-				//					name.setVisibility(View.VISIBLE);
-				//				}
-				//				else{
-				//					TextView name = (TextView) v.findViewById(R.id.account_name);
-				//					name.setVisibility(View.GONE);
-				//				}
-				//
-				//				if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
-				//					TextView balance = (TextView) v.findViewById(R.id.account_balance);
-				//					balance.setVisibility(View.VISIBLE);
-				//				}
-				//				else{
-				//					TextView balance = (TextView) v.findViewById(R.id.account_balance);
-				//					balance.setVisibility(View.GONE);
-				//				}
-				//
-				//				if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
-				//					TextView date = (TextView) v.findViewById(R.id.account_date);
-				//					date.setVisibility(View.VISIBLE);
-				//				}
-				//				else{
-				//					TextView date = (TextView) v.findViewById(R.id.account_date);
-				//					date.setVisibility(View.GONE);
-				//				}
-				//
-				//				if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
-				//					TextView time = (TextView) v.findViewById(R.id.account_time);
-				//					time.setVisibility(View.VISIBLE);
-				//				}
-				//				else{
-				//					TextView time = (TextView) v.findViewById(R.id.account_time);
-				//					time.setVisibility(View.GONE);
-				//				}
-
+					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}				
+				
 			}
 
 			if (user != null) {
 				TextView name = (TextView) v.findViewById(R.id.category_name);
-				//				TextView balance = (TextView) v.findViewById(R.id.account_balance);
 
 				if (user.name != null) {
 					name.setText(user.name);
 				}
 
-				//				if(user.balance != null) {
-				//					balance.setText("Balance: " + user.balance );
-				//				}
-
 			}
 			return v;
 		}//end getView
+
+		@Override
+		public Object getChild(int groupPosition, int childPosition) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		//Possibly Wrong; not sure if CateID or SubCateID
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			// TODO Auto-generated method stub
+			Cursor temp = subcategory.get(groupPosition);
+			temp.moveToPosition(childPosition);
+			return temp.getLong(temp.getColumnIndexOrThrow("CateID"));
+		}
+
+		@Override
+		public View getChildView(int groupPosition, int childPosition,
+				boolean isLastChild, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			Log.e("Cagtegories","groupPos: " + groupPosition + " childPos: " + childPosition + " isLastChild: " + isLastChild + " parent: " + parent);
+
+			View v = convertView;
+			Cursor user = subcategory.get(groupPosition);
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.subcategory_item, null);
+
+				//Change Background Colors
+				try{
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
+					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {startColor,endColor});
+
+					if(useDefaults){
+						l.setBackgroundResource(R.drawable.account_list_style);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradient);
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+				}
+
+				//Change Size of main field
+				try{
+					String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "16");
+					TextView t;
+					t=(TextView)v.findViewById(R.id.subcategory_name);
+
+					if(useDefaults){
+						t.setTextSize(16);
+					}
+					else{
+						t.setTextSize(Integer.parseInt(DefaultSize));
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+
+				try{
+					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
+					TextView t;
+					t=(TextView)v.findViewById(R.id.subcategory_name);
+
+					if(useDefaults){
+						t.setTextColor(Color.parseColor("#000000"));
+					}
+					else{
+						t.setTextColor(DefaultColor);
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				}
+				
+			}
+
+			TextView name = (TextView) v.findViewById(R.id.subcategory_name);
+			int IDColumn = user.getColumnIndex("SubCateID");
+			int ToIDColumn = user.getColumnIndex("ToCatID");
+			int NameColumn = user.getColumnIndex("SubCateName");
+			int NoteColumn = user.getColumnIndex("SubCateNote");
+
+			//user.moveToFirst();
+
+			user.moveToPosition(childPosition);
+			String itemId = user.getString(0);
+			String itemTo_id = user.getString(ToIDColumn);
+			String itemSubname = user.getString(NameColumn);
+			String itemNote = user.getString(NoteColumn);
+			Log.e("getChildView", "Found SubCategory: " + itemSubname);
+
+			if (itemSubname != null) {
+				name.setText(itemSubname);
+			}
+
+			return v;
+
+		}
+
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			// TODO Auto-generated method stub
+			Cursor temp = subcategory.get(groupPosition);
+
+			return temp.getCount();
+		}
+
+		@Override
+		public Object getGroup(int groupPosition) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getGroupCount() {
+			// TODO Auto-generated method stub
+			return category.size();
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			// TODO Auto-generated method stub
+			return true;
+		}
 
 	} //end of UserItemAdapter
 
@@ -635,6 +662,7 @@ public class Categories extends SherlockActivity{
 			this.name = name;
 			this.note = note;
 		}
+
 	}
 
 	//An Object Class used to hold the data of each sub-category record
@@ -650,6 +678,7 @@ public class Categories extends SherlockActivity{
 			this.name = name;
 			this.note = note;
 		}
+
 	}
 
 }//end category

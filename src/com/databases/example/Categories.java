@@ -107,13 +107,13 @@ public class Categories extends SherlockActivity{
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
 
-		cursorCategory = myDB.query(tblCategory, new String[] { "CateID", "CateName", "CateNote"}, null,
+		cursorCategory = myDB.query(tblCategory, new String[] { "CatID", "CatName", "CatNote"}, null,
 				null, null, null, null);
 
 		startManagingCursor(cursorCategory);
-		int IDColumn = cursorCategory.getColumnIndex("CateID");
-		int NameColumn = cursorCategory.getColumnIndex("CateName");
-		int NoteColumn = cursorCategory.getColumnIndex("CateNote");
+		int IDColumn = cursorCategory.getColumnIndex("CatID");
+		int NameColumn = cursorCategory.getColumnIndex("CatName");
+		int NoteColumn = cursorCategory.getColumnIndex("CatNote");
 
 		cursorCategory.moveToFirst();
 		if (cursorCategory != null) {
@@ -155,16 +155,16 @@ public class Categories extends SherlockActivity{
 	public void subcategoryPopulate(String catId){		
 		//Database myDB is already open
 
-		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCateID as _id", "ToCatID", "SubCateName", "SubCateNote"}, "ToCatID = " + catId,
+		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote"}, "ToCatID = " + catId,
 				null, null, null, null);
 
 		resultsCursor.add(cursorSubCategory);
 
 		startManagingCursor(cursorSubCategory);
-		int IDColumn = cursorSubCategory.getColumnIndex("SubCateID");
+		int IDColumn = cursorSubCategory.getColumnIndex("SubCatID");
 		int ToIDColumn = cursorSubCategory.getColumnIndex("ToCatID");
-		int NameColumn = cursorSubCategory.getColumnIndex("SubCateName");
-		int NoteColumn = cursorSubCategory.getColumnIndex("SubCateNote");
+		int NameColumn = cursorSubCategory.getColumnIndex("SubCatName");
+		int NoteColumn = cursorSubCategory.getColumnIndex("SubCatNote");
 
 		cursorSubCategory.moveToFirst();
 		if (cursorSubCategory != null) {
@@ -208,7 +208,7 @@ public class Categories extends SherlockActivity{
 		//Log.e("Categories","catID = " + catID);
 
 		LayoutInflater li = LayoutInflater.from(this);
-		final View categoryAddView = li.inflate(R.layout.transaction_category_add, null);
+		final View categoryAddView = li.inflate(R.layout.category_add, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -241,7 +241,7 @@ public class Categories extends SherlockActivity{
 						//	Log.e("Category Add", "Adding a normal category : " + category);
 
 						ContentValues categoryValues=new ContentValues();
-						categoryValues.put("CateName",category);
+						categoryValues.put("CatName",category);
 
 						myDB.insert(tblCategory, null, categoryValues);
 
@@ -251,7 +251,7 @@ public class Categories extends SherlockActivity{
 						//	Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
 
 						ContentValues subcategoryValues=new ContentValues();
-						subcategoryValues.put("SubCateName",category);
+						subcategoryValues.put("SubCatName",category);
 						subcategoryValues.put("ToCatID",catID);
 
 						myDB.insert(tblSubCategory, null, subcategoryValues);
@@ -280,10 +280,10 @@ public class Categories extends SherlockActivity{
 		});
 
 		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
+		AlertDialog alertDialogAdd = alertDialogBuilder.create();
 
 		// show it
-		alertDialog.show();
+		alertDialogAdd.show();
 
 	}//end of showCategoryAdd
 
@@ -296,29 +296,29 @@ public class Categories extends SherlockActivity{
 
 		//Open Database
 		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-		
+
 		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 			String subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
 			String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
-					" WHERE SubCateID = " + subcategoryID;
-			
+					" WHERE SubCatID = " + subcategoryID;
+
 			Log.e("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
-			
+
 			myDB.execSQL(sqlDeleteSubCategory);
-			
+
 		}
 		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 			String categoryID = adapterCategory.getCategory(groupPos).id;
 			String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
-					" WHERE CateID = " + categoryID;
+					" WHERE CatID = " + categoryID;
 			String sqlDeleteSubCategories = "DELETE FROM " + tblSubCategory + 
 					" WHERE ToCatID = " + categoryID;
 
 			Log.e("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
-			
+
 			myDB.execSQL(sqlDeleteCategory);
 			myDB.execSQL(sqlDeleteSubCategories);	
-			
+
 		}
 
 		//Close Database if Opened
@@ -330,6 +330,103 @@ public class Categories extends SherlockActivity{
 		categoryPopulate();
 
 	}//end categoryDelete
+
+
+	//Edit Category
+	public void categoryEdit(android.view.MenuItem item){
+		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+		final int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+		final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+		final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+
+		LayoutInflater li = LayoutInflater.from(this);
+		final View categoryAddView = li.inflate(R.layout.category_add, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set account_add.xml to AlertDialog builder
+		alertDialogBuilder.setView(categoryAddView);
+
+		alertDialogBuilder.setTitle("Editing...");			
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true)
+		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
+				String newName = categorySpinner.getText().toString().trim();
+
+				try{
+					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+					if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+						SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
+						String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
+								" WHERE SubCatID = " + oldRecord.id;
+
+						Log.e("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
+						myDB.execSQL(sqlDeleteSubCategory);
+
+						//Make new record with same ID
+						ContentValues valuesSubCategory=new ContentValues();
+						valuesSubCategory.put("SubCatID",oldRecord.id);
+						valuesSubCategory.put("ToCatID",oldRecord.catId);
+						valuesSubCategory.put("SubCatName",newName);
+						valuesSubCategory.put("SubCatNote",oldRecord.note);
+
+						myDB.insert(tblSubCategory, null, valuesSubCategory);
+
+					}
+					else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+						CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
+						String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
+								" WHERE CatID = " + oldRecord.id;
+
+						Log.e("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.name);
+						myDB.execSQL(sqlDeleteCategory);
+
+						//Make new record with same ID
+						ContentValues valuesCategory=new ContentValues();
+						valuesCategory.put("CatID",oldRecord.id);
+						valuesCategory.put("CatName",newName);
+						valuesCategory.put("CatNote",oldRecord.note);
+
+						myDB.insert(tblCategory, null, valuesCategory);
+
+					}
+
+					//Make sure Database is closed
+					if (myDB != null){
+						myDB.close();
+					}
+
+				}
+				catch(Exception e){
+					Log.e("Categories", "Error editing Categories");
+				}
+
+				//Refresh the categories list
+				categoryPopulate();
+
+			}
+		})
+		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		});		
+
+		// create alert dialog
+		AlertDialog alertDialogEdit = alertDialogBuilder.create();
+
+		// show it
+		alertDialogEdit.show();
+		
+		//Refresh the categories list
+		categoryPopulate();
+
+	}
 
 	//For ActionBar Menu
 	@Override
@@ -384,7 +481,6 @@ public class Categories extends SherlockActivity{
 
 		switch (type) {
 		case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
-			//Log.d("Categories", "Context Menu type CHILD");
 			String nameSubCategory = adapterCategory.getSubCategory(groupPos,childPos).name;
 			menu.setHeaderTitle(nameSubCategory);
 			menu.add(0, CONTEXT_MENU_SUBCATEGORY_VIEW, 1, "View");  
@@ -393,7 +489,6 @@ public class Categories extends SherlockActivity{
 			break;
 
 		case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
-			//Log.d("Categories", "Context Menu type GROUP");
 			String nameCategory = adapterCategory.getCategory(groupPos).name;
 			menu.setHeaderTitle(nameCategory);  
 			menu.add(1, CONTEXT_MENU_CATEGORY_ADD, 0, "Add");
@@ -411,12 +506,11 @@ public class Categories extends SherlockActivity{
 	}  
 
 	//Handles which methods are called when using the long presses menu
-	@Override  
+	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_CATEGORY_ADD:
-			//Log.e("Categories","Category Add pressed") ;
 			categoryAdd(item);
 			return true;
 
@@ -425,11 +519,11 @@ public class Categories extends SherlockActivity{
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_EDIT:
-			Log.e("Categories","Category Edit pressed");
+			//Log.e("Categories","Category Edit pressed");
+			categoryEdit(item);
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_DELETE:
-			//Log.e("Categories","Category Delete pressed");
 			categoryDelete(item);
 			return true;
 
@@ -438,11 +532,11 @@ public class Categories extends SherlockActivity{
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_EDIT:
-			Log.e("Categories","SubCategory Edit pressed");
+			//Log.e("Categories","SubCategory Edit pressed");
+			categoryEdit(item);
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_DELETE:
-			//Log.e("Categories","SubCategory Delete pressed");
 			categoryDelete(item);
 			return true;
 
@@ -472,9 +566,9 @@ public class Categories extends SherlockActivity{
 			Cursor group = category;
 
 			group.moveToPosition((int) id);
-			int IDColumn = group.getColumnIndex("CateID");
-			int NameColumn = group.getColumnIndex("CateName");
-			int NoteColumn = group.getColumnIndex("CateNote");
+			int IDColumn = group.getColumnIndex("CatID");
+			int NameColumn = group.getColumnIndex("CatName");
+			int NoteColumn = group.getColumnIndex("CatNote");
 
 			String itemId = group.getString(IDColumn);
 			String itemName = group.getString(NameColumn);
@@ -490,10 +584,10 @@ public class Categories extends SherlockActivity{
 		public SubCategoryRecord getSubCategory(int groupId, int childId){
 			Cursor group = subcategory.get(groupId);
 
-			int IDColumn = group.getColumnIndex("SubCateID");
+			int IDColumn = group.getColumnIndex("SubCatID");
 			int ToIDColumn = group.getColumnIndex("ToCatID");
-			int NameColumn = group.getColumnIndex("SubCateName");
-			int NoteColumn = group.getColumnIndex("SubCateNote");
+			int NameColumn = group.getColumnIndex("SubCatName");
+			int NoteColumn = group.getColumnIndex("SubCatNote");
 
 			group.moveToPosition(childId);
 			String itemId = group.getString(0);
@@ -580,9 +674,9 @@ public class Categories extends SherlockActivity{
 			}
 
 			TextView name = (TextView) v.findViewById(R.id.category_name);
-			int IDColumn = user.getColumnIndex("CateID");
-			int NameColumn = user.getColumnIndex("CateName");
-			int NoteColumn = user.getColumnIndex("CateNote");
+			int IDColumn = user.getColumnIndex("CatID");
+			int NameColumn = user.getColumnIndex("CatName");
+			int NoteColumn = user.getColumnIndex("CatNote");
 
 			user.moveToPosition(groupPosition);
 			String itemId = user.getString(0);
@@ -608,7 +702,7 @@ public class Categories extends SherlockActivity{
 			// TODO Auto-generated method stub
 			Cursor temp = subcategory.get(groupPosition);
 			temp.moveToPosition(childPosition);
-			int IDColumn = temp.getColumnIndex("SubCateID");
+			int IDColumn = temp.getColumnIndex("SubCatID");
 			String itemId = temp.getString(0);
 
 			//Log.e("getChildID", "returning " + Long.parseLong(itemId));
@@ -694,10 +788,10 @@ public class Categories extends SherlockActivity{
 			}
 
 			TextView name = (TextView) v.findViewById(R.id.subcategory_name);
-			int IDColumn = user.getColumnIndex("SubCateID");
+			int IDColumn = user.getColumnIndex("SubCatID");
 			int ToIDColumn = user.getColumnIndex("ToCatID");
-			int NameColumn = user.getColumnIndex("SubCateName");
-			int NoteColumn = user.getColumnIndex("SubCateNote");
+			int NameColumn = user.getColumnIndex("SubCatName");
+			int NoteColumn = user.getColumnIndex("SubCatNote");
 
 			user.moveToPosition(childPosition);
 			String itemId = user.getString(0);

@@ -185,11 +185,11 @@ public class Main extends SherlockActivity {
 
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
-						+ " (CateID INTEGER PRIMARY KEY, CateName VARCHAR, CateNote VARCHAR);";
+						+ " (CatID INTEGER PRIMARY KEY, CatName VARCHAR, CatNote VARCHAR);";
 				
 				String sqlCommandSubCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblSubCategory
-						+ " (SubCateID INTEGER PRIMARY KEY, ToCatID VARCHAR, SubCateName VARCHAR, SubCateNote VARCHAR);";
+						+ " (SubCatID INTEGER PRIMARY KEY, ToCatID VARCHAR, SubCatName VARCHAR, SubCatNote VARCHAR);";
 
 				String sqlCommandLinks = "CREATE TABLE IF NOT EXISTS "
 						+ tblLinks
@@ -214,24 +214,24 @@ public class Main extends SherlockActivity {
 				myDB.execSQL(sqlCommandLinks);
 
 				//Add some default categories
-				//final String sqlDefaultCategories = "INSERT INTO " + tblCategory
-				//		+ " (CateName) " + "VALUES ('STARTING BALANCE');";
+				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
+						+ " (CatName) " + "VALUES ('STARTING BALANCE');";
 				
 				//Add some default categories
-				//final String sqlDefaultCategories2 = "INSERT INTO " + tblCategory
-				//		+ " (CateName) " + "VALUES ('Utils');";
+				final String sqlDefaultCategories2 = "INSERT INTO " + tblCategory
+						+ " (CatName) " + "VALUES ('Utils');";
 				
 				//Add some default categories
-				//final String sqlDefaultSubCategories = "INSERT INTO " + tblSubCategory
-				//		+ " (SubCateName) " + "VALUES ('Gas');";
+				final String sqlDefaultSubCategories = "INSERT INTO " + tblSubCategory
+						+ " (SubCatName, ToCatID) " + "VALUES ('Gas',2);";
 				//Add some default categories
-				//final String sqlDefaultSubCategories2 = "INSERT INTO " + tblSubCategory
-				//		+ " (SubCateName) " + "VALUES ('Electricty');";
+				final String sqlDefaultSubCategories2 = "INSERT INTO " + tblSubCategory
+						+ " (SubCatName, ToCatID) " + "VALUES ('Electricty',2);";
 
-				//myDB.execSQL(sqlDefaultCategories);
-				//myDB.execSQL(sqlDefaultCategories2);
-				//myDB.execSQL(sqlDefaultSubCategories);
-				//myDB.execSQL(sqlDefaultSubCategories2);
+				myDB.execSQL(sqlDefaultCategories);
+				myDB.execSQL(sqlDefaultCategories2);
+				myDB.execSQL(sqlDefaultSubCategories);
+				myDB.execSQL(sqlDefaultSubCategories2);
 
 			} 
 			catch (Exception e) {

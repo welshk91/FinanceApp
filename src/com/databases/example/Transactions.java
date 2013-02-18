@@ -1388,12 +1388,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
-		final String sqlCategoryPopulate = "SELECT CateID as _id,CateName FROM " + tblCategory
+		final String sqlCategoryPopulate = "SELECT CatID as _id,CatName FROM " + tblCategory
 				+ ";";
 
 		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		getActivity().startManagingCursor(categoryCursor);
-		String[] from = new String[] {"CateName"}; 
+		String[] from = new String[] {"CatName"}; 
 		int[] to = new int[] { android.R.id.text1 }; 
 
 		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);

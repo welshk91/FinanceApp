@@ -196,15 +196,18 @@ public class Categories extends SherlockActivity{
 	}//end of subcategoryPopulate
 
 	//Adding a new category
-	public void categoryAdd(android.view.MenuItem item){		
+	public void categoryAdd(android.view.MenuItem item){			
 		boolean isCategory = true;
 		String itemID = "0";
+		SubCategoryRecord subRecord;
 
 		if(item != null){
 			isCategory = false;
 			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-			itemID = adapterCategory.getCategory(groupPos).id;
+			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+			subRecord = adapterCategory.getSubCategory(groupPos,childPos);
+			itemID = subRecord.id;
 			Log.d("categoryAdd", "itemID: " + itemID);
 		}
 
@@ -213,6 +216,9 @@ public class Categories extends SherlockActivity{
 
 		LayoutInflater li = LayoutInflater.from(this);
 		final View categoryAddView = li.inflate(R.layout.category_add, null);
+
+		final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
+		final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -233,8 +239,8 @@ public class Categories extends SherlockActivity{
 		.setCancelable(true)
 		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
-				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-				String category = categorySpinner.getText().toString().trim();
+				String name = editName.getText().toString().trim();
+				String note = editNote.getText().toString().trim();
 
 				//Create database and open
 				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -245,7 +251,8 @@ public class Categories extends SherlockActivity{
 						//	Log.e("Category Add", "Adding a normal category : " + category);
 
 						ContentValues categoryValues=new ContentValues();
-						categoryValues.put("CatName",category);
+						categoryValues.put("CatName",name);
+						categoryValues.put("CatNote",note);
 
 						myDB.insert(tblCategory, null, categoryValues);
 
@@ -255,8 +262,9 @@ public class Categories extends SherlockActivity{
 						//	Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
 
 						ContentValues subcategoryValues=new ContentValues();
-						subcategoryValues.put("SubCatName",category);
 						subcategoryValues.put("ToCatID",catID);
+						subcategoryValues.put("SubCatName",name);
+						subcategoryValues.put("SubCatNote",note);
 
 						myDB.insert(tblSubCategory, null, subcategoryValues);
 
@@ -342,24 +350,41 @@ public class Categories extends SherlockActivity{
 		final int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 		final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 		final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+		SubCategoryRecord subrecord = null;
+		CategoryRecord record = null;
 
 		LayoutInflater li = LayoutInflater.from(this);
 		final View categoryAddView = li.inflate(R.layout.category_add, null);
 
+		final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
+		final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
+
 		final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+
+		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+			subrecord = adapterCategory.getSubCategory(groupPos, childPos);
+			alertDialogBuilder.setTitle("Editing " + subrecord.name);
+			editName.setText(subrecord.name);
+			editNote.setText(subrecord.note);
+		}
+		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+			record = adapterCategory.getCategory(groupPos);
+			alertDialogBuilder.setTitle("Editing " + record.name);
+			editName.setText(record.name);
+			editNote.setText(record.note);			
+		}
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(categoryAddView);
-
-		alertDialogBuilder.setTitle("Editing");			
 
 		// set dialog message
 		alertDialogBuilder
 		.setCancelable(true)
 		.setPositiveButton("Done",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
-				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-				String newName = categorySpinner.getText().toString().trim();
+				String newName = editName.getText().toString().trim();
+				String newNote = editNote.getText().toString().trim();
 
 				try{
 					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
@@ -377,7 +402,7 @@ public class Categories extends SherlockActivity{
 						valuesSubCategory.put("SubCatID",oldRecord.id);
 						valuesSubCategory.put("ToCatID",oldRecord.catId);
 						valuesSubCategory.put("SubCatName",newName);
-						valuesSubCategory.put("SubCatNote",oldRecord.note);
+						valuesSubCategory.put("SubCatNote",newNote);
 
 						myDB.insert(tblSubCategory, null, valuesSubCategory);
 
@@ -387,14 +412,14 @@ public class Categories extends SherlockActivity{
 						String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
 								" WHERE CatID = " + oldRecord.id;
 
-						Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.name);
+						Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
 						myDB.execSQL(sqlDeleteCategory);
 
 						//Make new record with same ID
 						ContentValues valuesCategory=new ContentValues();
 						valuesCategory.put("CatID",oldRecord.id);
 						valuesCategory.put("CatName",newName);
-						valuesCategory.put("CatNote",oldRecord.note);
+						valuesCategory.put("CatNote",newNote);
 
 						myDB.insert(tblCategory, null, valuesCategory);
 

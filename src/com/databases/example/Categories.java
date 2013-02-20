@@ -45,6 +45,11 @@ public class Categories extends SherlockActivity{
 	ExpandableListView lvCategory = null;
 	UserItemAdapter adapterCategory = null;
 
+	//Need to be global so I can dismiss and avoid leaks
+	AlertDialog alertDialogView;
+	AlertDialog alertDialogAdd;
+	AlertDialog alertDialogEdit;
+
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
 
@@ -200,7 +205,7 @@ public class Categories extends SherlockActivity{
 			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			itemID = adapterCategory.getCategory(groupPos).id;
-			Log.e("categoryAdd", "itemID: " + itemID);
+			Log.d("categoryAdd", "itemID: " + itemID);
 		}
 
 		final boolean isCat = isCategory;
@@ -302,7 +307,7 @@ public class Categories extends SherlockActivity{
 			String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
 					" WHERE SubCatID = " + subcategoryID;
 
-			Log.e("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
+			Log.d("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
 
 			myDB.execSQL(sqlDeleteSubCategory);
 
@@ -314,7 +319,7 @@ public class Categories extends SherlockActivity{
 			String sqlDeleteSubCategories = "DELETE FROM " + tblSubCategory + 
 					" WHERE ToCatID = " + categoryID;
 
-			Log.e("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
+			Log.d("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
 
 			myDB.execSQL(sqlDeleteCategory);
 			myDB.execSQL(sqlDeleteSubCategories);	
@@ -342,17 +347,17 @@ public class Categories extends SherlockActivity{
 		LayoutInflater li = LayoutInflater.from(this);
 		final View categoryAddView = li.inflate(R.layout.category_add, null);
 
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
 		// set account_add.xml to AlertDialog builder
 		alertDialogBuilder.setView(categoryAddView);
 
-		alertDialogBuilder.setTitle("Editing...");			
+		alertDialogBuilder.setTitle("Editing");			
 
 		// set dialog message
 		alertDialogBuilder
 		.setCancelable(true)
-		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
+		.setPositiveButton("Done",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				EditText categorySpinner = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
 				String newName = categorySpinner.getText().toString().trim();
@@ -365,7 +370,7 @@ public class Categories extends SherlockActivity{
 						String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
 								" WHERE SubCatID = " + oldRecord.id;
 
-						Log.e("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
+						Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
 						myDB.execSQL(sqlDeleteSubCategory);
 
 						//Make new record with same ID
@@ -383,7 +388,7 @@ public class Categories extends SherlockActivity{
 						String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
 								" WHERE CatID = " + oldRecord.id;
 
-						Log.e("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.name);
+						Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.name);
 						myDB.execSQL(sqlDeleteCategory);
 
 						//Make new record with same ID
@@ -422,11 +427,69 @@ public class Categories extends SherlockActivity{
 
 		// show it
 		alertDialogEdit.show();
-		
+
 		//Refresh the categories list
 		categoryPopulate();
 
 	}
+
+	//View Category
+	public void categoryView(android.view.MenuItem item){
+		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
+		final int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+		final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
+		final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+
+		LayoutInflater li = LayoutInflater.from(this);
+		final View categoryStatsView = li.inflate(R.layout.category_stats, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
+
+		// set xml to AlertDialog builder
+		alertDialogBuilder.setView(categoryStatsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("View Category");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true);
+
+		// create alert dialog
+		alertDialogView = alertDialogBuilder.create();
+
+		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+			SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
+
+			//Set Statistics
+			TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+			statsName.setText(record.name);
+			TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+			statsValue.setText(record.catId);
+			TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+			statsDate.setText(record.note);			
+
+		}
+		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+			CategoryRecord record = adapterCategory.getCategory(groupPos);
+
+			//Set Statistics
+			TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+			statsName.setText(record.name);
+			TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+			statsValue.setText("None");
+			TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+			statsDate.setText(record.note);			
+
+		}
+
+		// show it
+		alertDialogView.show();
+
+	}
+
+
 
 	//For ActionBar Menu
 	@Override
@@ -490,8 +553,8 @@ public class Categories extends SherlockActivity{
 
 		case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
 			String nameCategory = adapterCategory.getCategory(groupPos).name;
-			menu.setHeaderTitle(nameCategory);  
 			menu.add(1, CONTEXT_MENU_CATEGORY_ADD, 0, "Add");
+			menu.setHeaderTitle(nameCategory);
 			menu.add(1, CONTEXT_MENU_CATEGORY_VIEW, 1, "View");  
 			menu.add(1, CONTEXT_MENU_CATEGORY_EDIT, 2, "Edit");
 			menu.add(1, CONTEXT_MENU_CATEGORY_DELETE, 3, "Delete");
@@ -500,7 +563,6 @@ public class Categories extends SherlockActivity{
 		default:
 			Log.e("Categories", "Context Menu type is not child or group");
 			break;	
-
 		}
 
 	}  
@@ -515,7 +577,8 @@ public class Categories extends SherlockActivity{
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_VIEW:
-			Log.e("Categories","Category View pressed");
+			//Log.e("Categories","Category View pressed");
+			categoryView(item);
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_EDIT:
@@ -528,7 +591,8 @@ public class Categories extends SherlockActivity{
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_VIEW:
-			Log.e("Categories","SubCategory View pressed");
+			//Log.e("Categories","SubCategory View pressed");
+			categoryView(item);
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_EDIT:
@@ -542,8 +606,7 @@ public class Categories extends SherlockActivity{
 
 		default:
 			Log.e("Categories", "Context Menu type is not child or group");
-			break;	
-
+			break;
 		}
 
 		return super.onContextItemSelected(item);
@@ -882,9 +945,9 @@ public class Categories extends SherlockActivity{
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		//		if(alertDialogView!=null){
-		//			alertDialogView.dismiss();
-		//		}
+		if(alertDialogView!=null){
+			alertDialogView.dismiss();
+		}
 		//		if(alertDialogEdit!=null){
 		//			alertDialogEdit.dismiss();
 		//		}

@@ -228,10 +228,10 @@ public class Main extends SherlockActivity {
 				final String sqlDefaultSubCategories2 = "INSERT INTO " + tblSubCategory
 						+ " (SubCatName, ToCatID) " + "VALUES ('Electricty',2);";
 
-				myDB.execSQL(sqlDefaultCategories);
-				myDB.execSQL(sqlDefaultCategories2);
-				myDB.execSQL(sqlDefaultSubCategories);
-				myDB.execSQL(sqlDefaultSubCategories2);
+				//myDB.execSQL(sqlDefaultCategories);
+				//myDB.execSQL(sqlDefaultCategories2);
+				//myDB.execSQL(sqlDefaultSubCategories);
+				//myDB.execSQL(sqlDefaultSubCategories2);
 
 			} 
 			catch (Exception e) {

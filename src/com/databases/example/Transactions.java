@@ -1,5 +1,6 @@
 package com.databases.example;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
@@ -119,6 +120,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	final String tblTrans = "tblTrans";
 	final String tblAccounts = "tblAccounts";
 	final String tblCategory = "tblCategory";
+	final String tblSubCategory = "tblSubCategory";
 	final String dbFinance = "dbFinance";
 	SQLiteDatabase myDB;
 	ArrayList<TransactionRecord> results = new ArrayList<TransactionRecord>();
@@ -530,6 +532,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
 		tMemo.setKeyListener(input);
 
+		SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+		
 		final Calendar c = Calendar.getInstance();
 		final int year = c.get(Calendar.YEAR);
 		final int month = c.get(Calendar.MONTH);
@@ -1388,13 +1392,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
-		final String sqlCategoryPopulate = "SELECT CatID as _id,CatName FROM " + tblCategory
-				+ ";";
+		final String sqlCategoryPopulate = "SELECT ToCatID as _id,SubCatName as CatName FROM " + tblSubCategory
+				+ " ORDER BY _id;";
+
+		//Can use this to combine category/subcategories
+		//		String sqlCategoryPopulate = " SELECT CatID as _id,CatName FROM " + tblCategory + 
+		//				" UNION " + 
+		//				" SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory + " ORDER BY _id";
 
 		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		getActivity().startManagingCursor(categoryCursor);
 		String[] from = new String[] {"CatName"}; 
-		int[] to = new int[] { android.R.id.text1 }; 
+		int[] to = new int[] { android.R.id.text1 };
 
 		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

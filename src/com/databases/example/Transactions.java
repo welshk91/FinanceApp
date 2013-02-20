@@ -538,7 +538,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		tMemo.setKeyListener(input);
 
 		final Calendar c = Calendar.getInstance();
-		
+
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 		tDate.setText(dateFormat.format(c.getTime()));
 
@@ -940,6 +940,91 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		return super.onOptionsItemSelected(item);
 	}
 
+	//Used after a change in settings occurs
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		//Toast.makeText(this, "Options Just Changed: Transactions.Java", Toast.LENGTH_SHORT).show();
+		populate();
+	}
+
+	//Calculates the balance
+	public void calculateBalance(int id){
+		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
+		balance.setText("Total Balance: " + totalBalance);
+
+		//Update account with accurate balance
+		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
+
+		//Open Database
+		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+		//Update Record
+		myDB.execSQL(sqlCommand);
+
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
+		}
+
+	}
+
+	//Override default resume to also call populate in case view needs refreshing
+	@Override
+	public void onResume(){
+		populate();
+		super.onResume();
+	}
+
+	//Method Called to refresh the list of categories if user changes the list
+	public void categoryPopulate(){
+
+		// Cursor is used to navigate the query results
+		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+		final String sqlCategoryPopulate = "SELECT ToCatID as _id,SubCatName as CatName FROM " + tblSubCategory
+				+ " ORDER BY _id;";
+
+		//Can use this to combine category/subcategories
+		//		String sqlCategoryPopulate = " SELECT CatID as _id,CatName FROM " + tblCategory + 
+		//				" UNION " + 
+		//				" SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory + " ORDER BY _id";
+
+		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
+		getActivity().startManagingCursor(categoryCursor);
+		String[] from = new String[] {"CatName"}; 
+		int[] to = new int[] { android.R.id.text1 };
+
+		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);
+		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		tCategory.setAdapter(categorySpinnerAdapter);
+
+		//Close Database
+		if (myDB != null){
+			myDB.close();
+		}
+
+	}//end of categoryPopulate
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogView!=null){
+			alertDialogView.dismiss();
+		}
+		if(alertDialogEdit!=null){
+			alertDialogEdit.dismiss();
+		}
+		if(alertDialogAdd!=null){
+			alertDialogAdd.dismiss();
+		}
+		if(categoryCursor!=null){
+			categoryCursor.close();
+		}
+
+		super.onPause();
+	}
+
+	
 	//Method to help create TimePicker
 	public static class TimePickerFragment extends DialogFragment
 	implements TimePickerDialog.OnTimeSetListener {
@@ -994,7 +1079,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
 			SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
 			SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
-			
+
 			int year = Integer.parseInt(dateFormatYear.format(c.getTime()));
 			int month = Integer.parseInt(dateFormatMonth.format(c.getTime()))-1;
 			int day = Integer.parseInt(dateFormatDay.format(c.getTime()));
@@ -1011,7 +1096,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			else{
 				transactionDate = (month+1) + "-" + day + "-" + year;
 			}
-			
+
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 			tDate.setText(transactionDate);
 		}
@@ -1352,88 +1437,33 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 	}
 
-	//Used after a change in settings occurs
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Toast.makeText(this, "Options Just Changed: Transactions.Java", Toast.LENGTH_SHORT).show();
-		populate();
+	//An Object Class used to hold the data of each transaction record
+	public class TransactionRecord {
+		protected int id;
+		protected int acctId;
+		protected String name;
+		protected String value;
+		protected String type;
+		protected String category;
+		protected String checknum;
+		protected String memo;
+		protected String time;
+		protected String date;
+		protected String cleared;
+
+		public TransactionRecord(int id, int acctId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
+			this.id = id;
+			this.acctId = acctId;
+			this.name = name;
+			this.value = value;
+			this.type = type;
+			this.category = category;
+			this.checknum = checknum;
+			this.memo = memo;
+			this.time = time;
+			this.date = date;
+			this.cleared = cleared;
+		}
 	}
-
-	//Calculates the balance
-	public void calculateBalance(int id){
-		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
-		balance.setText("Total Balance: " + totalBalance);
-
-		//Update account with accurate balance
-		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
-
-		//Open Database
-		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		//Update Record
-		myDB.execSQL(sqlCommand);
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
-		}
-
-	}
-
-	//Override default resume to also call populate in case view needs refreshing
-	@Override
-	public void onResume(){
-		populate();
-		super.onResume();
-	}
-
-	//Method Called to refresh the list of categories if user changes the list
-	public void categoryPopulate(){
-
-		// Cursor is used to navigate the query results
-		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		final String sqlCategoryPopulate = "SELECT ToCatID as _id,SubCatName as CatName FROM " + tblSubCategory
-				+ " ORDER BY _id;";
-
-		//Can use this to combine category/subcategories
-		//		String sqlCategoryPopulate = " SELECT CatID as _id,CatName FROM " + tblCategory + 
-		//				" UNION " + 
-		//				" SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory + " ORDER BY _id";
-
-		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
-		getActivity().startManagingCursor(categoryCursor);
-		String[] from = new String[] {"CatName"}; 
-		int[] to = new int[] { android.R.id.text1 };
-
-		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);
-		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		tCategory.setAdapter(categorySpinnerAdapter);
-
-		//Close Database
-		if (myDB != null){
-			myDB.close();
-		}
-
-	}//end of categoryPopulate
-
-	//Close dialogs to prevent window leaks
-	@Override
-	public void onPause() {
-		if(alertDialogView!=null){
-			alertDialogView.dismiss();
-		}
-		if(alertDialogEdit!=null){
-			alertDialogEdit.dismiss();
-		}
-		if(alertDialogAdd!=null){
-			alertDialogAdd.dismiss();
-		}
-		if(categoryCursor!=null){
-			categoryCursor.close();
-		}
-
-		super.onPause();
-	}
-
+	
 }//end Transactions

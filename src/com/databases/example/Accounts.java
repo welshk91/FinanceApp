@@ -744,7 +744,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					ft.replace(R.id.transaction_frag_frame, tran_frag);
 					ft.commit();
 					getFragmentManager().executePendingTransactions();
-
 				}
 
 			}//end onClick "OK"
@@ -836,6 +835,63 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		return super.onOptionsItemSelected(item);
 	}
+
+
+	//Used after a change in settings occurs
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		//Toast.makeText(this, "Options Just Changed: Accounts.Java", Toast.LENGTH_SHORT).show();
+		populate();
+	}
+
+	//Calculates the balance
+	public void calculateBalance(){
+		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
+		balance.setText("Total Balance: " + totalBalance);
+	}
+
+	//Override default resume to also call populate in case view needs refreshing
+	@Override
+	public void onResume(){
+		//populate();
+		super.onResume();
+	}
+
+	//Method used to handle picking a file
+	void pickFile(File aFile) {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*");
+		startActivityForResult(intent,PICKFILE_RESULT_CODE);
+	}
+
+	//Method called after picking a file
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		switch (requestCode) {
+		case PICKFILE_RESULT_CODE:
+			if(resultCode==getActivity().RESULT_OK){
+				String FilePath = data.getData().getPath();
+				Toast.makeText(this.getActivity(), "File Path : " + FilePath, Toast.LENGTH_LONG).show();
+			}
+			break;
+		}
+	}
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogView!=null){
+			alertDialogView.dismiss();
+		}
+		if(alertDialogEdit!=null){
+			alertDialogEdit.dismiss();
+		}
+		if(alertDialogAdd!=null){
+			alertDialogAdd.dismiss();
+		}
+		super.onPause();
+	}
+
 
 	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {
 		private ArrayList<AccountRecord> account;
@@ -1070,59 +1126,21 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 	}
 
-	//Used after a change in settings occurs
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Toast.makeText(this, "Options Just Changed: Accounts.Java", Toast.LENGTH_SHORT).show();
-		populate();
-	}
+	//An Object Class used to hold the data of each account record
+	public class AccountRecord {
+		protected String id;
+		protected String name;
+		protected String balance;
+		protected String date;
+		protected String time;
 
-	//Calculates the balance
-	public void calculateBalance(){
-		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
-		balance.setText("Total Balance: " + totalBalance);
-	}
-
-	//Override default resume to also call populate in case view needs refreshing
-	@Override
-	public void onResume(){
-		//populate();
-		super.onResume();
-	}
-
-	//Method used to handle picking a file
-	void pickFile(File aFile) {
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType("*/*");
-		startActivityForResult(intent,PICKFILE_RESULT_CODE);
-	}
-
-	//Method called after picking a file
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data){
-		switch (requestCode) {
-		case PICKFILE_RESULT_CODE:
-			if(resultCode==getActivity().RESULT_OK){
-				String FilePath = data.getData().getPath();
-				Toast.makeText(this.getActivity(), "File Path : " + FilePath, Toast.LENGTH_LONG).show();
-			}
-			break;
+		public AccountRecord(String id, String name, String balance, String date, String time) {
+			this.id = id;
+			this.name = name;
+			this.balance = balance;
+			this.date = date;
+			this.time = time;
 		}
-	}
-
-	//Close dialogs to prevent window leaks
-	@Override
-	public void onPause() {
-		if(alertDialogView!=null){
-			alertDialogView.dismiss();
-		}
-		if(alertDialogEdit!=null){
-			alertDialogEdit.dismiss();
-		}
-		if(alertDialogAdd!=null){
-			alertDialogAdd.dismiss();
-		}
-		super.onPause();
 	}
 
 }// end Accounts

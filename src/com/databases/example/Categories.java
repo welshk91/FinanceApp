@@ -129,7 +129,7 @@ public class Categories extends SherlockActivity{
 					String note = cursorCategory.getString(NoteColumn);
 
 					CategoryRecord entry = new CategoryRecord(id, name, note);
-					//Log.e("Category", "Added Category: " + id + " " + name + " " + note);
+					//Log.d("Category", "Added Category: " + id + " " + name + " " + note);
 					subcategoryPopulate(id);
 					resultsCategory.add(entry);
 
@@ -210,7 +210,6 @@ public class Categories extends SherlockActivity{
 
 		final boolean isCat = isCategory;
 		final String catID = itemID;
-		//Log.e("Categories","catID = " + catID);
 
 		LayoutInflater li = LayoutInflater.from(this);
 		final View categoryAddView = li.inflate(R.layout.category_add, null);
@@ -285,7 +284,7 @@ public class Categories extends SherlockActivity{
 		});
 
 		// create alert dialog
-		AlertDialog alertDialogAdd = alertDialogBuilder.create();
+		alertDialogAdd = alertDialogBuilder.create();
 
 		// show it
 		alertDialogAdd.show();
@@ -423,7 +422,7 @@ public class Categories extends SherlockActivity{
 		});		
 
 		// create alert dialog
-		AlertDialog alertDialogEdit = alertDialogBuilder.create();
+		alertDialogEdit = alertDialogBuilder.create();
 
 		// show it
 		alertDialogEdit.show();
@@ -948,12 +947,12 @@ public class Categories extends SherlockActivity{
 		if(alertDialogView!=null){
 			alertDialogView.dismiss();
 		}
-		//		if(alertDialogEdit!=null){
-		//			alertDialogEdit.dismiss();
-		//		}
-		//		if(alertDialogAdd!=null){
-		//			alertDialogAdd.dismiss();
-		//		}
+		if(alertDialogEdit!=null){
+			alertDialogEdit.dismiss();
+		}
+		if(alertDialogAdd!=null){
+			alertDialogAdd.dismiss();
+		}
 
 		//if(!cursorCategory.isClosed()){
 		//	cursorCategory.close();

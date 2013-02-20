@@ -575,28 +575,33 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if (myDB != null){
 			myDB.close();
 		}
-
+		
 		//Reload transaction fragment if shown
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
+		Accounts account_frag = new Accounts();
+		Transactions transaction_frag = new Transactions();
+
+		//Bundle for Transaction fragment
+		Bundle argsTran = new Bundle();
+		argsTran.putBoolean("showAll", true);
+		argsTran.putBoolean("boolSearch", false);
+
+		//Bundle for Account fragment
+		Bundle argsAccount = new Bundle();
+		argsAccount.putBoolean("boolSearch", false);
+
+		transaction_frag.setArguments(argsTran);
+		account_frag.setArguments(argsAccount);
+
 		if(transaction_frame!=null){
-			Transactions transaction_frag = new Transactions();
-
-			//Bundle for Transaction fragment
-			Bundle argsTran = new Bundle();
-			argsTran.putBoolean("showAll", true);
-			argsTran.putBoolean("boolSearch", false);
-
-			transaction_frag.setArguments(argsTran);
-
 			getFragmentManager().beginTransaction()
-			.replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
-
-			getFragmentManager().executePendingTransactions();
-
+			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 		}
-
-		populate();
+		else{
+			getFragmentManager().beginTransaction().
+			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
+		}
 
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
@@ -729,23 +734,32 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					myDB.close();
 				}
 
-				populate();
-
 				//Reload transaction fragment if shown
 				View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
+				Accounts account_frag = new Accounts();
+				Transactions transaction_frag = new Transactions();
+
+				//Bundle for Transaction fragment
+				Bundle argsTran = new Bundle();
+				argsTran.putInt("ID", entry_id);
+
+				//Bundle for Account fragment
+				Bundle argsAccount = new Bundle();
+				argsAccount.putBoolean("boolSearch", false);
+
+				transaction_frag.setArguments(argsTran);
+				account_frag.setArguments(argsAccount);
+
 				if(transaction_frame!=null){
-					Bundle args = new Bundle();
-					args.putInt("ID",entry_id);
-
-					Transactions tran_frag = new Transactions();
-					tran_frag.setArguments(args);
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.transaction_frag_frame, tran_frag);
-					ft.commit();
-					getFragmentManager().executePendingTransactions();
+					getFragmentManager().beginTransaction()
+					.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 				}
-
+				else{
+					getFragmentManager().beginTransaction().
+					replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
+				}
+				
 			}//end onClick "OK"
 		})
 		.setNegativeButton("Cancel",

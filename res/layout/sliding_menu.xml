@@ -3,18 +3,17 @@
     android:id="@+id/ScrollView01"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:background="#E8E8E8"
+    android:background="#33b5e5"
     android:fadeScrollbars="true" >
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/slidingmenu_checkbook"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
@@ -25,7 +24,7 @@
         <Button
             android:id="@+id/slidingmenu_categories"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_checkbook"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
@@ -37,7 +36,7 @@
         <Button
             android:id="@+id/slidingmenu_schedules"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_categories"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
@@ -49,7 +48,7 @@
         <Button
             android:id="@+id/slidingmenu_manage"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_schedules"
             android:layout_margin="5dp"
             android:background="@android:color/transparent"
@@ -62,7 +61,7 @@
         <Button
             android:id="@+id/slidingmenu_statistics"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_manage"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
@@ -71,10 +70,16 @@
             android:textColor="#FFFFFF" >
         </Button>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/slidingmenu_statistics"
+            android:background="#0099cc" />
+
         <Button
             android:id="@+id/slidingmenu_options"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_statistics"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
@@ -86,7 +91,7 @@
         <Button
             android:id="@+id/slidingmenu_help"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_options"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"
@@ -98,7 +103,7 @@
         <Button
             android:id="@+id/slidingmenu_exit"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_help"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/slidingmenu_exit"

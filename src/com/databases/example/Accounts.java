@@ -1,6 +1,7 @@
 package com.databases.example;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
@@ -63,6 +64,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	View accountStatsView;
 	View myFragmentView;
+
+	//Date Format to use for time (01:42 PM)
+	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+
+	//Date Format to use for date (03-26-2013)
+	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	//Need to be global so I can dismiss and avoid leaks
 	AlertDialog alertDialogView;
@@ -462,9 +469,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		final String name = adapter.getItem(itemInfo.position).name;
 		final String balance = adapter.getItem(itemInfo.position).balance;
 
-		//Toast.makeText(this, "Editing Item:\n" + id, Toast.LENGTH_SHORT).show();  
-
-		// get account_add.xml view
 		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
 		final View promptsView = li.inflate(R.layout.account_add, null);
 
@@ -494,15 +498,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				// CODE FOR "OK"
 				accountName = aName.getText().toString().trim();
 				accountBalance = balance.trim();
-
-				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-				}
-				else{
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-				}				
-
-				accountDate = Calendar.getInstance().get(Calendar.MONTH) + "-" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + Calendar.getInstance().get(Calendar.YEAR);
+				final Calendar c = Calendar.getInstance();
+				accountTime = timeFormat.format(c.getTime());
+				accountDate = dateFormat.format(c.getTime());
 
 				try{
 					final String ID = adapter.getItem(itemInfo.position).id;
@@ -581,7 +579,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//Reload transaction fragment if shown
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
-		if(transaction_frame==null){
+		if(transaction_frame!=null){
 			Transactions transaction_frag = new Transactions();
 
 			//Bundle for Transaction fragment
@@ -633,18 +631,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				accountBalance = aBalance.getText().toString().trim();
 
 				final Calendar cal = Calendar.getInstance();
-				final int year = cal.get(Calendar.YEAR);
-				final int month = cal.get(Calendar.MONTH);
-				final int day = cal.get(Calendar.DAY_OF_MONTH);
-
-				if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " PM";
-				}
-				else{
-					accountTime = Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+ " AM";
-				}				
-
-				accountDate = ((month+1) + "/" + day + "/" + year);
+				accountTime = timeFormat.format(cal.getTime());
+				accountDate = dateFormat.format(cal.getTime());
 
 				//Variables for adding Starting Balance transaction
 				final String transactionName = "STARTING BALANCE";
@@ -682,6 +670,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				//String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
 				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName = ? AND AcctBalance = ? AND AcctTime = ? AND AcctDate = ?;";
 
+				int entry_id = 0;
+
 				//Open Database
 				myDB = Accounts.this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -700,8 +690,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						//Query the Newly created account
 						Cursor c = myDB.rawQuery(sqlQuery, new String[] {accountName, accountBalance, accountTime, accountDate});
 						getActivity().startManagingCursor(c);
-
-						int entry_id = 0;
 
 						c.moveToFirst();
 						do{
@@ -741,7 +729,23 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					myDB.close();
 				}
 
-				Accounts.this.populate();
+				populate();
+
+				//Reload transaction fragment if shown
+				View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
+
+				if(transaction_frame!=null){
+					Bundle args = new Bundle();
+					args.putInt("ID",entry_id);
+
+					Transactions tran_frag = new Transactions();
+					tran_frag.setArguments(args);
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.replace(R.id.transaction_frag_frame, tran_frag);
+					ft.commit();
+					getFragmentManager().executePendingTransactions();
+
+				}
 
 			}//end onClick "OK"
 		})
@@ -845,7 +849,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			AccountRecord user = account.get(position);
-			
+
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
@@ -853,7 +857,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.account_item, null);
-				
+
 				//Change Background Colors
 				try{
 					LinearLayout l;
@@ -1085,14 +1089,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//populate();
 		super.onResume();
 	}
-
-	//	//Override method to send the search extra data, letting it know which class called it
-	//	@Override
-	//	public boolean onSearchRequested() {
-	//		Bundle appData = new Bundle();
-	//		startSearch(null, false, appData, false);
-	//		return true;
-	//	}
 
 	//Method used to handle picking a file
 	void pickFile(File aFile) {

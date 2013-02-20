@@ -3,6 +3,8 @@ package com.databases.example;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -103,6 +105,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	TextView statsTime;
 	CheckBox chkCleared;
 
+	//Date Format to use for time (01:42 PM)
+	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+
+	//Date Format to use for date (03-26-2013)
+	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
+
+
 	//Variables of the Account Used
 	int account_id;
 
@@ -184,10 +193,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 		else if(bundle!=null && showAllTransactions==false) {
 			account_id = bundle.getInt("ID");
-			//        String account_name = bundle.getString("name");
-			//        String account_balance = bundle.getString("balance");
-			//        String account_date = bundle.getString("date");
-			//        String account_time = bundle.getString("time");
 
 			//getActivity().setTitle("Transactions <" + account_name +">");
 
@@ -532,38 +537,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
 		tMemo.setKeyListener(input);
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-		
 		final Calendar c = Calendar.getInstance();
-		final int year = c.get(Calendar.YEAR);
-		final int month = c.get(Calendar.MONTH);
-		final int day = c.get(Calendar.DAY_OF_MONTH); 
-		int hour = c.get(Calendar.HOUR);
-		int minute = c.get(Calendar.MINUTE);
-		String AmPm = "";
-
+		
 		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-		tDate.setText((month+1) + "/" + day + "/" + year);
+		tDate.setText(dateFormat.format(c.getTime()));
 
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-
-		if(Calendar.getInstance().get(Calendar.AM_PM)==1){
-			AmPm = "PM";
-		}
-		else{
-			AmPm = "AM";
-		}
-
-		String newMinute = "";
-
-		if(minute<10){
-			newMinute = "0" + minute; 
-		}
-		else{
-			newMinute=""+minute;
-		}
-
-		tTime.setText(hour + ":" + newMinute + " " + AmPm);
+		tTime.setText(timeFormat.format(c.getTime()));
 
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
@@ -968,29 +948,39 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current time as the default values for the picker
 			final Calendar c = Calendar.getInstance();
-			int hour = c.get(Calendar.HOUR);
-			int minute = c.get(Calendar.MINUTE);
 
-			// Create a new instance of TimePickerDialog and return it
+			SimpleDateFormat dateFormatHour = new SimpleDateFormat("hh");
+			SimpleDateFormat dateFormatMinute = new SimpleDateFormat("mm");
+
+			int hour = Integer.parseInt(dateFormatHour.format(c.getTime()));
+			int minute = Integer.parseInt(dateFormatMinute.format(c.getTime()));
+
 			return new TimePickerDialog(getActivity(), this, hour, minute,
-					DateFormat.is24HourFormat(getActivity()));
+					false);
 		}
 
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			// Do something with the time chosen by the user
-			transactionTime = hourOfDay + ":" + minute;
+			String ampm = "";
+			if(hourOfDay >=12){
+				ampm = "PM";
+			}
+			else{
+				ampm = "AM";
+			}
 
+			if(hourOfDay==0){
+				hourOfDay=12;
+			}
+			else if (hourOfDay>12){
+				hourOfDay=hourOfDay-12;
+			}
+
+			transactionTime = hourOfDay + ":" + minute + " " + ampm;
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 			tTime.setText(transactionTime);
 
 		}
 	}
-
-	//Method called to show the TimePicker when adding a transaction
-	//public void showTimePickerDialog(View v) {
-	//	DialogFragment newFragment = new TimePickerFragment();
-	//	newFragment.show(this.getActivity().getSupportFragmentManager(), "timePicker");
-	//}
 
 	//Method to help create DatePicker
 	public static class DatePickerFragment extends DialogFragment
@@ -1000,9 +990,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current date as the default date in the picker
 			final Calendar c = Calendar.getInstance();
-			int year = c.get(Calendar.YEAR);
-			int month = c.get(Calendar.MONTH);
-			int day = c.get(Calendar.DAY_OF_MONTH);
+
+			SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
+			SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
+			SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
+			
+			int year = Integer.parseInt(dateFormatYear.format(c.getTime()));
+			int month = Integer.parseInt(dateFormatMonth.format(c.getTime()))-1;
+			int day = Integer.parseInt(dateFormatDay.format(c.getTime()));
 
 			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -1010,7 +1005,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 			// Do something with the date chosen by the user
-			transactionDate = (month+1) + "/" + day + "/" + year;
+			if(month<10){
+				transactionDate = "0"+(month+1) + "-" + day + "-" + year;
+			}
+			else{
+				transactionDate = (month+1) + "-" + day + "-" + year;
+			}
+			
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 			tDate.setText(transactionDate);
 		}

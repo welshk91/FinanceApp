@@ -562,7 +562,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		// set dialog message
 		alertDialogBuilder
 		.setCancelable(false)
-		.setPositiveButton("Save",
+		.setPositiveButton("Add",
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				// CODE FOR "OK"
@@ -580,7 +580,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				}
 				catch(Exception e){
 					//Usually caused if no category exists
-
+					//Log.d("Here","exception e:" + e);
+					dialog.cancel();
+					Toast.makeText(Transactions.this.getActivity(), "Needs A Category \n\nUse The Side Menu To Create Categories", Toast.LENGTH_LONG).show();
 				}
 
 				transactionCheckNum = tCheckNum.getText().toString().trim();
@@ -1024,7 +1026,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		super.onPause();
 	}
 
-	
+
 	//Method to help create TimePicker
 	public static class TimePickerFragment extends DialogFragment
 	implements TimePickerDialog.OnTimeSetListener {
@@ -1465,5 +1467,5 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			this.cleared = cleared;
 		}
 	}
-	
+
 }//end Transactions

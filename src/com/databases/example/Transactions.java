@@ -3,9 +3,6 @@ package com.databases.example;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -14,13 +11,11 @@ import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,18 +23,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.format.DateFormat;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -110,7 +101,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Date Format to use for date (03-26-2013)
 	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
-
 
 	//Variables of the Account Used
 	int account_id;
@@ -296,7 +286,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		}
 		else{
-			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
+			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
 					null, null, null, null);
 		}
 
@@ -305,6 +295,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		getActivity().startManagingCursor(c);
 		int idColumn = c.getColumnIndex("TransID");
 		int acctIDColumn = c.getColumnIndex("ToAcctID");
+		int planIDColumn = c.getColumnIndex("ToPlanID");
 		int nameColumn = c.getColumnIndex("TransName");
 		int valueColumn = c.getColumnIndex("TransValue");
 		int typeColumn = c.getColumnIndex("TransType");
@@ -321,6 +312,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				do {
 					int id = c.getInt(idColumn);
 					int acctId = c.getInt(acctIDColumn);
+					int planId = c.getInt(planIDColumn);
 					String name = c.getString(nameColumn);
 					String value = c.getString(valueColumn);
 					String type = c.getString(typeColumn);
@@ -331,7 +323,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String date = c.getString(dateColumn);
 					String cleared = c.getString(clearedColumn);
 
-					TransactionRecord entry = new TransactionRecord(id, acctId, name, value,type,category,checknum,memo,time,date,cleared);
+					TransactionRecord entry = new TransactionRecord(id, acctId, planId, name, value,type,category,checknum,memo,time,date,cleared);
 					results.add(entry);
 					dropdownResults.add(memo);
 
@@ -433,6 +425,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		int entry_id = 0;
 		int entry_acctId = 0;
+		int entry_planId = 0;
 		String entry_name = null;
 		String entry_value = null;
 		String entry_type = null;
@@ -447,6 +440,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		do{
 			entry_id = c.getInt(c.getColumnIndex("TransID"));
 			entry_acctId = c.getInt(c.getColumnIndex("ToAcctID"));
+			entry_planId = c.getInt(c.getColumnIndex("ToPlanID"));
 			entry_name = c.getString(c.getColumnIndex("TransName"));
 			entry_value = c.getString(c.getColumnIndex("TransValue"));
 			entry_type = c.getString(c.getColumnIndex("TransType"));
@@ -547,7 +541,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 
-		//Populate List
+		//Populate Category Drop-down List
 		categoryPopulate();
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
@@ -565,8 +559,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		.setPositiveButton("Add",
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "OK"
-
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = tCategory.getSelectedItemPosition();
 				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
@@ -616,6 +608,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						//Insert values into accounts table
 						ContentValues transactionValues=new ContentValues();
 						transactionValues.put("ToAcctID",account_id);
+						transactionValues.put("ToPlanID",0);
 						transactionValues.put("TransName",transactionName);
 						transactionValues.put("TransValue",transactionValue);
 						transactionValues.put("TransType",transactionType);
@@ -690,6 +683,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		final int tID = adapter.getItem(itemInfo.position).id;
 		final int aID = adapter.getItem(itemInfo.position).acctId;
+		final int pID = adapter.getItem(itemInfo.position).planId;
 		final String name = adapter.getItem(itemInfo.position).name;
 		final String value = adapter.getItem(itemInfo.position).value;
 		final String type = adapter.getItem(itemInfo.position).type;
@@ -798,6 +792,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						ContentValues transactionValues=new ContentValues();
 						transactionValues.put("TransID",tID);
 						transactionValues.put("ToAcctID",aID);
+						transactionValues.put("ToPlanID",pID);
 						transactionValues.put("TransName",transactionName);
 						transactionValues.put("TransValue",transactionValue);
 						transactionValues.put("TransType",transactionType);
@@ -1443,6 +1438,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public class TransactionRecord {
 		protected int id;
 		protected int acctId;
+		protected int planId;
 		protected String name;
 		protected String value;
 		protected String type;
@@ -1453,9 +1449,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		protected String date;
 		protected String cleared;
 
-		public TransactionRecord(int id, int acctId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
+		public TransactionRecord(int id, int acctId, int planId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
 			this.id = id;
 			this.acctId = acctId;
+			this.planId = planId;
 			this.name = name;
 			this.value = value;
 			this.type = type;

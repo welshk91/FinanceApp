@@ -36,8 +36,9 @@ public class Main extends SherlockActivity {
 	Button Exit_Button;
 
 	//Variables for the Database
-	public final String tblAccounts = "tblAccounts";
+	final String tblAccounts = "tblAccounts";
 	final String tblTrans = "tblTrans";
+	final String tblPlanTrans = "tblPlanTrans";
 	final String tblCategory = "tblCategory";
 	final String tblSubCategory = "tblSubCategory";
 	final String tblLinks = "tblLinks";
@@ -114,9 +115,9 @@ public class Main extends SherlockActivity {
 
 			case R.id.dashboard_schedules:
 				//	createDatabase();
-				//Intent intentSchedules = new Intent(Main.this, Accounts.class);
-				//startActivity(intentSchedules);
-				confirmPattern();
+				Intent intentSchedules = new Intent(Main.this, Schedule.class);
+				startActivity(intentSchedules);
+				//confirmPattern();
 				break;
 
 			case R.id.dashboard_statistics:
@@ -181,8 +182,13 @@ public class Main extends SherlockActivity {
 
 				String sqlCommandTransactions = "CREATE TABLE IF NOT EXISTS "
 						+ tblTrans
-						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
+						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, ToPlanID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
 
+				/***NEED TO FINE-TUNE THIS TABLE (Frequency,when it should occur...) ***/
+				String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
+						+ tblPlanTrans
+						+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, PlanCleared);";
+				
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
 						+ " (CatID INTEGER PRIMARY KEY, CatName VARCHAR, CatNote VARCHAR);";

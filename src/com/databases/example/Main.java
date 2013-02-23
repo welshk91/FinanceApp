@@ -145,9 +145,8 @@ public class Main extends SherlockActivity {
 				break;	
 
 			default:
-				//	Toast.makeText(Main.this, "Oh No, default listener condition :(", Toast.LENGTH_SHORT).show();
+				Log.e("Main", "Default onClickListner fired?");
 				break;	
-
 			}
 
 		}// end onClick
@@ -187,7 +186,7 @@ public class Main extends SherlockActivity {
 				/***NEED TO FINE-TUNE THIS TABLE (Frequency,when it should occur...) ***/
 				String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
 						+ tblPlanTrans
-						+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, PlanCleared);";
+						+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, PlanOffset VARCHAR, PlanRate VARCHAR, PlanCleared);";
 				
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory

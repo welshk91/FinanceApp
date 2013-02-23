@@ -240,7 +240,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		if(showAllTransactions){
-			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
+			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
 					null, null, null, null);
 		}
 		else if(searchFragment){
@@ -539,8 +539,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 		tTime.setText(timeFormat.format(c.getTime()));
 
-		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-
 		//Populate Category Drop-down List
 		categoryPopulate();
 
@@ -568,13 +566,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				transactionType = tType.getSelectedItem().toString().trim();
 
 				try{
-					transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
+					transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
 				}
 				catch(Exception e){
 					//Usually caused if no category exists
 					//Log.d("Here","exception e:" + e);
 					dialog.cancel();
 					Toast.makeText(Transactions.this.getActivity(), "Needs A Category \n\nUse The Side Menu To Create Categories", Toast.LENGTH_LONG).show();
+
+					return;
 				}
 
 				transactionCheckNum = tCheckNum.getText().toString().trim();
@@ -978,7 +978,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
-		final String sqlCategoryPopulate = "SELECT ToCatID as _id,SubCatName as CatName FROM " + tblSubCategory
+		final String sqlCategoryPopulate = "SELECT ToCatID as _id,SubCatName FROM " + tblSubCategory
 				+ " ORDER BY _id;";
 
 		//Can use this to combine category/subcategories
@@ -988,7 +988,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
 		getActivity().startManagingCursor(categoryCursor);
-		String[] from = new String[] {"CatName"}; 
+		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };
 
 		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);

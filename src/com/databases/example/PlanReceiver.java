@@ -59,6 +59,11 @@ public class PlanReceiver extends BroadcastReceiver{
 		nm.notify(0, notification);
 		
 	}
+	
+	
+	public void scheduleTransaction(){
+		
+	}
 
 
 }//end of PlanReceiver

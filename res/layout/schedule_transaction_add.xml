@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fadeScrollbars="true" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true"
+        android:orientation="vertical"
+        android:padding="4dp" >
+
+        <TextView
+            android:id="@+id/TextView00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account:" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/spinner_transaction_account"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView00"
+            android:layout_toRightOf="@+id/TextView04"
+            android:inputType="text" >
+        </Spinner>
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinner_transaction_account"
+            android:text="@string/name:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/EditTransactionName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView01"
+            android:layout_toRightOf="@+id/TextView04"
+            android:inputType="text" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/EditTransactionName"
+            android:text="@string/value:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/EditTransactionValue"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView02"
+            android:layout_toRightOf="@+id/TextView04"
+            android:digits="1234567890."
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal|phone" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/EditTransactionValue"
+            android:text="@string/type:" />
+
+        <Spinner
+            android:id="@+id/spinner_transaction_type"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView03"
+            android:layout_toRightOf="@+id/TextView04"
+            android:entries="@array/transaction_type" />
+
+        <TextView
+            android:id="@+id/TextView04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinner_transaction_type"
+            android:text="@string/category:" />
+
+        <Spinner
+            android:id="@+id/spinner_transaction_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView04"
+            android:layout_toRightOf="@+id/TextView04" />
+
+        <TextView
+            android:id="@+id/TextView06"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinner_transaction_category"
+            android:text="@string/memo:" >
+        </TextView>
+
+        <AutoCompleteTextView
+            android:id="@+id/EditTransactionMemo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView06"
+            android:layout_toRightOf="@+id/TextView04"
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+            android:maxLength="200"
+            android:maxLines="2" >
+        </AutoCompleteTextView>
+
+        <TextView
+            android:id="@+id/TextView07"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/EditTransactionMemo"
+            android:text="@string/date:" >
+        </TextView>
+
+        <Button
+            android:id="@+id/ButtonTransactionDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView07"
+            android:layout_toRightOf="@+id/TextView04"
+            android:onClick="showDatePickerDialog"
+            android:text="Date" >
+        </Button>
+
+        <Button
+            android:id="@+id/ButtonTransactionTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView07"
+            android:layout_toRightOf="@+id/ButtonTransactionDate"
+            android:onClick="showTimePickerDialog"
+            android:text="Time" >
+        </Button>
+
+        <TextView
+            android:id="@+id/TextView08"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ButtonTransactionDate"
+            android:text="@string/cleared:" >
+        </TextView>
+
+        <CheckBox
+            android:id="@+id/CheckTransactionCleared"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView08"
+            android:layout_toRightOf="@+id/TextView04"
+            android:checked="true" >
+        </CheckBox>
+    </RelativeLayout>
+
+</ScrollView>

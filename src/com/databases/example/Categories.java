@@ -160,7 +160,7 @@ public class Categories extends SherlockActivity{
 	public void subcategoryPopulate(String catId){		
 		//Database myDB is already open
 
-		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote"}, "ToCatID = " + catId,
+		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCatID", "ToCatID", "SubCatName", "SubCatNote"}, "ToCatID = " + catId,
 				null, null, null, null);
 
 		resultsCursor.add(cursorSubCategory);
@@ -199,16 +199,16 @@ public class Categories extends SherlockActivity{
 	public void categoryAdd(android.view.MenuItem item){			
 		boolean isCategory = true;
 		String itemID = "0";
-		SubCategoryRecord subRecord;
+		CategoryRecord catRecord;
 
 		if(item != null){
 			isCategory = false;
 			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			subRecord = adapterCategory.getSubCategory(groupPos,childPos);
-			itemID = subRecord.id;
-			Log.d("categoryAdd", "itemID: " + itemID);
+			catRecord = adapterCategory.getCategory(groupPos);
+			itemID = catRecord.id;
+			//Log.e("categoryAdd", "itemID: " + catRecord.id);
 		}
 
 		final boolean isCat = isCategory;
@@ -248,7 +248,7 @@ public class Categories extends SherlockActivity{
 				try{
 					//Add a category
 					if(isCat){
-						//	Log.e("Category Add", "Adding a normal category : " + category);
+						//Log.e("Category Add", "Adding a normal category : " + category);
 
 						ContentValues categoryValues=new ContentValues();
 						categoryValues.put("CatName",name);
@@ -259,7 +259,7 @@ public class Categories extends SherlockActivity{
 					}
 					//Add a subcategory
 					else{
-						//	Log.e("Category Add", "Adding a subcategory : " + category + " " + catID);
+						//Log.e("Category Add", "Adding a subcategory : " + catID + name + note);
 
 						ContentValues subcategoryValues=new ContentValues();
 						subcategoryValues.put("ToCatID",catID);
@@ -597,6 +597,7 @@ public class Categories extends SherlockActivity{
 
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_CATEGORY_ADD:
+			//Log.e("Categories","Category Add pressed");
 			categoryAdd(item);
 			return true;
 
@@ -657,6 +658,7 @@ public class Categories extends SherlockActivity{
 			int NameColumn = group.getColumnIndex("CatName");
 			int NoteColumn = group.getColumnIndex("CatNote");
 
+			//Log.e("HERE", "columns " + IDColumn + " " + NameColumn + " " + NoteColumn);
 			String itemId = group.getString(IDColumn);
 			String itemName = group.getString(NameColumn);
 			String itemNote = group.getString(NoteColumn);
@@ -671,12 +673,13 @@ public class Categories extends SherlockActivity{
 		public SubCategoryRecord getSubCategory(int groupId, int childId){
 			Cursor group = subcategory.get(groupId);
 
+			group.moveToPosition(childId);
 			int IDColumn = group.getColumnIndex("SubCatID");
 			int ToIDColumn = group.getColumnIndex("ToCatID");
 			int NameColumn = group.getColumnIndex("SubCatName");
 			int NoteColumn = group.getColumnIndex("SubCatNote");
 
-			group.moveToPosition(childId);
+			Log.e("HERE", "columns " + IDColumn + " " + ToIDColumn + " " + NameColumn + " " + NoteColumn);
 			String itemId = group.getString(0);
 			String itemTo_id = group.getString(ToIDColumn);
 			String itemSubname = group.getString(NameColumn);
@@ -766,7 +769,7 @@ public class Categories extends SherlockActivity{
 			int NoteColumn = user.getColumnIndex("CatNote");
 
 			user.moveToPosition(groupPosition);
-			String itemId = user.getString(0);
+			String itemId = user.getString(IDColumn);
 			String itemName = user.getString(NameColumn);
 			String itemNote = user.getString(NoteColumn);
 			//Log.e("getGroupView", "Found Category: " + itemName);
@@ -881,7 +884,7 @@ public class Categories extends SherlockActivity{
 			int NoteColumn = user.getColumnIndex("SubCatNote");
 
 			user.moveToPosition(childPosition);
-			String itemId = user.getString(0);
+			String itemId = user.getString(IDColumn);
 			String itemTo_id = user.getString(ToIDColumn);
 			String itemSubname = user.getString(NameColumn);
 			String itemNote = user.getString(NoteColumn);

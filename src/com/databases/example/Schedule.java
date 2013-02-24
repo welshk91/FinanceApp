@@ -7,28 +7,43 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Accounts.AccountRecord;
+import com.databases.example.Categories.CategoryRecord;
+import com.databases.example.Categories.SubCategoryRecord;
+import com.databases.example.Categories.UserItemAdapter;
 import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Schedule extends SherlockActivity{
@@ -50,12 +65,100 @@ public class Schedule extends SherlockActivity{
 	SimpleCursorAdapter accountSpinnerAdapter = null;
 	Spinner accountSpinner;
 
+	ListView lvPlans;
+
+	//For Memo autocomplete
 	ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+
+		setTitle("Schedule");
+		setContentView(R.layout.schedule);
+
+		lvPlans = (ListView)this.findViewById(R.id.schedule_list);
+
+		//Turn clicks on
+		lvPlans.setClickable(true);
+		lvPlans.setLongClickable(true);
+
+		//Allows Context Menus for each item of the list view
+		registerForContextMenu(lvPlans);
+
+		schedulePopulate();
+
 	}//end onCreate
+
+	//Method to list all plans
+	public void schedulePopulate(){
+		//A textView alerting the user if database is empty
+		TextView noResult = (TextView)this.findViewById(R.id.schedule_noPlans);
+		noResult.setVisibility(View.GONE);
+
+		// Cursor is used to navigate the query results
+		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
+
+		Cursor cursorPlans = myDB.query(tblPlanTrans, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
+				null, null, null, null);
+
+		startManagingCursor(cursorPlans);
+		int IDColumn = cursorPlans.getColumnIndex("PlanID");
+		int ToIDColumn = cursorPlans.getColumnIndex("ToAcctID");
+		int NameColumn = cursorPlans.getColumnIndex("PlanName");
+		int ValueColumn = cursorPlans.getColumnIndex("PlanValue");
+		int TypeColumn = cursorPlans.getColumnIndex("PlanType");
+		int CategoryColumn = cursorPlans.getColumnIndex("PlanCategory");
+		int MemoColumn = cursorPlans.getColumnIndex("PlanMemo");
+		int OffsetColumn = cursorPlans.getColumnIndex("PlanOffset");
+		int RateColumn = cursorPlans.getColumnIndex("PlanRate");
+		int ClearedColumn = cursorPlans.getColumnIndex("PlanCleared");
+
+		cursorPlans.moveToFirst();
+		if (cursorPlans != null) {
+			if (cursorPlans.isFirst()) {
+				do {
+					String id = cursorPlans.getString(0);
+					String to_id = cursorPlans.getString(ToIDColumn);
+					String name = cursorPlans.getString(NameColumn);
+					String value = cursorPlans.getString(ValueColumn);
+					String type = cursorPlans.getString(TypeColumn);
+					String category = cursorPlans.getString(CategoryColumn);
+					String memo = cursorPlans.getString(MemoColumn);
+					String offset = cursorPlans.getString(OffsetColumn);
+					String rate = cursorPlans.getString(RateColumn);
+					String cleared = cursorPlans.getString(ClearedColumn);
+
+					//PlanRecord entry = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
+					//Log.d("Category", "Added Category: " + id + " " + name + " " + note);
+					//resultsCategory.add(entry);
+
+				} while (cursorPlans.moveToNext());
+			}
+
+			else {
+				//No Results Found
+				noResult.setVisibility(View.VISIBLE);
+				Log.d("Schedule", "No Plans found");
+			}
+		} 
+
+		//Close Database if Open
+		if (myDB != null){
+			myDB.close();
+		}
+
+		//Give the item adapter a list of all categories and subcategories
+		UserItemAdapter adapterPlans = new UserItemAdapter(this, cursorPlans);		
+		lvPlans.setAdapter(adapterPlans);
+
+		//Log.e("Categories","out of category populate");
+
+	}//end of categoryPopulate	
 
 	//For Adding a Transaction
 	public void transactionAdd(){
@@ -102,16 +205,16 @@ public class Schedule extends SherlockActivity{
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
 				//Variables for the transaction Table
+				String transactionAccountID = null;
 				String transactionAccount = null;
 				String transactionName = null;
 				String transactionValue = null;
 				String transactionType = null;
 				String transactionCategory = null;
-				String transactionCheckNum = null;
 				String transactionMemo = null;
+				String transactionOffset = null;
+				String transactionRate = null;
 				String transactionCleared = null;
-				String transactionCategoryID = null;
-				String transactionAccountID = null;
 
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = categorySpinner.getSelectedItemPosition();
@@ -173,16 +276,30 @@ public class Schedule extends SherlockActivity{
 						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionCleared);
 
 						//Insert values into accounts table
-						//ContentValues transactionValues=new ContentValues();
-						//transactionValues.put("ToAcctID",accounnt_id);
-						//transactionValues.put("ToPlanID",0);
-						//transactionValues.put("TransName",transactionName);
-						//transactionValues.put("TransValue",transactionValue);
-						//transactionValues.put("TransType",transactionType);
-						//transactionValues.put("TransCategory",transactionCategory);
-						//transactionValues.put("TransCheckNum",transactionCheckNum);
-						//transactionValues.put("TransMemo",transactionMemo);
-						//transactionValues.put("TransCleared",transactionCleared);
+						ContentValues transactionValues=new ContentValues();
+						//transactionValues.put("PlanID",1);
+						transactionValues.put("ToAcctID",transactionAccountID);
+						transactionValues.put("PlanName",transactionName);
+						transactionValues.put("PlanValue",transactionValue);
+						transactionValues.put("PlanType",transactionType);
+						transactionValues.put("PlanCategory",transactionCategory);
+						transactionValues.put("PlanMemo",transactionMemo);
+						transactionValues.put("PlanOffset",transactionOffset);
+						transactionValues.put("PlanRate",transactionRate);
+						transactionValues.put("PlanCleared",transactionCleared);
+
+						//Create database and open
+						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+						myDB.insert(tblPlanTrans, null, transactionValues);
+
+						//Make sure Database is closed
+						if (myDB != null){
+							myDB.close();
+						}
+
+						//Refresh the categories list
+						schedulePopulate();
 
 					} 
 
@@ -321,4 +438,130 @@ public class Schedule extends SherlockActivity{
 		return super.onOptionsItemSelected(item);
 	}
 
-}//end of PlanReceiver
+	public class UserItemAdapter extends CursorAdapter {
+		private Cursor plans;
+		private Context context;
+
+		public UserItemAdapter(Context context,Cursor plans) {
+			super(context, plans);
+			this.plans = plans;
+			this.context = context;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			Cursor user = plans;
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)Schedule.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.schedule_item, null);
+			}
+
+			if (user != null) {
+				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
+				TextView TVvalue = (TextView) v.findViewById(R.id.plan_value);
+				TextView TVtype = (TextView) v.findViewById(R.id.plan_type);
+				TextView TVcategory = (TextView) v.findViewById(R.id.plan_category);
+				TextView TVmemo = (TextView) v.findViewById(R.id.plan_memo);
+				TextView TVoffset = (TextView) v.findViewById(R.id.plan_offset);
+				TextView TVrate = (TextView) v.findViewById(R.id.plan_rate);
+				TextView TVcleared = (TextView) v.findViewById(R.id.plan_cleared);
+
+				int IDColumn = user.getColumnIndex("PlanID");
+				int ToIDColumn = user.getColumnIndex("ToAcctID");
+				int NameColumn = user.getColumnIndex("PlanName");
+				int ValueColumn = user.getColumnIndex("PlanValue");
+				int TypeColumn = user.getColumnIndex("PlanType");
+				int CategoryColumn = user.getColumnIndex("PlanCategory");
+				int MemoColumn = user.getColumnIndex("PlanMemo");
+				int OffsetColumn = user.getColumnIndex("PlanOffset");
+				int RateColumn = user.getColumnIndex("PlanRate");
+				int ClearedColumn = user.getColumnIndex("PlanCleared");
+
+				user.moveToPosition(position);
+				String id = user.getString(0);
+				String to_id = user.getString(ToIDColumn);
+				String name = user.getString(NameColumn);
+				String value = user.getString(ValueColumn);
+				String type = user.getString(TypeColumn);
+				String category = user.getString(CategoryColumn);
+				String memo = user.getString(MemoColumn);
+				String offset = user.getString(OffsetColumn);
+				String rate = user.getString(RateColumn);
+				String cleared = user.getString(ClearedColumn);
+
+				if (name != null) {
+					TVname.setText(name);
+				}
+				if (value != null) {
+					TVvalue.setText(value);
+				}
+				if (type != null) {
+					TVtype.setText(type);
+				}
+				if (category != null) {
+					TVcategory.setText(category);
+				}
+				if (memo != null) {
+					TVmemo.setText(memo);
+				}
+				if (offset != null) {
+					TVoffset.setText(offset);
+				}
+				if (rate != null) {
+					TVrate.setText(rate);
+				}
+				if (cleared != null) {
+					TVcleared.setText(cleared);
+				}
+
+			}
+			return v;
+		}
+
+		@Override
+		public void bindView(View arg0, Context arg1, Cursor arg2) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}//end UserItem
+
+	//An Object Class used to hold the data of each transaction record
+	public class PlanRecord {
+		protected String id;
+		protected String acctId;
+		protected String name;
+		protected String value;
+		protected String type;
+		protected String category;
+		protected String memo;
+		protected String offset;
+		protected String rate;
+		protected String cleared;
+
+		public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String cleared) {
+			this.id = id;
+			this.acctId = acctId;
+			this.name = name;
+			this.value = value;
+			this.type = type;
+			this.category = category;
+			this.memo = memo;
+			this.offset = offset;
+			this.rate = rate;
+			this.cleared = cleared;
+		}
+	}
+
+}//end of Schedule

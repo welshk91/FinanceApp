@@ -135,13 +135,13 @@ public class Main extends SherlockActivity {
 				Main.this.finish();
 				//android.os.Process.killProcess(android.os.Process.myPid());				
 				onDestroy();
-				
+
 				//Intent i = new Intent();
 				//i.setAction(Intent.ACTION_MAIN);
 				//i.addCategory(Intent.CATEGORY_HOME);
 				//startActivity(i); 
 				finish(); 
-				
+
 				break;	
 
 			default:
@@ -186,12 +186,12 @@ public class Main extends SherlockActivity {
 				/***NEED TO FINE-TUNE THIS TABLE (Frequency,when it should occur...) ***/
 				String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
 						+ tblPlanTrans
-						+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, PlanOffset VARCHAR, PlanRate VARCHAR, PlanCleared);";
-				
+						+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, PlanOffset VARCHAR, PlanRate VARCHAR, PlanCleared VARCHAR);";
+
 				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblCategory
 						+ " (CatID INTEGER PRIMARY KEY, CatName VARCHAR, CatNote VARCHAR);";
-				
+
 				String sqlCommandSubCategory = "CREATE TABLE IF NOT EXISTS "
 						+ tblSubCategory
 						+ " (SubCatID INTEGER PRIMARY KEY, ToCatID VARCHAR, SubCatName VARCHAR, SubCatNote VARCHAR);";
@@ -209,9 +209,12 @@ public class Main extends SherlockActivity {
 				//Create Transactions table
 				myDB.execSQL(sqlCommandTransactions);
 
+				//Create Scheduled Transactions table
+				myDB.execSQL(sqlCommandPlannedTransactions);
+
 				//Create Category table
 				myDB.execSQL(sqlCommandCategory);
-				
+
 				//Create Category table
 				myDB.execSQL(sqlCommandSubCategory);
 
@@ -221,11 +224,11 @@ public class Main extends SherlockActivity {
 				//Add some default categories
 				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
 						+ " (CatName) " + "VALUES ('STARTING BALANCE');";
-				
+
 				//Add some default categories
 				final String sqlDefaultCategories2 = "INSERT INTO " + tblCategory
 						+ " (CatName) " + "VALUES ('Utils');";
-				
+
 				//Add some default categories
 				final String sqlDefaultSubCategories = "INSERT INTO " + tblSubCategory
 						+ " (SubCatName, ToCatID) " + "VALUES ('Gas',2);";

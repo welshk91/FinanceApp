@@ -1,9 +1,14 @@
 package com.databases.example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
@@ -11,10 +16,13 @@ import com.databases.example.Accounts.AccountRecord;
 import com.databases.example.Categories.CategoryRecord;
 import com.databases.example.Categories.SubCategoryRecord;
 import com.databases.example.Categories.UserItemAdapter;
+import com.databases.example.Transactions.DatePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,6 +35,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
@@ -40,6 +49,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -50,7 +60,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
-public class Schedule extends SherlockActivity{
+public class Schedule extends SherlockFragmentActivity{
 
 	public final String dbFinance = "dbFinance";
 	final String tblPlanTrans = "tblPlanTrans";
@@ -69,10 +79,25 @@ public class Schedule extends SherlockActivity{
 	SimpleCursorAdapter accountSpinnerAdapter = null;
 	Spinner accountSpinner;
 
+	//Date Format to use for time (01:42 PM)
+	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+
+	//Date Format to use for date (03-26-2013)
+	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
+
+	//Variables for the transaction Table
+	static String transactionTime = null;
+	static String transactionDate = null;
+
 	//Constants for ContextMenu
 	final int CONTEXT_MENU_OPEN=1;
 	final int CONTEXT_MENU_EDIT=2;
 	final int CONTEXT_MENU_DELETE=3;
+
+	//Dialog for Adding Transaction
+	static View promptsView;
+
+	static Button pDate;
 
 	UserItemAdapter adapterPlans;
 
@@ -118,35 +143,13 @@ public class Schedule extends SherlockActivity{
 				null, null, null, null);
 
 		startManagingCursor(cursorPlans);
-		int IDColumn = cursorPlans.getColumnIndex("PlanID");
-		int ToIDColumn = cursorPlans.getColumnIndex("ToAcctID");
-		int NameColumn = cursorPlans.getColumnIndex("PlanName");
-		int ValueColumn = cursorPlans.getColumnIndex("PlanValue");
-		int TypeColumn = cursorPlans.getColumnIndex("PlanType");
-		int CategoryColumn = cursorPlans.getColumnIndex("PlanCategory");
-		int MemoColumn = cursorPlans.getColumnIndex("PlanMemo");
-		int OffsetColumn = cursorPlans.getColumnIndex("PlanOffset");
-		int RateColumn = cursorPlans.getColumnIndex("PlanRate");
-		int ClearedColumn = cursorPlans.getColumnIndex("PlanCleared");
 
 		cursorPlans.moveToFirst();
 		if (cursorPlans != null) {
 			if (cursorPlans.isFirst()) {
 				do {
-					String id = cursorPlans.getString(0);
-					String to_id = cursorPlans.getString(ToIDColumn);
-					String name = cursorPlans.getString(NameColumn);
-					String value = cursorPlans.getString(ValueColumn);
-					String type = cursorPlans.getString(TypeColumn);
-					String category = cursorPlans.getString(CategoryColumn);
-					String memo = cursorPlans.getString(MemoColumn);
-					String offset = cursorPlans.getString(OffsetColumn);
-					String rate = cursorPlans.getString(RateColumn);
-					String cleared = cursorPlans.getString(ClearedColumn);
 
-					//PlanRecord entry = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
-					//Log.d("Category", "Added Category: " + id + " " + name + " " + note);
-					//resultsCategory.add(entry);
+					//Nothing??? Need loop for noResult textview
 
 				} while (cursorPlans.moveToNext());
 			}
@@ -177,7 +180,7 @@ public class Schedule extends SherlockActivity{
 
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(this);
-		final View promptsView = li.inflate(R.layout.schedule_transaction_add, null);
+		promptsView = li.inflate(R.layout.schedule_add, null);
 
 		final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
 		final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
@@ -186,6 +189,10 @@ public class Schedule extends SherlockActivity{
 		accountSpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_account);
 		final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
 		final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+
+		final Calendar c = Calendar.getInstance();
+		pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+		pDate.setText(dateFormat.format(c.getTime()));
 
 		//Adapter for memo's autocomplete
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
@@ -261,6 +268,9 @@ public class Schedule extends SherlockActivity{
 					Toast.makeText(Schedule.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 				}
 
+				//Set Time
+				transactionOffset = pDate.getText().toString().trim();
+
 				transactionMemo = tMemo.getText().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";
 
@@ -281,14 +291,10 @@ public class Schedule extends SherlockActivity{
 							transactionValue = "0";
 						}
 
-						/****CALL INTENT TO SCHEDULE HERE*****/
-						//schedule();
-
-						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionCleared);
+						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionCleared);
 
 						//Insert values into accounts table
 						ContentValues transactionValues=new ContentValues();
-						//transactionValues.put("PlanID",1);
 						transactionValues.put("ToAcctID",transactionAccountID);
 						transactionValues.put("PlanName",transactionName);
 						transactionValues.put("PlanValue",transactionValue);
@@ -302,16 +308,18 @@ public class Schedule extends SherlockActivity{
 						//Create database and open
 						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-						myDB.insert(tblPlanTrans, null, transactionValues);
+						long planID = myDB.insert(tblPlanTrans, null, transactionValues);
 
 						//Make sure Database is closed
 						if (myDB != null){
 							myDB.close();
 						}
 
-						//Refresh the categories list
-						schedulePopulate();
+						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						schedule(record);
 
+						//Refresh the schedule list
+						schedulePopulate();
 					} 
 
 					else {
@@ -325,8 +333,6 @@ public class Schedule extends SherlockActivity{
 				//Close cursor
 				cursorCategory.close();
 				cursorAccount.close();
-
-				//Transactions.this.populate();
 
 			}//end onClick "OK"
 		})
@@ -420,20 +426,40 @@ public class Schedule extends SherlockActivity{
 
 	}//end of accountPopulate
 
-	private void schedule() {
-		// get a Calendar object with current time
-		Calendar cal = Calendar.getInstance();
-		// add 5 minutes to the calendar object
-		cal.add(Calendar.SECOND, 10);
+	private void schedule(PlanRecord plan) {
+		PlanRecord record = plan;
+		//		Date d;
+		//		
+		//		try {
+		//			d = dateFormat.parse(record.offset);
+		//		} catch (ParseException e) {
+		//			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
+		//			e.printStackTrace();
+		//			return;
+		//		}
+		//		
+		//		Calendar firstRun = new GregorianCalendar(d.getYear(),d.getMonth(),d.getDay());
+
 		Intent intent = new Intent(this, PlanReceiver.class);
-		intent.putExtra("alarm_message", "O'Doyle Rules!");
+		intent.putExtra("plan_id", record.id);
+		intent.putExtra("plan_acct_id",record.acctId);
+		intent.putExtra("plan_name",record.name);
+		intent.putExtra("plan_value",record.value);
+		intent.putExtra("plan_type",record.type);
+		intent.putExtra("plan_category",record.category);
+		intent.putExtra("plan_memo",record.memo);
+		intent.putExtra("plan_offset",record.offset);
+		intent.putExtra("plan_rate",record.rate);
+		intent.putExtra("plan_cleared",record.cleared);
+
 		// In reality, you would want to have a static variable for the request code instead of 192837
 		PendingIntent sender = PendingIntent.getBroadcast(this, 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// Get the AlarmManager service
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 		//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
-		am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000*8, sender);
+		//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), 1000*20, sender);
+		am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
 	}
 
 	//For ActionBar Menu
@@ -514,6 +540,46 @@ public class Schedule extends SherlockActivity{
 
 	}  
 
+	//Method for selecting a Date when adding a transaction
+	public void showDatePickerDialog(View v) {
+		DialogFragment newFragment = new DatePickerFragment();
+		newFragment.show(getSupportFragmentManager(), "datePicker");
+	}
+
+	//Method to help create DatePicker
+	public static class DatePickerFragment extends DialogFragment
+	implements DatePickerDialog.OnDateSetListener {
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current date as the default date in the picker
+			final Calendar c = Calendar.getInstance();
+
+			SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
+			SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
+			SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
+
+			int year = Integer.parseInt(dateFormatYear.format(c.getTime()));
+			int month = Integer.parseInt(dateFormatMonth.format(c.getTime()))-1;
+			int day = Integer.parseInt(dateFormatDay.format(c.getTime()));
+
+			// Create a new instance of DatePickerDialog and return it
+			return new DatePickerDialog(getActivity(), this, year, month, day);
+		}
+
+		public void onDateSet(DatePicker view, int year, int month, int day) {
+			// Do something with the date chosen by the user
+			if(month<10){
+				transactionDate = "0"+(month+1) + "-" + day + "-" + year;
+			}
+			else{
+				transactionDate = (month+1) + "-" + day + "-" + year;
+			}
+
+			pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+			pDate.setText(transactionDate);
+		}
+	}
 
 	public class UserItemAdapter extends CursorAdapter {
 		private Cursor plans;
@@ -556,82 +622,6 @@ public class Schedule extends SherlockActivity{
 			PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
 			return record;
 		}
-
-		//		@Override
-		//		public View getView(int position, View convertView, ViewGroup parent) {
-		//			View v = convertView;
-		//			Cursor user = plans;
-		//
-		//			//For Custom View Properties
-		//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
-		//			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
-		//
-		//			if (v == null) {
-		//				LayoutInflater vi = (LayoutInflater)Schedule.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		//				v = vi.inflate(R.layout.schedule_item, null);
-		//			}
-		//
-		//			if (user != null) {
-		//				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
-		//				TextView TVvalue = (TextView) v.findViewById(R.id.plan_value);
-		//				TextView TVtype = (TextView) v.findViewById(R.id.plan_type);
-		//				TextView TVcategory = (TextView) v.findViewById(R.id.plan_category);
-		//				TextView TVmemo = (TextView) v.findViewById(R.id.plan_memo);
-		//				TextView TVoffset = (TextView) v.findViewById(R.id.plan_offset);
-		//				TextView TVrate = (TextView) v.findViewById(R.id.plan_rate);
-		//				TextView TVcleared = (TextView) v.findViewById(R.id.plan_cleared);
-		//
-		//				int IDColumn = user.getColumnIndex("PlanID");
-		//				int ToIDColumn = user.getColumnIndex("ToAcctID");
-		//				int NameColumn = user.getColumnIndex("PlanName");
-		//				int ValueColumn = user.getColumnIndex("PlanValue");
-		//				int TypeColumn = user.getColumnIndex("PlanType");
-		//				int CategoryColumn = user.getColumnIndex("PlanCategory");
-		//				int MemoColumn = user.getColumnIndex("PlanMemo");
-		//				int OffsetColumn = user.getColumnIndex("PlanOffset");
-		//				int RateColumn = user.getColumnIndex("PlanRate");
-		//				int ClearedColumn = user.getColumnIndex("PlanCleared");
-		//
-		//				user.moveToPosition(position);
-		//				String id = user.getString(0);
-		//				String to_id = user.getString(ToIDColumn);
-		//				String name = user.getString(NameColumn);
-		//				String value = user.getString(ValueColumn);
-		//				String type = user.getString(TypeColumn);
-		//				String category = user.getString(CategoryColumn);
-		//				String memo = user.getString(MemoColumn);
-		//				String offset = user.getString(OffsetColumn);
-		//				String rate = user.getString(RateColumn);
-		//				String cleared = user.getString(ClearedColumn);
-		//
-		//				if (name != null) {
-		//					TVname.setText(name);
-		//				}
-		//				if (value != null) {
-		//					TVvalue.setText(value);
-		//				}
-		//				if (type != null) {
-		//					TVtype.setText(type);
-		//				}
-		//				if (category != null) {
-		//					TVcategory.setText(category);
-		//				}
-		//				if (memo != null) {
-		//					TVmemo.setText(memo);
-		//				}
-		//				if (offset != null) {
-		//					TVoffset.setText(offset);
-		//				}
-		//				if (rate != null) {
-		//					TVrate.setText(rate);
-		//				}
-		//				if (cleared != null) {
-		//					TVcleared.setText(cleared);
-		//				}
-		//
-		//			}
-		//			return v;
-		//		}
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
@@ -687,7 +677,7 @@ public class Schedule extends SherlockActivity{
 							new int[] {0xFFFF0000,0xFF000000});
 
 					if(useDefaults){
-						if(Float.parseFloat((value)) >=0){
+						if(type.contains("Deposit")){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -696,7 +686,7 @@ public class Schedule extends SherlockActivity{
 
 					}
 					else{
-						if(Float.parseFloat((value)) >=0){
+						if(type.contains("Deposit")){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -887,7 +877,6 @@ public class Schedule extends SherlockActivity{
 			catch(Exception e){
 				Toast.makeText(Schedule.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
 			}
-
 
 			return v;
 		}

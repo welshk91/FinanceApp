@@ -117,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/EditTransactionMemo"
-            android:text="@string/date:" >
+            android:text="Start On:" >
         </TextView>
 
         <Button
@@ -130,21 +130,37 @@
             android:text="Date" >
         </Button>
 
-        <Button
-            android:id="@+id/ButtonTransactionTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView07"
-            android:layout_toRightOf="@+id/ButtonTransactionDate"
-            android:onClick="showTimePickerDialog"
-            android:text="Time" >
-        </Button>
-
         <TextView
             android:id="@+id/TextView08"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/ButtonTransactionDate"
+            android:text="Repeat Every:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/EditRate"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView08"
+            android:layout_toRightOf="@+id/TextView04"
+            android:imeOptions="actionNext"
+            android:inputType="number" >
+        </EditText>
+
+        <Spinner
+            android:id="@+id/spinner_rate_type"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/EditRate"
+            android:layout_toRightOf="@+id/EditRate"
+            android:entries="@array/rate_type" />
+
+        <TextView
+            android:id="@+id/TextView09"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/EditRate"
             android:text="@string/cleared:" >
         </TextView>
 
@@ -152,7 +168,7 @@
             android:id="@+id/CheckTransactionCleared"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/TextView08"
+            android:layout_alignTop="@+id/TextView09"
             android:layout_toRightOf="@+id/TextView04"
             android:checked="true" >
         </CheckBox>

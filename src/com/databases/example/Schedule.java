@@ -1,22 +1,14 @@
 package com.databases.example;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Accounts.AccountRecord;
-import com.databases.example.Categories.CategoryRecord;
-import com.databases.example.Categories.SubCategoryRecord;
-import com.databases.example.Categories.UserItemAdapter;
-import com.databases.example.Transactions.DatePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlarmManager;
@@ -51,14 +43,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 public class Schedule extends SherlockFragmentActivity{
 

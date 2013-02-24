@@ -371,9 +371,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}  
 
 	//Handles which methods are called when using the long presses menu
-	/* NOTE: Not sure whether to use return false/true or return super.onContextItemSelected(item)
-	 * Using 'super' causes a bug that performs an action twice if you single pane->dual pane->context menu
-	 */
 	@Override  
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 

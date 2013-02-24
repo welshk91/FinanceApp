@@ -30,9 +30,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -45,6 +48,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 public class Schedule extends SherlockActivity{
 
@@ -64,6 +68,13 @@ public class Schedule extends SherlockActivity{
 	//Adapter for category spinner
 	SimpleCursorAdapter accountSpinnerAdapter = null;
 	Spinner accountSpinner;
+
+	//Constants for ContextMenu
+	final int CONTEXT_MENU_OPEN=1;
+	final int CONTEXT_MENU_EDIT=2;
+	final int CONTEXT_MENU_DELETE=3;
+
+	UserItemAdapter adapterPlans;
 
 	ListView lvPlans;
 
@@ -153,7 +164,7 @@ public class Schedule extends SherlockActivity{
 		}
 
 		//Give the item adapter a list of all categories and subcategories
-		UserItemAdapter adapterPlans = new UserItemAdapter(this, cursorPlans);		
+		adapterPlans = new UserItemAdapter(this, cursorPlans);		
 		lvPlans.setAdapter(adapterPlans);
 
 		//Log.e("Categories","out of category populate");
@@ -161,7 +172,7 @@ public class Schedule extends SherlockActivity{
 	}//end of categoryPopulate	
 
 	//For Adding a Transaction
-	public void transactionAdd(){
+	public void schedulingAdd(){
 		AlertDialog alertDialogAdd;
 
 		// get transaction_add.xml view
@@ -335,6 +346,31 @@ public class Schedule extends SherlockActivity{
 
 	}//end of transactionAdd
 
+	//Delete Category
+	public void schedulingDelete(android.view.MenuItem item){
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
+
+		//Open Database
+		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+		String sqlDeleteCategory = "DELETE FROM " + tblPlanTrans + 
+				" WHERE PlanID = " + record.id;
+
+		Log.d("Schedule", "Deleting " + record.name + " id:" + record.id);
+
+		myDB.execSQL(sqlDeleteCategory);
+
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
+		}
+
+		//Refresh the categories list
+		schedulePopulate();
+
+	}//end categoryDelete
+
 	//Method to get the list of categories for spinner
 	public void categoryPopulate(){
 		// Cursor is used to navigate the query results
@@ -426,7 +462,7 @@ public class Schedule extends SherlockActivity{
 			break;
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:
-			transactionAdd();
+			schedulingAdd();
 			break;
 
 		case R.id.account_menu_search:    
@@ -438,6 +474,47 @@ public class Schedule extends SherlockActivity{
 		return super.onOptionsItemSelected(item);
 	}
 
+	//Creates menu for long presses
+	@Override  
+	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
+		String name = "" + adapterPlans.getPlan(itemInfo.position).name;
+
+		menu.setHeaderTitle(name);  
+		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");
+		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+	}  
+
+	//Handles which methods are called when using the long presses menu
+	@Override
+	public boolean onContextItemSelected(android.view.MenuItem item) {
+
+		switch (item.getItemId()) {
+		case CONTEXT_MENU_OPEN:
+			//Log.e("Categories","Category View pressed");
+			return true;
+
+		case CONTEXT_MENU_EDIT:
+			//Log.e("Categories","Category Edit pressed");
+			return true;
+
+		case CONTEXT_MENU_DELETE:
+			schedulingDelete(item);
+			return true;
+
+		default:
+			Log.e("Schedules", "Context Menu defualt listener fired?");
+			break;
+		}
+
+		return super.onContextItemSelected(item);
+
+	}  
+
+
 	public class UserItemAdapter extends CursorAdapter {
 		private Cursor plans;
 		private Context context;
@@ -448,19 +525,122 @@ public class Schedule extends SherlockActivity{
 			this.context = context;
 		}
 
+		public PlanRecord getPlan(long position){
+			Cursor group = plans;
+
+			group.moveToPosition((int) position);
+			int IDColumn = group.getColumnIndex("PlanID");
+			int ToIDColumn = group.getColumnIndex("ToAcctID");
+			int NameColumn = group.getColumnIndex("PlanName");
+			int ValueColumn = group.getColumnIndex("PlanValue");
+			int TypeColumn = group.getColumnIndex("PlanType");
+			int CategoryColumn = group.getColumnIndex("PlanCategory");
+			int MemoColumn = group.getColumnIndex("PlanMemo");
+			int OffsetColumn = group.getColumnIndex("PlanOffset");
+			int RateColumn = group.getColumnIndex("PlanRate");
+			int ClearedColumn = group.getColumnIndex("PlanCleared");
+
+			String id = group.getString(0);
+			String to_id = group.getString(ToIDColumn);
+			String name = group.getString(NameColumn);
+			String value = group.getString(ValueColumn);
+			String type = group.getString(TypeColumn);
+			String category = group.getString(CategoryColumn);
+			String memo = group.getString(MemoColumn);
+			String offset = group.getString(OffsetColumn);
+			String rate = group.getString(RateColumn);
+			String cleared = group.getString(ClearedColumn);
+
+			//Log.e("HERE", "columns " + IDColumn + " " + NameColumn + " " + NoteColumn);
+
+			PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
+			return record;
+		}
+
+		//		@Override
+		//		public View getView(int position, View convertView, ViewGroup parent) {
+		//			View v = convertView;
+		//			Cursor user = plans;
+		//
+		//			//For Custom View Properties
+		//			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
+		//			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+		//
+		//			if (v == null) {
+		//				LayoutInflater vi = (LayoutInflater)Schedule.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		//				v = vi.inflate(R.layout.schedule_item, null);
+		//			}
+		//
+		//			if (user != null) {
+		//				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
+		//				TextView TVvalue = (TextView) v.findViewById(R.id.plan_value);
+		//				TextView TVtype = (TextView) v.findViewById(R.id.plan_type);
+		//				TextView TVcategory = (TextView) v.findViewById(R.id.plan_category);
+		//				TextView TVmemo = (TextView) v.findViewById(R.id.plan_memo);
+		//				TextView TVoffset = (TextView) v.findViewById(R.id.plan_offset);
+		//				TextView TVrate = (TextView) v.findViewById(R.id.plan_rate);
+		//				TextView TVcleared = (TextView) v.findViewById(R.id.plan_cleared);
+		//
+		//				int IDColumn = user.getColumnIndex("PlanID");
+		//				int ToIDColumn = user.getColumnIndex("ToAcctID");
+		//				int NameColumn = user.getColumnIndex("PlanName");
+		//				int ValueColumn = user.getColumnIndex("PlanValue");
+		//				int TypeColumn = user.getColumnIndex("PlanType");
+		//				int CategoryColumn = user.getColumnIndex("PlanCategory");
+		//				int MemoColumn = user.getColumnIndex("PlanMemo");
+		//				int OffsetColumn = user.getColumnIndex("PlanOffset");
+		//				int RateColumn = user.getColumnIndex("PlanRate");
+		//				int ClearedColumn = user.getColumnIndex("PlanCleared");
+		//
+		//				user.moveToPosition(position);
+		//				String id = user.getString(0);
+		//				String to_id = user.getString(ToIDColumn);
+		//				String name = user.getString(NameColumn);
+		//				String value = user.getString(ValueColumn);
+		//				String type = user.getString(TypeColumn);
+		//				String category = user.getString(CategoryColumn);
+		//				String memo = user.getString(MemoColumn);
+		//				String offset = user.getString(OffsetColumn);
+		//				String rate = user.getString(RateColumn);
+		//				String cleared = user.getString(ClearedColumn);
+		//
+		//				if (name != null) {
+		//					TVname.setText(name);
+		//				}
+		//				if (value != null) {
+		//					TVvalue.setText(value);
+		//				}
+		//				if (type != null) {
+		//					TVtype.setText(type);
+		//				}
+		//				if (category != null) {
+		//					TVcategory.setText(category);
+		//				}
+		//				if (memo != null) {
+		//					TVmemo.setText(memo);
+		//				}
+		//				if (offset != null) {
+		//					TVoffset.setText(offset);
+		//				}
+		//				if (rate != null) {
+		//					TVrate.setText(rate);
+		//				}
+		//				if (cleared != null) {
+		//					TVcleared.setText(cleared);
+		//				}
+		//
+		//			}
+		//			return v;
+		//		}
+
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
+		public void bindView(View view, Context context, Cursor cursor) {
+			View v = view;
 			Cursor user = plans;
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
-
-			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)Schedule.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.schedule_item, null);
-			}
 
 			if (user != null) {
 				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
@@ -483,7 +663,6 @@ public class Schedule extends SherlockActivity{
 				int RateColumn = user.getColumnIndex("PlanRate");
 				int ClearedColumn = user.getColumnIndex("PlanCleared");
 
-				user.moveToPosition(position);
 				String id = user.getString(0);
 				String to_id = user.getString(ToIDColumn);
 				String name = user.getString(NameColumn);
@@ -494,6 +673,41 @@ public class Schedule extends SherlockActivity{
 				String offset = user.getString(OffsetColumn);
 				String rate = user.getString(RateColumn);
 				String cleared = user.getString(ClearedColumn);
+
+				//Change gradient
+				try{
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.plan_gradient);
+					GradientDrawable defaultGradientPos = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFF00FF33,0xFF000000});
+
+					GradientDrawable defaultGradientNeg = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {0xFFFF0000,0xFF000000});
+
+					if(useDefaults){
+						if(Float.parseFloat((value)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+
+					}
+					else{
+						if(Float.parseFloat((value)) >=0){
+							l.setBackgroundDrawable(defaultGradientPos);
+						}
+						else{
+							l.setBackgroundDrawable(defaultGradientNeg);
+						}
+					}
+
+				}
+				catch(Exception e){
+					Toast.makeText(Schedule.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+				}
 
 				if (name != null) {
 					TVname.setText(name);
@@ -521,19 +735,161 @@ public class Schedule extends SherlockActivity{
 				}
 
 			}
+
+		}
+
+		@Override
+		public View newView(Context context, Cursor plans, ViewGroup parent) {
+			LayoutInflater inflater = LayoutInflater.from(context);
+			View v = inflater.inflate(R.layout.schedule_item, parent, false);
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+
+			//Change Background Colors
+			try{
+				LinearLayout l;
+				l=(LinearLayout)v.findViewById(R.id.plan_layout);
+				int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+				int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+				GradientDrawable defaultGradient = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {startColor,endColor});
+
+				if(useDefaults){
+					l.setBackgroundResource(R.drawable.account_list_style);
+				}
+				else{
+					l.setBackgroundDrawable(defaultGradient);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Schedule.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+			}
+
+			//Change Size of main field
+			try{
+				String DefaultSize = prefs.getString(Schedule.this.getString(R.string.pref_key_account_nameSize), "16");
+				TextView t;
+				t=(TextView)v.findViewById(R.id.plan_name);
+
+				if(useDefaults){
+					t.setTextSize(16);
+				}
+				else{
+					t.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Schedule.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
+				TextView t;
+				t=(TextView)v.findViewById(R.id.plan_name);
+
+				if(useDefaults){
+					t.setTextColor(Color.parseColor("#000000"));
+				}
+				else{
+					t.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Schedule.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				String DefaultSize = prefs.getString(Schedule.this.getString(R.string.pref_key_account_fieldSize), "10");
+				TextView tmp;
+
+				if(useDefaults){
+					tmp=(TextView)v.findViewById(R.id.plan_value);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.plan_type);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.plan_category);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.plan_memo);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.plan_offset);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.plan_rate);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.plan_cleared);
+					tmp.setTextSize(10);
+				}
+				else{
+					tmp=(TextView)v.findViewById(R.id.plan_value);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.plan_type);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.plan_category);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.plan_memo);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.plan_offset);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.plan_rate);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.plan_cleared);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Schedule.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
+				TextView tmp;
+
+				if(useDefaults){
+					tmp=(TextView)v.findViewById(R.id.plan_value);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.plan_type);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.plan_category);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.plan_memo);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.plan_offset);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.plan_rate);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.plan_cleared);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+				}
+				else{
+					tmp=(TextView)v.findViewById(R.id.plan_value);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.plan_type);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.plan_category);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.plan_memo);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.plan_offset);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.plan_rate);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.plan_cleared);
+					tmp.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Schedule.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+			}
+
+
 			return v;
-		}
-
-		@Override
-		public void bindView(View arg0, Context arg1, Cursor arg2) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}//end UserItem
 

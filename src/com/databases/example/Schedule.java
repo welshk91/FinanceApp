@@ -93,6 +93,7 @@ public class Schedule extends SherlockFragmentActivity{
 	final int CONTEXT_MENU_OPEN=1;
 	final int CONTEXT_MENU_EDIT=2;
 	final int CONTEXT_MENU_DELETE=3;
+	final int CONTEXT_MENU_CANCEL=4;
 
 	//Dialog for Adding Transaction
 	static View promptsView;
@@ -453,13 +454,42 @@ public class Schedule extends SherlockFragmentActivity{
 		intent.putExtra("plan_cleared",record.cleared);
 
 		// In reality, you would want to have a static variable for the request code instead of 192837
-		PendingIntent sender = PendingIntent.getBroadcast(this, 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// Get the AlarmManager service
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 		//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
 		//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), 1000*20, sender);
 		am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
+	}
+
+	private void cancelPlan(PlanRecord plan) {
+		PlanRecord record = plan;
+
+		Intent intent = new Intent(this, PlanReceiver.class);
+		intent.putExtra("plan_id", record.id);
+		intent.putExtra("plan_acct_id",record.acctId);
+		intent.putExtra("plan_name",record.name);
+		intent.putExtra("plan_value",record.value);
+		intent.putExtra("plan_type",record.type);
+		intent.putExtra("plan_category",record.category);
+		intent.putExtra("plan_memo",record.memo);
+		intent.putExtra("plan_offset",record.offset);
+		intent.putExtra("plan_rate",record.rate);
+		intent.putExtra("plan_cleared",record.cleared);
+
+		// In reality, you would want to have a static variable for the request code instead of 192837
+		PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		// Get the AlarmManager service
+		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+		try {
+			am.cancel(sender);
+		} catch (Exception e) {
+			Log.e("Schedule", "AlarmManager update was not canceled. " + e.toString());
+		}
+
 	}
 
 	//For ActionBar Menu
@@ -512,6 +542,7 @@ public class Schedule extends SherlockFragmentActivity{
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");
 		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
 		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+		menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
 	}  
 
 	//Handles which methods are called when using the long presses menu
@@ -529,6 +560,12 @@ public class Schedule extends SherlockFragmentActivity{
 
 		case CONTEXT_MENU_DELETE:
 			schedulingDelete(item);
+			return true;
+			
+		case CONTEXT_MENU_CANCEL:
+			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+			PlanRecord record = adapterPlans.getPlan(itemInfo.position);
+			cancelPlan(record);
 			return true;
 
 		default:

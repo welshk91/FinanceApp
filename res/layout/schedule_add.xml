@@ -135,7 +135,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/ButtonTransactionDate"
-            android:text="Repeat Every:" >
+            android:text="Repeat" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/TextView08b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TextView08"
+            android:text="Every:" >
         </TextView>
 
         <EditText

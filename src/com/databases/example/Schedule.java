@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.ParseException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -52,7 +53,7 @@ import android.widget.Toast;
 
 public class Schedule extends SherlockFragmentActivity{
 
-	public final String dbFinance = "dbFinance";
+	final String dbFinance = "dbFinance";
 	final String tblPlanTrans = "tblPlanTrans";
 	final String tblAccounts = "tblAccounts";
 	final String tblSubCategory = "tblSubCategory";
@@ -76,7 +77,6 @@ public class Schedule extends SherlockFragmentActivity{
 	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	//Variables for the transaction Table
-	static String transactionTime = null;
 	static String transactionDate = null;
 
 	//Constants for ContextMenu
@@ -165,7 +165,7 @@ public class Schedule extends SherlockFragmentActivity{
 
 	}//end of categoryPopulate	
 
-	//For Adding a Transaction
+	//For Scheduling a Transaction
 	public void schedulingAdd(){
 		AlertDialog alertDialogAdd;
 
@@ -179,6 +179,8 @@ public class Schedule extends SherlockFragmentActivity{
 		categorySpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
 		accountSpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_account);
 		final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+		final EditText tRate = (EditText) promptsView.findViewById(R.id.EditRate);
+		final Spinner rateSpinner = (Spinner)promptsView.findViewById(R.id.spinner_rate_type);
 		final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
 
 		final Calendar c = Calendar.getInstance();
@@ -238,17 +240,6 @@ public class Schedule extends SherlockFragmentActivity{
 				transactionType = tType.getSelectedItem().toString().trim();
 
 				try{
-					//	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
-					transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
-				}
-				catch(Exception e){
-					//Usually caused if no category exists
-					Log.e("transactionAdd","No Category? Exception e:" + e);
-					dialog.cancel();
-					Toast.makeText(Schedule.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
-				}
-
-				try{
 					transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex("AcctName"));
 					transactionAccountID = cursorCategory.getString(cursorCategory.getColumnIndex("_id"));
 				}
@@ -257,12 +248,26 @@ public class Schedule extends SherlockFragmentActivity{
 					Log.e("transactionAdd","No Account? Exception e:" + e);
 					dialog.cancel();
 					Toast.makeText(Schedule.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
+					return;
 				}
+
+				try{
+					//	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
+					transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
+				}
+				catch(Exception e){
+					//Usually caused if no category exists
+					Log.e("transactionAdd","No Category? Exception e:" + e);
+					dialog.cancel();
+					Toast.makeText(Schedule.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
+					return;
+				}
+
+				transactionMemo = tMemo.getText().toString().trim();
 
 				//Set Time
 				transactionOffset = pDate.getText().toString().trim();
-
-				transactionMemo = tMemo.getText().toString().trim();
+				transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
 				transactionCleared = tCleared.isChecked()+"";
 
 				//Check to see if value is a number
@@ -282,7 +287,7 @@ public class Schedule extends SherlockFragmentActivity{
 							transactionValue = "0";
 						}
 
-						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionCleared);
+						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 						//Insert values into accounts table
 						ContentValues transactionValues=new ContentValues();
@@ -343,7 +348,7 @@ public class Schedule extends SherlockFragmentActivity{
 
 	}//end of transactionAdd
 
-	//Delete Category
+	//Delete Plan
 	public void schedulingDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
@@ -419,18 +424,20 @@ public class Schedule extends SherlockFragmentActivity{
 
 	private void schedule(PlanRecord plan) {
 		PlanRecord record = plan;
-		//		Date d;
-		//		
-		//		try {
-		//			d = dateFormat.parse(record.offset);
-		//		} catch (ParseException e) {
-		//			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
-		//			e.printStackTrace();
-		//			return;
-		//		}
-		//		
-		//		Calendar firstRun = new GregorianCalendar(d.getYear(),d.getMonth(),d.getDay());
+		Date d = null;
 
+		try {
+			d = dateFormat.parse(record.offset);
+		}catch (java.text.ParseException e) {
+			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
+			e.printStackTrace();
+		}
+		
+		Log.e("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+		
+		Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
+		Log.e("Schedule", "FirstRun:" + firstRun);
+		
 		Intent intent = new Intent(this, PlanReceiver.class);
 		intent.putExtra("plan_id", record.id);
 		intent.putExtra("plan_acct_id",record.acctId);
@@ -443,14 +450,48 @@ public class Schedule extends SherlockFragmentActivity{
 		intent.putExtra("plan_rate",record.rate);
 		intent.putExtra("plan_cleared",record.cleared);
 
+		//Parse Rate (token 0 is amount, token 1 is type)
+		String phrase = record.rate;
+		String delims = "[ ]+";
+		String[] tokens = phrase.split(delims);
+
 		// In reality, you would want to have a static variable for the request code instead of 192837
 		PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		// Get the AlarmManager service
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+		if(tokens[1].contains("Days")){
+			Log.e("schedule", "Days");
+
+			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
+			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
+		}
+		else if(tokens[1].contains("Weeks")){
+			Log.e("schedule", "Weeks");
+			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
+			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
+		}
+		else if(tokens[1].contains("Months")){
+			Log.e("schedule", "Months");
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(cal.getTimeInMillis());
+			cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
+
+			//Log.e("Schedule", "Calendar:" + cal);
+			//Log.e("Schedule", "FirstRun:" + firstRun);
+			
+			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
+			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_FIFTEEN_MINUTES), sender);
+			am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*30, sender);
+		}
+		else{
+			Log.e("Schedule", "Could not set alarm; Something wrong with the rate");
+		}
+
 		//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
 		//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), 1000*20, sender);
-		am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
+		//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
 	}
 
 	private void cancelPlan(PlanRecord plan) {
@@ -508,7 +549,9 @@ public class Schedule extends SherlockFragmentActivity{
 			break;
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:
-			schedulingAdd();
+			//schedulingAdd();
+			PlanRecord testRecord = new PlanRecord(1+"", 1+"", "test record", "50", "Deposit", "Electrical", "Memo things", "02-25-2013", "3 Months", "false");
+			schedule(testRecord);
 			break;
 
 		case R.id.account_menu_search:    
@@ -551,7 +594,7 @@ public class Schedule extends SherlockFragmentActivity{
 		case CONTEXT_MENU_DELETE:
 			schedulingDelete(item);
 			return true;
-			
+
 		case CONTEXT_MENU_CANCEL:
 			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 			PlanRecord record = adapterPlans.getPlan(itemInfo.position);

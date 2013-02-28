@@ -241,7 +241,7 @@ public class Schedule extends SherlockFragmentActivity{
 
 				try{
 					transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex("AcctName"));
-					transactionAccountID = cursorCategory.getString(cursorCategory.getColumnIndex("_id"));
+					transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
 				}
 				catch(Exception e){
 					//Usually caused if no category exists
@@ -280,12 +280,26 @@ public class Schedule extends SherlockFragmentActivity{
 					validValue=false;
 				}
 
+				//Check to see if value is a number
+				boolean validRate=false;
 				try{
-					if (transactionName.length()>0) {
+					Integer.parseInt(transactionRate);
+					validRate=true;
+				}
+				catch(Exception e){
+					validRate=false;
+				}
 
-						if(!validValue){
-							transactionValue = "0";
-						}
+				try{
+					if (transactionName.length()>0 && validRate && validValue) {
+
+						//		if(!validValue){
+						//			transactionValue = "0";
+						//		}
+						//						
+						//		if(!validRate){
+						//			transactionRate = "1";
+						//		}
 
 						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
@@ -312,14 +326,14 @@ public class Schedule extends SherlockFragmentActivity{
 						}
 
 						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
-						schedule(record);
+						//schedule(record);
 
 						//Refresh the schedule list
 						schedulePopulate();
 					} 
 
 					else {
-						Toast.makeText(Schedule.this, "Needs a Name", Toast.LENGTH_LONG).show();
+						Toast.makeText(Schedule.this, "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
 					}
 				}
 				catch(Exception e){

@@ -33,6 +33,15 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/plan_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#0099CC"
+            android:textSize="10sp"
+            android:typeface="monospace" />
+
+        <TextView
             android:id="@+id/plan_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

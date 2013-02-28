@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.ParseException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -38,7 +37,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -442,7 +440,7 @@ public class Schedule extends SherlockFragmentActivity{
 				break;
 			}
 		}
-		
+
 		//Used to find correct account to select
 		for (int i = 0; i < accountSpinner.getCount(); i++) {
 			Cursor value = (Cursor) accountSpinner.getItemAtPosition(i);
@@ -566,7 +564,7 @@ public class Schedule extends SherlockFragmentActivity{
 						Log.d("Schedule Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 						schedulingDelete(item);
-						
+
 						//Insert values into accounts table
 						ContentValues transactionValues=new ContentValues();
 						transactionValues.put("ToAcctID",transactionAccountID);
@@ -979,6 +977,7 @@ public class Schedule extends SherlockFragmentActivity{
 
 			if (user != null) {
 				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
+				TextView TVaccount = (TextView) v.findViewById(R.id.plan_account);
 				TextView TVvalue = (TextView) v.findViewById(R.id.plan_value);
 				TextView TVtype = (TextView) v.findViewById(R.id.plan_type);
 				TextView TVcategory = (TextView) v.findViewById(R.id.plan_category);
@@ -1044,8 +1043,12 @@ public class Schedule extends SherlockFragmentActivity{
 					Toast.makeText(Schedule.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
+
 				if (name != null) {
 					TVname.setText(name);
+				}
+				if (to_id != null) {
+					TVaccount.setText(to_id);
 				}
 				if (value != null) {
 					TVvalue.setText(value);

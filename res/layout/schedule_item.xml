@@ -4,6 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#E8E8E8"
+    android:baselineAligned="false"
     android:gravity="left|center"
     android:paddingBottom="2dp"
     android:paddingLeft="4dp"

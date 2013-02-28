@@ -15,6 +15,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,21 +24,31 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RemoteViews;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class PlanReceiver extends BroadcastReceiver{
 
 	final String dbFinance = "dbFinance";
 	final String tblPlanTrans = "tblPlanTrans";
+	final String tblTrans = "tblTrans";
 	SQLiteDatabase myDB = null;
-	private SliderMenu menu;
-	
+
 	//Date Format to use for date (03-26-2013)
 	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
+
+	//Date Format to use for time (01:42 PM)
+	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -52,9 +63,23 @@ public class PlanReceiver extends BroadcastReceiver{
 			String name = bundle.getString("plan_name");
 			Toast.makeText(context, "PlanReceiver received " + name, Toast.LENGTH_LONG).show();
 
-			//reschedulePlans(context);
-
 			try {
+
+				String plan_id = bundle.getString("plan_id");
+				String plan_acct_id = bundle.getString("plan_acct_id");
+				String plan_name = bundle.getString("plan_name");
+				String plan_value = bundle.getString("plan_value");
+				String plan_type = bundle.getString("plan_type");
+				String plan_category = bundle.getString("plan_category");
+				String plan_memo = bundle.getString("plan_memo");
+				String plan_offset = bundle.getString("plan_offset");
+				String plan_rate = bundle.getString("plan_rate");
+				String plan_cleared = bundle.getString("plan_cleared");
+
+				PlanRecord record = new PlanRecord(plan_id,plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate,plan_cleared);
+
+				transactionAdd(record,context);
+
 				notify(context, bundle);
 			} catch (Exception e) {
 				Toast.makeText(context, "There was an error somewhere \n e = " + e, Toast.LENGTH_SHORT).show();
@@ -65,6 +90,41 @@ public class PlanReceiver extends BroadcastReceiver{
 		}
 
 	}
+
+	//For Adding a Transaction
+	public void transactionAdd(PlanRecord plan, Context context){
+
+		//Open Database
+		myDB = context.openOrCreateDatabase(dbFinance, context.MODE_PRIVATE, null);
+
+		//Insert values into accounts table
+		ContentValues transactionValues=new ContentValues();
+		transactionValues.put("ToAcctID",plan.acctId);
+		transactionValues.put("ToPlanID",plan.id);
+		transactionValues.put("TransName",plan.name);
+		transactionValues.put("TransValue",plan.value);
+		transactionValues.put("TransType",plan.type);
+		transactionValues.put("TransCategory",plan.category);
+		transactionValues.put("TransCheckNum","");
+		transactionValues.put("TransMemo",plan.memo);
+
+		final Calendar cal = Calendar.getInstance();
+		String time = timeFormat.format(cal.getTime());
+		String date = dateFormat.format(cal.getTime());
+
+		transactionValues.put("TransTime",time);
+		transactionValues.put("TransDate",date);
+		transactionValues.put("TransCleared",plan.cleared);
+
+		myDB.insert(tblTrans, null, transactionValues);
+
+		//Close Database if Opened
+		if (myDB != null){
+			myDB.close();
+		}
+
+	}//end of transactionAdd
+
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void notify(Context context, Bundle bundle) {
@@ -152,8 +212,8 @@ public class PlanReceiver extends BroadcastReceiver{
 					Log.e("reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
 					PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,cleared);
 					schedule(record,context);
-					
-					
+
+
 				} while (cursorPlans.moveToNext());
 			}
 
@@ -181,12 +241,12 @@ public class PlanReceiver extends BroadcastReceiver{
 			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
 			e.printStackTrace();
 		}
-		
+
 		Log.e("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
-		
+
 		Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
 		Log.e("Schedule", "FirstRun:" + firstRun);
-		
+
 		Intent intent = new Intent(context, PlanReceiver.class);
 		intent.putExtra("plan_id", record.id);
 		intent.putExtra("plan_acct_id",record.acctId);
@@ -211,35 +271,48 @@ public class PlanReceiver extends BroadcastReceiver{
 		AlarmManager am = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
 
 		if(tokens[1].contains("Days")){
-			Log.e("schedule", "Days");
+			Log.d("schedule", "Days");
 
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
+			//If Starting Time is in the past, fire off next month(s)
+			while (firstRun.before(Calendar.getInstance())) {
+				firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
+			}
+
+			Log.d("PlanReceiver", "firstRun is " + firstRun);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 		}
 		else if(tokens[1].contains("Weeks")){
-			Log.e("schedule", "Weeks");
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
+			Log.d("schedule", "Weeks");
+
+			//If Starting Time is in the past, fire off next month(s)
+			while (firstRun.before(Calendar.getInstance())) {
+				firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
+			}
+
+			Log.d("PlanReceiver", "firstRun is " + firstRun);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
-			Log.e("schedule", "Months");
+			Log.d("schedule", "Months");
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(cal.getTimeInMillis());
 			cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
-			
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_FIFTEEN_MINUTES), sender);
-			am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*30, sender);
+
+			//If Starting Time is in the past, fire off next month(s)
+			while (firstRun.before(Calendar.getInstance())) {
+				firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
+			}
+
+			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
 		}
 		else{
 			Log.e("Schedule", "Could not set alarm; Something wrong with the rate");
 		}
 
-		//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
-		//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), 1000*20, sender);
 		//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
 	}	
-	
+
 	public class PlanRecord {
 		protected String id;
 		protected String acctId;

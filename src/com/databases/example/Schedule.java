@@ -432,12 +432,12 @@ public class Schedule extends SherlockFragmentActivity{
 			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
 			e.printStackTrace();
 		}
-		
-		Log.e("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
-		
+
+		Log.d("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+
 		Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
-		Log.e("Schedule", "FirstRun:" + firstRun);
-		
+		Log.d("Schedule", "FirstRun:" + firstRun);
+
 		Intent intent = new Intent(this, PlanReceiver.class);
 		intent.putExtra("plan_id", record.id);
 		intent.putExtra("plan_acct_id",record.acctId);
@@ -462,28 +462,50 @@ public class Schedule extends SherlockFragmentActivity{
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
 		if(tokens[1].contains("Days")){
-			Log.e("schedule", "Days");
+			Log.d("schedule", "Days");
+
+			//If Starting Time is in the past, fire off next month(s)
+			while (firstRun.before(Calendar.getInstance())) {
+				firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
+			}
+
+			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 		}
 		else if(tokens[1].contains("Weeks")){
-			Log.e("schedule", "Weeks");
+			Log.d("schedule", "Weeks");
+
+			//If Starting Time is in the past, fire off next month(s)
+			while (firstRun.before(Calendar.getInstance())) {
+				firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
+			}
+
+			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
-			Log.e("schedule", "Months");
+			Log.d("schedule", "Months");
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(cal.getTimeInMillis());
 			cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
 
-			//Log.e("Schedule", "Calendar:" + cal);
-			//Log.e("Schedule", "FirstRun:" + firstRun);
-			
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
+			//If Starting Time is in the past, fire off next month(s)
+			while (firstRun.before(Calendar.getInstance())) {
+				firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
+			}
+
+			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+
+			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_FIFTEEN_MINUTES), sender);
-			am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*30, sender);
+			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*30, sender);
 		}
 		else{
 			Log.e("Schedule", "Could not set alarm; Something wrong with the rate");
@@ -549,15 +571,14 @@ public class Schedule extends SherlockFragmentActivity{
 			break;
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:
-			//schedulingAdd();
-			PlanRecord testRecord = new PlanRecord(1+"", 1+"", "test record", "50", "Deposit", "Electrical", "Memo things", "02-25-2013", "3 Months", "false");
-			schedule(testRecord);
+			schedulingAdd();
+			//PlanRecord testRecord = new PlanRecord(1+"", 1+"", "test record", "50", "Deposit", "Electrical", "Memo things", "02-25-2013", "3 Months", "false");
+			//schedule(testRecord);
 			break;
 
 		case R.id.account_menu_search:    
 			onSearchRequested();
 			return true;
-
 		}
 
 		return super.onOptionsItemSelected(item);

@@ -65,6 +65,11 @@ public class Schedule extends SherlockFragmentActivity{
 	SimpleCursorAdapter categorySpinnerAdapter = null;
 	Spinner categorySpinner;
 
+	//Alert Dialogs (Need to be closed properly)
+	AlertDialog alertDialogView;
+	AlertDialog alertDialogAdd;
+	AlertDialog alertDialogEdit;
+
 	//Adapter for category spinner
 	SimpleCursorAdapter accountSpinnerAdapter = null;
 	Spinner accountSpinner;
@@ -166,8 +171,6 @@ public class Schedule extends SherlockFragmentActivity{
 
 	//For Scheduling a Transaction
 	public void schedulingAdd(){
-		AlertDialog alertDialogAdd;
-
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(this);
 		promptsView = li.inflate(R.layout.schedule_add, null);
@@ -395,8 +398,6 @@ public class Schedule extends SherlockFragmentActivity{
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
-		AlertDialog alertDialogEdit;
-
 		LayoutInflater li = LayoutInflater.from(this);
 		promptsView = li.inflate(R.layout.schedule_add, null);
 
@@ -623,6 +624,55 @@ public class Schedule extends SherlockFragmentActivity{
 		alertDialogEdit.show();
 
 	}//end of transactionAdd
+
+	//View Plan
+	public void scheduleView(android.view.MenuItem item){
+		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
+
+		LayoutInflater li = LayoutInflater.from(this);
+		final View scheduleStatsView = li.inflate(R.layout.schedule_stats, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
+
+		// set xml to AlertDialog builder
+		alertDialogBuilder.setView(scheduleStatsView);
+
+		//set Title
+		alertDialogBuilder.setTitle("View Schedule");
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(true);
+
+		// create alert dialog
+		alertDialogView = alertDialogBuilder.create();
+
+		//Set Statistics
+		TextView statsName = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionName);
+		statsName.setText(record.name);
+		TextView statsAccount = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionAccount);
+		statsAccount.setText(record.acctId);
+		TextView statsValue = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionValue);
+		statsValue.setText(record.value);
+		TextView statsType = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionType);
+		statsType.setText(record.type);
+		TextView statsCategory = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionCategory);
+		statsCategory.setText(record.category);
+		TextView statsMemo = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionMemo);
+		statsMemo.setText(record.memo);
+		TextView statsOffset = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionOffset);
+		statsOffset.setText(record.offset);
+		TextView statsRate = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionRate);
+		statsRate.setText(record.rate);
+		TextView statsCleared = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionCleared);
+		statsCleared.setText(record.cleared);
+
+		// show it
+		alertDialogView.show();
+
+	}
 
 	//Method to get the list of categories for spinner
 	public void categoryPopulate(){
@@ -857,6 +907,7 @@ public class Schedule extends SherlockFragmentActivity{
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_OPEN:
 			//Log.e("Categories","Category View pressed");
+			scheduleView(item);
 			return true;
 
 		case CONTEXT_MENU_EDIT:
@@ -890,6 +941,35 @@ public class Schedule extends SherlockFragmentActivity{
 	}
 
 	//Method to help create DatePicker
+
+	//Close dialogs to prevent window leaks
+	@Override
+	public void onPause() {
+		if(alertDialogView!=null){
+			alertDialogView.dismiss();
+		}
+		if(alertDialogEdit!=null){
+			alertDialogEdit.dismiss();
+		}
+		if(alertDialogAdd!=null){
+			alertDialogAdd.dismiss();
+		}
+
+		//if(!cursorCategory.isClosed()){
+		//	cursorCategory.close();
+		//}
+		//if(!cursorSubCategory.isClosed()){
+		//	cursorSubCategory.close();
+		//}
+		//if(!resultsCursor.isEmpty()){
+		//	resultsCursor.clear();
+		//	resultsCursor = null;
+		//}
+
+		super.onPause();
+	}
+
+
 	public static class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 

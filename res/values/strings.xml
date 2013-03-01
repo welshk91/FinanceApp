@@ -12,10 +12,13 @@
     <string name="options">Options</string>
     <string name="exit">Exit</string>
     <string name="done">Done</string>
+    <string name="account:">ACCOUNT:</string>
     <string name="balance:">BALANCE:</string>
     <string name="name:">NAME:</string>
     <string name="value:">VALUE:</string>
     <string name="type:">TYPE:</string>
+    <string name="every:">EVERY:</string>
+    <string name="start_on:">START ON:</string>
     <string name="category:">CATEGORY:</string>
     <string name="add">add</string>
     <string name="checknum:">CHECK NUM:</string>

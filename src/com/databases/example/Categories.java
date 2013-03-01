@@ -513,8 +513,6 @@ public class Categories extends SherlockActivity{
 
 	}
 
-
-
 	//For ActionBar Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

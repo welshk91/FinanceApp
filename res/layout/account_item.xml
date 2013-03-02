@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/account_layout"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#E8E8E8"
+    android:baselineAligned="false"
     android:gravity="left|center"
     android:paddingBottom="2dp"
     android:paddingLeft="4dp"

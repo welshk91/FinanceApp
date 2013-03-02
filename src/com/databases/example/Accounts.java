@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -17,43 +16,32 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Categories.CategoryRecord;
-import com.databases.example.Categories.EditDialogFragment;
-import com.databases.example.Categories.SubCategoryRecord;
-import com.databases.example.Categories.ViewDialogFragment;
-import com.slidingmenu.lib.SlidingMenu;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
 
@@ -82,14 +70,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	AlertDialog alertDialogEdit;
 
 	ListView lv = null;
-	static ArrayAdapter<AccountRecord> adapter = null;
+	static UserItemAdapter adapter = null;
 
-	Cursor c = null;
 	final static String tblAccounts = "tblAccounts";
 	final static String tblTrans = "tblTrans";
 	final static String dbFinance = "dbFinance";
 	static SQLiteDatabase myDB;
-	ArrayList<AccountRecord> results = new ArrayList<AccountRecord>();
 
 	//Method called upon first creation
 	@Override
@@ -217,10 +203,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
 
-		//Set up an adapter for the listView
-		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
-		lv.setAdapter(adapter);
-
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
@@ -233,7 +215,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Method called after creation, populates list with account information
 	protected void populate() {
 		Log.e("Accounts", "Populate");
-		results = new ArrayList<AccountRecord>();
+
+		Cursor c = null;
 
 		//A textView alerting the user if database is empty
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
@@ -276,6 +259,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					" WHERE AcctTime " + 
 					" LIKE ?";
 
+
 			try{
 				c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
 			}
@@ -288,30 +272,26 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			c = myDB.query(tblAccounts, new String[] { "AcctID", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
+			c = myDB.query(tblAccounts, new String[] { "AcctID as _id", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
 					null, null, null, null);			
 		}
 
-
-		getActivity().startManagingCursor(c);
-		int IDColumn = c.getColumnIndex("AcctID");
-		int NameColumn = c.getColumnIndex("AcctName");
+		//		getActivity().startManagingCursor(c);
+		//		int IDColumn = c.getColumnIndex("AcctID");
+		//		int NameColumn = c.getColumnIndex("AcctName");
 		int BalanceColumn = c.getColumnIndex("AcctBalance");
-		int TimeColumn = c.getColumnIndex("AcctTime");
-		int DateColumn = c.getColumnIndex("AcctDate");
+		//		int TimeColumn = c.getColumnIndex("AcctTime");
+		//		int DateColumn = c.getColumnIndex("AcctDate");
 
 		c.moveToFirst();
 		if (c != null) {
 			if (c.isFirst()) {
 				do {
-					String id = c.getString(IDColumn);
-					String name = c.getString(NameColumn);
+					//					String id = c.getString(IDColumn);
+					//					String name = c.getString(NameColumn);
 					String balance = c.getString(BalanceColumn);
-					String time = c.getString(TimeColumn);
-					String date = c.getString(DateColumn);
-
-					AccountRecord entry = new AccountRecord(id, name, balance,date,time);
-					results.add(entry);
+					//					String time = c.getString(TimeColumn);
+					//					String date = c.getString(DateColumn);
 
 					//Add account balance to total balance
 					try{
@@ -341,7 +321,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			myDB.close();
 		}
 
-		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), c);
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
@@ -355,7 +335,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapter.getItem(itemInfo.position).name;
+		String name = "" + adapter.getAccount(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -390,7 +370,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Opening an Account
 	public void accountOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		String id = adapter.getItem(itemInfo.position).id;
+		String id = adapter.getAccount(itemInfo.position).id;
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getChildFragmentManager(), "dialogView");
@@ -400,7 +380,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Editing an Account
 	public void accountEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final AccountRecord record = adapter.getItem(itemInfo.position);
+		final AccountRecord record = adapter.getAccount(itemInfo.position);
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");
@@ -409,14 +389,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Deleting an Account
 	public void accountDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position).name;
+		AccountRecord record = adapter.getAccount(itemInfo.position);
 
 		String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
-				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
+				" WHERE AcctID = " + record.id;
 
 		//Deletes all transactions in the account
 		String sqlDeleteTransactions = "DELETE FROM " + tblTrans + 
-				" WHERE ToAcctID = " + adapter.getItem(itemInfo.position).id;
+				" WHERE ToAcctID = " + record.id;
 
 		//Open Database
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
@@ -456,7 +436,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
 		}
 
-		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
 
 	}//end of accountDelete
 
@@ -464,41 +444,41 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void accountAdd(){
 		DialogFragment newFragment = AddDialogFragment.newInstance();
 		newFragment.show(getChildFragmentManager(), "dialogAdd");
-				
-//		//Reload transaction fragment if shown
-//		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
-//		int account_frame = R.id.account_frag_frame;
-//		View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
-//		
-//		Log.e("HERE", "Transaction_frame=" + transaction_frame);
-//		Log.e("HERE", "Account_frame=" + account_frame);
-//		Log.e("HERE", "Checkbook_frame=" + checkbook_frame);
-//		
-//		Accounts account_frag = new Accounts();
-//		Transactions transaction_frag = new Transactions();
-//
-//		//Bundle for Transaction fragment
-//		Bundle argsTran = new Bundle();
-//		argsTran.putInt("ID", 0);
-//
-//		//Bundle for Account fragment
-//		Bundle argsAccount = new Bundle();
-//		argsAccount.putBoolean("boolSearch", false);
-//
-//		transaction_frag.setArguments(argsTran);
-//		account_frag.setArguments(argsAccount);
-//		
-//		if(transaction_frame!=null){
-//			getFragmentManager().beginTransaction()
-//			.replace(account_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
-//			//getFragmentManager().executePendingTransactions();
-//		}
-//		else{
-//			getFragmentManager().beginTransaction().
-//			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
-//			//getFragmentManager().executePendingTransactions();
-//		}
-		
+
+		//		//Reload transaction fragment if shown
+		//		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
+		//		int account_frame = R.id.account_frag_frame;
+		//		View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+		//		
+		//		Log.e("HERE", "Transaction_frame=" + transaction_frame);
+		//		Log.e("HERE", "Account_frame=" + account_frame);
+		//		Log.e("HERE", "Checkbook_frame=" + checkbook_frame);
+		//		
+		//		Accounts account_frag = new Accounts();
+		//		Transactions transaction_frag = new Transactions();
+		//
+		//		//Bundle for Transaction fragment
+		//		Bundle argsTran = new Bundle();
+		//		argsTran.putInt("ID", 0);
+		//
+		//		//Bundle for Account fragment
+		//		Bundle argsAccount = new Bundle();
+		//		argsAccount.putBoolean("boolSearch", false);
+		//
+		//		transaction_frag.setArguments(argsTran);
+		//		account_frag.setArguments(argsAccount);
+		//		
+		//		if(transaction_frame!=null){
+		//			getFragmentManager().beginTransaction()
+		//			.replace(account_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
+		//			//getFragmentManager().executePendingTransactions();
+		//		}
+		//		else{
+		//			getFragmentManager().beginTransaction().
+		//			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
+		//			//getFragmentManager().executePendingTransactions();
+		//		}
+
 	}	
 
 	//Handle closing database properly to avoid corruption
@@ -625,187 +605,70 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
 		}
-		
+
 		//populate();
-		
+
 		super.onPause();
 	}
 
-	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {
-		private ArrayList<AccountRecord> account;
+	public class UserItemAdapter extends CursorAdapter {
+		private Cursor accounts;
+		private Context context;
 
-		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<AccountRecord> users) {
-			super(context, textViewResourceId, users);
-			this.account = users;
+		public UserItemAdapter(Context context, Cursor accounts) {
+			super(context, accounts);
+			this.context = context;
+			this.accounts = accounts;
+		}
+
+		public AccountRecord getAccount(long position){
+			Cursor group = accounts;
+
+			group.moveToPosition((int) position);
+			int IDColumn = group.getColumnIndex("AcctID");
+			int NameColumn = group.getColumnIndex("AcctName");
+			int BalanceColumn = group.getColumnIndex("AcctBalance");
+			int TimeColumn = group.getColumnIndex("AcctTime");
+			int DateColumn = group.getColumnIndex("AcctDate");
+
+			String id = group.getString(0);
+			//String id = group.getString(IDColumn);
+			String name = group.getString(NameColumn);
+			String balance = group.getString(BalanceColumn);
+			String time = group.getString(TimeColumn);
+			String date = group.getString(DateColumn);
+
+			AccountRecord record = new AccountRecord(id, name, balance, time, date);
+			return record;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			AccountRecord user = account.get(position);
+		public void bindView(View view, Context context, Cursor cursor) {
+			View v = view;
+			Cursor user = accounts;
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
-			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.account_item, null);
-
-				//Change Background Colors
-				try{
-					LinearLayout l;
-					l=(LinearLayout)v.findViewById(R.id.account_layout);
-					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-					GradientDrawable defaultGradient = new GradientDrawable(
-							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {startColor,endColor});
-
-					if(useDefaults){
-						l.setBackgroundResource(R.drawable.account_list_style);
-					}
-					else{
-						l.setBackgroundDrawable(defaultGradient);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
-				}
-
-				//Change Size of main field
-				try{
-					String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameSize), "16");
-					TextView t;
-					t=(TextView)v.findViewById(R.id.account_name);
-
-					if(useDefaults){
-						t.setTextSize(16);
-					}
-					else{
-						t.setTextSize(Integer.parseInt(DefaultSize));
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
-					TextView t;
-					t=(TextView)v.findViewById(R.id.account_name);
-
-					if(useDefaults){
-						t.setTextColor(Color.parseColor("#000000"));
-					}
-					else{
-						t.setTextColor(DefaultColor);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldSize), "10");
-					TextView tmp;
-
-					if(useDefaults){
-						tmp=(TextView)v.findViewById(R.id.account_balance);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.account_date);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.account_time);
-						tmp.setTextSize(10);
-					}
-					else{
-						tmp=(TextView)v.findViewById(R.id.account_balance);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.account_date);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.account_time);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
-					TextView tmp;
-
-					if(useDefaults){
-						tmp=(TextView)v.findViewById(R.id.account_balance);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.account_date);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.account_time);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-					}
-					else{
-						tmp=(TextView)v.findViewById(R.id.account_balance);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.account_date);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.account_time);
-						tmp.setTextColor(DefaultColor);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
-				}
-
-
-				//For User-Defined Field Visibility
-				if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
-					TextView name = (TextView) v.findViewById(R.id.account_name);
-					name.setVisibility(View.VISIBLE);
-				}
-				else{
-					TextView name = (TextView) v.findViewById(R.id.account_name);
-					name.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
-					TextView balance = (TextView) v.findViewById(R.id.account_balance);
-					balance.setVisibility(View.VISIBLE);
-				}
-				else{
-					TextView balance = (TextView) v.findViewById(R.id.account_balance);
-					balance.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
-					TextView date = (TextView) v.findViewById(R.id.account_date);
-					date.setVisibility(View.VISIBLE);
-				}
-				else{
-					TextView date = (TextView) v.findViewById(R.id.account_date);
-					date.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
-					TextView time = (TextView) v.findViewById(R.id.account_time);
-					time.setVisibility(View.VISIBLE);
-				}
-				else{
-					TextView time = (TextView) v.findViewById(R.id.account_time);
-					time.setVisibility(View.GONE);
-				}
-
-			}
-
 			if (user != null) {
-				TextView name = (TextView) v.findViewById(R.id.account_name);
-				TextView balance = (TextView) v.findViewById(R.id.account_balance);
-				TextView date = (TextView) v.findViewById(R.id.account_date);
-				TextView time = (TextView) v.findViewById(R.id.account_time);
+				TextView TVname = (TextView) v.findViewById(R.id.account_name);
+				TextView TVbalance = (TextView) v.findViewById(R.id.account_balance);
+				TextView TVdate = (TextView) v.findViewById(R.id.account_date);
+				TextView TVtime = (TextView) v.findViewById(R.id.account_time);
+
+				int IDColumn = user.getColumnIndex("AcctID");
+				int NameColumn = user.getColumnIndex("AcctName");
+				int BalanceColumn = user.getColumnIndex("AcctBalance");
+				int TimeColumn = user.getColumnIndex("AcctTime");
+				int DateColumn = user.getColumnIndex("AcctDate");
+
+				String id = user.getString(0);
+				//String id = user.getString(IDColumn);
+				String name = user.getString(NameColumn);
+				String balance = user.getString(BalanceColumn);
+				String time = user.getString(TimeColumn);
+				String date = user.getString(DateColumn);
 
 				//Change gradient
 				try{
@@ -820,7 +683,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							new int[] {0xFFFF0000,0xFF000000});
 
 					if(useDefaults){
-						if(Float.parseFloat((user.balance)) >=0){
+						if(Float.parseFloat(balance) >=0){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -829,7 +692,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					}
 					else{
-						if(Float.parseFloat((user.balance)) >=0){
+						if(Float.parseFloat(balance) >=0){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -843,24 +706,184 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 
-				if (user.name != null) {
-					name.setText(user.name);
+				if (name != null) {
+					TVname.setText(name);
 				}
 
-				if(user.balance != null) {
-					balance.setText("Balance: " + user.balance );
+				if(balance != null) {
+					TVbalance.setText("Balance: " + balance );
 				}
 
-				if(user.date != null) {
-					date.setText("Date: " + user.date );
+				if(date != null) {
+					TVdate.setText("Date: " + date );
 				}
 
-				if(user.time != null) {
-					time.setText("Time: " + user.time );
+				if(time != null) {
+					TVtime.setText("Time: " + time );
 				}
 
 			}
+
+		}
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			LayoutInflater inflater = LayoutInflater.from(context);
+			View v = inflater.inflate(R.layout.account_item, parent, false);
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+
+			//Change Background Colors
+			try{
+				LinearLayout l;
+				l=(LinearLayout)v.findViewById(R.id.account_layout);
+				int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+				int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+				GradientDrawable defaultGradient = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {startColor,endColor});
+
+				if(useDefaults){
+					l.setBackgroundResource(R.drawable.account_list_style);
+				}
+				else{
+					l.setBackgroundDrawable(defaultGradient);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+			}
+
+			//Change Size of main field
+			try{
+				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameSize), "16");
+				TextView t;
+				t=(TextView)v.findViewById(R.id.account_name);
+
+				if(useDefaults){
+					t.setTextSize(16);
+				}
+				else{
+					t.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
+				TextView t;
+				t=(TextView)v.findViewById(R.id.account_name);
+
+				if(useDefaults){
+					t.setTextColor(Color.parseColor("#000000"));
+				}
+				else{
+					t.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldSize), "10");
+				TextView tmp;
+
+				if(useDefaults){
+					tmp=(TextView)v.findViewById(R.id.account_balance);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.account_date);
+					tmp.setTextSize(10);
+					tmp=(TextView)v.findViewById(R.id.account_time);
+					tmp.setTextSize(10);
+				}
+				else{
+					tmp=(TextView)v.findViewById(R.id.account_balance);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.account_date);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tmp=(TextView)v.findViewById(R.id.account_time);
+					tmp.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
+				TextView tmp;
+
+				if(useDefaults){
+					tmp=(TextView)v.findViewById(R.id.account_balance);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.account_date);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tmp=(TextView)v.findViewById(R.id.account_time);
+					tmp.setTextColor(Color.parseColor("#0099CC"));
+				}
+				else{
+					tmp=(TextView)v.findViewById(R.id.account_balance);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.account_date);
+					tmp.setTextColor(DefaultColor);
+					tmp=(TextView)v.findViewById(R.id.account_time);
+					tmp.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+			}
+
+
+			//For User-Defined Field Visibility
+			if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
+				TextView name = (TextView) v.findViewById(R.id.account_name);
+				name.setVisibility(View.VISIBLE);
+			}
+			else{
+				TextView name = (TextView) v.findViewById(R.id.account_name);
+				name.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
+				TextView balance = (TextView) v.findViewById(R.id.account_balance);
+				balance.setVisibility(View.VISIBLE);
+			}
+			else{
+				TextView balance = (TextView) v.findViewById(R.id.account_balance);
+				balance.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
+				TextView date = (TextView) v.findViewById(R.id.account_date);
+				date.setVisibility(View.VISIBLE);
+			}
+			else{
+				TextView date = (TextView) v.findViewById(R.id.account_date);
+				date.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
+				TextView time = (TextView) v.findViewById(R.id.account_time);
+				time.setVisibility(View.VISIBLE);
+			}
+			else{
+				TextView time = (TextView) v.findViewById(R.id.account_time);
+				time.setVisibility(View.GONE);
+			}
+
 			return v;
+
 		}
 	}
 

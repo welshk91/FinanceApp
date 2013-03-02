@@ -3,6 +3,7 @@ package com.databases.example;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,29 +25,34 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.slidingmenu.lib.SlidingMenu;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Manage.BackupDialogFragment;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 
-public class Categories extends SherlockActivity{
+public class Categories extends SherlockFragmentActivity{
 
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
-	final String tblCategory = "tblCategory";
-	final String tblSubCategory = "tblSubCategory";
+	public final static String dbFinance = "dbFinance";
+	public static SQLiteDatabase myDB = null;
+	final static String tblCategory = "tblCategory";
+	final static String tblSubCategory = "tblSubCategory";
 
 	private SliderMenu menu;
 
 	ExpandableListView lvCategory = null;
-	UserItemAdapter adapterCategory = null;
+	static UserItemAdapter adapterCategory = null;
 
 	//Need to be global so I can dismiss and avoid leaks
-	AlertDialog alertDialogView;
+	static AlertDialog alertDialogView;
 	AlertDialog alertDialogAdd;
 	AlertDialog alertDialogEdit;
 
@@ -350,111 +356,9 @@ public class Categories extends SherlockActivity{
 		final int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 		final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 		final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-		SubCategoryRecord subrecord = null;
-		CategoryRecord record = null;
 
-		LayoutInflater li = LayoutInflater.from(this);
-		final View categoryAddView = li.inflate(R.layout.category_add, null);
-
-		final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-		final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
-
-		final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-
-		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-			subrecord = adapterCategory.getSubCategory(groupPos, childPos);
-			alertDialogBuilder.setTitle("Editing " + subrecord.name);
-			editName.setText(subrecord.name);
-			editNote.setText(subrecord.note);
-		}
-		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-			record = adapterCategory.getCategory(groupPos);
-			alertDialogBuilder.setTitle("Editing " + record.name);
-			editName.setText(record.name);
-			editNote.setText(record.note);			
-		}
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(categoryAddView);
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true)
-		.setPositiveButton("Done",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				String newName = editName.getText().toString().trim();
-				String newNote = editNote.getText().toString().trim();
-
-				try{
-					myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-					if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-						SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
-						String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
-								" WHERE SubCatID = " + oldRecord.id;
-
-						Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
-						myDB.execSQL(sqlDeleteSubCategory);
-
-						//Make new record with same ID
-						ContentValues valuesSubCategory=new ContentValues();
-						valuesSubCategory.put("SubCatID",oldRecord.id);
-						valuesSubCategory.put("ToCatID",oldRecord.catId);
-						valuesSubCategory.put("SubCatName",newName);
-						valuesSubCategory.put("SubCatNote",newNote);
-
-						myDB.insert(tblSubCategory, null, valuesSubCategory);
-
-					}
-					else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-						CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
-						String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
-								" WHERE CatID = " + oldRecord.id;
-
-						Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
-						myDB.execSQL(sqlDeleteCategory);
-
-						//Make new record with same ID
-						ContentValues valuesCategory=new ContentValues();
-						valuesCategory.put("CatID",oldRecord.id);
-						valuesCategory.put("CatName",newName);
-						valuesCategory.put("CatNote",newNote);
-
-						myDB.insert(tblCategory, null, valuesCategory);
-
-					}
-
-					//Make sure Database is closed
-					if (myDB != null){
-						myDB.close();
-					}
-
-				}
-				catch(Exception e){
-					Log.e("Categories", "Error editing Categories");
-				}
-
-				//Refresh the categories list
-				categoryPopulate();
-
-			}
-		})
-		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				dialog.cancel();
-			}
-		});		
-
-		// create alert dialog
-		alertDialogEdit = alertDialogBuilder.create();
-
-		// show it
-		alertDialogEdit.show();
-
-		//Refresh the categories list
-		categoryPopulate();
-
+		DialogFragment newFragment = EditDialogFragment.newInstance(groupPos,childPos,type);
+		newFragment.show(getSupportFragmentManager(), "dialogView");
 	}
 
 	//View Category
@@ -464,52 +368,8 @@ public class Categories extends SherlockActivity{
 		final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 		final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
-		LayoutInflater li = LayoutInflater.from(this);
-		final View categoryStatsView = li.inflate(R.layout.category_stats, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				this);
-
-		// set xml to AlertDialog builder
-		alertDialogBuilder.setView(categoryStatsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("View Category");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true);
-
-		// create alert dialog
-		alertDialogView = alertDialogBuilder.create();
-
-		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-			SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
-
-			//Set Statistics
-			TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
-			statsName.setText(record.name);
-			TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
-			statsValue.setText(record.catId);
-			TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
-			statsDate.setText(record.note);			
-
-		}
-		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-			CategoryRecord record = adapterCategory.getCategory(groupPos);
-
-			//Set Statistics
-			TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
-			statsName.setText(record.name);
-			TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
-			statsValue.setText("None");
-			TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
-			statsDate.setText(record.note);			
-
-		}
-
-		// show it
-		alertDialogView.show();
+		DialogFragment newFragment = ViewDialogFragment.newInstance(groupPos,childPos,type);
+		newFragment.show(getSupportFragmentManager(), "dialogView");
 
 	}
 
@@ -992,6 +852,259 @@ public class Categories extends SherlockActivity{
 		//}
 
 		super.onPause();
+	}
+
+	//Class that handles view fragment
+	public static class ViewDialogFragment extends SherlockDialogFragment {
+
+		public static AddDialogFragment newInstance(int gPos, int cPos,int t) {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			args.putInt("group", gPos);
+			args.putInt("child", cPos);
+			args.putInt("type", t);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(this.getActivity());
+			final View categoryStatsView = li.inflate(R.layout.category_stats, null);
+
+			int type = getArguments().getInt("type");
+			int groupPos = getArguments().getInt("gPos");
+			int childPos = getArguments().getInt("cPos");
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set xml to AlertDialog builder
+			alertDialogBuilder.setView(categoryStatsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("View Category");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(true);
+
+			// create alert dialog
+			alertDialogView = alertDialogBuilder.create();
+
+			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+				SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
+
+				//Set Statistics
+				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+				statsName.setText(record.name);
+				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+				statsValue.setText(record.catId);
+				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+				statsDate.setText(record.note);			
+
+			}
+			else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+				CategoryRecord record = adapterCategory.getCategory(groupPos);
+
+				//Set Statistics
+				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+				statsName.setText(record.name);
+				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+				statsValue.setText("None");
+				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+				statsDate.setText(record.note);			
+
+			}
+
+			return alertDialogBuilder.create();
+
+		}
+	}
+
+	//Class that handles edit fragment
+	public static class EditDialogFragment extends SherlockDialogFragment {
+
+		public static AddDialogFragment newInstance(int gPos, int cPos,int t) {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			args.putInt("group", gPos);
+			args.putInt("child", cPos);
+			args.putInt("type", t);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(this.getActivity());
+			final View categoryAddView = li.inflate(R.layout.category_add, null);
+
+			final int type = getArguments().getInt("type");
+			final int groupPos = getArguments().getInt("gPos");
+			final int childPos = getArguments().getInt("cPos");
+
+			SubCategoryRecord subrecord = null;
+			CategoryRecord record = null;
+
+			final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
+			final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
+
+			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
+
+			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+				subrecord = adapterCategory.getSubCategory(groupPos, childPos);
+				alertDialogBuilder.setTitle("Editing " + subrecord.name);
+				editName.setText(subrecord.name);
+				editNote.setText(subrecord.note);
+			}
+			else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+				record = adapterCategory.getCategory(groupPos);
+				alertDialogBuilder.setTitle("Editing " + record.name);
+				editName.setText(record.name);
+				editNote.setText(record.note);			
+			}
+
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(categoryAddView);
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(true)
+			.setPositiveButton("Done",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					String newName = editName.getText().toString().trim();
+					String newNote = editNote.getText().toString().trim();
+
+					try{
+						myDB = getActivity().openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
+
+						if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+							SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
+							String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
+									" WHERE SubCatID = " + oldRecord.id;
+
+							Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
+							myDB.execSQL(sqlDeleteSubCategory);
+
+							//Make new record with same ID
+							ContentValues valuesSubCategory=new ContentValues();
+							valuesSubCategory.put("SubCatID",oldRecord.id);
+							valuesSubCategory.put("ToCatID",oldRecord.catId);
+							valuesSubCategory.put("SubCatName",newName);
+							valuesSubCategory.put("SubCatNote",newNote);
+
+							myDB.insert(tblSubCategory, null, valuesSubCategory);
+
+						}
+						else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+							CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
+							String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
+									" WHERE CatID = " + oldRecord.id;
+
+							Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
+							myDB.execSQL(sqlDeleteCategory);
+
+							//Make new record with same ID
+							ContentValues valuesCategory=new ContentValues();
+							valuesCategory.put("CatID",oldRecord.id);
+							valuesCategory.put("CatName",newName);
+							valuesCategory.put("CatNote",newNote);
+
+							myDB.insert(tblCategory, null, valuesCategory);
+
+						}
+
+						//Make sure Database is closed
+						if (myDB != null){
+							myDB.close();
+						}
+
+					}
+					catch(Exception e){
+						Log.e("Categories", "Error editing Categories");
+					}
+
+					//Refresh the categories list
+					categoryPopulate();
+
+				}
+			})
+			.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});		
+
+			return alertDialogBuilder.create();
+
+		}
+	}
+
+	//Class that handles add fragment
+	public static class AddDialogFragment extends SherlockDialogFragment {
+
+		public static AddDialogFragment newInstance(int gPos, int cPos,int t) {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			args.putInt("group", gPos);
+			args.putInt("child", cPos);
+			args.putInt("type", t);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(this.getActivity());
+			final View categoryStatsView = li.inflate(R.layout.category_stats, null);
+
+			int type = getArguments().getInt("type");
+			int groupPos = getArguments().getInt("gPos");
+			int childPos = getArguments().getInt("cPos");
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set xml to AlertDialog builder
+			alertDialogBuilder.setView(categoryStatsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("View Category");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(true);
+
+			// create alert dialog
+			alertDialogView = alertDialogBuilder.create();
+
+			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+				SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
+
+				//Set Statistics
+				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+				statsName.setText(record.name);
+				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+				statsValue.setText(record.catId);
+				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+				statsDate.setText(record.note);			
+
+			}
+			else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+				CategoryRecord record = adapterCategory.getCategory(groupPos);
+
+				//Set Statistics
+				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+				statsName.setText(record.name);
+				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+				statsValue.setText("None");
+				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+				statsDate.setText(record.note);			
+
+			}
+
+			return alertDialogBuilder.create();
+
+		}
 	}
 
 }//end category

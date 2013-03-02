@@ -24,15 +24,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.slidingmenu.lib.SlidingMenu;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Manage.BackupDialogFragment;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -50,11 +47,6 @@ public class Categories extends SherlockFragmentActivity{
 
 	ExpandableListView lvCategory = null;
 	static UserItemAdapter adapterCategory = null;
-
-	//Need to be global so I can dismiss and avoid leaks
-	static AlertDialog alertDialogView;
-	AlertDialog alertDialogAdd;
-	AlertDialog alertDialogEdit;
 
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
@@ -203,105 +195,23 @@ public class Categories extends SherlockFragmentActivity{
 
 	//Adding a new category
 	public void categoryAdd(android.view.MenuItem item){			
-		boolean isCategory = true;
-		String itemID = "0";
-		CategoryRecord catRecord;
 
+		//SubCategory Add
 		if(item != null){
-			isCategory = false;
 			ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
 			int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
-			catRecord = adapterCategory.getCategory(groupPos);
-			itemID = catRecord.id;
-			//Log.e("categoryAdd", "itemID: " + catRecord.id);
+
+			DialogFragment newFragment = AddDialogFragment.newInstance(groupPos,childPos);
+			newFragment.show(getSupportFragmentManager(), "dialogAdd");
+
 		}
-
-		final boolean isCat = isCategory;
-		final String catID = itemID;
-
-		LayoutInflater li = LayoutInflater.from(this);
-		final View categoryAddView = li.inflate(R.layout.category_add, null);
-
-		final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-		final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(categoryAddView);
-
-		if(isCat){
-			//set Title
-			alertDialogBuilder.setTitle("Create A Category");
-		}
+		//CategoryAdd
 		else{
-			//set Title
-			alertDialogBuilder.setTitle("Create A SubCategory");			
+
+			DialogFragment newFragment = AddDialogFragment.newInstance();
+			newFragment.show(getSupportFragmentManager(), "dialogAdd");
 		}
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true)
-		.setPositiveButton("Add",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				String name = editName.getText().toString().trim();
-				String note = editNote.getText().toString().trim();
-
-				//Create database and open
-				myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-				try{
-					//Add a category
-					if(isCat){
-						//Log.e("Category Add", "Adding a normal category : " + category);
-
-						ContentValues categoryValues=new ContentValues();
-						categoryValues.put("CatName",name);
-						categoryValues.put("CatNote",note);
-
-						myDB.insert(tblCategory, null, categoryValues);
-
-					}
-					//Add a subcategory
-					else{
-						//Log.e("Category Add", "Adding a subcategory : " + catID + name + note);
-
-						ContentValues subcategoryValues=new ContentValues();
-						subcategoryValues.put("ToCatID",catID);
-						subcategoryValues.put("SubCatName",name);
-						subcategoryValues.put("SubCatNote",note);
-
-						myDB.insert(tblSubCategory, null, subcategoryValues);
-
-					}
-
-				}
-				catch(Exception e){
-					Log.e("Categories", "Error adding Categories");
-				}
-
-				//Make sure Database is closed
-				if (myDB != null){
-					myDB.close();
-				}
-
-				//Refresh the categories list
-				categoryPopulate();
-
-			}
-		})
-		.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogAdd = alertDialogBuilder.create();
-
-		// show it
-		alertDialogAdd.show();
 
 	}//end of showCategoryAdd
 
@@ -349,7 +259,6 @@ public class Categories extends SherlockFragmentActivity{
 
 	}//end categoryDelete
 
-
 	//Edit Category
 	public void categoryEdit(android.view.MenuItem item){
 		ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
@@ -358,7 +267,7 @@ public class Categories extends SherlockFragmentActivity{
 		final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(groupPos,childPos,type);
-		newFragment.show(getSupportFragmentManager(), "dialogView");
+		newFragment.show(getSupportFragmentManager(), "dialogEdit");
 	}
 
 	//View Category
@@ -537,7 +446,7 @@ public class Categories extends SherlockFragmentActivity{
 			int NameColumn = group.getColumnIndex("SubCatName");
 			int NoteColumn = group.getColumnIndex("SubCatNote");
 
-			Log.e("HERE", "columns " + IDColumn + " " + ToIDColumn + " " + NameColumn + " " + NoteColumn);
+			//Log.e("HERE", "columns " + IDColumn + " " + ToIDColumn + " " + NameColumn + " " + NoteColumn);
 			String itemId = group.getString(0);
 			String itemTo_id = group.getString(ToIDColumn);
 			String itemSubname = group.getString(NameColumn);
@@ -830,15 +739,15 @@ public class Categories extends SherlockFragmentActivity{
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		if(alertDialogView!=null){
-			alertDialogView.dismiss();
-		}
-		if(alertDialogEdit!=null){
-			alertDialogEdit.dismiss();
-		}
-		if(alertDialogAdd!=null){
-			alertDialogAdd.dismiss();
-		}
+//		if(alertDialogView!=null){
+//			alertDialogView.dismiss();
+//		}
+//		if(alertDialogEdit!=null){
+//			alertDialogEdit.dismiss();
+//		}
+//		if(alertDialogAdd!=null){
+//			alertDialogAdd.dismiss();
+//		}
 
 		//if(!cursorCategory.isClosed()){
 		//	cursorCategory.close();
@@ -857,8 +766,8 @@ public class Categories extends SherlockFragmentActivity{
 	//Class that handles view fragment
 	public static class ViewDialogFragment extends SherlockDialogFragment {
 
-		public static AddDialogFragment newInstance(int gPos, int cPos,int t) {
-			AddDialogFragment frag = new AddDialogFragment();
+		public static ViewDialogFragment newInstance(int gPos, int cPos,int t) {
+			ViewDialogFragment frag = new ViewDialogFragment();
 			Bundle args = new Bundle();
 			args.putInt("group", gPos);
 			args.putInt("child", cPos);
@@ -872,9 +781,9 @@ public class Categories extends SherlockFragmentActivity{
 			LayoutInflater li = LayoutInflater.from(this.getActivity());
 			final View categoryStatsView = li.inflate(R.layout.category_stats, null);
 
-			int type = getArguments().getInt("type");
-			int groupPos = getArguments().getInt("gPos");
-			int childPos = getArguments().getInt("cPos");
+			final int type = getArguments().getInt("type");
+			final int groupPos = getArguments().getInt("group");
+			final int childPos = getArguments().getInt("child");
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
@@ -887,9 +796,6 @@ public class Categories extends SherlockFragmentActivity{
 			// set dialog message
 			alertDialogBuilder
 			.setCancelable(true);
-
-			// create alert dialog
-			alertDialogView = alertDialogBuilder.create();
 
 			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 				SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
@@ -912,8 +818,7 @@ public class Categories extends SherlockFragmentActivity{
 				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
 				statsValue.setText("None");
 				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
-				statsDate.setText(record.note);			
-
+				statsDate.setText(record.note);
 			}
 
 			return alertDialogBuilder.create();
@@ -924,8 +829,8 @@ public class Categories extends SherlockFragmentActivity{
 	//Class that handles edit fragment
 	public static class EditDialogFragment extends SherlockDialogFragment {
 
-		public static AddDialogFragment newInstance(int gPos, int cPos,int t) {
-			AddDialogFragment frag = new AddDialogFragment();
+		public static EditDialogFragment newInstance(int gPos, int cPos,int t) {
+			EditDialogFragment frag = new EditDialogFragment();
 			Bundle args = new Bundle();
 			args.putInt("group", gPos);
 			args.putInt("child", cPos);
@@ -940,8 +845,8 @@ public class Categories extends SherlockFragmentActivity{
 			final View categoryAddView = li.inflate(R.layout.category_add, null);
 
 			final int type = getArguments().getInt("type");
-			final int groupPos = getArguments().getInt("gPos");
-			final int childPos = getArguments().getInt("cPos");
+			final int groupPos = getArguments().getInt("group");
+			final int childPos = getArguments().getInt("child");
 
 			SubCategoryRecord subrecord = null;
 			CategoryRecord record = null;
@@ -1025,7 +930,7 @@ public class Categories extends SherlockFragmentActivity{
 					}
 
 					//Refresh the categories list
-					categoryPopulate();
+					((Categories) getActivity()).categoryPopulate();
 
 				}
 			})
@@ -1043,64 +948,116 @@ public class Categories extends SherlockFragmentActivity{
 	//Class that handles add fragment
 	public static class AddDialogFragment extends SherlockDialogFragment {
 
-		public static AddDialogFragment newInstance(int gPos, int cPos,int t) {
+		public static AddDialogFragment newInstance() {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		public static AddDialogFragment newInstance(int gPos, int cPos) {
 			AddDialogFragment frag = new AddDialogFragment();
 			Bundle args = new Bundle();
 			args.putInt("group", gPos);
 			args.putInt("child", cPos);
-			args.putInt("type", t);
 			frag.setArguments(args);
 			return frag;
 		}
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			boolean isCategory = true;
+			String itemID = "0";
+			CategoryRecord catRecord;
+
+			if(!this.getArguments().isEmpty()){
+				isCategory = false;
+				int groupPos = getArguments().getInt("group");
+				int childPos = getArguments().getInt("child");
+				catRecord = adapterCategory.getCategory(groupPos);
+				itemID = catRecord.id;
+				//Log.e("categoryAdd", "itemID: " + catRecord.id);
+			}
+
+			final boolean isCat = isCategory;
+			final String catID = itemID;
+
 			LayoutInflater li = LayoutInflater.from(this.getActivity());
-			final View categoryStatsView = li.inflate(R.layout.category_stats, null);
+			final View categoryAddView = li.inflate(R.layout.category_add, null);
 
-			int type = getArguments().getInt("type");
-			int groupPos = getArguments().getInt("gPos");
-			int childPos = getArguments().getInt("cPos");
+			final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
+			final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
 
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
-			// set xml to AlertDialog builder
-			alertDialogBuilder.setView(categoryStatsView);
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(categoryAddView);
 
-			//set Title
-			alertDialogBuilder.setTitle("View Category");
+			if(isCat){
+				//set Title
+				alertDialogBuilder.setTitle("Create A Category");
+			}
+			else{
+				//set Title
+				alertDialogBuilder.setTitle("Create A SubCategory");			
+			}
 
 			// set dialog message
 			alertDialogBuilder
-			.setCancelable(true);
+			.setCancelable(true)
+			.setPositiveButton("Add",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					String name = editName.getText().toString().trim();
+					String note = editNote.getText().toString().trim();
 
-			// create alert dialog
-			alertDialogView = alertDialogBuilder.create();
+					//Create database and open
+					myDB = getActivity().openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
-			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-				SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
+					try{
+						//Add a category
+						if(isCat){
+							//Log.e("Category Add", "Adding a normal category : " + category);
 
-				//Set Statistics
-				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
-				statsName.setText(record.name);
-				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
-				statsValue.setText(record.catId);
-				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
-				statsDate.setText(record.note);			
+							ContentValues categoryValues=new ContentValues();
+							categoryValues.put("CatName",name);
+							categoryValues.put("CatNote",note);
 
-			}
-			else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-				CategoryRecord record = adapterCategory.getCategory(groupPos);
+							myDB.insert(tblCategory, null, categoryValues);
 
-				//Set Statistics
-				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
-				statsName.setText(record.name);
-				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
-				statsValue.setText("None");
-				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
-				statsDate.setText(record.note);			
+						}
+						//Add a subcategory
+						else{
+							//Log.e("Category Add", "Adding a subcategory : " + catID + name + note);
 
-			}
+							ContentValues subcategoryValues=new ContentValues();
+							subcategoryValues.put("ToCatID",catID);
+							subcategoryValues.put("SubCatName",name);
+							subcategoryValues.put("SubCatNote",note);
+
+							myDB.insert(tblSubCategory, null, subcategoryValues);
+
+						}
+
+					}
+					catch(Exception e){
+						Log.e("Categories", "Error adding Categories");
+					}
+
+					//Make sure Database is closed
+					if (myDB != null){
+						myDB.close();
+					}
+
+					//Refresh the categories list
+					((Categories) getActivity()).categoryPopulate();
+
+				}
+			})
+			.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
 
 			return alertDialogBuilder.create();
 

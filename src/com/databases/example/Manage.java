@@ -75,8 +75,8 @@ public class Manage extends SherlockFragmentActivity{
 
 	public static class RestoreDialogFragment extends SherlockDialogFragment {
 
-		public static BackupDialogFragment newInstance() {
-			BackupDialogFragment frag = new BackupDialogFragment();
+		public static RestoreDialogFragment newInstance() {
+			RestoreDialogFragment frag = new RestoreDialogFragment();
 			Bundle args = new Bundle();
 			frag.setArguments(args);
 			return frag;

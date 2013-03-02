@@ -165,8 +165,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-		myFragmentView = inflater.inflate(R.layout.transactions, container, false);		
+		
+		//myFragmentView = inflater.inflate(R.layout.transactions, container, false);		
+		myFragmentView = inflater.inflate(R.layout.transactions, null, false);				
 
 		lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
 

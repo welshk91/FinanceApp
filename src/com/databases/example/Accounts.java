@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,7 +20,9 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -33,17 +36,23 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Categories.CategoryRecord;
+import com.databases.example.Categories.EditDialogFragment;
+import com.databases.example.Categories.SubCategoryRecord;
+import com.databases.example.Categories.ViewDialogFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
@@ -58,11 +67,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
 
-	//Text Area for Adding Accounts
-	EditText aName;
-	EditText aBalance;
-
-	View accountStatsView;
+	static View accountStatsView;
 	View myFragmentView;
 
 	//Date Format to use for time (01:42 PM)
@@ -76,27 +81,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	AlertDialog alertDialogAdd;
 	AlertDialog alertDialogEdit;
 
-	//Variables for the Account Table
-	String accountName = null;
-	String accountTime = null;
-	String accountBalance = null;
-	String accountDate = null;
-
-	//TextView of Statistics
-	TextView statsName;
-	TextView statsValue;
-	TextView statsDate;
-	TextView statsTime;
-
-
 	ListView lv = null;
-	ArrayAdapter<AccountRecord> adapter = null;
+	static ArrayAdapter<AccountRecord> adapter = null;
 
 	Cursor c = null;
-	final String tblAccounts = "tblAccounts";
-	final String tblTrans = "tblTrans";
-	final String dbFinance = "dbFinance";
-	SQLiteDatabase myDB;
+	final static String tblAccounts = "tblAccounts";
+	final static String tblTrans = "tblTrans";
+	final static String dbFinance = "dbFinance";
+	static SQLiteDatabase myDB;
 	ArrayList<AccountRecord> results = new ArrayList<AccountRecord>();
 
 	//Method called upon first creation
@@ -120,7 +112,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		myFragmentView = inflater.inflate(R.layout.accounts, container, false);	
+		//myFragmentView = inflater.inflate(R.layout.accounts, container, false);	
+		myFragmentView = inflater.inflate(R.layout.accounts, null, false);
 
 		lv = (ListView)myFragmentView.findViewById(R.id.account_list);
 
@@ -239,7 +232,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
-		//Log.e("Accounts", "Populate");
+		Log.e("Accounts", "Populate");
 		results = new ArrayList<AccountRecord>();
 
 		//A textView alerting the user if database is empty
@@ -397,157 +390,20 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Opening an Account
 	public void accountOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		String id = adapter.getItem(itemInfo.position).id;
 
-		String sqlCommand = "SELECT * FROM " + tblAccounts + 
-				" WHERE AcctID = " + adapter.getItem(itemInfo.position).id;
+		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
+		newFragment.show(getChildFragmentManager(), "dialogView");
 
-		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		Cursor c = myDB.rawQuery(sqlCommand, null);
-		getActivity().startManagingCursor(c);
-
-		int entry_id = 0;
-		String entry_name = null;
-		String entry_balance = null;
-		String entry_time = null;
-		String entry_date = null;
-
-		c.moveToFirst();
-		do{
-			entry_id = c.getInt(c.getColumnIndex("AcctID"));
-			entry_name = c.getString(c.getColumnIndex("AcctName"));
-			entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
-			entry_time = c.getString(c.getColumnIndex("AcctTime"));
-			entry_date = c.getString(c.getColumnIndex("AcctDate"));
-		}while(c.moveToNext());
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
-		LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-		accountStatsView = li.inflate(R.layout.account_stats, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				this.getSherlockActivity());
-
-		// set xml to AlertDialog builder
-		alertDialogBuilder.setView(accountStatsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("View Account");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true);
-
-		// create alert dialog
-		alertDialogView = alertDialogBuilder.create();
-
-		//Set Statistics
-		statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
-		statsName.setText(entry_name);
-		statsValue = (TextView)accountStatsView.findViewById(R.id.TextAccountValue);
-		statsValue.setText(entry_balance);
-		statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
-		statsDate.setText(entry_date);
-		statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
-		statsTime.setText(entry_time);
-
-		// show it
-		alertDialogView.show();
-
-	}  
+	}
 
 	//For Editing an Account
 	public void accountEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final String name = adapter.getItem(itemInfo.position).name;
-		final String balance = adapter.getItem(itemInfo.position).balance;
+		final AccountRecord record = adapter.getItem(itemInfo.position);
 
-		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
-		final View promptsView = li.inflate(R.layout.account_add, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Accounts.this.getActivity());
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(promptsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("Edit An Account");
-
-		//Add the previous info into the fields, remove unnecessary fields
-		aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-		aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
-		TextView aBalanceText = (TextView)promptsView.findViewById(R.id.BalanceTexts);
-		aName.setText(name);
-		aBalance.setVisibility(View.GONE);
-		aBalanceText.setVisibility(View.GONE);
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(false)
-		.setPositiveButton("Save",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "OK"
-				accountName = aName.getText().toString().trim();
-				accountBalance = balance.trim();
-				final Calendar c = Calendar.getInstance();
-				accountTime = timeFormat.format(c.getTime());
-				accountDate = dateFormat.format(c.getTime());
-
-				try{
-					final String ID = adapter.getItem(itemInfo.position).id;
-					String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
-
-					//Open Database
-					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-					//Delete Old Record
-					myDB.execSQL(deleteCommand);
-
-					//Make new record with same ID
-					ContentValues accountValues=new ContentValues();
-					accountValues.put("AcctID",ID);
-					accountValues.put("AcctName",accountName);
-					accountValues.put("AcctBalance",accountBalance);
-					accountValues.put("AcctTime",accountTime);
-					accountValues.put("AcctDate",accountDate);
-
-					myDB.insert(tblAccounts, null, accountValues);
-
-					//Close Database if Opened
-					if (myDB != null){
-						myDB.close();
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-				}
-
-				//Update Accounts ListView
-				Accounts.this.populate();
-
-			}//end onClick "OK"
-		})
-		.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "Cancel"
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogEdit = alertDialogBuilder.create();
-
-		// show it
-		alertDialogEdit.show();
-
+		DialogFragment newFragment = EditDialogFragment.newInstance(record);
+		newFragment.show(getChildFragmentManager(), "dialogEdit");
 	}
 
 	//For Deleting an Account
@@ -572,7 +428,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if (myDB != null){
 			myDB.close();
 		}
-		
+
 		//Reload transaction fragment if shown
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
@@ -606,173 +462,43 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//For Adding an Account
 	public void accountAdd(){
-		// get account_add.xml view
-		LayoutInflater li = LayoutInflater.from(Accounts.this.getActivity());
-		final View promptsView = li.inflate(R.layout.account_add, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Accounts.this.getActivity());
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(promptsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("Add An Account");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(false)
-		.setPositiveButton("Save",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-
-				//Variables for adding the account
-				aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-				aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
-				accountName = aName.getText().toString().trim();
-				accountBalance = aBalance.getText().toString().trim();
-
-				final Calendar cal = Calendar.getInstance();
-				accountTime = timeFormat.format(cal.getTime());
-				accountDate = dateFormat.format(cal.getTime());
-
-				//Variables for adding Starting Balance transaction
-				final String transactionName = "STARTING BALANCE";
-				float transactionValue;
-				final String transactionCategory = "STARTING BALANCE";
-				final String transactionCheckNum = "None";
-				final String transactionMemo = "This is an automatically generated transaction created when you add an account";
-				final String transactionTime = accountTime;
-				final String transactionDate = accountDate;
-				final String transactionCleared = "true";
-				String transactionType = "Unknown";
-
-				//Check Value to see if it's valid
-				try{
-					transactionValue = Float.parseFloat(accountBalance);
-				}
-				catch(Exception e){
-					transactionValue = (float) 0.00;
-					accountBalance = "0";
-				}				
-
-				try{
-					if(Float.parseFloat(accountBalance)>=0){
-						transactionType = "Deposit";
-					}
-					else{
-						transactionType = "Withdrawl";
-						transactionValue = transactionValue * -1;
-					}
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
-				}
-
-				//String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
-				String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName = ? AND AcctBalance = ? AND AcctTime = ? AND AcctDate = ?;";
-
-				int entry_id = 0;
-
-				//Open Database
-				myDB = Accounts.this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-				try{
-					if (accountName.length()>0) {
-
-						//Insert values into accounts table
-						ContentValues accountValues=new ContentValues();
-						accountValues.put("AcctName",accountName);
-						accountValues.put("AcctBalance",accountBalance);
-						accountValues.put("AcctTime",accountTime);
-						accountValues.put("AcctDate",accountDate);
-
-						myDB.insert(tblAccounts, null, accountValues);
-
-						//Query the Newly created account
-						Cursor c = myDB.rawQuery(sqlQuery, new String[] {accountName, accountBalance, accountTime, accountDate});
-						getActivity().startManagingCursor(c);
-
-						c.moveToFirst();
-						do{
-							entry_id = c.getInt(0);
-						}while(c.moveToNext());
-
-						//Insert values into accounts table
-						ContentValues transactionValues=new ContentValues();
-						transactionValues.put("ToAcctID",entry_id);
-						transactionValues.put("TransName",transactionName);
-						transactionValues.put("TransValue",transactionValue);
-						transactionValues.put("TransType",transactionType);
-						transactionValues.put("TransCategory",transactionCategory);
-						transactionValues.put("TransCheckNum",transactionCheckNum);
-						transactionValues.put("TransMemo",transactionMemo);
-						transactionValues.put("TransTime",transactionTime);
-						transactionValues.put("TransDate",transactionDate);
-						transactionValues.put("TransCleared",transactionCleared);
-
-						myDB.insert(tblTrans, null, transactionValues);
-
-						//Close Cursor object
-						c.close();
-					} 
-
-					else {
-						Toast.makeText(Accounts.this.getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Accounts.this.getActivity(), "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-				}
-
-				//Close Database if Opened
-				if (myDB != null){
-					myDB.close();
-				}
-
-				//Reload transaction fragment if shown
-				View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
-
-				Accounts account_frag = new Accounts();
-				Transactions transaction_frag = new Transactions();
-
-				//Bundle for Transaction fragment
-				Bundle argsTran = new Bundle();
-				argsTran.putInt("ID", entry_id);
-
-				//Bundle for Account fragment
-				Bundle argsAccount = new Bundle();
-				argsAccount.putBoolean("boolSearch", false);
-
-				transaction_frag.setArguments(argsTran);
-				account_frag.setArguments(argsAccount);
-
-				if(transaction_frame!=null){
-					getFragmentManager().beginTransaction()
-					.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
-				}
-				else{
-					getFragmentManager().beginTransaction().
-					replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
-				}
+		DialogFragment newFragment = AddDialogFragment.newInstance();
+		newFragment.show(getChildFragmentManager(), "dialogAdd");
 				
-			}//end onClick "OK"
-		})
-		.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "Cancel"
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogAdd = alertDialogBuilder.create();
-
-		// show it
-		alertDialogAdd.show();
-
+//		//Reload transaction fragment if shown
+//		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
+//		int account_frame = R.id.account_frag_frame;
+//		View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+//		
+//		Log.e("HERE", "Transaction_frame=" + transaction_frame);
+//		Log.e("HERE", "Account_frame=" + account_frame);
+//		Log.e("HERE", "Checkbook_frame=" + checkbook_frame);
+//		
+//		Accounts account_frag = new Accounts();
+//		Transactions transaction_frag = new Transactions();
+//
+//		//Bundle for Transaction fragment
+//		Bundle argsTran = new Bundle();
+//		argsTran.putInt("ID", 0);
+//
+//		//Bundle for Account fragment
+//		Bundle argsAccount = new Bundle();
+//		argsAccount.putBoolean("boolSearch", false);
+//
+//		transaction_frag.setArguments(argsTran);
+//		account_frag.setArguments(argsAccount);
+//		
+//		if(transaction_frame!=null){
+//			getFragmentManager().beginTransaction()
+//			.replace(account_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
+//			//getFragmentManager().executePendingTransactions();
+//		}
+//		else{
+//			getFragmentManager().beginTransaction().
+//			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
+//			//getFragmentManager().executePendingTransactions();
+//		}
+		
 	}	
 
 	//Handle closing database properly to avoid corruption
@@ -847,7 +573,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		return super.onOptionsItemSelected(item);
 	}
 
-
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -900,9 +625,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
 		}
+		
+		//populate();
+		
 		super.onPause();
 	}
-
 
 	public class UserItemAdapter extends ArrayAdapter<AccountRecord> {
 		private ArrayList<AccountRecord> account;
@@ -1151,6 +878,341 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			this.balance = balance;
 			this.date = date;
 			this.time = time;
+		}
+	}
+
+	//Class that handles view fragment
+	public static class ViewDialogFragment extends SherlockDialogFragment {
+
+		public static ViewDialogFragment newInstance(String id) {
+			ViewDialogFragment frag = new ViewDialogFragment();
+			Bundle args = new Bundle();
+			args.putString("id", id);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final String ID = getArguments().getString("id");
+
+			String sqlCommand = "SELECT * FROM " + tblAccounts + 
+					" WHERE AcctID = " + ID;
+
+			myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+			Cursor c = myDB.rawQuery(sqlCommand, null);
+			getActivity().startManagingCursor(c);
+
+			int entry_id = 0;
+			String entry_name = null;
+			String entry_balance = null;
+			String entry_time = null;
+			String entry_date = null;
+
+			c.moveToFirst();
+			do{
+				entry_id = c.getInt(c.getColumnIndex("AcctID"));
+				entry_name = c.getString(c.getColumnIndex("AcctName"));
+				entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
+				entry_time = c.getString(c.getColumnIndex("AcctTime"));
+				entry_date = c.getString(c.getColumnIndex("AcctDate"));
+			}while(c.moveToNext());
+
+			//Close Database if Open
+			if (myDB != null){
+				myDB.close();
+			}
+
+			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			accountStatsView = li.inflate(R.layout.account_stats, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+					this.getSherlockActivity());
+
+			// set xml to AlertDialog builder
+			alertDialogBuilder.setView(accountStatsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("View Account");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(true);
+
+			//Set Statistics
+			TextView statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
+			statsName.setText(entry_name);
+			TextView statsValue = (TextView)accountStatsView.findViewById(R.id.TextAccountValue);
+			statsValue.setText(entry_balance);
+			TextView statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
+			statsDate.setText(entry_date);
+			TextView statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
+			statsTime.setText(entry_time);
+
+			return alertDialogBuilder.create();
+
+		}
+	}
+
+	//Class that handles edit fragment
+	public static class EditDialogFragment extends SherlockDialogFragment {
+
+		public static EditDialogFragment newInstance(AccountRecord record) {
+			EditDialogFragment frag = new EditDialogFragment();
+			Bundle args = new Bundle();
+			args.putString("id", record.id);
+			args.putString("name", record.name);
+			args.putString("balance", record.balance);
+			args.putString("date", record.date);
+			args.putString("time", record.time);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final String ID = getArguments().getString("id");
+			final String name = getArguments().getString("name");
+			final String balance = getArguments().getString("balance");
+
+			LayoutInflater li = LayoutInflater.from(getActivity());
+			final View promptsView = li.inflate(R.layout.account_add, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(promptsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("Edit An Account");
+
+			//Add the previous info into the fields, remove unnecessary fields
+			final EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
+			final EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+			TextView aBalanceText = (TextView)promptsView.findViewById(R.id.BalanceTexts);
+			aName.setText(name);
+			aBalance.setVisibility(View.GONE);
+			aBalanceText.setVisibility(View.GONE);
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Save",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "OK"
+					String accountName = null;
+					String accountTime = null;
+					String accountBalance = null;
+					String accountDate = null;
+
+					accountName = aName.getText().toString().trim();
+					accountBalance = balance.trim();
+					final Calendar c = Calendar.getInstance();
+					accountTime = timeFormat.format(c.getTime());
+					accountDate = dateFormat.format(c.getTime());
+
+					try{
+						String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
+
+						//Open Database
+						myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+						//Delete Old Record
+						myDB.execSQL(deleteCommand);
+
+						//Make new record with same ID
+						ContentValues accountValues=new ContentValues();
+						accountValues.put("AcctID",ID);
+						accountValues.put("AcctName",accountName);
+						accountValues.put("AcctBalance",accountBalance);
+						accountValues.put("AcctTime",accountTime);
+						accountValues.put("AcctDate",accountDate);
+
+						myDB.insert(tblAccounts, null, accountValues);
+
+						//Close Database if Opened
+						if (myDB != null){
+							myDB.close();
+						}
+
+					}
+					catch(Exception e){
+						Toast.makeText(getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					}
+
+					//Update Accounts ListView
+					((Accounts) getParentFragment()).populate();
+
+				}//end onClick "OK"
+			})
+			.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "Cancel"
+					dialog.cancel();
+				}
+			});
+
+			return alertDialogBuilder.create();
+
+		}
+	}
+
+	//Class that handles add fragment
+	public static class AddDialogFragment extends SherlockDialogFragment {
+
+		public static AddDialogFragment newInstance() {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(getActivity());
+			final View promptsView = li.inflate(R.layout.account_add, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(promptsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("Add An Account");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Save",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					String accountName = null;
+					String accountTime = null;
+					String accountBalance = null;
+					String accountDate = null;
+
+					//Variables for adding the account
+					EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
+					EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+					accountName = aName.getText().toString().trim();
+					accountBalance = aBalance.getText().toString().trim();
+
+					final Calendar cal = Calendar.getInstance();
+					accountTime = timeFormat.format(cal.getTime());
+					accountDate = dateFormat.format(cal.getTime());
+
+					//Variables for adding Starting Balance transaction
+					final String transactionName = "STARTING BALANCE";
+					float transactionValue;
+					final String transactionCategory = "STARTING BALANCE";
+					final String transactionCheckNum = "None";
+					final String transactionMemo = "This is an automatically generated transaction created when you add an account";
+					final String transactionTime = accountTime;
+					final String transactionDate = accountDate;
+					final String transactionCleared = "true";
+					String transactionType = "Unknown";
+
+					//Check Value to see if it's valid
+					try{
+						transactionValue = Float.parseFloat(accountBalance);
+					}
+					catch(Exception e){
+						transactionValue = (float) 0.00;
+						accountBalance = "0";
+					}				
+
+					try{
+						if(Float.parseFloat(accountBalance)>=0){
+							transactionType = "Deposit";
+						}
+						else{
+							transactionType = "Withdrawl";
+							transactionValue = transactionValue * -1;
+						}
+					}
+					catch(Exception e){
+						Toast.makeText(getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
+					}
+
+					//String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
+					String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName = ? AND AcctBalance = ? AND AcctTime = ? AND AcctDate = ?;";
+
+					int entry_id = 0;
+
+					//Open Database
+					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+					try{
+						if (accountName.length()>0) {
+
+							//Insert values into accounts table
+							ContentValues accountValues=new ContentValues();
+							accountValues.put("AcctName",accountName);
+							accountValues.put("AcctBalance",accountBalance);
+							accountValues.put("AcctTime",accountTime);
+							accountValues.put("AcctDate",accountDate);
+
+							myDB.insert(tblAccounts, null, accountValues);
+
+							//Query the Newly created account
+							Cursor c = myDB.rawQuery(sqlQuery, new String[] {accountName, accountBalance, accountTime, accountDate});
+							getActivity().startManagingCursor(c);
+
+							c.moveToFirst();
+							do{
+								entry_id = c.getInt(0);
+							}while(c.moveToNext());
+
+							//Insert values into accounts table
+							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("ToAcctID",entry_id);
+							transactionValues.put("TransName",transactionName);
+							transactionValues.put("TransValue",transactionValue);
+							transactionValues.put("TransType",transactionType);
+							transactionValues.put("TransCategory",transactionCategory);
+							transactionValues.put("TransCheckNum",transactionCheckNum);
+							transactionValues.put("TransMemo",transactionMemo);
+							transactionValues.put("TransTime",transactionTime);
+							transactionValues.put("TransDate",transactionDate);
+							transactionValues.put("TransCleared",transactionCleared);
+
+							myDB.insert(tblTrans, null, transactionValues);
+
+							//Close Cursor object
+							c.close();
+						} 
+
+						else {
+							Toast.makeText(getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
+						}
+
+					}
+					catch(Exception e){
+						Toast.makeText(getActivity(), "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					}
+
+					//Close Database if Opened
+					if (myDB != null){
+						myDB.close();
+					}
+
+					//Update Accounts ListView
+					((Accounts) getParentFragment()).populate();					
+
+				}//end onClick "OK"
+			})
+			.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "Cancel"
+					dialog.cancel();
+				}
+			});
+
+			return alertDialogBuilder.create();
 		}
 	}
 

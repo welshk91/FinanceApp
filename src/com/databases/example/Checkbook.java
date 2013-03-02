@@ -6,11 +6,14 @@ import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 public class Checkbook extends SherlockFragmentActivity {
 
@@ -47,6 +50,9 @@ public class Checkbook extends SherlockFragmentActivity {
 		 *  if you went to transactions in a single pane and then rotated
 		 *  Removing if forces the frags to be replaced every time so not very efficient
 		 */
+
+		int o = getResources().getConfiguration().orientation;
+
 		//if (savedInstanceState==null){
 		Accounts account_frag = new Accounts();
 		Transactions transaction_frag = new Transactions();
@@ -75,6 +81,31 @@ public class Checkbook extends SherlockFragmentActivity {
 		getSupportFragmentManager().executePendingTransactions();
 
 		//}
+		//
+		//		else{
+		//
+		//			if(checkbook_frame==null){
+		//				getSupportFragmentManager().beginTransaction()
+		//				.addToBackStack("account_frag_tag")
+		//				.addToBackStack("transaction_frag_tag")
+		//				.remove(getSupportFragmentManager().findFragmentByTag("account_frag_tag"))
+		//				.remove(getSupportFragmentManager().findFragmentByTag("transaction_frag_tag"))
+		//				.replace(R.id.account_frag_frame, getSupportFragmentManager().findFragmentByTag("account_frag_tag"),"account_frag_tag").replace(R.id.transaction_frag_frame, getSupportFragmentManager().findFragmentByTag("transaction_frag_tag"), "transaction_frag_tag")
+		//				.commit();
+		//			}
+		//			else{
+		//				getSupportFragmentManager().beginTransaction()
+		//				.addToBackStack("account_frag_tag")
+		//				.addToBackStack("transaction_frag_tag")
+		//				.remove(getSupportFragmentManager().findFragmentByTag("account_frag_tag"))
+		//				.remove(getSupportFragmentManager().findFragmentByTag("transaction_frag_tag"))
+		//				.replace(R.id.checkbook_frag_frame, getSupportFragmentManager().findFragmentByTag("account_frag_tag"),"account_frag_tag")
+		//				.commit();
+		//			}
+		//
+		//			getSupportFragmentManager().executePendingTransactions();
+		//
+		//		}
 
 
 	}//end onCreate

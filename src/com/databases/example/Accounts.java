@@ -243,28 +243,27 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			//Command used to search
-			String sqlCommand = " SELECT * FROM " + tblAccounts + 
+			String sqlCommand = " SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts + 
 					" WHERE AcctName " + 
 					" LIKE ?" + 
 					" UNION " + 
-					" SELECT * FROM " + tblAccounts +
+					" SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts +
 					" WHERE AcctBalance " + 
 					" LIKE ?" + 
 					" UNION " + 
-					" SELECT * FROM " + tblAccounts +
+					" SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts +
 					" WHERE AcctDate " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT * FROM " + tblAccounts +
+					" SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts +
 					" WHERE AcctTime " + 
 					" LIKE ?";
-
 
 			try{
 				c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
 			}
 			catch(Exception e){
-				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
+				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_LONG).show();
 				return;
 			}
 

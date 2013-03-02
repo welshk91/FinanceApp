@@ -1168,10 +1168,20 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					t=(TextView)v.findViewById(R.id.transaction_name);
 
 					if(useDefaults){
-						t.setTextColor(Color.parseColor("#000000"));
+						if(user.planId==0){
+							t.setTextColor(Color.parseColor("#000000"));
+						}
+						else{
+							t.setTextColor(Color.parseColor("#FF9933"));
+						}
 					}
 					else{
-						t.setTextColor(DefaultColor);
+						if(user.planId==0){
+							t.setTextColor(DefaultColor);
+						}
+						else{
+							t.setTextColor(DefaultColor);
+						}
 					}
 
 				}

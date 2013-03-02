@@ -70,6 +70,9 @@ public class Schedule extends SherlockFragmentActivity{
 	AlertDialog alertDialogAdd;
 	AlertDialog alertDialogEdit;
 
+	//Cursor (Need to be closed properly)
+	Cursor cursorPlans;
+	
 	//Adapter for category spinner
 	SimpleCursorAdapter accountSpinnerAdapter = null;
 	Spinner accountSpinner;
@@ -134,7 +137,7 @@ public class Schedule extends SherlockFragmentActivity{
 		// Cursor is used to navigate the query results
 		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
 
-		Cursor cursorPlans = myDB.query(tblPlanTrans, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
+		cursorPlans = myDB.query(tblPlanTrans, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
 				null, null, null, null);
 
 		startManagingCursor(cursorPlans);
@@ -164,7 +167,7 @@ public class Schedule extends SherlockFragmentActivity{
 		//Give the item adapter a list of all categories and subcategories
 		adapterPlans = new UserItemAdapter(this, cursorPlans);		
 		lvPlans.setAdapter(adapterPlans);
-
+		
 		//Log.e("Categories","out of category populate");
 
 	}//end of categoryPopulate	
@@ -955,9 +958,10 @@ public class Schedule extends SherlockFragmentActivity{
 			alertDialogAdd.dismiss();
 		}
 
-		//if(!cursorCategory.isClosed()){
-		//	cursorCategory.close();
-		//}
+		if(!cursorPlans.isClosed()){
+			cursorPlans.close();
+		}
+		
 		//if(!cursorSubCategory.isClosed()){
 		//	cursorSubCategory.close();
 		//}
@@ -968,7 +972,6 @@ public class Schedule extends SherlockFragmentActivity{
 
 		super.onPause();
 	}
-
 
 	public static class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
@@ -1128,28 +1131,28 @@ public class Schedule extends SherlockFragmentActivity{
 					TVname.setText(name);
 				}
 				if (to_id != null) {
-					TVaccount.setText(to_id);
+					TVaccount.setText("Account ID: " + to_id);
 				}
 				if (value != null) {
-					TVvalue.setText(value);
+					TVvalue.setText("Value: " + value);
 				}
 				if (type != null) {
-					TVtype.setText(type);
+					TVtype.setText("Type: " + type);
 				}
 				if (category != null) {
-					TVcategory.setText(category);
+					TVcategory.setText("Category: " + category);
 				}
 				if (memo != null) {
-					TVmemo.setText(memo);
+					TVmemo.setText("Memo: " + memo);
 				}
 				if (offset != null) {
-					TVoffset.setText(offset);
+					TVoffset.setText("Offset: " + offset);
 				}
 				if (rate != null) {
-					TVrate.setText(rate);
+					TVrate.setText("Rate: " + rate);
 				}
 				if (cleared != null) {
-					TVcleared.setText(cleared);
+					TVcleared.setText("Cleared: " + cleared);
 				}
 
 			}

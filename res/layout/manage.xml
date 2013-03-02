@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/TextView01"
         android:layout_margin="5dp"
-        android:onClick="backupDialog"
+        android:onClick="showBackupDialog"
         android:padding="15dp"
         android:text="Backup" >
     </Button>
@@ -29,7 +29,7 @@
         android:layout_below="@+id/TextView01"
         android:layout_margin="5dp"
         android:layout_toRightOf="@+id/ButtonBackup"
-        android:onClick="restoreDialog"
+        android:onClick="showRestoreDialog"
         android:padding="15dp"
         android:text="Restore" >
     </Button>

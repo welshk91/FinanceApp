@@ -46,9 +46,9 @@ Optimizations
 Notes to Self
 --------------------------------------
 * GIT Reminders for Myself:
-	git add -A
-	git commit -a -m 'Fixed some warnings'
-	git push -u origin master
+	- git add -A
+	- git commit -a -m 'Fixed some warnings'
+	- git push -u origin master
 * Need more spinners, less typing
 * Possibly 'hide' advance options in add dialogs, 'expand' for more options
 * Sorting Options

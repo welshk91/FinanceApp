@@ -22,6 +22,7 @@ Known Issues
 
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 
+
 Things To Do
 --------------------------------------
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, ...)

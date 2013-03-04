@@ -110,7 +110,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				//NOTE: LIMIT *position*,*how many after*
 				String sqlCommand = "SELECT * FROM " + tblAccounts + 
 						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
-						" LIMIT " + (selectionRowID-0) + ",1)AS tmp)";
+						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
 
 				myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -131,7 +131,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					entry_balance = c.getString(2);
 					entry_time = c.getString(3);
 					entry_date = c.getString(4);
-					//Toast.makeText(Accounts.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+					Log.e("Here!!!", "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date);
 				}while(c.moveToNext());
 
 				//Close Database if Open
@@ -236,19 +236,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			//Command used to search
-			String sqlCommand = " SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts + 
+			String sqlCommand = " SELECT AcctID as _id, * FROM " + tblAccounts + 
 					" WHERE AcctName " + 
 					" LIKE ?" + 
 					" UNION " + 
-					" SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts +
+					" SELECT AcctID as _id, * FROM " + tblAccounts +
 					" WHERE AcctBalance " + 
 					" LIKE ?" + 
 					" UNION " + 
-					" SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts +
+					" SELECT AcctID as _id, AcctName, * FROM " + tblAccounts +
 					" WHERE AcctDate " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT AcctID as _id, AcctName, AcctBalance, AcctTime, AcctDate FROM " + tblAccounts +
+					" SELECT AcctID as _id, AcctName, * FROM " + tblAccounts +
 					" WHERE AcctTime " + 
 					" LIKE ?";
 
@@ -723,7 +723,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			LayoutInflater inflater = LayoutInflater.from(context);
 			View v = inflater.inflate(R.layout.account_item, parent, false);
 
-			/***FindByViewID here just once instead of multiple times***/
 			TextView TVname = (TextView)v.findViewById(R.id.account_name);
 			TextView TVbalance = (TextView)v.findViewById(R.id.account_balance);
 			TextView TVtime = (TextView)v.findViewById(R.id.account_time);
@@ -860,6 +859,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//An Object Class used to hold the data of each account record
+	
 	public class AccountRecord {
 		protected String id;
 		protected String name;
@@ -1056,6 +1056,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles add fragment
+
 	public static class AddDialogFragment extends SherlockDialogFragment {
 
 		public static AddDialogFragment newInstance() {

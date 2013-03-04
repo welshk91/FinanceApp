@@ -23,6 +23,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -46,12 +47,16 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.DatePicker;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Accounts.AccountRecord;
+import com.databases.example.Accounts.AddDialogFragment;
+import com.databases.example.Accounts.EditDialogFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
@@ -69,20 +74,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Need to be global so I can dismiss and avoid leaks
 	AlertDialog alertDialogView;
-	AlertDialog alertDialogAdd;
+	//AlertDialog alertDialogAdd;
 	AlertDialog alertDialogEdit;
 
-	//Widgets for Adding Accounts
-	EditText tName;
-	EditText tValue;
-	Spinner tType;	
-	Spinner tCategory;
-	EditText tCheckNum;
-	AutoCompleteTextView tMemo;
+	static Spinner tCategory;
 	static Button tTime;
 	static Button tDate;
-	Button tCategoryAdd;
-	CheckBox tCleared;
 
 	//TextView of Statistics
 	TextView statsName;
@@ -103,7 +100,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	//Variables of the Account Used
-	int account_id;
+	static int account_id;
 
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=4;
@@ -112,32 +109,30 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//ListView and Adapter
 	ListView lv = null;
-	ArrayAdapter<TransactionRecord> adapter = null;
+	UserItemAdapter adapter = null;
 
 	//Variables needed for traversing database
-	Cursor c = null;
-	final String tblTrans = "tblTrans";
-	final String tblAccounts = "tblAccounts";
-	final String tblCategory = "tblCategory";
-	final String tblSubCategory = "tblSubCategory";
-	final String dbFinance = "dbFinance";
-	SQLiteDatabase myDB;
-	ArrayList<TransactionRecord> results = new ArrayList<TransactionRecord>();
-	ArrayList<String> dropdownResults = new ArrayList<String>();
+	final static String tblTrans = "tblTrans";
+	final static String tblAccounts = "tblAccounts";
+	final static String tblCategory = "tblCategory";
+	final static String tblSubCategory = "tblSubCategory";
+	final static String dbFinance = "dbFinance";
+	static SQLiteDatabase myDB;
+	static ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	//Variables for the transaction Table
-	String transactionName = null;
-	String transactionValue = null;
-	String transactionType = null;
-	String transactionCategory = null;
-	String transactionCheckNum = null;
-	String transactionMemo = null;
+	static String transactionName = null;
+	static String transactionValue = null;
+	static String transactionType = null;
+	static String transactionCategory = null;
+	static String transactionCheckNum = null;
+	static String transactionMemo = null;
 	static String transactionTime = null;
 	static String transactionDate = null;
-	String transactionCleared = null;
+	static String transactionCleared = null;
 
 	//Adapter for category spinner
-	SimpleCursorAdapter categorySpinnerAdapter = null;
+	static SimpleCursorAdapter categorySpinnerAdapter = null;
 	Cursor categoryCursor;
 
 	/** Called when the activity is first created. */
@@ -165,7 +160,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		//myFragmentView = inflater.inflate(R.layout.transactions, container, false);		
 		myFragmentView = inflater.inflate(R.layout.transactions, null, false);				
 
@@ -194,7 +189,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapter.getItemId(position);
-				String item = adapter.getItem(position).name;
+				String item = adapter.getTransaction(position).name;
 
 				Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
 
@@ -219,8 +214,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Populate view with all the transactions of selected account
 	protected void populate(){
-		results = new ArrayList<TransactionRecord>();
 		dropdownResults = new ArrayList<String>();
+		
+		Cursor cursorTransactions = null;
 
 		//TextView instructing user if database is empty
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
@@ -241,7 +237,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
 		if(showAllTransactions){
-			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
+			cursorTransactions = myDB.query(tblTrans, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
 					null, null, null, null);
 		}
 		else if(searchFragment){
@@ -249,36 +245,36 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			//SQL for searching
-			String sqlCommand = " SELECT * FROM " + tblTrans + 
+			String sqlCommand = " SELECT TransID as _id, * FROM " + tblTrans + 
 					" WHERE TransName " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT * FROM " + tblTrans +
+					" SELECT TransID as _id, * FROM " + tblTrans +
 					" WHERE TransValue " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT * FROM " + tblTrans +
+					" SELECT TransID as _id, * FROM " + tblTrans +
 					" WHERE TransCategory " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT * FROM " + tblTrans +
+					" SELECT TransID as _id, * FROM " + tblTrans +
 					" WHERE TransDate " + 
 					" LIKE ?" +
 					" UNION " +				
-					" SELECT * FROM " + tblTrans +
+					" SELECT TransID as _id, * FROM " + tblTrans +
 					" WHERE TransTime " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT * FROM " + tblTrans +
+					" SELECT TransID as _id, * FROM " + tblTrans +
 					" WHERE TransMemo " + 
 					" LIKE ?" +
 					" UNION " +
-					" SELECT * FROM " + tblTrans +
+					" SELECT TransID as _id, * FROM " + tblTrans +
 					" WHERE TransCheckNum " + 
 					" LIKE ?";
 
 			try{
-				c = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
+				cursorTransactions = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
 			}
 			catch(Exception e){
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
@@ -287,45 +283,42 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		}
 		else{
-			c = myDB.query(tblTrans, new String[] { "TransID", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
+			cursorTransactions = myDB.query(tblTrans, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
 					null, null, null, null);
 		}
 
-		//"ToAcctID = " + account_id
+		getActivity().startManagingCursor(cursorTransactions);
+		int idColumn = cursorTransactions.getColumnIndex("TransID");
+		int acctIDColumn = cursorTransactions.getColumnIndex("ToAcctID");
+		int planIDColumn = cursorTransactions.getColumnIndex("ToPlanID");
+		int nameColumn = cursorTransactions.getColumnIndex("TransName");
+		int valueColumn = cursorTransactions.getColumnIndex("TransValue");
+		int typeColumn = cursorTransactions.getColumnIndex("TransType");
+		int categoryColumn = cursorTransactions.getColumnIndex("TransCategory");
+		int checknumColumn = cursorTransactions.getColumnIndex("TransCheckNum");
+		int memoColumn = cursorTransactions.getColumnIndex("TransMemo");
+		int timeColumn = cursorTransactions.getColumnIndex("TransTime");
+		int dateColumn = cursorTransactions.getColumnIndex("TransDate");
+		int clearedColumn = cursorTransactions.getColumnIndex("TransCleared");
 
-		getActivity().startManagingCursor(c);
-		int idColumn = c.getColumnIndex("TransID");
-		int acctIDColumn = c.getColumnIndex("ToAcctID");
-		int planIDColumn = c.getColumnIndex("ToPlanID");
-		int nameColumn = c.getColumnIndex("TransName");
-		int valueColumn = c.getColumnIndex("TransValue");
-		int typeColumn = c.getColumnIndex("TransType");
-		int categoryColumn = c.getColumnIndex("TransCategory");
-		int checknumColumn = c.getColumnIndex("TransCheckNum");
-		int memoColumn = c.getColumnIndex("TransMemo");
-		int timeColumn = c.getColumnIndex("TransTime");
-		int dateColumn = c.getColumnIndex("TransDate");
-		int clearedColumn = c.getColumnIndex("TransCleared");
-
-		c.moveToFirst();
-		if (c != null) {
-			if (c.isFirst()) {
+		cursorTransactions.moveToFirst();
+		if (cursorTransactions != null) {
+			if (cursorTransactions.isFirst()) {
 				do {
-					int id = c.getInt(idColumn);
-					int acctId = c.getInt(acctIDColumn);
-					int planId = c.getInt(planIDColumn);
-					String name = c.getString(nameColumn);
-					String value = c.getString(valueColumn);
-					String type = c.getString(typeColumn);
-					String category = c.getString(categoryColumn);
-					String checknum = c.getString(checknumColumn);
-					String memo = c.getString(memoColumn);
-					String time = c.getString(timeColumn);
-					String date = c.getString(dateColumn);
-					String cleared = c.getString(clearedColumn);
+					int id = cursorTransactions.getInt(0);
+					//int id = cursorTransactions.getInt(idColumn);
+					int acctId = cursorTransactions.getInt(acctIDColumn);
+					int planId = cursorTransactions.getInt(planIDColumn);
+					String name = cursorTransactions.getString(nameColumn);
+					String value = cursorTransactions.getString(valueColumn);
+					String type = cursorTransactions.getString(typeColumn);
+					String category = cursorTransactions.getString(categoryColumn);
+					String checknum = cursorTransactions.getString(checknumColumn);
+					String memo = cursorTransactions.getString(memoColumn);
+					String time = cursorTransactions.getString(timeColumn);
+					String date = cursorTransactions.getString(dateColumn);
+					String cleared = cursorTransactions.getString(clearedColumn);
 
-					TransactionRecord entry = new TransactionRecord(id, acctId, planId, name, value,type,category,checknum,memo,time,date,cleared);
-					results.add(entry);
 					dropdownResults.add(memo);
 
 					//Add account balance to total balance
@@ -345,7 +338,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						Toast.makeText(Transactions.this.getActivity(), "Could not calculate total balance", Toast.LENGTH_SHORT).show();
 					}
 
-				} while (c.moveToNext());
+				} while (cursorTransactions.moveToNext());
 			}
 
 			else {
@@ -366,7 +359,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		//Set up an adapter for listView
-		adapter = new UserItemAdapter(this.getActivity(), android.R.layout.simple_list_item_1, results);
+		adapter = new UserItemAdapter(this.getActivity(), cursorTransactions);
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
@@ -380,7 +373,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapter.getItem(itemInfo.position).name;
+		String name = adapter.getTransaction(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -416,8 +409,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void transactionOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 
-		String sqlCommand = "SELECT * FROM " + tblTrans + 
-				" WHERE TransID = " + adapter.getItem(itemInfo.position).id;
+		String sqlCommand = "SELECT TransID as _id, * FROM " + tblTrans + 
+				" WHERE TransID = " + adapter.getTransaction(itemInfo.position).id;
 
 		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -505,195 +498,28 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//For Adding a Transaction
 	public void transactionAdd(){
-		if(account_id==0){
-			Toast.makeText(Transactions.this.getActivity(), "Please Select an Account First", Toast.LENGTH_LONG).show();
-			return;
-		}
-
-		// get transaction_add.xml view
-		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
-		promptsView = li.inflate(R.layout.transaction_add, null);
-
-		tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-		tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-		tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-		tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-		tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
-		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-
-		//Adapter for memo's autocomplete
-		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
-		tMemo.setAdapter(dropdownAdapter);
-
-		//Add dictionary back to autocomplete
-		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
-		tMemo.setKeyListener(input);
-
-		final Calendar c = Calendar.getInstance();
-
-		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-		tDate.setText(dateFormat.format(c.getTime()));
-
-		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-		tTime.setText(timeFormat.format(c.getTime()));
-
-		//Populate Category Drop-down List
-		categoryPopulate();
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this.getActivity());
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(promptsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("Add A Transaction");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(false)
-		.setPositiveButton("Add",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				//Needed to get category's name from DB-populated spinner
-				int categoryPosition = tCategory.getSelectedItemPosition();
-				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-
-				transactionName = tName.getText().toString().trim();
-				transactionValue = tValue.getText().toString().trim();
-				transactionType = tType.getSelectedItem().toString().trim();
-
-				try{
-					transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
-				}
-				catch(Exception e){
-					//Usually caused if no category exists
-					//Log.d("Here","exception e:" + e);
-					dialog.cancel();
-					Toast.makeText(Transactions.this.getActivity(), "Needs A Category \n\nUse The Side Menu To Create Categories", Toast.LENGTH_LONG).show();
-
-					return;
-				}
-
-				transactionCheckNum = tCheckNum.getText().toString().trim();
-				transactionMemo = tMemo.getText().toString().trim();
-				transactionCleared = tCleared.isChecked()+"";
-
-				//Set Time
-				transactionTime = tTime.getText().toString().trim();
-				transactionDate = tDate.getText().toString().trim();
-
-				//Check to see if value is a number
-				boolean validValue=false;
-				try{
-					Float.parseFloat(transactionValue);
-					validValue=true;
-				}
-				catch(Exception e){
-					validValue=false;
-				}
-
-				//Open Database
-				myDB = Transactions.this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-				try{
-					if (transactionName.length()>0) {
-
-						if(!validValue){
-							transactionValue = "0";
-						}
-
-						//Insert values into accounts table
-						ContentValues transactionValues=new ContentValues();
-						transactionValues.put("ToAcctID",account_id);
-						transactionValues.put("ToPlanID",0);
-						transactionValues.put("TransName",transactionName);
-						transactionValues.put("TransValue",transactionValue);
-						transactionValues.put("TransType",transactionType);
-						transactionValues.put("TransCategory",transactionCategory);
-						transactionValues.put("TransCheckNum",transactionCheckNum);
-						transactionValues.put("TransMemo",transactionMemo);
-						transactionValues.put("TransTime",transactionTime);
-						transactionValues.put("TransDate",transactionDate);
-						transactionValues.put("TransCleared",transactionCleared);
-
-						myDB.insert(tblTrans, null, transactionValues);
-
-					} 
-
-					else {
-						Toast.makeText(Transactions.this.getActivity(), "Needs a Name", Toast.LENGTH_LONG).show();
-					}
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-				}
-
-				//Close cursor
-				cursor.close();
-
-				//Close Database if Opened
-				if (myDB != null){
-					myDB.close();
-				}
-
-				Transactions.this.populate();
-
-				//Reload account fragment if shown
-				View account_frame = getActivity().findViewById(R.id.account_frag_frame);
-
-				if(account_frame!=null){
-					Accounts account_frag = new Accounts();
-
-					//Bundle for Account fragment
-					Bundle argsAccount = new Bundle();
-					argsAccount.putBoolean("boolSearch", false);
-
-					account_frag.setArguments(argsAccount);
-
-					getFragmentManager().beginTransaction()
-					.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
-
-					getFragmentManager().executePendingTransactions();
-
-				}
-
-			}//end onClick "OK"
-		})
-		.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "Cancel"
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogAdd = alertDialogBuilder.create();
-
-		// show it
-		alertDialogAdd.show();
+		DialogFragment newFragment = AddDialogFragment.newInstance();
+		newFragment.show(getChildFragmentManager(), "dialogAdd");
 
 	}//end of transactionAdd
 
 	//For Editing an Transaction
 	public void transactionEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final int tID = adapter.getItem(itemInfo.position).id;
-		final int aID = adapter.getItem(itemInfo.position).acctId;
-		final int pID = adapter.getItem(itemInfo.position).planId;
-		final String name = adapter.getItem(itemInfo.position).name;
-		final String value = adapter.getItem(itemInfo.position).value;
-		final String type = adapter.getItem(itemInfo.position).type;
-		final String category = adapter.getItem(itemInfo.position).category;
-		final String checknum = adapter.getItem(itemInfo.position).checknum;
-		final String memo = adapter.getItem(itemInfo.position).memo;
-		final String date = adapter.getItem(itemInfo.position).date;
-		final String time = adapter.getItem(itemInfo.position).time;
-		final String cleared = adapter.getItem(itemInfo.position).cleared;
+		TransactionRecord record = adapter.getTransaction(itemInfo.position);
+		
+		final int tID = record.id;
+		final int aID = record.acctId;
+		final int pID = record.planId;
+		final String name = record.name;
+		final String value = record.value;
+		final String type = record.type;
+		final String category = record.category;
+		final String checknum = record.checknum;
+		final String memo = record.memo;
+		final String date = record.date;
+		final String time = record.time;
+		final String cleared = record.cleared;
 
 		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
@@ -709,15 +535,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		alertDialogBuilder.setTitle("Edit A Transaction");
 
 		//Set fields to old values
-		tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-		tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-		tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+		final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+		final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+		final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
 		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-		tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-		tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
-		tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-		tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-		tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+		final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
+		final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+		final Button tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+		final Button tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+		final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
 
 		//Set the adapter for memo's autocomplete
 		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
@@ -863,7 +689,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Deleting an Transaction
 	public void transactionDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getItem(itemInfo.position).name;
+		Object itemName = adapter.getTransaction(itemInfo.position).name;
 
 		//NOTE: LIMIT *position*,*how many after*
 		//String sqlCommand = "DELETE FROM " + tblTrans + 
@@ -871,7 +697,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//		" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
 		String sqlCommand = "DELETE FROM " + tblTrans + 
-				" WHERE TransID = " + adapter.getItem(itemInfo.position).id;
+				" WHERE TransID = " + adapter.getTransaction(itemInfo.position).id;
 
 		//Open Database
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
@@ -975,7 +801,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
-
 		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -1006,15 +831,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		if(alertDialogView!=null){
-			alertDialogView.dismiss();
-		}
-		if(alertDialogEdit!=null){
-			alertDialogEdit.dismiss();
-		}
-		if(alertDialogAdd!=null){
-			alertDialogAdd.dismiss();
-		}
+		//		if(alertDialogView!=null){
+		//			alertDialogView.dismiss();
+		//		}
+		//		if(alertDialogEdit!=null){
+		//			alertDialogEdit.dismiss();
+		//		}
+		//		if(alertDialogAdd!=null){
+		//			alertDialogAdd.dismiss();
+		//		}
 		if(categoryCursor!=null){
 			categoryCursor.close();
 		}
@@ -1061,7 +886,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			transactionTime = hourOfDay + ":" + minute + " " + ampm;
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 			tTime.setText(transactionTime);
-
 		}
 	}
 
@@ -1100,274 +924,96 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 	}
 
-	public class UserItemAdapter extends ArrayAdapter<TransactionRecord> {
-		private ArrayList<TransactionRecord> transaction;
+	public class UserItemAdapter extends CursorAdapter {
+		private Cursor transactions;
+		private Context context;
 
-		public UserItemAdapter(Context context, int textViewResourceId, ArrayList<TransactionRecord> users) {
-			super(context, textViewResourceId, users);
-			this.transaction = users;
+		public UserItemAdapter(Context context, Cursor transactions) {
+			super(context, transactions);
+			this.transactions = transactions;
 		}
 
-		//Used to Define the View of each transaction
+		public TransactionRecord getTransaction(long position){
+			Cursor group = transactions;
+
+			group.moveToPosition((int) position);
+			int idColumn = group.getColumnIndex("TransID");
+			int acctIDColumn = group.getColumnIndex("ToAcctID");
+			int planIDColumn = group.getColumnIndex("ToPlanID");
+			int nameColumn = group.getColumnIndex("TransName");
+			int valueColumn = group.getColumnIndex("TransValue");
+			int typeColumn = group.getColumnIndex("TransType");
+			int categoryColumn = group.getColumnIndex("TransCategory");
+			int checknumColumn = group.getColumnIndex("TransCheckNum");
+			int memoColumn = group.getColumnIndex("TransMemo");
+			int timeColumn = group.getColumnIndex("TransTime");
+			int dateColumn = group.getColumnIndex("TransDate");
+			int clearedColumn = group.getColumnIndex("TransCleared");
+
+			//int id = group.getInt(idColumn);
+			int id = group.getInt(0);
+			int acctId = group.getInt(acctIDColumn);
+			int planId = group.getInt(planIDColumn);
+			String name = group.getString(nameColumn);
+			String value = group.getString(valueColumn);
+			String type = group.getString(typeColumn);
+			String category = group.getString(categoryColumn);
+			String checknum = group.getString(checknumColumn);
+			String memo = group.getString(memoColumn);
+			String time = group.getString(timeColumn);
+			String date = group.getString(dateColumn);
+			String cleared = group.getString(clearedColumn);
+
+			TransactionRecord record = new TransactionRecord(id, acctId, planId, name, value,type,category,checknum,memo,time,date,cleared);
+			return record;
+		}
+
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			TransactionRecord user = transaction.get(position);
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this.getActivity());
+		public void bindView(View view, Context context, Cursor cursor) {
+			View v = view;
+			Cursor user = transactions;
+
+			//For Custom View Properties
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
-
-			if (v == null) {
-				LayoutInflater vi = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.transaction_item, null);
-
-				//Change Background Colors
-				try{
-					LinearLayout l;
-					l=(LinearLayout)v.findViewById(R.id.transaction_layout);
-					int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#E8E8E8"));
-					int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
-
-					GradientDrawable defaultGradient = new GradientDrawable(
-							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {startColor,endColor});
-
-					if(useDefaults){
-						l.setBackgroundResource(R.drawable.transaction_list_style);
-					}
-					else{
-
-						l.setBackgroundDrawable(defaultGradient);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "18");
-					TextView t;
-
-					t=(TextView)v.findViewById(R.id.transaction_name);
-
-					if(useDefaults){
-						t.setTextSize(18);
-					}
-					else{
-						t.setTextSize(Integer.parseInt(DefaultSize));
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#000000"));
-					TextView t;
-					t=(TextView)v.findViewById(R.id.transaction_name);
-
-					if(useDefaults){
-						if(user.planId==0){
-							t.setTextColor(Color.parseColor("#000000"));
-						}
-						else{
-							t.setTextColor(Color.parseColor("#FF9933"));
-						}
-					}
-					else{
-						if(user.planId==0){
-							t.setTextColor(DefaultColor);
-						}
-						else{
-							t.setTextColor(DefaultColor);
-						}
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "10");
-					TextView tmp;
-
-					if(useDefaults){
-						tmp=(TextView)v.findViewById(R.id.transaction_value);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_date);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_time);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_category);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_memo);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
-						tmp.setTextSize(10);
-						tmp=(TextView)v.findViewById(R.id.transaction_type);
-						tmp.setTextSize(10);
-					}
-					else{
-						tmp=(TextView)v.findViewById(R.id.transaction_value);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_date);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_time);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_category);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_memo);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-						tmp=(TextView)v.findViewById(R.id.transaction_type);
-						tmp.setTextSize(Integer.parseInt(DefaultSize));
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#0099CC"));
-					TextView tmp;
-
-					if(useDefaults){
-						tmp=(TextView)v.findViewById(R.id.transaction_value);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_date);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_time);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_category);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_memo);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-						tmp=(TextView)v.findViewById(R.id.transaction_type);
-						tmp.setTextColor(Color.parseColor("#0099CC"));
-					}
-					else{
-						tmp=(TextView)v.findViewById(R.id.transaction_value);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_date);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_time);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_category);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_memo);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_checknum);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_cleared);
-						tmp.setTextColor(DefaultColor);
-						tmp=(TextView)v.findViewById(R.id.transaction_type);
-						tmp.setTextColor(DefaultColor);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
-				}
-
-				//For User-Defined Field Visibility
-				TextView name = (TextView) v.findViewById(R.id.transaction_name);
-				TextView value = (TextView) v.findViewById(R.id.transaction_value);
-				TextView type = (TextView) v.findViewById(R.id.transaction_type);
-				TextView category = (TextView) v.findViewById(R.id.transaction_category);
-				TextView checknum = (TextView) v.findViewById(R.id.transaction_checknum);
-				TextView memo = (TextView) v.findViewById(R.id.transaction_memo);
-				TextView date = (TextView) v.findViewById(R.id.transaction_date);
-				TextView time = (TextView) v.findViewById(R.id.transaction_time);
-				TextView cleared = (TextView) v.findViewById(R.id.transaction_cleared);
-
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_nameField", true)){
-					name.setVisibility(View.VISIBLE);
-				}
-				else{
-					name.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
-					value.setVisibility(View.VISIBLE);
-				}
-				else{
-					value.setVisibility(View.GONE);
-				}
-
-				if(prefs.getBoolean("checkbox_transaction_typeField", false)){
-					type.setVisibility(View.VISIBLE);
-				}
-				else{
-					type.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_categoryField", true)){
-					category.setVisibility(View.VISIBLE);
-				}
-				else{
-					category.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_checknumField", true)){
-					checknum.setVisibility(View.VISIBLE);
-				}
-				else{
-					checknum.setVisibility(View.GONE);
-				}
-
-				if(prefs.getBoolean("checkbox_transaction_memoField", false)){
-					memo.setVisibility(View.VISIBLE);
-				}
-				else{
-					memo.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_dateField", true)){
-					date.setVisibility(View.VISIBLE);
-				}
-				else{
-					date.setVisibility(View.GONE);
-				}
-
-				if(useDefaults||prefs.getBoolean("checkbox_transaction_timeField", true)){
-					time.setVisibility(View.VISIBLE);
-				}
-				else{
-					time.setVisibility(View.GONE);
-				}
-
-				if(prefs.getBoolean("checkbox_transaction_clearedField", false)){
-					cleared.setVisibility(View.VISIBLE);
-				}
-				else{
-					cleared.setVisibility(View.GONE);
-				}
-
-			}
-
 			if (user != null) {
-				TextView name = (TextView) v.findViewById(R.id.transaction_name);
-				TextView value = (TextView) v.findViewById(R.id.transaction_value);
-				TextView type = (TextView) v.findViewById(R.id.transaction_type);
-				TextView category = (TextView) v.findViewById(R.id.transaction_category);
-				TextView checknum = (TextView) v.findViewById(R.id.transaction_checknum);
-				TextView memo = (TextView) v.findViewById(R.id.transaction_memo);
-				TextView date = (TextView) v.findViewById(R.id.transaction_date);
-				TextView time = (TextView) v.findViewById(R.id.transaction_time);
-				TextView cleared = (TextView) v.findViewById(R.id.transaction_cleared);
+				TextView TVname = (TextView) v.findViewById(R.id.transaction_name);
+				TextView TVvalue = (TextView) v.findViewById(R.id.transaction_value);
+				TextView TVtype = (TextView) v.findViewById(R.id.transaction_type);
+				TextView TVcategory = (TextView) v.findViewById(R.id.transaction_category);
+				TextView TVchecknum = (TextView) v.findViewById(R.id.transaction_checknum);
+				TextView TVmemo = (TextView) v.findViewById(R.id.transaction_memo);
+				TextView TVdate = (TextView) v.findViewById(R.id.transaction_date);
+				TextView TVtime = (TextView) v.findViewById(R.id.transaction_time);
+				TextView TVcleared = (TextView) v.findViewById(R.id.transaction_cleared);
+
+				int idColumn = user.getColumnIndex("TransID");
+				int acctIDColumn = user.getColumnIndex("ToAcctID");
+				int planIDColumn = user.getColumnIndex("ToPlanID");
+				int nameColumn = user.getColumnIndex("TransName");
+				int valueColumn = user.getColumnIndex("TransValue");
+				int typeColumn = user.getColumnIndex("TransType");
+				int categoryColumn = user.getColumnIndex("TransCategory");
+				int checknumColumn = user.getColumnIndex("TransCheckNum");
+				int memoColumn = user.getColumnIndex("TransMemo");
+				int timeColumn = user.getColumnIndex("TransTime");
+				int dateColumn = user.getColumnIndex("TransDate");
+				int clearedColumn = user.getColumnIndex("TransCleared");
+
+				int id = user.getInt(0);
+				//int id = user.getInt(idColumn);
+				int acctId = user.getInt(acctIDColumn);
+				int planId = user.getInt(planIDColumn);
+				String name = user.getString(nameColumn);
+				String value = user.getString(valueColumn);
+				String type = user.getString(typeColumn);
+				String category = user.getString(categoryColumn);
+				String checknum = user.getString(checknumColumn);
+				String memo = user.getString(memoColumn);
+				String time = user.getString(timeColumn);
+				String date = user.getString(dateColumn);
+				String cleared = user.getString(clearedColumn);
 
 				//Change gradient
 				try{
@@ -1382,7 +1028,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							new int[] {0xFFFF0000,0xFF000000});
 
 					if(useDefaults){
-						if(user.type.contains("Deposit")){
+						if(type.contains("Deposit")){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -1391,7 +1037,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					}
 					else{
-						if(user.type.contains("Deposit")){
+						if(type.contains("Deposit")){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -1404,43 +1050,238 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
-				if (user.name != null) {
-					name.setText(user.name);
+				if (name != null) {
+					TVname.setText(name);
 				}
 
-				if(user.value != null) {
-					value.setText("Value: " + user.value );
+				if(value != null) {
+					TVvalue.setText("Value: " + value );
 				}
 
-				if(user.type != null) {
-					type.setText("Type: " + user.type );
+				if(type != null) {
+					TVtype.setText("Type: " + type );
 				}
 
-				if(user.category != null) {
-					category.setText("Category: " + user.category );
+				if(category != null) {
+					TVcategory.setText("Category: " + category );
 				}
 
-				if(user.checknum != null) {
-					checknum.setText("Check Num: " + user.checknum );
+				if(checknum != null) {
+					TVchecknum.setText("Check Num: " + checknum );
 				}
 
-				if(user.memo != null) {
-					memo.setText("Memo: " + user.memo );
+				if(memo != null) {
+					TVmemo.setText("Memo: " + memo );
 				}
 
-				if(user.date != null) {
-					date.setText("Date: " + user.date );
+				if(date != null) {
+					TVdate.setText("Date: " + date );
 				}
 
-				if(user.time != null) {
-					time.setText("Time: " + user.time );
+				if(time != null) {
+					TVtime.setText("Time: " + time );
 				}
 
-				if(user.cleared != null) {
-					cleared.setText("Cleared: " + user.cleared );
+				if(cleared != null) {
+					TVcleared.setText("Cleared: " + cleared );
+				}
+
+			}			
+
+		}
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View v = vi.inflate(R.layout.transaction_item, null);
+
+			LinearLayout l=(LinearLayout)v.findViewById(R.id.transaction_layout);
+			TextView TVname = (TextView)v.findViewById(R.id.transaction_name);
+			TextView TVvalue = (TextView)v.findViewById(R.id.transaction_value);
+			TextView TVtype = (TextView)v.findViewById(R.id.transaction_type);
+			TextView TVcategory = (TextView)v.findViewById(R.id.transaction_category);
+			TextView TVchecknum = (TextView)v.findViewById(R.id.transaction_checknum);
+			TextView TVmemo = (TextView)v.findViewById(R.id.transaction_memo);
+			TextView TVtime = (TextView)v.findViewById(R.id.transaction_time);
+			TextView TVdate = (TextView)v.findViewById(R.id.transaction_date);
+			TextView TVcleared = (TextView)v.findViewById(R.id.transaction_cleared);
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this.getActivity());
+			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+
+			//Change Background Colors
+			try{
+				int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#E8E8E8"));
+				int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
+
+				GradientDrawable defaultGradient = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {startColor,endColor});
+
+				if(useDefaults){
+					l.setBackgroundResource(R.drawable.transaction_list_style);
+				}
+				else{
+
+					l.setBackgroundDrawable(defaultGradient);
 				}
 
 			}
+			catch(Exception e){
+				Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "18");
+
+				if(useDefaults){
+					TVname.setTextSize(18);
+				}
+				else{
+					TVname.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#000000"));
+
+				if(useDefaults){
+					TVname.setTextColor(Color.parseColor("#000000"));
+				}
+				else{
+					TVname.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "10");
+
+				if(useDefaults){
+					TVvalue.setTextSize(10);
+					TVdate.setTextSize(10);
+					TVtime.setTextSize(10);
+					TVcategory.setTextSize(10);
+					TVmemo.setTextSize(10);
+					TVchecknum.setTextSize(10);
+					TVcleared.setTextSize(10);
+					TVtype.setTextSize(10);
+				}
+				else{
+					TVvalue.setTextSize(Integer.parseInt(DefaultSize));
+					TVtype.setTextSize(Integer.parseInt(DefaultSize));
+					TVcategory.setTextSize(Integer.parseInt(DefaultSize));
+					TVchecknum.setTextSize(Integer.parseInt(DefaultSize));
+					TVmemo.setTextSize(Integer.parseInt(DefaultSize));
+					TVtime.setTextSize(Integer.parseInt(DefaultSize));
+					TVdate.setTextSize(Integer.parseInt(DefaultSize));
+					TVcleared.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#0099CC"));
+
+				if(useDefaults){
+					TVvalue.setTextColor(Color.parseColor("#0099CC"));
+					TVtype.setTextColor(Color.parseColor("#0099CC"));
+					TVcategory.setTextColor(Color.parseColor("#0099CC"));
+					TVchecknum.setTextColor(Color.parseColor("#0099CC"));
+					TVmemo.setTextColor(Color.parseColor("#0099CC"));
+					TVtime.setTextColor(Color.parseColor("#0099CC"));
+					TVdate.setTextColor(Color.parseColor("#0099CC"));
+					TVcleared.setTextColor(Color.parseColor("#0099CC"));
+				}
+				else{
+					TVvalue.setTextColor(DefaultColor);
+					TVtype.setTextColor(DefaultColor);
+					TVcategory.setTextColor(DefaultColor);
+					TVchecknum.setTextColor(DefaultColor);
+					TVmemo.setTextColor(DefaultColor);
+					TVtime.setTextColor(DefaultColor);
+					TVdate.setTextColor(DefaultColor);
+					TVcleared.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_transaction_nameField", true)){
+				TVname.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVname.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
+				TVvalue.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVvalue.setVisibility(View.GONE);
+			}
+
+			if(prefs.getBoolean("checkbox_transaction_typeField", false)){
+				TVtype.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVtype.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_transaction_categoryField", true)){
+				TVcategory.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVcategory.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_transaction_checknumField", true)){
+				TVchecknum.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVchecknum.setVisibility(View.GONE);
+			}
+
+			if(prefs.getBoolean("checkbox_transaction_memoField", false)){
+				TVmemo.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVmemo.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_transaction_dateField", true)){
+				TVdate.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVdate.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_transaction_timeField", true)){
+				TVtime.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVtime.setVisibility(View.GONE);
+			}
+
+			if(prefs.getBoolean("checkbox_transaction_clearedField", false)){
+				TVcleared.setVisibility(View.VISIBLE);
+			}
+			else{
+				TVcleared.setVisibility(View.GONE);
+			}
+
 			return v;
 		}
 	}
@@ -1475,5 +1316,292 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			this.cleared = cleared;
 		}
 	}
+
+	public static class EditDialogFragment extends SherlockDialogFragment {
+
+		public static EditDialogFragment newInstance(AccountRecord record) {
+			EditDialogFragment frag = new EditDialogFragment();
+			Bundle args = new Bundle();
+			args.putString("id", record.id);
+			args.putString("name", record.name);
+			args.putString("balance", record.balance);
+			args.putString("date", record.date);
+			args.putString("time", record.time);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final String ID = getArguments().getString("id");
+			final String name = getArguments().getString("name");
+			final String balance = getArguments().getString("balance");
+
+			LayoutInflater li = LayoutInflater.from(getActivity());
+			final View promptsView = li.inflate(R.layout.account_add, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(promptsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("Edit An Account");
+
+			//Add the previous info into the fields, remove unnecessary fields
+			final EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
+			final EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
+			TextView aBalanceText = (TextView)promptsView.findViewById(R.id.BalanceTexts);
+			aName.setText(name);
+			aBalance.setVisibility(View.GONE);
+			aBalanceText.setVisibility(View.GONE);
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Save",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "OK"
+					String accountName = null;
+					String accountTime = null;
+					String accountBalance = null;
+					String accountDate = null;
+
+					accountName = aName.getText().toString().trim();
+					accountBalance = balance.trim();
+					final Calendar c = Calendar.getInstance();
+					accountTime = timeFormat.format(c.getTime());
+					accountDate = dateFormat.format(c.getTime());
+
+					try{
+						String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
+
+						//Open Database
+						myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+						//Delete Old Record
+						myDB.execSQL(deleteCommand);
+
+						//Make new record with same ID
+						ContentValues accountValues=new ContentValues();
+						accountValues.put("AcctID",ID);
+						accountValues.put("AcctName",accountName);
+						accountValues.put("AcctBalance",accountBalance);
+						accountValues.put("AcctTime",accountTime);
+						accountValues.put("AcctDate",accountDate);
+
+						myDB.insert(tblAccounts, null, accountValues);
+
+						//Close Database if Opened
+						if (myDB != null){
+							myDB.close();
+						}
+
+					}
+					catch(Exception e){
+						Toast.makeText(getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					}
+
+					//Update Accounts ListView
+					((Accounts) getParentFragment()).populate();
+
+				}//end onClick "OK"
+			})
+			.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "Cancel"
+					dialog.cancel();
+				}
+			});
+
+			return alertDialogBuilder.create();
+
+		}
+	}
+
+	public static class AddDialogFragment extends SherlockDialogFragment {
+
+		public static AddDialogFragment newInstance() {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			if(account_id==0){
+				Toast.makeText(getActivity(), "Please Select an Account First", Toast.LENGTH_LONG).show();
+				return null;
+			}
+
+			// get transaction_add.xml view
+			LayoutInflater li = LayoutInflater.from(getActivity());
+			promptsView = li.inflate(R.layout.transaction_add, null);
+
+			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+			final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+			final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+			tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+			final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
+			final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+			final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+
+			//Adapter for memo's autocomplete
+			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
+			tMemo.setAdapter(dropdownAdapter);
+
+			//Add dictionary back to autocomplete
+			TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+			tMemo.setKeyListener(input);
+
+			final Calendar c = Calendar.getInstance();
+
+			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+			tDate.setText(dateFormat.format(c.getTime()));
+
+			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+			tTime.setText(timeFormat.format(c.getTime()));
+
+			//Populate Category Drop-down List
+			//categoryPopulate();
+			((Transactions) getParentFragment()).categoryPopulate();					
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(promptsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("Add A Transaction");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Add",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					//Needed to get category's name from DB-populated spinner
+					int categoryPosition = tCategory.getSelectedItemPosition();
+					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
+
+					transactionName = tName.getText().toString().trim();
+					transactionValue = tValue.getText().toString().trim();
+					transactionType = tType.getSelectedItem().toString().trim();
+
+					try{
+						transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
+					}
+					catch(Exception e){
+						//Usually caused if no category exists
+						//Log.d("Here","exception e:" + e);
+						dialog.cancel();
+						Toast.makeText(getActivity(), "Needs A Category \n\nUse The Side Menu To Create Categories", Toast.LENGTH_LONG).show();
+
+						return;
+					}
+
+					transactionCheckNum = tCheckNum.getText().toString().trim();
+					transactionMemo = tMemo.getText().toString().trim();
+					transactionCleared = tCleared.isChecked()+"";
+
+					//Set Time
+					transactionTime = tTime.getText().toString().trim();
+					transactionDate = tDate.getText().toString().trim();
+
+					//Check to see if value is a number
+					boolean validValue=false;
+					try{
+						Float.parseFloat(transactionValue);
+						validValue=true;
+					}
+					catch(Exception e){
+						validValue=false;
+					}
+
+					//Open Database
+					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+					try{
+						if (transactionName.length()>0) {
+
+							if(!validValue){
+								transactionValue = "0";
+							}
+
+							//Insert values into accounts table
+							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("ToAcctID",account_id);
+							transactionValues.put("ToPlanID",0);
+							transactionValues.put("TransName",transactionName);
+							transactionValues.put("TransValue",transactionValue);
+							transactionValues.put("TransType",transactionType);
+							transactionValues.put("TransCategory",transactionCategory);
+							transactionValues.put("TransCheckNum",transactionCheckNum);
+							transactionValues.put("TransMemo",transactionMemo);
+							transactionValues.put("TransTime",transactionTime);
+							transactionValues.put("TransDate",transactionDate);
+							transactionValues.put("TransCleared",transactionCleared);
+
+							myDB.insert(tblTrans, null, transactionValues);
+
+						} 
+
+						else {
+							Toast.makeText(getActivity(), "Needs a Name", Toast.LENGTH_LONG).show();
+						}
+					}
+					catch(Exception e){
+						Toast.makeText(getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					}
+
+					//Close cursor
+					cursor.close();
+
+					//Close Database if Opened
+					if (myDB != null){
+						myDB.close();
+					}
+
+					//Update Accounts ListView
+					((Transactions) getParentFragment()).populate();					
+
+					//Reload account fragment if shown
+					View account_frame = getActivity().findViewById(R.id.account_frag_frame);
+
+					if(account_frame!=null){
+						Accounts account_frag = new Accounts();
+
+						//Bundle for Account fragment
+						Bundle argsAccount = new Bundle();
+						argsAccount.putBoolean("boolSearch", false);
+
+						account_frag.setArguments(argsAccount);
+
+						getFragmentManager().beginTransaction()
+						.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
+
+						getFragmentManager().executePendingTransactions();
+
+					}
+
+				}//end onClick "OK"
+			})
+			.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "Cancel"
+					dialog.cancel();
+				}
+			});
+
+			return alertDialogBuilder.create();
+		}
+	}
+
 
 }//end Transactions

@@ -773,6 +773,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					if(planId!=0){
 						TVname.setTextColor(Color.parseColor("#FF9933"));
 					}
+					else{
+						TVname.setTextColor(Color.parseColor("#000000"));
+					}
 					
 				}
 

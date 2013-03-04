@@ -131,7 +131,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					entry_balance = c.getString(2);
 					entry_time = c.getString(3);
 					entry_date = c.getString(4);
-					Log.e("Here!!!", "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date);
+					//Log.e("Here!!!", "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date);
 				}while(c.moveToNext());
 
 				//Close Database if Open
@@ -877,6 +877,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles view fragment
+	
 	public static class ViewDialogFragment extends SherlockDialogFragment {
 
 		public static ViewDialogFragment newInstance(String id) {
@@ -951,6 +952,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles edit fragment
+	
 	public static class EditDialogFragment extends SherlockDialogFragment {
 
 		public static EditDialogFragment newInstance(AccountRecord record) {

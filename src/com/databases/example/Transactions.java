@@ -57,6 +57,7 @@ import com.actionbarsherlock.view.SubMenu;
 import com.databases.example.Accounts.AccountRecord;
 import com.databases.example.Accounts.AddDialogFragment;
 import com.databases.example.Accounts.EditDialogFragment;
+import com.databases.example.Accounts.ViewDialogFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
@@ -69,29 +70,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Dialog for Adding Transaction
 	static View promptsView;
-	View transStatsView;
 	View myFragmentView;
-
-	//Need to be global so I can dismiss and avoid leaks
-	AlertDialog alertDialogView;
-	//AlertDialog alertDialogAdd;
-	AlertDialog alertDialogEdit;
 
 	static Spinner tCategory;
 	static Button tTime;
 	static Button tDate;
-
-	//TextView of Statistics
-	TextView statsName;
-	TextView statsValue;
-	TextView statsType;
-	TextView statsCategory;
-	TextView statsCheckNum;
-	TextView statsMemo;
-	TextView statsCleared;
-	TextView statsDate;
-	TextView statsTime;
-	CheckBox chkCleared;
 
 	//Date Format to use for time (01:42 PM)
 	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
@@ -109,7 +92,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//ListView and Adapter
 	ListView lv = null;
-	UserItemAdapter adapter = null;
+	static UserItemAdapter adapter = null;
 
 	//Variables needed for traversing database
 	final static String tblTrans = "tblTrans";
@@ -215,7 +198,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//Populate view with all the transactions of selected account
 	protected void populate(){
 		dropdownResults = new ArrayList<String>();
-		
+
 		Cursor cursorTransactions = null;
 
 		//TextView instructing user if database is empty
@@ -408,91 +391,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Opening a Transaction
 	public void transactionOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		int id = adapter.getTransaction(itemInfo.position).id;
 
-		String sqlCommand = "SELECT TransID as _id, * FROM " + tblTrans + 
-				" WHERE TransID = " + adapter.getTransaction(itemInfo.position).id;
-
-		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		Cursor c = myDB.rawQuery(sqlCommand, null);
-		getActivity().startManagingCursor(c);
-
-		int entry_id = 0;
-		int entry_acctId = 0;
-		int entry_planId = 0;
-		String entry_name = null;
-		String entry_value = null;
-		String entry_type = null;
-		String entry_category = null;
-		String entry_checknum = null;
-		String entry_memo = null;
-		String entry_time = null;
-		String entry_date = null;
-		String entry_cleared = null;
-
-		c.moveToFirst();
-		do{
-			entry_id = c.getInt(c.getColumnIndex("TransID"));
-			entry_acctId = c.getInt(c.getColumnIndex("ToAcctID"));
-			entry_planId = c.getInt(c.getColumnIndex("ToPlanID"));
-			entry_name = c.getString(c.getColumnIndex("TransName"));
-			entry_value = c.getString(c.getColumnIndex("TransValue"));
-			entry_type = c.getString(c.getColumnIndex("TransType"));
-			entry_category = c.getString(c.getColumnIndex("TransCategory"));
-			entry_checknum = c.getString(c.getColumnIndex("TransCheckNum"));
-			entry_memo = c.getString(c.getColumnIndex("TransMemo"));
-			entry_time = c.getString(c.getColumnIndex("TransTime"));
-			entry_date = c.getString(c.getColumnIndex("TransDate"));
-			entry_cleared = c.getString(c.getColumnIndex("TransCleared"));
-			//Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
-		}while(c.moveToNext());
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
-		// get transaction_stats.xml view
-		LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-		transStatsView = li.inflate(R.layout.transaction_stats, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
-
-		// set xml to AlertDialog builder
-		alertDialogBuilder.setView(transStatsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("View Transaction");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true);
-
-		// create alert dialog
-		alertDialogView = alertDialogBuilder.create();
-
-		//Set Statistics
-		statsName = (TextView)transStatsView.findViewById(R.id.TextTransactionName);
-		statsName.setText(entry_name);
-		statsValue = (TextView)transStatsView.findViewById(R.id.TextTransactionValue);
-		statsValue.setText(entry_value);
-		statsType = (TextView)transStatsView.findViewById(R.id.TextTransactionType);
-		statsType.setText(entry_type);
-		statsCategory = (TextView)transStatsView.findViewById(R.id.TextTransactionCategory);
-		statsCategory.setText(entry_category);
-		statsCheckNum = (TextView)transStatsView.findViewById(R.id.TextTransactionCheck);
-		statsCheckNum.setText(entry_checknum);
-		statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
-		statsMemo.setText(entry_memo);
-		statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
-		statsDate.setText(entry_date);
-		statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
-		statsTime.setText(entry_time);
-		statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
-		statsCleared.setText(entry_cleared);
-
-		// show it
-		alertDialogView.show();
+		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
+		newFragment.show(getChildFragmentManager(), "dialogView");
 
 	}  
 
@@ -506,183 +408,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Editing an Transaction
 	public void transactionEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		TransactionRecord record = adapter.getTransaction(itemInfo.position);
-		
-		final int tID = record.id;
-		final int aID = record.acctId;
-		final int pID = record.planId;
-		final String name = record.name;
-		final String value = record.value;
-		final String type = record.type;
-		final String category = record.category;
-		final String checknum = record.checknum;
-		final String memo = record.memo;
-		final String date = record.date;
-		final String time = record.time;
-		final String cleared = record.cleared;
+		final TransactionRecord record = adapter.getTransaction(itemInfo.position);
 
-		// get transaction_add.xml view
-		LayoutInflater li = LayoutInflater.from(Transactions.this.getActivity());
-		promptsView = li.inflate(R.layout.transaction_add, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				Transactions.this.getActivity());
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(promptsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("Edit A Transaction");
-
-		//Set fields to old values
-		final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-		final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-		final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-		tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-		final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-		final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
-		final Button tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-		final Button tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-		final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-
-		//Set the adapter for memo's autocomplete
-		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
-		tMemo.setAdapter(dropdownAdapter);
-
-		//Add dictionary back to autocomplete
-		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
-		tMemo.setKeyListener(input);
-
-		tName.setText(name);
-		tValue.setText(value);
-		ArrayAdapter<String> myAdap = (ArrayAdapter<String>) tType.getAdapter();
-		int spinnerPosition = myAdap.getPosition(type);
-		tType.setSelection(spinnerPosition);
-
-		//Populate Category Spinner
-		categoryPopulate();
-
-		tCheckNum.setText(checknum);
-		tMemo.setText(memo);
-		tCleared.setChecked(Boolean.parseBoolean(cleared));
-		tDate.setText(date);
-		tTime.setText(time);
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(false)
-		.setPositiveButton("Save",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "OK"
-
-				//Needed to get category's name from DB-populated spinner
-				int categoryPosition = tCategory.getSelectedItemPosition();
-				Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-
-				transactionName = tName.getText().toString().trim();
-				transactionValue = tValue.getText().toString().trim();
-				transactionType = tType.getSelectedItem().toString().trim();
-				transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
-				transactionCheckNum = tCheckNum.getText().toString().trim();
-				transactionMemo = tMemo.getText().toString().trim();
-				transactionCleared = tCleared.isChecked()+"";
-				transactionTime = tTime.getText().toString().trim();
-				transactionDate = tDate.getText().toString().trim();
-
-				//Check to see if value is a number
-				boolean validValue=false;
-				try{
-					Float.parseFloat(transactionValue);
-					validValue=true;
-				}
-				catch(Exception e){
-					validValue=false;
-				}
-
-				try{
-					if(transactionName.length()>0){
-
-						if(!validValue){
-							transactionValue = "0";
-						}
-
-						String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
-
-						//Open Database
-						myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-						//Delete Old Record
-						myDB.execSQL(deleteCommand);
-
-						//Make new record with same ID
-						ContentValues transactionValues=new ContentValues();
-						transactionValues.put("TransID",tID);
-						transactionValues.put("ToAcctID",aID);
-						transactionValues.put("ToPlanID",pID);
-						transactionValues.put("TransName",transactionName);
-						transactionValues.put("TransValue",transactionValue);
-						transactionValues.put("TransType",transactionType);
-						transactionValues.put("TransCategory",transactionCategory);
-						transactionValues.put("TransCheckNum",transactionCheckNum);
-						transactionValues.put("TransMemo",transactionMemo);
-						transactionValues.put("TransTime",transactionTime);
-						transactionValues.put("TransDate",transactionDate);
-						transactionValues.put("TransCleared",transactionCleared);
-
-						myDB.insert(tblTrans, null, transactionValues);
-
-						//Close Database if Opened
-						if (myDB != null){
-							myDB.close();
-						}
-					}
-
-					else{
-						Toast.makeText(Transactions.this.getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(Transactions.this.getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-				}
-
-				Transactions.this.populate();
-
-				//Reload account fragment if shown
-				View account_frame = getActivity().findViewById(R.id.account_frag_frame);
-
-				if(account_frame!=null){
-					Accounts account_frag = new Accounts();
-
-					//Bundle for Account fragment
-					Bundle argsAccount = new Bundle();
-					argsAccount.putBoolean("boolSearch", false);
-
-					account_frag.setArguments(argsAccount);
-
-					getFragmentManager().beginTransaction()
-					.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
-
-					getFragmentManager().executePendingTransactions();
-
-				}
-
-			}//end onClick "OK"
-		})
-		.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "Cancel"
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogEdit = alertDialogBuilder.create();
-
-		// show it
-		alertDialogEdit.show();
+		DialogFragment newFragment = EditDialogFragment.newInstance(record);
+		newFragment.show(getChildFragmentManager(), "dialogEdit");	
 
 	}
 
@@ -801,10 +530,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
-		// Cursor is used to navigate the query results
 		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
-		final String sqlCategoryPopulate = "SELECT ToCatID as _id,SubCatName FROM " + tblSubCategory
+		final String sqlCategoryPopulate = "SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory
 				+ " ORDER BY _id;";
 
 		//Can use this to combine category/subcategories
@@ -846,7 +574,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		super.onPause();
 	}
-
 
 	//Method to help create TimePicker
 	public static class TimePickerFragment extends DialogFragment
@@ -1317,28 +1044,143 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 	}
 
-	public static class EditDialogFragment extends SherlockDialogFragment {
+	public static class ViewDialogFragment extends SherlockDialogFragment {
 
-		public static EditDialogFragment newInstance(AccountRecord record) {
-			EditDialogFragment frag = new EditDialogFragment();
+		public static ViewDialogFragment newInstance(int id) {
+			ViewDialogFragment frag = new ViewDialogFragment();
 			Bundle args = new Bundle();
-			args.putString("id", record.id);
-			args.putString("name", record.name);
-			args.putString("balance", record.balance);
-			args.putString("date", record.date);
-			args.putString("time", record.time);
+			args.putInt("id", id);
 			frag.setArguments(args);
 			return frag;
 		}
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			final String ID = getArguments().getString("id");
-			final String name = getArguments().getString("name");
-			final String balance = getArguments().getString("balance");
+			int id = getArguments().getInt("id");
 
+			String sqlCommand = "SELECT TransID as _id, * FROM " + tblTrans + 
+					" WHERE TransID = " + id;
+
+			myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+
+			Cursor c = myDB.rawQuery(sqlCommand, null);
+			getActivity().startManagingCursor(c);
+
+			int entry_id = 0;
+			int entry_acctId = 0;
+			int entry_planId = 0;
+			String entry_name = null;
+			String entry_value = null;
+			String entry_type = null;
+			String entry_category = null;
+			String entry_checknum = null;
+			String entry_memo = null;
+			String entry_time = null;
+			String entry_date = null;
+			String entry_cleared = null;
+
+			c.moveToFirst();
+			do{
+				entry_id = c.getInt(c.getColumnIndex("TransID"));
+				entry_acctId = c.getInt(c.getColumnIndex("ToAcctID"));
+				entry_planId = c.getInt(c.getColumnIndex("ToPlanID"));
+				entry_name = c.getString(c.getColumnIndex("TransName"));
+				entry_value = c.getString(c.getColumnIndex("TransValue"));
+				entry_type = c.getString(c.getColumnIndex("TransType"));
+				entry_category = c.getString(c.getColumnIndex("TransCategory"));
+				entry_checknum = c.getString(c.getColumnIndex("TransCheckNum"));
+				entry_memo = c.getString(c.getColumnIndex("TransMemo"));
+				entry_time = c.getString(c.getColumnIndex("TransTime"));
+				entry_date = c.getString(c.getColumnIndex("TransDate"));
+				entry_cleared = c.getString(c.getColumnIndex("TransCleared"));
+				//Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
+			}while(c.moveToNext());
+
+			//Close Database if Open
+			if (myDB != null){
+				myDB.close();
+			}
+
+			// get transaction_stats.xml view
+			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			View transStatsView = li.inflate(R.layout.transaction_stats, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+
+			// set xml to AlertDialog builder
+			alertDialogBuilder.setView(transStatsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("View Transaction");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(true);
+
+			//Set Statistics
+			TextView statsName = (TextView)transStatsView.findViewById(R.id.TextTransactionName);
+			statsName.setText(entry_name);
+			TextView statsValue = (TextView)transStatsView.findViewById(R.id.TextTransactionValue);
+			statsValue.setText(entry_value);
+			TextView statsType = (TextView)transStatsView.findViewById(R.id.TextTransactionType);
+			statsType.setText(entry_type);
+			TextView statsCategory = (TextView)transStatsView.findViewById(R.id.TextTransactionCategory);
+			statsCategory.setText(entry_category);
+			TextView statsCheckNum = (TextView)transStatsView.findViewById(R.id.TextTransactionCheck);
+			statsCheckNum.setText(entry_checknum);
+			TextView statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
+			statsMemo.setText(entry_memo);
+			TextView statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
+			statsDate.setText(entry_date);
+			TextView statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
+			statsTime.setText(entry_time);
+			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
+			statsCleared.setText(entry_cleared);
+
+			return alertDialogBuilder.create();
+
+		}
+	}
+
+	public static class EditDialogFragment extends SherlockDialogFragment {
+
+		public static EditDialogFragment newInstance(TransactionRecord record) {
+			EditDialogFragment frag = new EditDialogFragment();
+			Bundle args = new Bundle();
+			args.putInt("id", record.id);
+			args.putInt("acct_id", record.acctId);
+			args.putInt("plan_id", record.planId);
+			args.putString("name", record.name);
+			args.putString("value", record.value);
+			args.putString("type", record.type);
+			args.putString("category", record.category);
+			args.putString("checknum", record.checknum);
+			args.putString("memo", record.memo);
+			args.putString("date", record.date);
+			args.putString("time", record.time);
+			args.putString("cleared", record.cleared);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final int tID = getArguments().getInt("id");
+			final int aID = getArguments().getInt("acct_id");
+			final int pID = getArguments().getInt("plan_id");
+			final String name = getArguments().getString("name");
+			final String value = getArguments().getString("value");
+			final String type = getArguments().getString("type");
+			final String category = getArguments().getString("category");
+			final String checknum = getArguments().getString("checknum");
+			final String memo = getArguments().getString("memo");
+			final String date = getArguments().getString("date");
+			final String time = getArguments().getString("time");
+			final String cleared = getArguments().getString("cleared");
+
+			// get transaction_add.xml view
 			LayoutInflater li = LayoutInflater.from(getActivity());
-			final View promptsView = li.inflate(R.layout.account_add, null);
+			promptsView = li.inflate(R.layout.transaction_add, null);
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
@@ -1346,15 +1188,51 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			alertDialogBuilder.setView(promptsView);
 
 			//set Title
-			alertDialogBuilder.setTitle("Edit An Account");
+			alertDialogBuilder.setTitle("Edit A Transaction");
 
-			//Add the previous info into the fields, remove unnecessary fields
-			final EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-			final EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
-			TextView aBalanceText = (TextView)promptsView.findViewById(R.id.BalanceTexts);
-			aName.setText(name);
-			aBalance.setVisibility(View.GONE);
-			aBalanceText.setVisibility(View.GONE);
+			//Set fields to old values
+			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+			final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+			final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+			tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+			final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
+			final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+			final Button tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+			final Button tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
+			final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+
+			//Set the adapter for memo's autocomplete
+			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
+			tMemo.setAdapter(dropdownAdapter);
+
+			//Add dictionary back to autocomplete
+			TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+			tMemo.setKeyListener(input);
+
+			//Populate Category Spinner			
+			((Transactions) getParentFragment()).categoryPopulate();					
+
+			tName.setText(name);
+			tValue.setText(value);
+			ArrayAdapter<String> myAdap = (ArrayAdapter<String>) tType.getAdapter();
+			int spinnerPosition = myAdap.getPosition(type);
+			tType.setSelection(spinnerPosition);
+
+			//Used to find correct category to select
+			for (int i = 0; i < tCategory.getCount(); i++) {
+				Cursor c = (Cursor) tCategory.getItemAtPosition(i);
+				String catName = c.getString(c.getColumnIndex("SubCatName"));
+				if (catName.contentEquals(category)) {
+					tCategory.setSelection(i);
+					break;
+				}
+			}
+
+			tCheckNum.setText(checknum);
+			tMemo.setText(memo);
+			tCleared.setChecked(Boolean.parseBoolean(cleared));
+			tDate.setText(date);
+			tTime.setText(time);
 
 			// set dialog message
 			alertDialogBuilder
@@ -1363,48 +1241,99 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
 					// CODE FOR "OK"
-					String accountName = null;
-					String accountTime = null;
-					String accountBalance = null;
-					String accountDate = null;
 
-					accountName = aName.getText().toString().trim();
-					accountBalance = balance.trim();
-					final Calendar c = Calendar.getInstance();
-					accountTime = timeFormat.format(c.getTime());
-					accountDate = dateFormat.format(c.getTime());
+					//Needed to get category's name from DB-populated spinner
+					int categoryPosition = tCategory.getSelectedItemPosition();
+					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
+
+					transactionName = tName.getText().toString().trim();
+					transactionValue = tValue.getText().toString().trim();
+					transactionType = tType.getSelectedItem().toString().trim();
+					transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
+					transactionCheckNum = tCheckNum.getText().toString().trim();
+					transactionMemo = tMemo.getText().toString().trim();
+					transactionCleared = tCleared.isChecked()+"";
+					transactionTime = tTime.getText().toString().trim();
+					transactionDate = tDate.getText().toString().trim();
+
+					//Check to see if value is a number
+					boolean validValue=false;
+					try{
+						Float.parseFloat(transactionValue);
+						validValue=true;
+					}
+					catch(Exception e){
+						validValue=false;
+					}
 
 					try{
-						String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
+						if(transactionName.length()>0){
 
-						//Open Database
-						myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+							if(!validValue){
+								transactionValue = "0";
+							}
 
-						//Delete Old Record
-						myDB.execSQL(deleteCommand);
+							String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
 
-						//Make new record with same ID
-						ContentValues accountValues=new ContentValues();
-						accountValues.put("AcctID",ID);
-						accountValues.put("AcctName",accountName);
-						accountValues.put("AcctBalance",accountBalance);
-						accountValues.put("AcctTime",accountTime);
-						accountValues.put("AcctDate",accountDate);
+							//Open Database
+							myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
-						myDB.insert(tblAccounts, null, accountValues);
+							//Delete Old Record
+							myDB.execSQL(deleteCommand);
 
-						//Close Database if Opened
-						if (myDB != null){
-							myDB.close();
+							//Make new record with same ID
+							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("TransID",tID);
+							transactionValues.put("ToAcctID",aID);
+							transactionValues.put("ToPlanID",pID);
+							transactionValues.put("TransName",transactionName);
+							transactionValues.put("TransValue",transactionValue);
+							transactionValues.put("TransType",transactionType);
+							transactionValues.put("TransCategory",transactionCategory);
+							transactionValues.put("TransCheckNum",transactionCheckNum);
+							transactionValues.put("TransMemo",transactionMemo);
+							transactionValues.put("TransTime",transactionTime);
+							transactionValues.put("TransDate",transactionDate);
+							transactionValues.put("TransCleared",transactionCleared);
+
+							myDB.insert(tblTrans, null, transactionValues);
+
+							//Close Database if Opened
+							if (myDB != null){
+								myDB.close();
+							}
+						}
+
+						else{
+							Toast.makeText(getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
 						}
 
 					}
 					catch(Exception e){
-						Toast.makeText(getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
-					//Update Accounts ListView
-					((Accounts) getParentFragment()).populate();
+					//Update Transactions ListView
+					((Transactions) getParentFragment()).populate();					
+
+					//Reload account fragment if shown
+					View account_frame = getActivity().findViewById(R.id.account_frag_frame);
+
+					if(account_frame!=null){
+						Accounts account_frag = new Accounts();
+
+						//Bundle for Account fragment
+						Bundle argsAccount = new Bundle();
+						argsAccount.putBoolean("boolSearch", false);
+
+						account_frag.setArguments(argsAccount);
+
+						getFragmentManager().beginTransaction()
+						.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
+
+						getFragmentManager().executePendingTransactions();
+
+					}
 
 				}//end onClick "OK"
 			})

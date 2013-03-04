@@ -170,7 +170,7 @@ public class Schedule extends SherlockFragmentActivity{
 		
 		//Log.e("Categories","out of category populate");
 
-	}//end of categoryPopulate	
+	}//end of schedulePopulate	
 
 	//For Scheduling a Transaction
 	public void schedulingAdd(){
@@ -679,7 +679,6 @@ public class Schedule extends SherlockFragmentActivity{
 
 	//Method to get the list of categories for spinner
 	public void categoryPopulate(){
-		// Cursor is used to navigate the query results
 		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
 
 		final String sqlCategoryPopulate = "SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory
@@ -734,7 +733,7 @@ public class Schedule extends SherlockFragmentActivity{
 			d = dateFormat.parse(record.offset);
 		}catch (java.text.ParseException e) {
 			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		Log.d("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());

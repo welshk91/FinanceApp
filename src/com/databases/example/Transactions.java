@@ -103,17 +103,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	static SQLiteDatabase myDB;
 	static ArrayList<String> dropdownResults = new ArrayList<String>();
 
-	//Variables for the transaction Table
-	static String transactionName = null;
-	static String transactionValue = null;
-	static String transactionType = null;
-	static String transactionCategory = null;
-	static String transactionCheckNum = null;
-	static String transactionMemo = null;
-	static String transactionTime = null;
-	static String transactionDate = null;
-	static String transactionCleared = null;
-
 	//Adapter for category spinner
 	static SimpleCursorAdapter categorySpinnerAdapter = null;
 	Cursor categoryCursor;
@@ -507,7 +496,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		//Update account with accurate balance
 		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
-
+		
 		//Open Database
 		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -610,7 +599,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				hourOfDay=hourOfDay-12;
 			}
 
-			transactionTime = hourOfDay + ":" + minute + " " + ampm;
+			String transactionTime = hourOfDay + ":" + minute + " " + ampm;
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 			tTime.setText(transactionTime);
 		}
@@ -639,6 +628,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 			// Do something with the date chosen by the user
+			String transactionDate = null;
 			if(month<10){
 				transactionDate = "0"+(month+1) + "-" + day + "-" + year;
 			}
@@ -779,6 +769,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 				if (name != null) {
 					TVname.setText(name);
+					
+					if(planId!=0){
+						TVname.setTextColor(Color.parseColor("#FF9933"));
+					}
+					
 				}
 
 				if(value != null) {
@@ -1246,15 +1241,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					int categoryPosition = tCategory.getSelectedItemPosition();
 					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
 
-					transactionName = tName.getText().toString().trim();
-					transactionValue = tValue.getText().toString().trim();
-					transactionType = tType.getSelectedItem().toString().trim();
-					transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
-					transactionCheckNum = tCheckNum.getText().toString().trim();
-					transactionMemo = tMemo.getText().toString().trim();
-					transactionCleared = tCleared.isChecked()+"";
-					transactionTime = tTime.getText().toString().trim();
-					transactionDate = tDate.getText().toString().trim();
+					String transactionName = tName.getText().toString().trim();
+					String transactionValue = tValue.getText().toString().trim();
+					String transactionType = tType.getSelectedItem().toString().trim();
+					String transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
+					String transactionCheckNum = tCheckNum.getText().toString().trim();
+					String transactionMemo = tMemo.getText().toString().trim();
+					String transactionCleared = tCleared.isChecked()+"";
+					String transactionTime = tTime.getText().toString().trim();
+					String transactionDate = tDate.getText().toString().trim();
 
 					//Check to see if value is a number
 					boolean validValue=false;
@@ -1418,10 +1413,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					int categoryPosition = tCategory.getSelectedItemPosition();
 					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
 
-					transactionName = tName.getText().toString().trim();
-					transactionValue = tValue.getText().toString().trim();
-					transactionType = tType.getSelectedItem().toString().trim();
+					String transactionName = tName.getText().toString().trim();
+					String transactionValue = tValue.getText().toString().trim();
+					String transactionType = tType.getSelectedItem().toString().trim();
 
+					String transactionCategory = null;
+					
 					try{
 						transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
 					}
@@ -1434,13 +1431,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						return;
 					}
 
-					transactionCheckNum = tCheckNum.getText().toString().trim();
-					transactionMemo = tMemo.getText().toString().trim();
-					transactionCleared = tCleared.isChecked()+"";
+					String transactionCheckNum = tCheckNum.getText().toString().trim();
+					String transactionMemo = tMemo.getText().toString().trim();
+					String transactionCleared = tCleared.isChecked()+"";
 
 					//Set Time
-					transactionTime = tTime.getText().toString().trim();
-					transactionDate = tDate.getText().toString().trim();
+					String transactionTime = tTime.getText().toString().trim();
+					String transactionDate = tDate.getText().toString().trim();
 
 					//Check to see if value is a number
 					boolean validValue=false;

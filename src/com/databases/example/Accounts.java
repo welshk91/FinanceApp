@@ -859,7 +859,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//An Object Class used to hold the data of each account record
-	
+
 	public class AccountRecord {
 		protected String id;
 		protected String name;
@@ -877,7 +877,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles view fragment
-	
+
 	public static class ViewDialogFragment extends SherlockDialogFragment {
 
 		public static ViewDialogFragment newInstance(String id) {
@@ -952,7 +952,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles edit fragment
-	
+
 	public static class EditDialogFragment extends SherlockDialogFragment {
 
 		public static EditDialogFragment newInstance(AccountRecord record) {
@@ -1135,10 +1135,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						Toast.makeText(getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 					}
 
-					//String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName='" + accountName + "' AND AcctBalance=" + accountBalance + " AND AcctTime='" + accountTime + "' AND AcctDate='" + accountDate + "';";
-					String sqlQuery = "SELECT AcctID FROM " + tblAccounts + " WHERE AcctName = ? AND AcctBalance = ? AND AcctTime = ? AND AcctDate = ?;";
-
-					int entry_id = 0;
+					long entry_id = 0;
 
 					//Open Database
 					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
@@ -1153,16 +1150,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							accountValues.put("AcctTime",accountTime);
 							accountValues.put("AcctDate",accountDate);
 
-							myDB.insert(tblAccounts, null, accountValues);
-
-							//Query the Newly created account
-							Cursor c = myDB.rawQuery(sqlQuery, new String[] {accountName, accountBalance, accountTime, accountDate});
-							getActivity().startManagingCursor(c);
-
-							c.moveToFirst();
-							do{
-								entry_id = c.getInt(0);
-							}while(c.moveToNext());
+							entry_id = myDB.insert(tblAccounts, null, accountValues);
 
 							//Insert values into accounts table
 							ContentValues transactionValues=new ContentValues();
@@ -1179,8 +1167,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 							myDB.insert(tblTrans, null, transactionValues);
 
-							//Close Cursor object
-							c.close();
 						} 
 
 						else {

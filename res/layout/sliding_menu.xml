@@ -3,18 +3,20 @@
     android:id="@+id/ScrollView01"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:background="#33b5e5"
+    android:background="#000000"
     android:fadeScrollbars="true" >
 
     <RelativeLayout
+        android:id="@+id/slidingmenu_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/slidingmenu_checkbook"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="Checkbook"
@@ -23,10 +25,11 @@
 
         <Button
             android:id="@+id/slidingmenu_categories"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_checkbook"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="Categories"
@@ -35,10 +38,11 @@
 
         <Button
             android:id="@+id/slidingmenu_schedules"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_categories"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="Schedules"
@@ -47,7 +51,7 @@
 
         <Button
             android:id="@+id/slidingmenu_manage"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_schedules"
             android:layout_margin="5dp"
@@ -60,10 +64,11 @@
 
         <Button
             android:id="@+id/slidingmenu_statistics"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_manage"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="Statistics"
@@ -71,17 +76,19 @@
         </Button>
 
         <View
-            android:layout_width="match_parent"
+            android:id="@+id/slidingmenu_line1"
+            android:layout_width="fill_parent"
             android:layout_height="2dp"
             android:layout_below="@+id/slidingmenu_statistics"
-            android:background="#0099cc" />
+            android:background="#33b5e5" />
 
         <Button
             android:id="@+id/slidingmenu_options"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_statistics"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="Options"
@@ -90,10 +97,11 @@
 
         <Button
             android:id="@+id/slidingmenu_help"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_options"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="Help"
@@ -102,10 +110,11 @@
 
         <Button
             android:id="@+id/slidingmenu_exit"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_help"
             android:layout_margin="5dp"
+            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/slidingmenu_exit"
             android:padding="15dp"
             android:text="@string/exit"

@@ -53,6 +53,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	int CONTEXT_MENU_OPEN=1;
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
+	int CONTEXT_MENU_ATTACH=4;
 
 	View myFragmentView;
 
@@ -333,6 +334,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
 		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
 		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+		menu.add(0, CONTEXT_MENU_ATTACH, 3, "Attach");
+
 	}  
 
 	//Handles which methods are called when using the long presses menu
@@ -349,6 +352,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 		else if(item.getItemId()==CONTEXT_MENU_DELETE){
 			accountDelete(item);
+			return true;
+		}
+		else if(item.getItemId()==CONTEXT_MENU_ATTACH){
+			accountAttach(item);
 			return true;
 		}
 		else {
@@ -376,6 +383,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");
+	}
+	
+	//For Attaching to an Account
+	public void accountAttach(android.view.MenuItem item){
+		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		final AccountRecord record = adapter.getAccount(itemInfo.position);
+
+		Intent intentLink = new Intent(this.getActivity(), Links.class);
+		intentLink.putExtra("AcctID", record.id);
+		intentLink.putExtra("AcctName", record.name);
+		startActivityForResult(intentLink, PICKFILE_RESULT_CODE);
+
 	}
 
 	//For Deleting an Account
@@ -578,11 +597,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch (requestCode) {
 		case PICKFILE_RESULT_CODE:
 			if(resultCode==getActivity().RESULT_OK){
-				String FilePath = data.getData().getPath();
-				Toast.makeText(this.getActivity(), "File Path : " + FilePath, Toast.LENGTH_LONG).show();
+				Log.e("onActivityResult:OK", "OK");
+				
+				/******CALL POPULATE AGAIN TO SHOW THE ATTACHMENT ICON*******/
+				
 			}
+			
+			if(resultCode==getActivity().RESULT_CANCELED){
+				Log.e("onActivityResult:CANCELED", "canceled");
+			}
+			
 			break;
 		}
+		
 	}
 
 	//Close dialogs to prevent window leaks
@@ -1199,5 +1226,5 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			return alertDialogBuilder.create();
 		}
 	}
-
+	
 }// end Accounts

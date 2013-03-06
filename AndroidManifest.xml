@@ -6,12 +6,14 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="4"
-        android:targetSdkVersion="7" />
+        android:minSdkVersion="7"
+        android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -65,13 +67,13 @@
         </activity>
         <activity
             android:name=".Links"
-            android:configChanges="keyboardHidden|orientation"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".SearchMain"
             android:clearTaskOnLaunch="true"
-            android:configChanges="keyboardHidden|orientation"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:label="@string/app_name"
             android:launchMode="singleTop" >

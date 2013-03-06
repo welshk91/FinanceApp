@@ -34,6 +34,18 @@
         android:text="View" >
     </Button>
 
+    <Button
+        android:id="@+id/ButtonDoneLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TextViewCurrentLink"
+        android:layout_margin="5dp"
+        android:layout_toRightOf="@+id/ButtonViewLink"
+        android:onClick="linkDone"
+        android:padding="15dp"
+        android:text="Done" >
+    </Button>
+
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"

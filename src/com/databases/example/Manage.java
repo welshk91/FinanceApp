@@ -54,12 +54,12 @@ public class Manage extends SherlockFragmentActivity{
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		if(alertDialogCreate!=null){
-			alertDialogCreate.dismiss();
-		}
-		if(alertDialogRestore!=null){
-			alertDialogRestore.dismiss();
-		}
+//		if(alertDialogCreate!=null){
+//			alertDialogCreate.dismiss();
+//		}
+//		if(alertDialogRestore!=null){
+//			alertDialogRestore.dismiss();
+//		}
 		super.onPause();
 	}
 

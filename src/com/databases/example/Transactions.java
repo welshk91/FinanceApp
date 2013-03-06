@@ -86,9 +86,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	static int account_id;
 
 	//Constants for ContextMenu
-	int CONTEXT_MENU_OPEN=4;
-	int CONTEXT_MENU_EDIT=5;
-	int CONTEXT_MENU_DELETE=6;
+	int CONTEXT_MENU_OPEN=5;
+	int CONTEXT_MENU_EDIT=6;
+	int CONTEXT_MENU_DELETE=7;
+	int CONTEXT_MENU_ATTACH=8;
 
 	//ListView and Adapter
 	ListView lv = null;

@@ -8,8 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/transaction_total_balance"
-        android:layout_alignParentTop="true"
-        android:listSelector="@drawable/transaction_list_style" />
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/transaction_noTransaction"

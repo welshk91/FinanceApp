@@ -13,6 +13,9 @@ Known Issues
 * Still trying to sort out fragments that use a frameLayout with different IDs depending on orientation...
 * Deleting the database, then using the sliding menu to navigate to a different activity will cause the app to crash because the recreating of the database is not set in the proper place just yet...
 * Dialogs close on rotate.
+* Setting my application to target anything above android:targetSdkVersion="13" causes slidingMenu not to work.
+* Going into checkbook, rotating, then adding an account while cause populate not to change the update the appearance of the fragment.
+* Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 * [FIXED] Hitting Back on search goes back to the last search, not exiting the search (singleTop Mode). Update: changing FragmentPageAdapter to FragmentStatePageAdapter allowed old fragments to be replaced.
 * [FIXED] Need to fix addtobackstack for fragments so hitting back goes back to either accounts from transactions (single-pane) or 'home' if dual-pane. Update: popped old fragments off back stack. 
 * [FIXED] Orientation changing in checkbook doesn't work as expected. Not a problem if instead of orientation I use screen size to determine dual-pane mode or not. Update: removing a check for savedInstance fixes this by always recreating the fragments when checkbook is restarted. Not very efficient...
@@ -20,15 +23,19 @@ Known Issues
 
 	- Options SlidingMenu not the same as others (must choose between sliding the actionbar or touch not working). Possibly solved if I go from PreferenceActivity to PreferenceFragment. Update: This occurs for other views, but this bug only affects old android devices (tablet with 4.2 slides correctly). Update: slides actionbar in pre-ICS devices, but 4.0+ slide correctly.
 
-* Setting my application to target anything above android:targetSdkVersion="13" causes slidingMenu not to work.
-
-* Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
-
-
 Things To Do
 --------------------------------------
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, ...)
 * Make dialogs not close on rotation change (converting to dialogfragments recommended)
+* Add custom search suggestions
+* Add sorting options
+* PDF Reports
+* Export/Import oxf (Make sure to support required fields)
+* Password/Pattern, warning of liability. Add encryption and email for recovery?
+* Dropbox support -> archieve support (Keep Balance)
+* CardsUI to display important information on homesceen
+* Encrypt entire database (SQLCipher)
+* Fix Scopes (Global Variables,...) and code clean-up
 * Add preference options for Categories/Scheduling
 * Improve look (icons, default colors, slide menu, big notifications)
 
@@ -37,6 +44,7 @@ Optimizations
 --------------------------------------
 * Cut Down on inflating views (costly operation)
 * Keep cursors of categroies, accounts, transactions so you don't have to requery on orientation change (onRetainNonConfigurationInstance, getLastNonConfigurationInstance, onSaveInstanceState, onRestoreInstanceState)
+* Optimize layouts for performance
 * Make sure any SQL Joins are small (older sql_lite versions struggle with it)
 * Look into View Holder for ListView performance increase
 * Index Database Tables properly
@@ -53,15 +61,8 @@ Notes to Self
 	- git push -u origin master
 * Need more spinners, less typing
 * Possibly 'hide' advance options in add dialogs, 'expand' for more options
-* Sorting Options
-* Link a contact
+* Link a contact (own table?)
 * Possibly a payee field, own table. Can avoid if description is dropdown.
-* Export/Import oxf (Make sure to support required fields)
-* Password/Pattern, warning of liability. Add encryption and email for recovery?
-* Dropbox support -> archieve support (Keep Balance)
-* CardsUI to display important information on homesceen
-* Encrypt entire database (SQLCipher)
-* Fix Scopes (Global Variables,...) and code clean-up
 * What should happen when a user clicks on a search result?
 
 

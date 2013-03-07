@@ -117,7 +117,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		Bundle bundle=getArguments();
 
 		//bundle is empty if from search, so don't add extra menu options
-		if(bundle!=null){
+		if(bundle!=null || savedInstanceState!=null){
 			setHasOptionsMenu(true);
 		}
 

@@ -3,7 +3,7 @@
     android:id="@+id/notification_item_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#E8E8E8"
+    android:background="@android:color/transparent"
     android:gravity="left|center"
     android:orientation="vertical"
     android:paddingBottom="2dp"
@@ -13,6 +13,7 @@
     <TextView
         android:id="@+id/TextNotification"
         android:layout_width="wrap_content"
+        android:textIsSelectable="false"
         android:layout_height="150dp"
         android:gravity="center"
         android:textColor="#0099CC"

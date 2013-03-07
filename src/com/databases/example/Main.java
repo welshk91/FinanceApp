@@ -45,12 +45,6 @@ public class Main extends SherlockActivity {
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 
-	//Variables for the Account Table
-	String accountName = null;
-	String accountTime = null;
-	String accountBalance = null;
-	String accountDate = null;
-
 	//Variables for the ListView
 	public ArrayList<String> results = new ArrayList<String>();
 
@@ -277,27 +271,6 @@ public class Main extends SherlockActivity {
 			onSearchRequested();
 			break;
 
-		case R.id.main_menu_links:    
-			//	Toast.makeText(this, "You pressed Links!", Toast.LENGTH_SHORT).show();
-			Intent intentLinks = new Intent(Main.this, Links.class);
-			startActivity(intentLinks);			
-			break;
-
-		case R.id.main_menu_logout:
-			Toast.makeText(this, "You pressed Logout!", Toast.LENGTH_SHORT).show();
-			this.finish();
-			this.moveTaskToBack(true);
-			super.onDestroy();
-			break;
-
-		case R.id.main_menu_options:    
-			Intent v = new Intent(Main.this, Options.class);
-			startActivity(v);
-			break;
-
-		case R.id.main_menu_help:    
-			Toast.makeText(this, "You pressed Help!", Toast.LENGTH_SHORT).show();
-			break;
 		}
 		return true;
 	}

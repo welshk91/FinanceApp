@@ -9,6 +9,7 @@ import com.slidingmenu.lib.SlidingMenu;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,10 +34,19 @@ public class Links extends SherlockFragmentActivity{
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 	final static int PICKFILE_RESULT_CODE = 1;
+	final static int PICKCONTACT_RESULT_CODE = 2;
 	private SliderMenu menu;
 	Intent lastLink;
 	String linkFilePath = null;
 	static int linkItem;
+
+	//Contact Info
+	long contactId = 0;
+	String contactName = null;
+	String contactPhone = null;
+	String contactEmail = null;
+	String contactPicture = null;
+
 	static Intent intent = null;
 	AlertDialog alertDialogAttachment;
 
@@ -94,7 +104,6 @@ public class Links extends SherlockFragmentActivity{
 		Log.e("linkDone", "AcctID=" + getIntent().getExtras().getString("AcctID"));
 		Log.e("linkDone", "AcctName=" + getIntent().getExtras().getString("AcctName"));
 
-
 		Intent returnIntent = new Intent();
 		setResult(RESULT_OK,returnIntent);     
 		finish();
@@ -121,12 +130,25 @@ public class Links extends SherlockFragmentActivity{
 						image.setImageURI(lastLink.getData());
 					}
 					catch(Exception e){
-						//Most likely caused by not picking a pile first (NullPointer)
+						//Most likely caused by not picking a file first (NullPointer)
 						Log.e("onActivityResult", "Error e=" + e);
 					}
 
 				}
 				break;
+
+			case PICKCONTACT_RESULT_CODE:	
+				if(resultCode==RESULT_OK){
+					getContactInfo(intent);
+					Log.e("PICKCONTACT_RESULT_CODE","contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail + " " + contactPicture);
+
+					TextView currentLink = (TextView)findViewById(R.id.TextViewCurrentLink);
+					currentLink.setText("Current Attachment : " + contactName);
+
+
+				}
+				break;
+
 			}
 
 		}
@@ -153,6 +175,76 @@ public class Links extends SherlockFragmentActivity{
 		return linkFilePath;
 	}
 
+	//Method to grab contact info
+	protected void getContactInfo(Intent intent)
+	{
+
+		Cursor cursor =  managedQuery(intent.getData(), null, null, null, null);      
+		while (cursor.moveToNext()) 
+		{           
+			contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+			contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
+			contactPicture = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts.PHOTO_ID)); 
+
+
+			String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+
+			if (hasPhone.equalsIgnoreCase("1"))
+				hasPhone = "true";
+			else
+				hasPhone = "false" ;
+
+			if (Boolean.parseBoolean(hasPhone)) 
+			{
+				Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ contactId,null, null);
+				while (phones.moveToNext()) 
+				{
+					contactPhone = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				}
+				phones.close();
+			}
+
+			// Find Email Addresses
+			Cursor emails = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId,null, null);
+			while (emails.moveToNext()) 
+			{
+				contactEmail = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+			}
+			emails.close();
+
+			//	    Cursor address = getContentResolver().query(
+			//	                ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI,
+			//	                null,
+			//	                ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID + " = " + contactId,
+			//	                null, null);
+			//	    while (address.moveToNext()) 
+			//	    { 
+			//	      // These are all private class variables, don't forget to create them.
+			//	      poBox      = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POBOX));
+			//	      street     = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
+			//	      city       = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
+			//	      state      = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.REGION));
+			//	      postalCode = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE));
+			//	      country    = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY));
+			//	      type       = address.getString(address.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.TYPE));
+			//	    }  //address.moveToNext()   
+		}  //while (cursor.moveToNext())        
+		cursor.close();
+
+		//Set thumbnail
+	    Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,contactId);
+		ImageView image = (ImageView) findViewById(R.id.imageView1);
+
+		try{
+			image.setImageURI(Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY));
+		}
+		catch(Exception e){
+			//Most likely caused by not picking a file first (NullPointer)
+			Log.e("onActivityResult", "Error e=" + e);
+		}
+
+	}//end getContactInfo
+
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
@@ -178,13 +270,8 @@ public class Links extends SherlockFragmentActivity{
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
-			// set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(linkChooser);
-
-			//set Title
 			alertDialogBuilder.setTitle("Attachment");
-
-			// set dialog message
 			alertDialogBuilder
 			.setCancelable(true);
 
@@ -224,8 +311,10 @@ public class Links extends SherlockFragmentActivity{
 
 						//Contact	
 					case 4:
-
-						break;
+						intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+						getActivity().startActivityForResult(intent,PICKCONTACT_RESULT_CODE);
+						getDialog().cancel();
+						return;
 
 						//Any	
 					default:

@@ -51,8 +51,6 @@ public class Checkbook extends SherlockFragmentActivity {
 		 *  Removing if forces the frags to be replaced every time so not very efficient
 		 */
 
-		int o = getResources().getConfiguration().orientation;
-
 		//if (savedInstanceState==null){
 		Accounts account_frag = new Accounts();
 		Transactions transaction_frag = new Transactions();

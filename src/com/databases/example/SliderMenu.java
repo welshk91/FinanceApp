@@ -2,6 +2,7 @@ package com.databases.example;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.slidingmenu.lib.SlidingMenu;
@@ -20,7 +21,7 @@ public class SliderMenu extends SlidingMenu{
 
 	public SliderMenu(Context context) {
 		super(context);
-
+		
 		//Menu attributes
 		setContent(R.layout.sliding_menu);
 		setClickable(true);		

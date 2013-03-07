@@ -150,10 +150,6 @@ public class PlanReceiver extends BroadcastReceiver{
 
 		Calendar cal = Calendar.getInstance();
 
-		RemoteViews customNotifView = new RemoteViews("com.databases.example", 
-				R.layout.notification_big);
-		customNotifView.setTextViewText(R.id.TextNotification, plan_id + " " + plan_name + " " + plan_value + " " + plan_offset + " " + plan_rate + "\n Fired on " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) +":" + cal.get(Calendar.SECOND));
-
 		Notification notification = new NotificationCompat.Builder(context).
 				setContentTitle(from+ ": " + plan_name)
 				.setContentText(plan_id + " " + plan_name + " " + plan_value + " " + plan_offset + " " + plan_rate)
@@ -161,7 +157,12 @@ public class PlanReceiver extends BroadcastReceiver{
 				.setContentIntent(contentIntent)
 				.build();
 
+		//Notification's Big View
 		if (Build.VERSION.SDK_INT > 15){
+			RemoteViews customNotifView = new RemoteViews("com.databases.example", 
+					R.layout.notification_big);
+			customNotifView.setTextViewText(R.id.TextNotification, plan_id + " " + plan_name + " " + plan_value + " " + plan_offset + " " + plan_rate + "\n Fired on " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) +":" + cal.get(Calendar.SECOND));
+
 			notification.bigContentView = customNotifView;
 		}
 

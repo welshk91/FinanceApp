@@ -20,6 +20,8 @@ Known Issues
 
 	- Options SlidingMenu not the same as others (must choose between sliding the actionbar or touch not working). Possibly solved if I go from PreferenceActivity to PreferenceFragment. Update: This occurs for other views, but this bug only affects old android devices (tablet with 4.2 slides correctly). Update: slides actionbar in pre-ICS devices, but 4.0+ slide correctly.
 
+* Setting my application to target anything above android:targetSdkVersion="13" causes slidingMenu not to work.
+
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 
 

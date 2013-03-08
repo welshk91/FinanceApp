@@ -6,7 +6,6 @@ import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;

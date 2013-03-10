@@ -35,15 +35,8 @@ public class Main extends SherlockActivity {
 	Button Schedule_Button;
 	Button Exit_Button;
 
-	//Variables for the Database
-	final String tblAccounts = "tblAccounts";
-	final String tblTrans = "tblTrans";
-	final String tblPlanTrans = "tblPlanTrans";
-	final String tblCategory = "tblCategory";
-	final String tblSubCategory = "tblSubCategory";
-	final String tblLinks = "tblLinks";
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
+	static SQLiteDatabase myDB;
+	private DatabaseHelper dh = null;
 
 	//Variables for the ListView
 	public ArrayList<String> results = new ArrayList<String>();
@@ -122,20 +115,14 @@ public class Main extends SherlockActivity {
 				break;
 
 			case R.id.dashboard_exit:
-				if (myDB != null){
-					myDB.close();
-				}
-
 				Main.this.finish();
 				//android.os.Process.killProcess(android.os.Process.myPid());				
 				onDestroy();
-
 				//Intent i = new Intent();
 				//i.setAction(Intent.ACTION_MAIN);
 				//i.addCategory(Intent.CATEGORY_HOME);
 				//startActivity(i); 
 				finish(); 
-
 				break;	
 
 			default:
@@ -149,101 +136,30 @@ public class Main extends SherlockActivity {
 	//Over-rode method to handle database closing, prevent corruption
 	@Override
 	public void onDestroy() {
-
-		//Close database to avoid corruption/leaks
-		if (myDB != null){
+		if(myDB.isOpen()){
 			myDB.close();
 		}
 
-		//Exit
 		super.onDestroy();
 	}
 
 	//Method for Creating Database
 	public void createDatabase(){
-		/*
-		 * Initialize database and tables
-		 */
-
+		
 		//If this is the first time running program...
 		if(true){
 			try {
-
-				String sqlCommandAccounts = "CREATE TABLE IF NOT EXISTS "
-						+ tblAccounts
-						+ " (AcctID INTEGER PRIMARY KEY, AcctName VARCHAR, AcctBalance VARCHAR, AcctTime VARCHAR, AcctDate VARCHAR);";
-
-				String sqlCommandTransactions = "CREATE TABLE IF NOT EXISTS "
-						+ tblTrans
-						+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, ToPlanID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
-
-				/***NEED TO FINE-TUNE THIS TABLE (Frequency,when it should occur...) ***/
-				String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
-						+ tblPlanTrans
-						+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, PlanOffset VARCHAR, PlanRate VARCHAR, PlanCleared VARCHAR);";
-
-				String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
-						+ tblCategory
-						+ " (CatID INTEGER PRIMARY KEY, CatName VARCHAR, CatNote VARCHAR);";
-
-				String sqlCommandSubCategory = "CREATE TABLE IF NOT EXISTS "
-						+ tblSubCategory
-						+ " (SubCatID INTEGER PRIMARY KEY, ToCatID VARCHAR, SubCatName VARCHAR, SubCatNote VARCHAR);";
-
-				String sqlCommandLinks = "CREATE TABLE IF NOT EXISTS "
-						+ tblLinks
-						+ " (LinkID INTEGER PRIMARY KEY, ToID VARCHAR, LinkName VARCHAR, LinkMemo VARCHAR, ParentType VARCHAR);";
-
-				//Create database and open
-				myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-				//Create Accounts table
-				myDB.execSQL(sqlCommandAccounts);
-
-				//Create Transactions table
-				myDB.execSQL(sqlCommandTransactions);
-
-				//Create Scheduled Transactions table
-				myDB.execSQL(sqlCommandPlannedTransactions);
-
-				//Create Category table
-				myDB.execSQL(sqlCommandCategory);
-
-				//Create Category table
-				myDB.execSQL(sqlCommandSubCategory);
-
-				//Create Category table
-				myDB.execSQL(sqlCommandLinks);
-
-				//Add some default categories
-				final String sqlDefaultCategories = "INSERT INTO " + tblCategory
-						+ " (CatName) " + "VALUES ('STARTING BALANCE');";
-
-				//Add some default categories
-				final String sqlDefaultCategories2 = "INSERT INTO " + tblCategory
-						+ " (CatName) " + "VALUES ('Utils');";
-
-				//Add some default categories
-				final String sqlDefaultSubCategories = "INSERT INTO " + tblSubCategory
-						+ " (SubCatName, ToCatID) " + "VALUES ('Gas',2);";
-				//Add some default categories
-				final String sqlDefaultSubCategories2 = "INSERT INTO " + tblSubCategory
-						+ " (SubCatName, ToCatID) " + "VALUES ('Electricty',2);";
-
-				//myDB.execSQL(sqlDefaultCategories);
-				//myDB.execSQL(sqlDefaultCategories2);
-				//myDB.execSQL(sqlDefaultSubCategories);
-				//myDB.execSQL(sqlDefaultSubCategories2);
-
+				dh = new DatabaseHelper(this);
+				myDB = dh.getWritableDatabase();
 			} 
 			catch (Exception e) {
+				Log.e("Main-createDatabase", "Error e=" + e);
 				Toast.makeText(this, "Error Creating Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
 			}
 
 		}//end if
 
-		//Make sure Database is closed even if try-catch fails
-		if (myDB != null){
+		if(myDB.isOpen()){
 			myDB.close();
 		}
 

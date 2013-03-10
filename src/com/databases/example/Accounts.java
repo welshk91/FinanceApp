@@ -45,9 +45,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
 
 	final int PICKFILE_RESULT_CODE = 1;
+
+	private static final int REG_LOADER = 0;
+	private static final int SEARCH_LOADER = 1;
+
 
 	//Balance
 	float totalBalance;
@@ -387,7 +391,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");
 	}
-	
+
 	//For Attaching to an Account
 	public void accountAttach(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
@@ -601,18 +605,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		case PICKFILE_RESULT_CODE:
 			if(resultCode==getActivity().RESULT_OK){
 				Log.e("onActivityResult:OK", "OK");
-				
+
 				/******CALL POPULATE AGAIN TO SHOW THE ATTACHMENT ICON*******/
-				
+
 			}
-			
+
 			if(resultCode==getActivity().RESULT_CANCELED){
 				Log.e("onActivityResult:CANCELED", "canceled");
 			}
-			
+
 			break;
 		}
-		
+
 	}
 
 	//Close dialogs to prevent window leaks
@@ -1230,22 +1234,4 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }// end Accounts

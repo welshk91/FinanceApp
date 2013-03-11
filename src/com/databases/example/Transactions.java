@@ -95,8 +95,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	ListView lv = null;
 	static UserItemAdapter adapter = null;
 
-	//Variables needed for traversing database
-	final static String tblTrans = "tblTrans";
 	final static String tblAccounts = "tblAccounts";
 	final static String tblCategory = "tblCategory";
 	final static String tblSubCategory = "tblSubCategory";
@@ -206,58 +204,27 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
 
-		// Cursor is used to navigate the query results
-		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
+		DatabaseHelper dh = new DatabaseHelper(getActivity());
 
 		if(showAllTransactions){
-			cursorTransactions = myDB.query(tblTrans, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
-					null, null, null, null);
+			dh.getTransactionsAll();
 		}
 		else if(searchFragment){
 			//Word being searched
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
-			//SQL for searching
-			String sqlCommand = " SELECT TransID as _id, * FROM " + tblTrans + 
-					" WHERE TransName " + 
-					" LIKE ?" +
-					" UNION " +
-					" SELECT TransID as _id, * FROM " + tblTrans +
-					" WHERE TransValue " + 
-					" LIKE ?" +
-					" UNION " +
-					" SELECT TransID as _id, * FROM " + tblTrans +
-					" WHERE TransCategory " + 
-					" LIKE ?" +
-					" UNION " +
-					" SELECT TransID as _id, * FROM " + tblTrans +
-					" WHERE TransDate " + 
-					" LIKE ?" +
-					" UNION " +				
-					" SELECT TransID as _id, * FROM " + tblTrans +
-					" WHERE TransTime " + 
-					" LIKE ?" +
-					" UNION " +
-					" SELECT TransID as _id, * FROM " + tblTrans +
-					" WHERE TransMemo " + 
-					" LIKE ?" +
-					" UNION " +
-					" SELECT TransID as _id, * FROM " + tblTrans +
-					" WHERE TransCheckNum " + 
-					" LIKE ?";
-
 			try{
-				cursorTransactions = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
+				cursorTransactions = dh.getSearchedTransactions(query);
 			}
 			catch(Exception e){
+				Log.e("Transactions-populate", "Search Failed. Error e=" + e);
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
 				return;
 			}
 
 		}
 		else{
-			cursorTransactions = myDB.query(tblTrans, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + account_id,
-					null, null, null, null);
+			dh.getTransactions(account_id+"");
 		}
 
 		getActivity().startManagingCursor(cursorTransactions);
@@ -415,18 +382,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//		" WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + 
 		//		" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
-		String sqlCommand = "DELETE FROM " + tblTrans + 
-				" WHERE TransID = " + adapter.getTransaction(itemInfo.position).id;
-
-		//Open Database
-		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		myDB.execSQL(sqlCommand);
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
-		}
+		DatabaseHelper dh = new DatabaseHelper(getActivity());
+		dh.deleteTransaction(adapter.getTransaction(itemInfo.position).id +"");
 
 		Transactions.this.populate();
 
@@ -497,7 +454,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		//Update account with accurate balance
 		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
-		
+
 		//Open Database
 		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
 
@@ -770,14 +727,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 				if (name != null) {
 					TVname.setText(name);
-					
+
 					if(planId!=0){
 						TVname.setTextColor(Color.parseColor("#FF9933"));
 					}
 					else{
 						TVname.setTextColor(Color.parseColor("#000000"));
 					}
-					
+
 				}
 
 				if(value != null) {
@@ -1057,12 +1014,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			int id = getArguments().getInt("id");
 
-			String sqlCommand = "SELECT TransID as _id, * FROM " + tblTrans + 
-					" WHERE TransID = " + id;
+			DatabaseHelper dh = new DatabaseHelper(getActivity());
+			Cursor c = dh.getTransaction(id+"");
 
-			myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-			Cursor c = myDB.rawQuery(sqlCommand, null);
 			getActivity().startManagingCursor(c);
 
 			int entry_id = 0;
@@ -1094,11 +1048,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				entry_cleared = c.getString(c.getColumnIndex("TransCleared"));
 				//Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 			}while(c.moveToNext());
-
-			//Close Database if Open
-			if (myDB != null){
-				myDB.close();
-			}
 
 			// get transaction_stats.xml view
 			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
@@ -1136,8 +1085,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
 			statsCleared.setText(entry_cleared);
 
+			c.close();
 			return alertDialogBuilder.create();
-
 		}
 	}
 
@@ -1272,35 +1221,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = "0";
 							}
 
-							String deleteCommand = "DELETE FROM " + tblTrans + " WHERE TransID = " + tID + ";";
-
-							//Open Database
-							myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-							//Delete Old Record
-							myDB.execSQL(deleteCommand);
+							DatabaseHelper dh = new DatabaseHelper(getActivity());
+							dh.deleteTransaction(tID+"");
 
 							//Make new record with same ID
-							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("TransID",tID);
-							transactionValues.put("ToAcctID",aID);
-							transactionValues.put("ToPlanID",pID);
-							transactionValues.put("TransName",transactionName);
-							transactionValues.put("TransValue",transactionValue);
-							transactionValues.put("TransType",transactionType);
-							transactionValues.put("TransCategory",transactionCategory);
-							transactionValues.put("TransCheckNum",transactionCheckNum);
-							transactionValues.put("TransMemo",transactionMemo);
-							transactionValues.put("TransTime",transactionTime);
-							transactionValues.put("TransDate",transactionDate);
-							transactionValues.put("TransCleared",transactionCleared);
+							dh.addTransaction(tID+"", aID+"", pID+"", transactionName, transactionValue, transactionType, transactionCategory, transactionCheckNum, transactionMemo, transactionTime, transactionDate, transactionCleared);
 
-							myDB.insert(tblTrans, null, transactionValues);
-
-							//Close Database if Opened
-							if (myDB != null){
-								myDB.close();
-							}
 						}
 
 						else{
@@ -1422,7 +1348,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionType = tType.getSelectedItem().toString().trim();
 
 					String transactionCategory = null;
-					
+
 					try{
 						transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
 					}
@@ -1463,21 +1389,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = "0";
 							}
 
-							//Insert values into accounts table
-							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("ToAcctID",account_id);
-							transactionValues.put("ToPlanID",0);
-							transactionValues.put("TransName",transactionName);
-							transactionValues.put("TransValue",transactionValue);
-							transactionValues.put("TransType",transactionType);
-							transactionValues.put("TransCategory",transactionCategory);
-							transactionValues.put("TransCheckNum",transactionCheckNum);
-							transactionValues.put("TransMemo",transactionMemo);
-							transactionValues.put("TransTime",transactionTime);
-							transactionValues.put("TransDate",transactionDate);
-							transactionValues.put("TransCleared",transactionCleared);
 
-							myDB.insert(tblTrans, null, transactionValues);
+							//Insert values into accounts table
+							DatabaseHelper dh = new DatabaseHelper(getActivity());
+							dh.addTransaction(account_id+"","0",transactionName, transactionValue+"", transactionType, transactionCategory, transactionCheckNum, transactionMemo, transactionTime, transactionDate, transactionCleared);
 
 						} 
 

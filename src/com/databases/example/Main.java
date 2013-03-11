@@ -136,7 +136,7 @@ public class Main extends SherlockActivity {
 	//Over-rode method to handle database closing, prevent corruption
 	@Override
 	public void onDestroy() {
-		if(myDB.isOpen()){
+		if(myDB != null){
 			myDB.close();
 		}
 
@@ -159,7 +159,7 @@ public class Main extends SherlockActivity {
 
 		}//end if
 
-		if(myDB.isOpen()){
+		if(myDB != null){
 			myDB.close();
 		}
 

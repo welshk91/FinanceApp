@@ -52,7 +52,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static final int REG_LOADER = 0;
 	private static final int SEARCH_LOADER = 1;
 
-
 	//Balance
 	float totalBalance;
 
@@ -72,11 +71,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	ListView lv = null;
 	static UserItemAdapter adapter = null;
-
-	final static String tblAccounts = "tblAccounts";
-	final static String tblTrans = "tblTrans";
-	final static String dbFinance = "dbFinance";
-	static SQLiteDatabase myDB;
 
 	//Method called upon first creation
 	@Override
@@ -113,40 +107,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapter.getItemId(position);
-				//String item = (String) adapter.getItem(position).name;
-
 				//NOTE: LIMIT *position*,*how many after*
-				String sqlCommand = "SELECT * FROM " + tblAccounts + 
-						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
-						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
+//				String sqlCommand = "SELECT * FROM " + tblAccounts + 
+//						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
+//						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
+				
+				DatabaseHelper dh = new DatabaseHelper(getActivity());
+				Cursor c = dh.getAccounts();
 
-				myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-				Cursor c = myDB.rawQuery(sqlCommand, null);
-
-				getActivity().startManagingCursor(c);
-
-				int entry_id = 0;
-				String entry_name = null;
-				String entry_balance = null;
-				String entry_time = null;
-				String entry_date = null;
-
-				c.moveToFirst();
-				do{
-					entry_id = c.getInt(0);
-					entry_name = c.getString(1);
-					entry_balance = c.getString(2);
-					entry_time = c.getString(3);
-					entry_date = c.getString(4);
-					//Log.e("Here!!!", "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_balance+"\nTime: "+entry_time+"\nDate: "+entry_date);
-				}while(c.moveToNext());
-
-				//Close Database if Open
-				if (myDB != null){
-					myDB.close();
-				}
-
+				c.moveToPosition(selectionRowID-1);
+				int	entry_id = c.getInt(0);
+				
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
 				if(checkbook_frame!=null){
@@ -154,10 +125,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					//Data to send to transaction fragment
 					Bundle args = new Bundle();
 					args.putInt("ID",entry_id);
-					args.putString("name", entry_name);
-					args.putString("balance", entry_balance);
-					args.putString("time", entry_time);
-					args.putString("date", entry_date);
 
 					// Add the fragment to the activity, pushing this transaction
 					// on to the back stack.
@@ -176,13 +143,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Bundle args = new Bundle();
 					args.putBoolean("showAll", false);
 					args.putBoolean("boolSearch", false);
-
 					args.putInt("ID",entry_id);
-					args.putString("name", entry_name);
-					args.putString("balance", entry_balance);
-					args.putString("time", entry_time);
-					args.putString("date", entry_date);
-
+					
 					// Add the fragment to the activity, pushing this transaction
 					// on to the back stack.
 					Transactions tran_frag = new Transactions();
@@ -234,36 +196,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
 
-		// Cursor is used to navigate the query results
-		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
 		//Fragment is a search fragment
 		if(searchFragment){
 
 			//Word being searched
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
-			//Command used to search
-			String sqlCommand = " SELECT AcctID as _id, * FROM " + tblAccounts + 
-					" WHERE AcctName " + 
-					" LIKE ?" + 
-					" UNION " + 
-					" SELECT AcctID as _id, * FROM " + tblAccounts +
-					" WHERE AcctBalance " + 
-					" LIKE ?" + 
-					" UNION " + 
-					" SELECT AcctID as _id, AcctName, * FROM " + tblAccounts +
-					" WHERE AcctDate " + 
-					" LIKE ?" +
-					" UNION " +
-					" SELECT AcctID as _id, AcctName, * FROM " + tblAccounts +
-					" WHERE AcctTime " + 
-					" LIKE ?";
-
 			try{
-				cursorAccounts = myDB.rawQuery(sqlCommand, new String[] { "%" + query  + "%", "%" + query  + "%", "%" + query  + "%", "%" + query  + "%" });
+				DatabaseHelper dh = new DatabaseHelper(getActivity());
+				cursorAccounts = dh.getSearchedAccounts(query);
 			}
 			catch(Exception e){
+				Log.e("Accounts-populate","Search Failed. Error e="+e);
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_LONG).show();
 				return;
 			}
@@ -272,8 +216,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			cursorAccounts = myDB.query(tblAccounts, new String[] { "AcctID as _id", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
-					null, null, null, null);			
+			DatabaseHelper dh = new DatabaseHelper(getActivity());
+			cursorAccounts = dh.getAccounts();	
 		}
 
 		//		getActivity().startManagingCursor(c);
@@ -315,11 +259,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			}
 		} 
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
 
 		adapter = new UserItemAdapter(this.getActivity(), cursorAccounts);
 		lv.setAdapter(adapter);
@@ -409,24 +348,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		AccountRecord record = adapter.getAccount(itemInfo.position);
 
-		String sqlDeleteAccount = "DELETE FROM " + tblAccounts + 
-				" WHERE AcctID = " + record.id;
-
-		//Deletes all transactions in the account
-		String sqlDeleteTransactions = "DELETE FROM " + tblTrans + 
-				" WHERE ToAcctID = " + record.id;
-
-		//Open Database
-		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		myDB.execSQL(sqlDeleteAccount);
-		myDB.execSQL(sqlDeleteTransactions);	
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
-		}
-
+		DatabaseHelper dh = new DatabaseHelper(getActivity());
+		dh.deleteAccount(record.id, false);
+		
 		//Reload transaction fragment if shown
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
@@ -502,9 +426,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {
-		if (myDB != null){
-			myDB.close();
-		}
 		super.onDestroy();
 	}
 
@@ -925,13 +846,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-
-			String sqlCommand = "SELECT * FROM " + tblAccounts + 
-					" WHERE AcctID = " + ID;
-
-			myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-			Cursor c = myDB.rawQuery(sqlCommand, null);
+			
+			DatabaseHelper dh = new DatabaseHelper(getActivity());
+			Cursor c = dh.getAccount(ID);
+			
 			getActivity().startManagingCursor(c);
 
 			int entry_id = 0;
@@ -948,11 +866,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				entry_time = c.getString(c.getColumnIndex("AcctTime"));
 				entry_date = c.getString(c.getColumnIndex("AcctDate"));
 			}while(c.moveToNext());
-
-			//Close Database if Open
-			if (myDB != null){
-				myDB.close();
-			}
 
 			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
 			View accountStatsView = li.inflate(R.layout.account_stats, null);
@@ -980,6 +893,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			TextView statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
 			statsTime.setText(entry_time);
 
+			c.close();
 			return alertDialogBuilder.create();
 
 		}
@@ -1045,28 +959,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					accountDate = dateFormat.format(c.getTime());
 
 					try{
-						String deleteCommand = "DELETE FROM " + tblAccounts + " WHERE AcctID = " + ID + ";";
-
-						//Open Database
-						myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
 						//Delete Old Record
-						myDB.execSQL(deleteCommand);
+						DatabaseHelper dh = new DatabaseHelper(getActivity());
+						dh.deleteAccount(ID,true);
 
 						//Make new record with same ID
-						ContentValues accountValues=new ContentValues();
-						accountValues.put("AcctID",ID);
-						accountValues.put("AcctName",accountName);
-						accountValues.put("AcctBalance",accountBalance);
-						accountValues.put("AcctTime",accountTime);
-						accountValues.put("AcctDate",accountDate);
-
-						myDB.insert(tblAccounts, null, accountValues);
-
-						//Close Database if Opened
-						if (myDB != null){
-							myDB.close();
-						}
+						dh.addAccount(ID, accountName,accountBalance,accountTime,accountDate);
 
 					}
 					catch(Exception e){
@@ -1139,6 +1037,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					//Variables for adding Starting Balance transaction
 					final String transactionName = "STARTING BALANCE";
 					float transactionValue;
+					final String transactionPlanId = "0";
 					final String transactionCategory = "STARTING BALANCE";
 					final String transactionCheckNum = "None";
 					final String transactionMemo = "This is an automatically generated transaction created when you add an account";
@@ -1171,36 +1070,15 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					long entry_id = 0;
 
-					//Open Database
-					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
 					try{
 						if (accountName.length()>0) {
 
 							//Insert values into accounts table
-							ContentValues accountValues=new ContentValues();
-							accountValues.put("AcctName",accountName);
-							accountValues.put("AcctBalance",accountBalance);
-							accountValues.put("AcctTime",accountTime);
-							accountValues.put("AcctDate",accountDate);
-
-							entry_id = myDB.insert(tblAccounts, null, accountValues);
-
-							//Insert values into accounts table
-							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("ToAcctID",entry_id);
-							transactionValues.put("TransName",transactionName);
-							transactionValues.put("TransValue",transactionValue);
-							transactionValues.put("TransType",transactionType);
-							transactionValues.put("TransCategory",transactionCategory);
-							transactionValues.put("TransCheckNum",transactionCheckNum);
-							transactionValues.put("TransMemo",transactionMemo);
-							transactionValues.put("TransTime",transactionTime);
-							transactionValues.put("TransDate",transactionDate);
-							transactionValues.put("TransCleared",transactionCleared);
-
-							myDB.insert(tblTrans, null, transactionValues);
-
+							DatabaseHelper dh = new DatabaseHelper(getActivity());
+							entry_id = dh.addAccount(accountName,accountBalance,accountTime,accountDate);
+							
+							//Insert values into transactions table
+							dh.addTransaction(entry_id+"",transactionPlanId,transactionName,transactionValue+"",transactionType,transactionCategory,transactionCheckNum,transactionMemo,transactionTime,transactionDate,transactionCleared);
 						} 
 
 						else {
@@ -1210,11 +1088,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					}
 					catch(Exception e){
 						Toast.makeText(getActivity(), "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-					}
-
-					//Close Database if Opened
-					if (myDB != null){
-						myDB.close();
 					}
 
 					//Update Accounts ListView

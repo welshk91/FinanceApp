@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -55,6 +56,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Balance
 	float totalBalance;
 
+	private static DatabaseHelper dh = null;
+	
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=1;
 	int CONTEXT_MENU_EDIT=2;
@@ -77,6 +80,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		dh = new DatabaseHelper(getActivity());
+		
 		//Arguments
 		Bundle bundle=getArguments();
 
@@ -112,9 +117,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 //						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
 //						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
 				
-				DatabaseHelper dh = new DatabaseHelper(getActivity());
 				Cursor c = dh.getAccounts();
-
+				
 				c.moveToPosition(selectionRowID-1);
 				int	entry_id = c.getInt(0);
 				
@@ -203,7 +207,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			try{
-				DatabaseHelper dh = new DatabaseHelper(getActivity());
 				cursorAccounts = dh.getSearchedAccounts(query);
 			}
 			catch(Exception e){
@@ -216,7 +219,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			DatabaseHelper dh = new DatabaseHelper(getActivity());
 			cursorAccounts = dh.getAccounts();	
 		}
 
@@ -348,7 +350,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		AccountRecord record = adapter.getAccount(itemInfo.position);
 
-		DatabaseHelper dh = new DatabaseHelper(getActivity());
 		dh.deleteAccount(record.id, false);
 		
 		//Reload transaction fragment if shown
@@ -543,18 +544,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		//		if(alertDialogView!=null){
-		//			alertDialogView.dismiss();
-		//		}
-		//		if(alertDialogEdit!=null){
-		//			alertDialogEdit.dismiss();
-		//		}
-		//		if(alertDialogAdd!=null){
-		//			alertDialogAdd.dismiss();
-		//		}
-
-		//populate();
-
+		if(dh!=null){
+			dh.close();
+		}
 		super.onPause();
 	}
 
@@ -847,7 +839,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
 			
-			DatabaseHelper dh = new DatabaseHelper(getActivity());
 			Cursor c = dh.getAccount(ID);
 			
 			getActivity().startManagingCursor(c);
@@ -960,7 +951,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					try{
 						//Delete Old Record
-						DatabaseHelper dh = new DatabaseHelper(getActivity());
 						dh.deleteAccount(ID,true);
 
 						//Make new record with same ID
@@ -1074,7 +1064,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						if (accountName.length()>0) {
 
 							//Insert values into accounts table
-							DatabaseHelper dh = new DatabaseHelper(getActivity());
 							entry_id = dh.addAccount(accountName,accountBalance,accountTime,accountDate);
 							
 							//Insert values into transactions table

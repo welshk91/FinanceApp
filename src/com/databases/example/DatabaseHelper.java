@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper{
@@ -26,10 +28,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	private static final String TABLE_LINKS = "tblLinks";
 
 	private static Context context = null;
-
+	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		this.context=context;        
+		this.context=context;
 	}
 
 	@Override
@@ -66,7 +68,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlCommandCategory);
 		db.execSQL(sqlCommandSubCategory);
 		db.execSQL(sqlCommandLinks);
-
 	}
 
 	@Override
@@ -101,6 +102,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	}
 
+	//Updates balance of an account
+	public void setBalance(String aID, float balance){
+		SQLiteDatabase db = this.getWritableDatabase();
+		String sqlCommand = "UPDATE " + TABLE_ACCOUNTS + " SET AcctBalance = " + balance + " WHERE AcctID = " + aID+ ";";
+		db.execSQL(sqlCommand);
+		db.close();
+	}
+	
 	//Get all accounts
 	public Cursor getAccounts(){
 		Cursor cursor = null;
@@ -149,19 +158,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Delete account (and relating transactions if specified)
-	public void deleteAccount(String id, boolean keepTransactions){
+	public void deleteAccount(String aID, boolean keepTransactions){
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		String sqlDeleteAccount = "DELETE FROM " + TABLE_ACCOUNTS + 
-				" WHERE AcctID = " + id;
+				" WHERE AcctID = " + aID;
 		db.execSQL(sqlDeleteAccount);
 
 		if(keepTransactions=false){
 			String sqlDeleteTransactions = "DELETE FROM " + TABLE_TRANSACTIONS + 
-					" WHERE ToAcctID = " + id;
+					" WHERE ToAcctID = " + aID;
 			db.execSQL(sqlDeleteTransactions);	
 		}
 
+		db.close();
 	}
 
 	//Add account (no ID)
@@ -175,7 +185,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		accountValues.put("AcctDate",date);
 
 		long id = db.insert(TABLE_ACCOUNTS, null, accountValues);
-
+		db.close();
 		return id; 
 	}
 
@@ -191,7 +201,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		accountValues.put("AcctDate",date);
 
 		long id = db.insert(TABLE_ACCOUNTS, null, accountValues);
-
+		db.close();
 		return id; 
 	}
 
@@ -317,6 +327,48 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 		return id; 	
 
+	}
+
+	//Get all categories
+	public Cursor getCategories(){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+		cursor = db.query(TABLE_CATEGORIES, new String[] { "CatID as _id", "CatName", "CatNote" }, null,
+				null, null, null, null);
+		return cursor;
+	}
+
+	//Get single category
+	public Cursor getCategory(String cID){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String sqlCommand = "SELECT * FROM " + TABLE_CATEGORIES + 
+				" WHERE CatID = " + cID;
+
+		cursor = db.rawQuery(sqlCommand, null);
+		return cursor;
+	}
+
+	//Get all categories
+	public Cursor getSubCategories(){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote" }, null,
+				null, null, null, null);
+		return cursor;
+	}
+
+	//Get single category
+	public Cursor getSubCategory(String sID){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String sqlCommand = "SELECT * FROM " + TABLE_SUBCATEGORIES + 
+				" WHERE SubCatID = " + sID;
+
+		cursor = db.rawQuery(sqlCommand, null);
+		return cursor;
 	}
 
 }

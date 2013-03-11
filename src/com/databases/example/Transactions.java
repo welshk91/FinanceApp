@@ -62,9 +62,6 @@ import com.slidingmenu.lib.SlidingMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
 
-	//Used to keep Track of total Balance
-	float totalBalance;
-
 	//Used to determine if fragment should show all transactions
 	boolean showAllTransactions=false;
 
@@ -72,6 +69,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	static View promptsView;
 	View myFragmentView;
 
+	private static DatabaseHelper dh = null;
+	
 	static Spinner tCategory;
 	static Button tTime;
 	static Button tDate;
@@ -95,11 +94,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	ListView lv = null;
 	static UserItemAdapter adapter = null;
 
-	final static String tblAccounts = "tblAccounts";
-	final static String tblCategory = "tblCategory";
-	final static String tblSubCategory = "tblSubCategory";
-	final static String dbFinance = "dbFinance";
-	static SQLiteDatabase myDB;
+	//For Autocomplete
 	static ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	//Adapter for category spinner
@@ -111,6 +106,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		dh = new DatabaseHelper(getActivity());
+		
 		//Arguments
 		Bundle bundle=getArguments();
 
@@ -193,9 +190,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
 		noResult.setVisibility(View.GONE);
 
-		//Reset totalBalance
-		totalBalance = 0;
-
 		//Arguments for fragment
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
@@ -204,10 +198,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
 
-		DatabaseHelper dh = new DatabaseHelper(getActivity());
-
 		if(showAllTransactions){
-			dh.getTransactionsAll();
+			cursorTransactions = dh.getTransactionsAll();
 		}
 		else if(searchFragment){
 			//Word being searched
@@ -224,11 +216,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		}
 		else{
-			dh.getTransactions(account_id+"");
+			cursorTransactions = dh.getTransactions(account_id+"");
 		}
 
 		getActivity().startManagingCursor(cursorTransactions);
-		int idColumn = cursorTransactions.getColumnIndex("TransID");
+		
+		//int idColumn = cursorTransactions.getColumnIndex("TransID");
 		int acctIDColumn = cursorTransactions.getColumnIndex("ToAcctID");
 		int planIDColumn = cursorTransactions.getColumnIndex("ToPlanID");
 		int nameColumn = cursorTransactions.getColumnIndex("TransName");
@@ -261,23 +254,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					dropdownResults.add(memo);
 
-					//Add account balance to total balance
-					try{
-
-						//Withdraws should subtract totalBalance
-						if(type.contains("Withdrawl")){
-							totalBalance = totalBalance - (Float.parseFloat(value));
-						}
-						//Deposit should add to totalBalance
-						else{
-							totalBalance = totalBalance + Float.parseFloat(value);
-						}
-
-					}
-					catch(Exception e){
-						Toast.makeText(Transactions.this.getActivity(), "Could not calculate total balance", Toast.LENGTH_SHORT).show();
-					}
-
 				} while (cursorTransactions.moveToNext());
 			}
 
@@ -293,18 +269,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 		} 
 
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
 		//Set up an adapter for listView
 		adapter = new UserItemAdapter(this.getActivity(), cursorTransactions);
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
-		calculateBalance(account_id);
-
+		calculateBalance(cursorTransactions);
+		
 	}//end populate
 
 	//Creates menu for long presses
@@ -382,7 +353,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//		" WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + 
 		//		" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
 
-		DatabaseHelper dh = new DatabaseHelper(getActivity());
 		dh.deleteTransaction(adapter.getTransaction(itemInfo.position).id +"");
 
 		Transactions.this.populate();
@@ -448,24 +418,46 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	}
 
 	//Calculates the balance
-	public void calculateBalance(int id){
+	public void calculateBalance(Cursor cursor){
+		float totalBalance = 0;
+		
+		cursor.moveToFirst();
+		if (cursor != null) {
+			if (cursor.isFirst()) {
+				do {
+					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
+					String type = cursor.getString(cursor.getColumnIndex("TransType"));
+					
+					//Add account balance to total balance
+					try{
+
+						//Withdraws should subtract totalBalance
+						if(type.contains("Withdrawl")){
+							totalBalance = totalBalance - (Float.parseFloat(value));
+						}
+						//Deposit should add to totalBalance
+						else{
+							totalBalance = totalBalance + Float.parseFloat(value);
+						}
+
+					}
+					catch(Exception e){
+						Log.e("Transactions-calculateBalance", "Could not calculate total balance. Error e=" + e);
+					}
+
+				} while (cursor.moveToNext());
+			}
+
+			else {
+				Log.e("Transactions-calculateBalance", "No results found/Cursor empty");
+			}
+
+		}
+		
+		dh.setBalance(account_id+"", totalBalance);
+		
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
-
-		//Update account with accurate balance
-		String sqlCommand = "UPDATE " + tblAccounts + " SET AcctBalance = " + totalBalance + " WHERE AcctID = " + id + ";";
-
-		//Open Database
-		myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		//Update Record
-		myDB.execSQL(sqlCommand);
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
-		}
-
 	}
 
 	//Override default resume to also call populate in case view needs refreshing
@@ -477,17 +469,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
-		myDB = this.getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
-		final String sqlCategoryPopulate = "SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory
-				+ " ORDER BY _id;";
-
-		//Can use this to combine category/subcategories
-		//		String sqlCategoryPopulate = " SELECT CatID as _id,CatName FROM " + tblCategory + 
-		//				" UNION " + 
-		//				" SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory + " ORDER BY _id";
-
-		categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
+		categoryCursor = dh.getSubCategories();
+		
 		getActivity().startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };
@@ -496,25 +479,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
 
-		//Close Database
-		if (myDB != null){
-			myDB.close();
-		}
-
 	}//end of categoryPopulate
 
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		//		if(alertDialogView!=null){
-		//			alertDialogView.dismiss();
-		//		}
-		//		if(alertDialogEdit!=null){
-		//			alertDialogEdit.dismiss();
-		//		}
-		//		if(alertDialogAdd!=null){
-		//			alertDialogAdd.dismiss();
-		//		}
+		if(dh!=null){
+			dh.close();
+		}
+		
 		if(categoryCursor!=null){
 			categoryCursor.close();
 		}
@@ -1014,7 +987,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			int id = getArguments().getInt("id");
 
-			DatabaseHelper dh = new DatabaseHelper(getActivity());
 			Cursor c = dh.getTransaction(id+"");
 
 			getActivity().startManagingCursor(c);
@@ -1221,7 +1193,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = "0";
 							}
 
-							DatabaseHelper dh = new DatabaseHelper(getActivity());
 							dh.deleteTransaction(tID+"");
 
 							//Make new record with same ID
@@ -1379,9 +1350,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						validValue=false;
 					}
 
-					//Open Database
-					myDB = getActivity().openOrCreateDatabase(dbFinance, getActivity().MODE_PRIVATE, null);
-
 					try{
 						if (transactionName.length()>0) {
 
@@ -1389,9 +1357,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = "0";
 							}
 
-
 							//Insert values into accounts table
-							DatabaseHelper dh = new DatabaseHelper(getActivity());
 							dh.addTransaction(account_id+"","0",transactionName, transactionValue+"", transactionType, transactionCategory, transactionCheckNum, transactionMemo, transactionTime, transactionDate, transactionCleared);
 
 						} 
@@ -1406,11 +1372,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					//Close cursor
 					cursor.close();
-
-					//Close Database if Opened
-					if (myDB != null){
-						myDB.close();
-					}
 
 					//Update Accounts ListView
 					((Transactions) getParentFragment()).populate();					

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -35,8 +36,7 @@ public class Main extends SherlockActivity {
 	Button Schedule_Button;
 	Button Exit_Button;
 
-	static SQLiteDatabase myDB;
-	private DatabaseHelper dh = null;
+	private SQLiteOpenHelper dh = null;
 
 	//Variables for the ListView
 	public ArrayList<String> results = new ArrayList<String>();
@@ -133,24 +133,27 @@ public class Main extends SherlockActivity {
 		}// end onClick
 	};// end onClickListener
 
-	//Over-rode method to handle database closing, prevent corruption
 	@Override
 	public void onDestroy() {
-		if(myDB != null){
-			myDB.close();
-		}
-
 		super.onDestroy();
 	}
 
+	//Over-rode method to handle database closing, prevent corruption
+	@Override
+	public void onPause(){
+		if(dh!=null){
+			dh.close();
+		}
+		super.onPause();
+	}
 	//Method for Creating Database
 	public void createDatabase(){
-		
+
 		//If this is the first time running program...
 		if(true){
 			try {
 				dh = new DatabaseHelper(this);
-				myDB = dh.getWritableDatabase();
+				dh.getWritableDatabase();
 			} 
 			catch (Exception e) {
 				Log.e("Main-createDatabase", "Error e=" + e);
@@ -158,10 +161,6 @@ public class Main extends SherlockActivity {
 			}
 
 		}//end if
-
-		if(myDB != null){
-			myDB.close();
-		}
 
 	}//end createDatabase
 

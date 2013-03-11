@@ -28,7 +28,7 @@ Things To Do
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, ...)
 * Make dialogs not close on rotation change (converting to dialogfragments recommended)
 * Add custom search suggestions
-* Add sorting options
+* Add sorting options (ORDER BY parameter in the database get methods)
 * PDF Reports
 * Export/Import oxf (Make sure to support required fields)
 * Password/Pattern, warning of liability. Add encryption and email for recovery?

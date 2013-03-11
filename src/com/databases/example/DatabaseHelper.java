@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	private static final String TABLE_LINKS = "tblLinks";
 
 	private static Context context = null;
-	
+
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context=context;
@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlCommand);
 		db.close();
 	}
-	
+
 	//Get all accounts
 	public Cursor getAccounts(){
 		Cursor cursor = null;
@@ -214,7 +214,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return cursor;
 	}
 
-	//Get all transactions
+	//Get all transactions for all accounts
 	public Cursor getTransactionsAll(){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -333,7 +333,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	public Cursor getCategories(){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_CATEGORIES, new String[] { "CatID as _id", "CatName", "CatNote" }, null,
+		cursor = db.query(TABLE_CATEGORIES, new String[] { "CatID", "CatName", "CatNote" }, null,
 				null, null, null, null);
 		return cursor;
 	}
@@ -350,16 +350,70 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return cursor;
 	}
 
-	//Get all categories
-	public Cursor getSubCategories(){
+	//Add category (no ID)
+	public long addCategory(String name, String note){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues categoryValues=new ContentValues();
+		categoryValues.put("CatName",name);
+		categoryValues.put("CatNote",note);
+
+		long id = db.insert(TABLE_CATEGORIES, null, categoryValues);
+		db.close();
+		return id; 
+	}
+
+	//Add category (ID given)
+	public long addCategory(String cID, String name, String note){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues categoryValues=new ContentValues();
+		categoryValues.put("CatID",cID);
+		categoryValues.put("CatName",name);
+		categoryValues.put("CatNote",note);
+
+		long id = db.insert(TABLE_CATEGORIES, null, categoryValues);
+		db.close();
+		return id; 
+	}
+
+	//Delete category (and relating subcategories if specified)
+	public void deleteCategory(String cID, boolean keepSubCategories){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		String sqlDeleteCategory = "DELETE FROM " + TABLE_CATEGORIES + 
+				" WHERE CatID = " + cID;
+
+		db.execSQL(sqlDeleteCategory);
+
+		if(keepSubCategories=false){
+			String sqlDeleteSubCategories = "DELETE FROM " + TABLE_SUBCATEGORIES + 
+					" WHERE ToCatID = " + cID;
+			db.execSQL(sqlDeleteSubCategories);	
+		}
+
+		db.close();
+	}
+
+	//Get subcategories for all categories
+	public Cursor getSubCategoriesAll(){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote" }, null,
+		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID", "ToCatID", "SubCatName", "SubCatNote" }, null,
 				null, null, null, null);
 		return cursor;
 	}
 
-	//Get single category
+	//Get subcategories for a category
+	public Cursor getSubCategories(String cID){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID", "ToCatID", "SubCatName", "SubCatNote"}, "ToCatID = " + cID,
+				null, null, null, null);
+		return cursor;
+	}
+
+	//Get single subcategory
 	public Cursor getSubCategory(String sID){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -369,6 +423,44 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 		cursor = db.rawQuery(sqlCommand, null);
 		return cursor;
+	}
+
+	//Add subcategory (no ID)
+	public long addSubCategory(String cID, String name, String note){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues subcategoryValues=new ContentValues();
+		subcategoryValues.put("ToCatID",cID);
+		subcategoryValues.put("SubCatName",name);
+		subcategoryValues.put("SubCatNote",note);
+
+		long id = db.insert(TABLE_SUBCATEGORIES, null, subcategoryValues);
+		db.close();
+		return id; 
+	}
+
+	//Add subcategory (ID given)
+	public long addSubCategory(String sID, String cID, String name, String note){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues subcategoryValues=new ContentValues();
+		subcategoryValues.put("SubCatID",sID);
+		subcategoryValues.put("ToCatID",cID);
+		subcategoryValues.put("SubCatName",name);
+		subcategoryValues.put("SubCatNote",note);
+
+		long id = db.insert(TABLE_SUBCATEGORIES, null, subcategoryValues);
+		db.close();
+		return id; 
+	}
+
+	//Delete subcategory
+	public void deleteSubCategory(String cID){
+		SQLiteDatabase db = this.getWritableDatabase();
+		String sqlDeleteSubCategory = "DELETE FROM " + TABLE_SUBCATEGORIES + 
+				" WHERE SubCatID = " + cID;
+		db.execSQL(sqlDeleteSubCategory);
+		db.close();
 	}
 
 }

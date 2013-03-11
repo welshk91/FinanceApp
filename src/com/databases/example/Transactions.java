@@ -469,7 +469,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
-		categoryCursor = dh.getSubCategories();
+		categoryCursor = dh.getSubCategoriesAll();
 		
 		getActivity().startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 

@@ -38,10 +38,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 
 public class Categories extends SherlockFragmentActivity{
 
-	public final static String dbFinance = "dbFinance";
-	public static SQLiteDatabase myDB = null;
-	final static String tblCategory = "tblCategory";
-	final static String tblSubCategory = "tblSubCategory";
+	private static DatabaseHelper dh = null;
 
 	private SliderMenu menu;
 
@@ -71,6 +68,8 @@ public class Categories extends SherlockFragmentActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+
+		dh = new DatabaseHelper(this);
 
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
@@ -107,14 +106,10 @@ public class Categories extends SherlockFragmentActivity{
 		TextView noResult = (TextView)this.findViewById(R.id.category_noCategory);
 		noResult.setVisibility(View.GONE);
 
-		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
-
-		cursorCategory = myDB.query(tblCategory, new String[] { "CatID", "CatName", "CatNote"}, null,
-				null, null, null, null);
+		cursorCategory = dh.getCategories();
 
 		startManagingCursor(cursorCategory);
-		int IDColumn = cursorCategory.getColumnIndex("CatID");
+		//int IDColumn = cursorCategory.getColumnIndex("CatID");
 		int NameColumn = cursorCategory.getColumnIndex("CatName");
 		int NoteColumn = cursorCategory.getColumnIndex("CatNote");
 
@@ -122,7 +117,7 @@ public class Categories extends SherlockFragmentActivity{
 		if (cursorCategory != null) {
 			if (cursorCategory.isFirst()) {
 				do {
-					String id = cursorCategory.getString(IDColumn);
+					String id = cursorCategory.getString(0);
 					String name = cursorCategory.getString(NameColumn);
 					String note = cursorCategory.getString(NoteColumn);
 
@@ -141,11 +136,6 @@ public class Categories extends SherlockFragmentActivity{
 			}
 		} 
 
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
 		//Give the item adapter a list of all categories and subcategories
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
 		lvCategory.setAdapter(adapterCategory);
@@ -156,10 +146,7 @@ public class Categories extends SherlockFragmentActivity{
 
 	//Method for filling subcategories
 	public void subcategoryPopulate(String catId){		
-		//Database myDB is already open
-
-		cursorSubCategory = myDB.query(tblSubCategory, new String[] { "SubCatID", "ToCatID", "SubCatName", "SubCatNote"}, "ToCatID = " + catId,
-				null, null, null, null);
+		cursorSubCategory = dh.getSubCategories(catId);
 
 		resultsCursor.add(cursorSubCategory);
 
@@ -222,36 +209,15 @@ public class Categories extends SherlockFragmentActivity{
 		int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 		int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
-		//Open Database
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
 		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 			String subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
-			String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
-					" WHERE SubCatID = " + subcategoryID;
-
+			dh.deleteSubCategory(subcategoryID);			
 			Log.d("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
-
-			myDB.execSQL(sqlDeleteSubCategory);
-
 		}
 		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 			String categoryID = adapterCategory.getCategory(groupPos).id;
-			String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
-					" WHERE CatID = " + categoryID;
-			String sqlDeleteSubCategories = "DELETE FROM " + tblSubCategory + 
-					" WHERE ToCatID = " + categoryID;
-
+			dh.deleteCategory(categoryID, false);
 			Log.d("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
-
-			myDB.execSQL(sqlDeleteCategory);
-			myDB.execSQL(sqlDeleteSubCategories);	
-
-		}
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
 		}
 
 		//Refresh the categories list
@@ -739,16 +705,6 @@ public class Categories extends SherlockFragmentActivity{
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-//		if(alertDialogView!=null){
-//			alertDialogView.dismiss();
-//		}
-//		if(alertDialogEdit!=null){
-//			alertDialogEdit.dismiss();
-//		}
-//		if(alertDialogAdd!=null){
-//			alertDialogAdd.dismiss();
-//		}
-
 		//if(!cursorCategory.isClosed()){
 		//	cursorCategory.close();
 		//}
@@ -759,6 +715,10 @@ public class Categories extends SherlockFragmentActivity{
 		//	resultsCursor.clear();
 		//	resultsCursor = null;
 		//}
+
+		if(dh!=null){
+			dh.close();
+		}
 
 		super.onPause();
 	}
@@ -881,49 +841,16 @@ public class Categories extends SherlockFragmentActivity{
 					String newNote = editNote.getText().toString().trim();
 
 					try{
-						myDB = getActivity().openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
 						if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 							SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
-							String sqlDeleteSubCategory = "DELETE FROM " + tblSubCategory + 
-									" WHERE SubCatID = " + oldRecord.id;
-
-							Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
-							myDB.execSQL(sqlDeleteSubCategory);
-
-							//Make new record with same ID
-							ContentValues valuesSubCategory=new ContentValues();
-							valuesSubCategory.put("SubCatID",oldRecord.id);
-							valuesSubCategory.put("ToCatID",oldRecord.catId);
-							valuesSubCategory.put("SubCatName",newName);
-							valuesSubCategory.put("SubCatNote",newNote);
-
-							myDB.insert(tblSubCategory, null, valuesSubCategory);
-
+							dh.deleteSubCategory(oldRecord.id);
+							dh.addSubCategory(oldRecord.id, oldRecord.catId, newName, newNote);
 						}
 						else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 							CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
-							String sqlDeleteCategory = "DELETE FROM " + tblCategory + 
-									" WHERE CatID = " + oldRecord.id;
-
-							Log.d("categoryEdit", "Deleting " + oldRecord.name + " id:" + oldRecord.id);
-							myDB.execSQL(sqlDeleteCategory);
-
-							//Make new record with same ID
-							ContentValues valuesCategory=new ContentValues();
-							valuesCategory.put("CatID",oldRecord.id);
-							valuesCategory.put("CatName",newName);
-							valuesCategory.put("CatNote",newNote);
-
-							myDB.insert(tblCategory, null, valuesCategory);
-
+							dh.deleteCategory(oldRecord.id, true);
+							dh.addCategory(oldRecord.id, newName, newNote);
 						}
-
-						//Make sure Database is closed
-						if (myDB != null){
-							myDB.close();
-						}
-
 					}
 					catch(Exception e){
 						Log.e("Categories", "Error editing Categories");
@@ -1010,42 +937,19 @@ public class Categories extends SherlockFragmentActivity{
 					String name = editName.getText().toString().trim();
 					String note = editNote.getText().toString().trim();
 
-					//Create database and open
-					myDB = getActivity().openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
 					try{
 						//Add a category
 						if(isCat){
-							//Log.e("Category Add", "Adding a normal category : " + category);
-
-							ContentValues categoryValues=new ContentValues();
-							categoryValues.put("CatName",name);
-							categoryValues.put("CatNote",note);
-
-							myDB.insert(tblCategory, null, categoryValues);
-
+							dh.addCategory(name, note);
 						}
 						//Add a subcategory
 						else{
-							//Log.e("Category Add", "Adding a subcategory : " + catID + name + note);
-
-							ContentValues subcategoryValues=new ContentValues();
-							subcategoryValues.put("ToCatID",catID);
-							subcategoryValues.put("SubCatName",name);
-							subcategoryValues.put("SubCatNote",note);
-
-							myDB.insert(tblSubCategory, null, subcategoryValues);
-
+							dh.addSubCategory(catID, name, note);
 						}
 
 					}
 					catch(Exception e){
 						Log.e("Categories", "Error adding Categories");
-					}
-
-					//Make sure Database is closed
-					if (myDB != null){
-						myDB.close();
 					}
 
 					//Refresh the categories list

@@ -53,9 +53,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static final int REG_LOADER = 0;
 	private static final int SEARCH_LOADER = 1;
 
-	//Balance
-	float totalBalance;
-
 	private static DatabaseHelper dh = null;
 	
 	//Constants for ContextMenu
@@ -190,7 +187,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		noResult.setVisibility(View.GONE);
 
 		//Reset Balance
-		totalBalance=0;
+		float totalBalance=0;
 
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
@@ -266,7 +263,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		lv.setAdapter(adapter);
 
 		//Refresh Balance
-		calculateBalance();
+		calculateBalance(totalBalance);
 
 	}//end populate
 
@@ -501,7 +498,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Calculates the balance
-	public void calculateBalance(){
+	public void calculateBalance(float totalBalance){
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
 	}

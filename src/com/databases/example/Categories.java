@@ -109,7 +109,7 @@ public class Categories extends SherlockFragmentActivity{
 		cursorCategory = dh.getCategories();
 
 		startManagingCursor(cursorCategory);
-		//int IDColumn = cursorCategory.getColumnIndex("CatID");
+		int IDColumn = cursorCategory.getColumnIndex("CatID");
 		int NameColumn = cursorCategory.getColumnIndex("CatName");
 		int NoteColumn = cursorCategory.getColumnIndex("CatNote");
 
@@ -117,7 +117,7 @@ public class Categories extends SherlockFragmentActivity{
 		if (cursorCategory != null) {
 			if (cursorCategory.isFirst()) {
 				do {
-					String id = cursorCategory.getString(0);
+					String id = cursorCategory.getString(IDColumn);
 					String name = cursorCategory.getString(NameColumn);
 					String note = cursorCategory.getString(NoteColumn);
 

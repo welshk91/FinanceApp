@@ -37,12 +37,8 @@ import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class PlanReceiver extends BroadcastReceiver{
-
-	final String dbFinance = "dbFinance";
-	final String tblPlanTrans = "tblPlanTrans";
-	final String tblTrans = "tblTrans";
-	SQLiteDatabase myDB = null;
+public class PlanReceiver extends BroadcastReceiver{	
+	private static DatabaseHelper dh = null;
 
 	//Date Format to use for date (03-26-2013)
 	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
@@ -53,6 +49,8 @@ public class PlanReceiver extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle bundle = intent.getExtras();
+		
+		dh = new DatabaseHelper(context);
 
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			Log.d("PlanReceiver", "Notified of boot");
@@ -93,35 +91,11 @@ public class PlanReceiver extends BroadcastReceiver{
 
 	//For Adding a Transaction
 	public void transactionAdd(PlanRecord plan, Context context){
-
-		//Open Database
-		myDB = context.openOrCreateDatabase(dbFinance, context.MODE_PRIVATE, null);
-
-		//Insert values into accounts table
-		ContentValues transactionValues=new ContentValues();
-		transactionValues.put("ToAcctID",plan.acctId);
-		transactionValues.put("ToPlanID",plan.id);
-		transactionValues.put("TransName",plan.name);
-		transactionValues.put("TransValue",plan.value);
-		transactionValues.put("TransType",plan.type);
-		transactionValues.put("TransCategory",plan.category);
-		transactionValues.put("TransCheckNum","");
-		transactionValues.put("TransMemo",plan.memo);
-
 		final Calendar cal = Calendar.getInstance();
 		String time = timeFormat.format(cal.getTime());
 		String date = dateFormat.format(cal.getTime());
 
-		transactionValues.put("TransTime",time);
-		transactionValues.put("TransDate",date);
-		transactionValues.put("TransCleared",plan.cleared);
-
-		myDB.insert(tblTrans, null, transactionValues);
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
-		}
+		dh.addTransaction(plan.acctId, plan.id, plan.name, plan.value, plan.type, plan.category, "", plan.memo, time, date, plan.cleared);
 
 	}//end of transactionAdd
 
@@ -173,15 +147,9 @@ public class PlanReceiver extends BroadcastReceiver{
 
 	//Method that remakes the planned transaction
 	public void reschedulePlans(Context context){
-
-		// Cursor is used to navigate the query results
-		myDB = context.openOrCreateDatabase(dbFinance, context.MODE_PRIVATE, null);
-
-		Cursor cursorPlans = myDB.query(tblPlanTrans, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
-				null, null, null, null);
-
+		Cursor cursorPlans = dh.getPlannedTransactionsAll();
+		
 		//startManagingCursor(cursorPlans);
-
 		int IDColumn = cursorPlans.getColumnIndex("PlanID");
 		int ToIDColumn = cursorPlans.getColumnIndex("ToAcctID");
 		int NameColumn = cursorPlans.getColumnIndex("PlanName");
@@ -214,7 +182,6 @@ public class PlanReceiver extends BroadcastReceiver{
 					PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,cleared);
 					schedule(record,context);
 
-
 				} while (cursorPlans.moveToNext());
 			}
 
@@ -223,11 +190,6 @@ public class PlanReceiver extends BroadcastReceiver{
 				Log.d("Schedule", "No Plans to reschedule");
 			}
 		} 
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
 
 	}
 

@@ -51,14 +51,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Schedule extends SherlockFragmentActivity{
-
-	final String dbFinance = "dbFinance";
-	final String tblPlanTrans = "tblPlanTrans";
-	final String tblAccounts = "tblAccounts";
-	final String tblSubCategory = "tblSubCategory";
-	public SQLiteDatabase myDB = null;
 	private SliderMenu menu;
 
+	private static DatabaseHelper dh = null;
+	
 	final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
 	//Adapter for category spinner
@@ -108,6 +104,8 @@ public class Schedule extends SherlockFragmentActivity{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
+		dh = new DatabaseHelper(this);
+		
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
@@ -133,22 +131,15 @@ public class Schedule extends SherlockFragmentActivity{
 		//A textView alerting the user if database is empty
 		TextView noResult = (TextView)this.findViewById(R.id.schedule_noPlans);
 		noResult.setVisibility(View.GONE);
-
-		// Cursor is used to navigate the query results
-		myDB = this.openOrCreateDatabase(dbFinance, this.MODE_PRIVATE, null);
-
-		cursorPlans = myDB.query(tblPlanTrans, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
-				null, null, null, null);
+		
+		cursorPlans = dh.getPlannedTransactionsAll();
 
 		startManagingCursor(cursorPlans);
-
 		cursorPlans.moveToFirst();
 		if (cursorPlans != null) {
 			if (cursorPlans.isFirst()) {
 				do {
-
 					//Nothing??? Need loop for noResult textview
-
 				} while (cursorPlans.moveToNext());
 			}
 
@@ -158,18 +149,10 @@ public class Schedule extends SherlockFragmentActivity{
 				Log.d("Schedule", "No Plans found");
 			}
 		} 
-
-		//Close Database if Open
-		if (myDB != null){
-			myDB.close();
-		}
-
+		
 		//Give the item adapter a list of all categories and subcategories
 		adapterPlans = new UserItemAdapter(this, cursorPlans);		
 		lvPlans.setAdapter(adapterPlans);
-		
-		//Log.e("Categories","out of category populate");
-
 	}//end of schedulePopulate	
 
 	//For Scheduling a Transaction
@@ -299,39 +282,10 @@ public class Schedule extends SherlockFragmentActivity{
 
 				try{
 					if (transactionName.length()>0 && validRate && validValue) {
+						Log.d("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
-						//		if(!validValue){
-						//			transactionValue = "0";
-						//		}
-						//						
-						//		if(!validRate){
-						//			transactionRate = "1";
-						//		}
-
-						Log.e("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
-
-						//Insert values into accounts table
-						ContentValues transactionValues=new ContentValues();
-						transactionValues.put("ToAcctID",transactionAccountID);
-						transactionValues.put("PlanName",transactionName);
-						transactionValues.put("PlanValue",transactionValue);
-						transactionValues.put("PlanType",transactionType);
-						transactionValues.put("PlanCategory",transactionCategory);
-						transactionValues.put("PlanMemo",transactionMemo);
-						transactionValues.put("PlanOffset",transactionOffset);
-						transactionValues.put("PlanRate",transactionRate);
-						transactionValues.put("PlanCleared",transactionCleared);
-
-						//Create database and open
-						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-						long planID = myDB.insert(tblPlanTrans, null, transactionValues);
-
-						//Make sure Database is closed
-						if (myDB != null){
-							myDB.close();
-						}
-
+						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						
 						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
@@ -374,20 +328,9 @@ public class Schedule extends SherlockFragmentActivity{
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
-		//Open Database
-		myDB = this.openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-		String sqlDeleteCategory = "DELETE FROM " + tblPlanTrans + 
-				" WHERE PlanID = " + record.id;
-
+		dh.deletePlannedTransaction(record.id);
+		
 		Log.d("Schedule", "Deleting " + record.name + " id:" + record.id);
-
-		myDB.execSQL(sqlDeleteCategory);
-
-		//Close Database if Opened
-		if (myDB != null){
-			myDB.close();
-		}
 
 		cancelPlan(record);
 
@@ -569,28 +512,8 @@ public class Schedule extends SherlockFragmentActivity{
 
 						schedulingDelete(item);
 
-						//Insert values into accounts table
-						ContentValues transactionValues=new ContentValues();
-						transactionValues.put("ToAcctID",transactionAccountID);
-						transactionValues.put("PlanName",transactionName);
-						transactionValues.put("PlanValue",transactionValue);
-						transactionValues.put("PlanType",transactionType);
-						transactionValues.put("PlanCategory",transactionCategory);
-						transactionValues.put("PlanMemo",transactionMemo);
-						transactionValues.put("PlanOffset",transactionOffset);
-						transactionValues.put("PlanRate",transactionRate);
-						transactionValues.put("PlanCleared",transactionCleared);
-
-						//Create database and open
-						myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-						long planID = myDB.insert(tblPlanTrans, null, transactionValues);
-
-						//Make sure Database is closed
-						if (myDB != null){
-							myDB.close();
-						}
-
+						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						
 						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
@@ -679,12 +602,7 @@ public class Schedule extends SherlockFragmentActivity{
 
 	//Method to get the list of categories for spinner
 	public void categoryPopulate(){
-		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-		final String sqlCategoryPopulate = "SELECT ToCatID as _id, SubCatName FROM " + tblSubCategory
-				+ " ORDER BY _id;";
-
-		Cursor categoryCursor = myDB.rawQuery(sqlCategoryPopulate, null);
+		Cursor categoryCursor = dh.getSubCategoriesAll();
 		startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };
@@ -692,24 +610,11 @@ public class Schedule extends SherlockFragmentActivity{
 		categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		categorySpinner.setAdapter(categorySpinnerAdapter);
-
-		//Close Database
-		if (myDB != null){
-			myDB.close();
-		}
-
 	}//end of categoryPopulate
 
 	//Method to get the list of accounts for spinner
 	public void accountPopulate(){
-
-		// Cursor is used to navigate the query results
-		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-		final String sqlAccountPopulate = "SELECT AcctID as _id,AcctName FROM " + tblAccounts
-				+ " ;";
-
-		Cursor accountCursor = myDB.rawQuery(sqlAccountPopulate, null);
+		Cursor accountCursor = dh.getAccounts();
 		startManagingCursor(accountCursor);
 		String[] from = new String[] {"AcctName", "_id"}; 
 		int[] to = new int[] { android.R.id.text1};
@@ -717,12 +622,6 @@ public class Schedule extends SherlockFragmentActivity{
 		accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, accountCursor, from, to);
 		accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		accountSpinner.setAdapter(accountSpinnerAdapter);
-
-		//Close Database
-		if (myDB != null){
-			myDB.close();
-		}
-
 	}//end of accountPopulate
 
 	private void schedule(PlanRecord plan) {

@@ -17,6 +17,7 @@ public class MyContentProvider extends ContentProvider{
 	//IDs
 	public static final int ACCOUNTS_ID = 100;
 	public static final int ACCOUNT_ID = 110;
+	public static final int ACCOUNT_SEARCH_ID = 120;
 	public static final int TRANSACTIONS_ID = 200;
 	public static final int TRANSACTION_ID = 210;
 	public static final int CATEGORIES_ID = 300;
@@ -59,6 +60,7 @@ public class MyContentProvider extends ContentProvider{
 	static{
 		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS, ACCOUNTS_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/#", ACCOUNT_ID);
+		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/SEARCH/*", ACCOUNT_SEARCH_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_TRANSACTIONS, TRANSACTIONS_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_TRANSACTIONS + "/#", TRANSACTION_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_CATEGORIES, CATEGORIES_ID);
@@ -91,6 +93,10 @@ public class MyContentProvider extends ContentProvider{
 			return cursor;
 		case ACCOUNT_ID:
 			cursor = dh.getAccount(uri.getLastPathSegment());
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);
+			return cursor;
+		case ACCOUNT_SEARCH_ID:
+			cursor = dh.getSearchedAccounts(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case TRANSACTIONS_ID:

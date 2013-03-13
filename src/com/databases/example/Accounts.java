@@ -52,7 +52,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	final int PICKFILE_RESULT_CODE = 1;
 
 	private static final int REG_LOADER = 0;
-	private static final int SEARCH_LOADER = 1;
 
 	private static DatabaseHelper dh = null;
 
@@ -78,6 +77,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.getLoaderManager();
+		
 		dh = new DatabaseHelper(getActivity());
 
 		//Arguments
@@ -115,9 +116,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				//						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
 				//						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
 
-				Cursor c = dh.getAccounts();
-
-				c.moveToPosition(selectionRowID-1);
+				Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
+				
+				c.moveToFirst();
 				int	entry_id = c.getInt(0);
 
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
@@ -172,6 +173,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
+		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
+		lv.setEmptyView(noResult);
+		
+		adapter = new UserItemAdapter(this.getActivity(), null);
+		lv.setAdapter(adapter);
+
 		populate();
 
 		return myFragmentView;
@@ -180,15 +187,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Method called after creation, populates list with account information
 	protected void populate() {
 		Log.e("Accounts", "Populate");
-
-		Cursor cursorAccounts = null;
-
-		//A textView alerting the user if database is empty
-		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
-		noResult.setVisibility(View.GONE);
-
-		//Reset Balance
-		float totalBalance=0;
 
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
@@ -205,73 +203,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			try{
-				cursorAccounts = dh.getSearchedAccounts(query);
+				Bundle b = new Bundle();
+				b.putBoolean("boolSearch", true);
+				b.putString("query", query);
+				getLoaderManager().restartLoader(REG_LOADER, b, this);
 			}
 			catch(Exception e){
 				Log.e("Accounts-populate","Search Failed. Error e="+e);
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_LONG).show();
-				return;
 			}
 
 		}
 
 		//Not A Search Fragment
 		else{
-			//cursorAccounts = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
-			getLoaderManager().initLoader(REG_LOADER, null, this);
-
-			adapter = new UserItemAdapter(this.getActivity(), cursorAccounts);
-			lv.setAdapter(adapter);
-
-			return;
-
+			getLoaderManager().initLoader(REG_LOADER, bundle, this);
 		}
-
-		//		getActivity().startManagingCursor(c);
-		//		int IDColumn = c.getColumnIndex("AcctID");
-		//		int NameColumn = c.getColumnIndex("AcctName");
-		int BalanceColumn = cursorAccounts.getColumnIndex("AcctBalance");
-		//		int TimeColumn = c.getColumnIndex("AcctTime");
-		//		int DateColumn = c.getColumnIndex("AcctDate");
-
-		cursorAccounts.moveToFirst();
-		if (cursorAccounts != null) {
-			if (cursorAccounts.isFirst()) {
-				do {
-					//					String id = c.getString(IDColumn);
-					//					String name = c.getString(NameColumn);
-					String balance = cursorAccounts.getString(BalanceColumn);
-					//					String time = c.getString(TimeColumn);
-					//					String date = c.getString(DateColumn);
-
-					//Add account balance to total balance
-					try{
-						totalBalance = totalBalance + Float.parseFloat(balance);
-					}
-					catch(Exception e){
-						Toast.makeText(Accounts.this.getActivity(), "Could not calculate total balance", Toast.LENGTH_SHORT).show();
-					}
-
-				} while (cursorAccounts.moveToNext());
-			}
-
-			else {
-				//No Results Found
-				noResult.setVisibility(View.VISIBLE);
-
-				//No Search Results
-				if(bundle==null){
-					noResult.setText("Nothing Found");
-				}
-
-			}
-		} 
-
-		adapter = new UserItemAdapter(this.getActivity(), cursorAccounts);
-		lv.setAdapter(adapter);
-
-		//Refresh Balance
-		calculateBalance(totalBalance);
 
 	}//end populate
 
@@ -355,7 +302,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		AccountRecord record = adapter.getAccount(itemInfo.position);
 		Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
-		
+
 		//Delete Account
 		getActivity().getContentResolver().delete(uri, null, null);
 
@@ -616,7 +563,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			TextView TVbalance = (TextView)v.findViewById(R.id.account_balance);
 			TextView TVtime = (TextView)v.findViewById(R.id.account_time);
 			TextView TVdate = (TextView)v.findViewById(R.id.account_date);
-
+			
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
@@ -779,8 +726,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
 
-			Cursor c = dh.getAccount(ID);
-
+			//Cursor c = dh.getAccount(ID);
+			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
+			
 			getActivity().startManagingCursor(c);
 
 			int entry_id = 0;
@@ -1047,29 +995,32 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
-
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
 		switch (loaderID) {
 		case REG_LOADER:
-			return new CursorLoader(
-					getActivity(),   // Parent activity context
-					MyContentProvider.ACCOUNTS_URI,// Table to query
-					null,     // Projection to return
-					null,            // No selection clause
-					null,            // No selection arguments
-					null             // Default sort order
-					);
-		case SEARCH_LOADER:
-			return new CursorLoader(
-					getActivity(),   // Parent activity context
-					MyContentProvider.ACCOUNTS_URI,// Table to query
-					null,     // Projection to return
-					null,            // No selection clause
-					null,            // No selection arguments
-					null             // Default sort order
-					);
+			if(bundle!=null && bundle.getBoolean("boolSearch")){
+				String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
+				return new CursorLoader(
+						getActivity(),   	// Parent activity context
+						(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);
+			}
+			else{
+				return new CursorLoader(
+						getActivity(),   	// Parent activity context
+						MyContentProvider.ACCOUNTS_URI,// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);				
+			}
 		default:
-			// An invalid id was passed in
+			Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
 		}
 

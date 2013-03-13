@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -46,7 +47,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener {
+public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 	final int PICKFILE_RESULT_CODE = 1;
 
@@ -54,7 +55,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static final int SEARCH_LOADER = 1;
 
 	private static DatabaseHelper dh = null;
-	
+
 	//Constants for ContextMenu
 	int CONTEXT_MENU_OPEN=1;
 	int CONTEXT_MENU_EDIT=2;
@@ -78,7 +79,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		super.onCreate(savedInstanceState);
 
 		dh = new DatabaseHelper(getActivity());
-		
+
 		//Arguments
 		Bundle bundle=getArguments();
 
@@ -110,15 +111,15 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapter.getItemId(position);
 				//NOTE: LIMIT *position*,*how many after*
-//				String sqlCommand = "SELECT * FROM " + tblAccounts + 
-//						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
-//						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
-				
+				//				String sqlCommand = "SELECT * FROM " + tblAccounts + 
+				//						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
+				//						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
+
 				Cursor c = dh.getAccounts();
-				
+
 				c.moveToPosition(selectionRowID-1);
 				int	entry_id = c.getInt(0);
-				
+
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
 				if(checkbook_frame!=null){
@@ -145,7 +146,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					args.putBoolean("showAll", false);
 					args.putBoolean("boolSearch", false);
 					args.putInt("ID",entry_id);
-					
+
 					// Add the fragment to the activity, pushing this transaction
 					// on to the back stack.
 					Transactions tran_frag = new Transactions();
@@ -216,8 +217,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			cursorAccounts = dh.getAccounts();
-			getActivity().managedQuery(MyContentProvider.CONTENT_URI, null, null, null, null);
+			//cursorAccounts = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
+			getLoaderManager().initLoader(REG_LOADER, null, this);
+
+			adapter = new UserItemAdapter(this.getActivity(), cursorAccounts);
+			lv.setAdapter(adapter);
+
+			return;
+
 		}
 
 		//		getActivity().startManagingCursor(c);
@@ -347,35 +354,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void accountDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		AccountRecord record = adapter.getAccount(itemInfo.position);
-
-		dh.deleteAccount(record.id, false);
+		Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
 		
-		//Reload transaction fragment if shown
-		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
-
-		Accounts account_frag = new Accounts();
-		Transactions transaction_frag = new Transactions();
-
-		//Bundle for Transaction fragment
-		Bundle argsTran = new Bundle();
-		argsTran.putBoolean("showAll", true);
-		argsTran.putBoolean("boolSearch", false);
-
-		//Bundle for Account fragment
-		Bundle argsAccount = new Bundle();
-		argsAccount.putBoolean("boolSearch", false);
-
-		transaction_frag.setArguments(argsTran);
-		account_frag.setArguments(argsAccount);
-
-		if(transaction_frame!=null){
-			getFragmentManager().beginTransaction()
-			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
-		}
-		else{
-			getFragmentManager().beginTransaction().
-			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
-		}
+		//Delete Account
+		getActivity().getContentResolver().delete(uri, null, null);
 
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
 
@@ -385,41 +367,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void accountAdd(){
 		DialogFragment newFragment = AddDialogFragment.newInstance();
 		newFragment.show(getChildFragmentManager(), "dialogAdd");
-
-		//		//Reload transaction fragment if shown
-		//		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
-		//		int account_frame = R.id.account_frag_frame;
-		//		View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
-		//		
-		//		Log.e("HERE", "Transaction_frame=" + transaction_frame);
-		//		Log.e("HERE", "Account_frame=" + account_frame);
-		//		Log.e("HERE", "Checkbook_frame=" + checkbook_frame);
-		//		
-		//		Accounts account_frag = new Accounts();
-		//		Transactions transaction_frag = new Transactions();
-		//
-		//		//Bundle for Transaction fragment
-		//		Bundle argsTran = new Bundle();
-		//		argsTran.putInt("ID", 0);
-		//
-		//		//Bundle for Account fragment
-		//		Bundle argsAccount = new Bundle();
-		//		argsAccount.putBoolean("boolSearch", false);
-		//
-		//		transaction_frag.setArguments(argsTran);
-		//		account_frag.setArguments(argsAccount);
-		//		
-		//		if(transaction_frame!=null){
-		//			getFragmentManager().beginTransaction()
-		//			.replace(account_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
-		//			//getFragmentManager().executePendingTransactions();
-		//		}
-		//		else{
-		//			getFragmentManager().beginTransaction().
-		//			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
-		//			//getFragmentManager().executePendingTransactions();
-		//		}
-
 	}	
 
 	//Handle closing database properly to avoid corruption
@@ -549,27 +496,25 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
-		private Cursor accounts;
+		//private Cursor accounts;
 		private Context context;
 
 		public UserItemAdapter(Context context, Cursor accounts) {
 			super(context, accounts);
 			this.context = context;
-			this.accounts = accounts;
+			//this.accounts = accounts;
 		}
 
 		public AccountRecord getAccount(long position){
-			Cursor group = accounts;
+			Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
-			int IDColumn = group.getColumnIndex("AcctID");
 			int NameColumn = group.getColumnIndex("AcctName");
 			int BalanceColumn = group.getColumnIndex("AcctBalance");
 			int TimeColumn = group.getColumnIndex("AcctTime");
 			int DateColumn = group.getColumnIndex("AcctDate");
 
 			String id = group.getString(0);
-			//String id = group.getString(IDColumn);
 			String name = group.getString(NameColumn);
 			String balance = group.getString(BalanceColumn);
 			String time = group.getString(TimeColumn);
@@ -582,7 +527,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
-			Cursor user = accounts;
+			//Cursor user = accounts;
+			Cursor user = getCursor();
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -594,14 +540,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				TextView TVdate = (TextView) v.findViewById(R.id.account_date);
 				TextView TVtime = (TextView) v.findViewById(R.id.account_time);
 
-				int IDColumn = user.getColumnIndex("AcctID");
 				int NameColumn = user.getColumnIndex("AcctName");
 				int BalanceColumn = user.getColumnIndex("AcctBalance");
 				int TimeColumn = user.getColumnIndex("AcctTime");
 				int DateColumn = user.getColumnIndex("AcctDate");
 
 				String id = user.getString(0);
-				//String id = user.getString(IDColumn);
 				String name = user.getString(NameColumn);
 				String balance = user.getString(BalanceColumn);
 				String time = user.getString(TimeColumn);
@@ -804,7 +748,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//An Object Class used to hold the data of each account record
-
 	public class AccountRecord {
 		protected String id;
 		protected String name;
@@ -822,7 +765,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles view fragment
-
 	public static class ViewDialogFragment extends SherlockDialogFragment {
 
 		public static ViewDialogFragment newInstance(String id) {
@@ -836,9 +778,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-			
+
 			Cursor c = dh.getAccount(ID);
-			
+
 			getActivity().startManagingCursor(c);
 
 			int entry_id = 0;
@@ -889,7 +831,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles edit fragment
-
 	public static class EditDialogFragment extends SherlockDialogFragment {
 
 		public static EditDialogFragment newInstance(AccountRecord record) {
@@ -949,10 +890,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					try{
 						//Delete Old Record
-						dh.deleteAccount(ID,true);
+						Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + ID);
+						getActivity().getContentResolver().delete(uri, null, null);
+
+						ContentValues accountValues=new ContentValues();
+						accountValues.put("AcctID",ID);
+						accountValues.put("AcctName",accountName);
+						accountValues.put("AcctBalance",accountBalance);
+						accountValues.put("AcctTime",accountTime);
+						accountValues.put("AcctDate",accountDate);
 
 						//Make new record with same ID
-						dh.addAccount(ID, accountName,accountBalance,accountTime,accountDate);
+						getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
 
 					}
 					catch(Exception e){
@@ -978,7 +927,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Class that handles add fragment
-
 	public static class AddDialogFragment extends SherlockDialogFragment {
 
 		public static AddDialogFragment newInstance() {
@@ -1061,9 +1009,15 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					try{
 						if (accountName.length()>0) {
 
+							ContentValues accountValues=new ContentValues();
+							accountValues.put("AcctName",accountName);
+							accountValues.put("AcctBalance",accountBalance);
+							accountValues.put("AcctTime",accountTime);
+							accountValues.put("AcctDate",accountDate);
+
 							//Insert values into accounts table
-							entry_id = dh.addAccount(accountName,accountBalance,accountTime,accountDate);
-							
+							getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
+
 							//Insert values into transactions table
 							dh.addTransaction(entry_id+"",transactionPlanId,transactionName,transactionValue+"",transactionType,transactionCategory,transactionCheckNum,transactionMemo,transactionTime,transactionDate,transactionCleared);
 						} 
@@ -1074,11 +1028,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					}
 					catch(Exception e){
+						Log.e("Accounts-AddDialog", "Exception e="+e);
 						Toast.makeText(getActivity(), "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
-
-					//Update Accounts ListView
-					((Accounts) getParentFragment()).populate();					
 
 				}//end onClick "OK"
 			})
@@ -1092,6 +1044,45 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			return alertDialogBuilder.create();
 		}
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
+
+		switch (loaderID) {
+		case REG_LOADER:
+			return new CursorLoader(
+					getActivity(),   // Parent activity context
+					MyContentProvider.ACCOUNTS_URI,// Table to query
+					null,     // Projection to return
+					null,            // No selection clause
+					null,            // No selection arguments
+					null             // Default sort order
+					);
+		case SEARCH_LOADER:
+			return new CursorLoader(
+					getActivity(),   // Parent activity context
+					MyContentProvider.ACCOUNTS_URI,// Table to query
+					null,     // Projection to return
+					null,            // No selection clause
+					null,            // No selection arguments
+					null             // Default sort order
+					);
+		default:
+			// An invalid id was passed in
+			return null;
+		}
+
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		adapter.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		adapter.swapCursor(null);		
 	}
 
 }// end Accounts

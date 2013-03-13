@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -158,50 +159,18 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Delete account (and relating transactions if specified)
-	public void deleteAccount(String aID, boolean keepTransactions){
+	public int deleteAccount(Uri uri,String selection, String[] selectionArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		String sqlDeleteAccount = "DELETE FROM " + TABLE_ACCOUNTS + 
-				" WHERE AcctID = " + aID;
-		db.execSQL(sqlDeleteAccount);
-
-		if(keepTransactions=false){
-			String sqlDeleteTransactions = "DELETE FROM " + TABLE_TRANSACTIONS + 
-					" WHERE ToAcctID = " + aID;
-			db.execSQL(sqlDeleteTransactions);	
-		}
-
-		db.close();
+	    String id = uri.getLastPathSegment();
+	    int rowsDeleted = 0;
+		rowsDeleted = db.delete(TABLE_ACCOUNTS, "AcctID = " + id, null);		
+		return rowsDeleted;
 	}
 
-	//Add account (no ID)
-	public long addAccount(String name, String balance,String time,String date){
+	//Add account
+	public long addAccount(ContentValues values){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues accountValues=new ContentValues();
-		accountValues.put("AcctName",name);
-		accountValues.put("AcctBalance",balance);
-		accountValues.put("AcctTime",time);
-		accountValues.put("AcctDate",date);
-
-		long id = db.insert(TABLE_ACCOUNTS, null, accountValues);
-		db.close();
-		return id; 
-	}
-
-	//Add account (ID given)
-	public long addAccount(String aID, String name, String balance,String time,String date){
-		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues accountValues=new ContentValues();
-		accountValues.put("AcctID",aID);
-		accountValues.put("AcctName",name);
-		accountValues.put("AcctBalance",balance);
-		accountValues.put("AcctTime",time);
-		accountValues.put("AcctDate",date);
-
-		long id = db.insert(TABLE_ACCOUNTS, null, accountValues);
-		db.close();
+		long id = db.insert(TABLE_ACCOUNTS, null, values);
 		return id; 
 	}
 

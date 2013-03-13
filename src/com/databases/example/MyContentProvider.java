@@ -36,8 +36,19 @@ public class MyContentProvider extends ContentProvider{
 	private static final String PATH_PLANNED_TRANSACTIONS = "plannedTransactions";
 	private static final String PATH_LINKS = "links";
 
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	public static final Uri ACCOUNTS_URI = Uri.parse("content://" + AUTHORITY
 	       + "/" + PATH_ACCOUNTS);
+	public static final Uri TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
+		       + "/" + PATH_TRANSACTIONS);
+	public static final Uri CATEGORIES_URI = Uri.parse("content://" + AUTHORITY
+		       + "/" + PATH_CATEGORIES);
+	public static final Uri SUBCATEGORIES_URI = Uri.parse("content://" + AUTHORITY
+		       + "/" + PATH_SUBCATEGORIES);
+	public static final Uri PLANNED_TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
+		       + "/" + PATH_TRANSACTIONS);
+	public static final Uri LINKS_URI = Uri.parse("content://" + AUTHORITY
+		       + "/" + PATH_LINKS);
+	
 	//public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	//        + "/mt-tutorial";
 	//public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -64,24 +75,6 @@ public class MyContentProvider extends ContentProvider{
 	public boolean onCreate(){
 		dh = new DatabaseHelper(getContext());
 		return true;
-	}
-
-	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String getType(Uri uri) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Uri insert(Uri uri, ContentValues values) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -145,13 +138,92 @@ public class MyContentProvider extends ContentProvider{
 		}
 
 	}
+	
+	@Override
+	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		int uriType = sURIMatcher.match(uri);
+		int rowsDeleted = 0;
+		
+		switch (uriType) {
+		case ACCOUNT_ID:
+			rowsDeleted = dh.deleteAccount(uri, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		case TRANSACTION_ID:
+			dh.getTransaction(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		case CATEGORY_ID:
+			dh.getCategory(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		case SUBCATEGORY_ID:
+			dh.getSubCategory(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		case PLANNED_TRANSACTION_ID:
+			dh.getPlannedTransaction(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		case LINK_ID:
+			dh.getAccount(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown URI");
+		}		
+		
+		return rowsDeleted;
+	}
+
+	@Override
+	public Uri insert(Uri uri, ContentValues values) {
+	    int uriType = sURIMatcher.match(uri);
+	    long id = 0;
+		switch (uriType) {
+		case ACCOUNTS_ID:
+			id = dh.addAccount(values);
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_ACCOUNTS + "/" + id);
+		case TRANSACTION_ID:
+			dh.getTransaction(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_TRANSACTIONS + "/" + id);
+		case CATEGORY_ID:
+			dh.getCategory(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_CATEGORIES + "/" + id);
+		case SUBCATEGORY_ID:
+			dh.getSubCategory(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_SUBCATEGORIES + "/" + id);
+		case PLANNED_TRANSACTION_ID:
+			dh.getPlannedTransaction(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_PLANNED_TRANSACTIONS + "/" + id);
+		case LINK_ID:
+			dh.getAccount(uri.getLastPathSegment());
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_LINKS + "/" + id);
+		default:
+			throw new IllegalArgumentException("Unknown URI");
+		}
+	    
+	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		// TODO Auto-generated method stub
+		
+		//WHEN YOU WANT TO UPDATE A VALUE IN THE DATABASE
+		
 		return 0;
 	}
-
+	
+	@Override
+	public String getType(Uri uri) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

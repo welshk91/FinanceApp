@@ -28,7 +28,7 @@ public class MyContentProvider extends ContentProvider{
 	public static final int LINKS_ID = 600;
 	public static final int LINK_ID = 610;
 
-	private static final String AUTHORITY = "com.database.example.provider";
+	private static final String AUTHORITY = "com.databases.example.provider";
 	private static final String PATH_ACCOUNTS = "accounts";
 	private static final String PATH_TRANSACTIONS = "transactions";
 	private static final String PATH_CATEGORIES = "categories";

@@ -109,7 +109,6 @@ public class Categories extends SherlockFragmentActivity{
 		cursorCategory = dh.getCategories();
 
 		startManagingCursor(cursorCategory);
-		int IDColumn = cursorCategory.getColumnIndex("CatID");
 		int NameColumn = cursorCategory.getColumnIndex("CatName");
 		int NoteColumn = cursorCategory.getColumnIndex("CatNote");
 
@@ -117,7 +116,7 @@ public class Categories extends SherlockFragmentActivity{
 		if (cursorCategory != null) {
 			if (cursorCategory.isFirst()) {
 				do {
-					String id = cursorCategory.getString(IDColumn);
+					String id = cursorCategory.getString(0);
 					String name = cursorCategory.getString(NameColumn);
 					String note = cursorCategory.getString(NoteColumn);
 
@@ -151,7 +150,6 @@ public class Categories extends SherlockFragmentActivity{
 		resultsCursor.add(cursorSubCategory);
 
 		startManagingCursor(cursorSubCategory);
-		int IDColumn = cursorSubCategory.getColumnIndex("SubCatID");
 		int ToIDColumn = cursorSubCategory.getColumnIndex("ToCatID");
 		int NameColumn = cursorSubCategory.getColumnIndex("SubCatName");
 		int NoteColumn = cursorSubCategory.getColumnIndex("SubCatNote");
@@ -387,18 +385,14 @@ public class Categories extends SherlockFragmentActivity{
 			Cursor group = category;
 
 			group.moveToPosition((int) id);
-			int IDColumn = group.getColumnIndex("CatID");
 			int NameColumn = group.getColumnIndex("CatName");
 			int NoteColumn = group.getColumnIndex("CatNote");
 
-			//Log.e("HERE", "columns " + IDColumn + " " + NameColumn + " " + NoteColumn);
-			String itemId = group.getString(IDColumn);
+			String itemId = group.getString(0);
 			String itemName = group.getString(NameColumn);
 			String itemNote = group.getString(NoteColumn);
 
 			CategoryRecord record = new CategoryRecord(itemId, itemName, itemNote);
-			//group.close();
-
 			return record;
 		}
 
@@ -407,7 +401,6 @@ public class Categories extends SherlockFragmentActivity{
 			Cursor group = subcategory.get(groupId);
 
 			group.moveToPosition(childId);
-			int IDColumn = group.getColumnIndex("SubCatID");
 			int ToIDColumn = group.getColumnIndex("ToCatID");
 			int NameColumn = group.getColumnIndex("SubCatName");
 			int NoteColumn = group.getColumnIndex("SubCatNote");
@@ -497,12 +490,11 @@ public class Categories extends SherlockFragmentActivity{
 			}
 
 			TextView name = (TextView) v.findViewById(R.id.category_name);
-			int IDColumn = user.getColumnIndex("CatID");
 			int NameColumn = user.getColumnIndex("CatName");
 			int NoteColumn = user.getColumnIndex("CatNote");
 
 			user.moveToPosition(groupPosition);
-			String itemId = user.getString(IDColumn);
+			String itemId = user.getString(0);
 			String itemName = user.getString(NameColumn);
 			String itemNote = user.getString(NoteColumn);
 			//Log.e("getGroupView", "Found Category: " + itemName);
@@ -525,7 +517,6 @@ public class Categories extends SherlockFragmentActivity{
 			// TODO Auto-generated method stub
 			Cursor temp = subcategory.get(groupPosition);
 			temp.moveToPosition(childPosition);
-			int IDColumn = temp.getColumnIndex("SubCatID");
 			String itemId = temp.getString(0);
 
 			//Log.e("getChildID", "returning " + Long.parseLong(itemId));
@@ -611,13 +602,12 @@ public class Categories extends SherlockFragmentActivity{
 			}
 
 			TextView name = (TextView) v.findViewById(R.id.subcategory_name);
-			int IDColumn = user.getColumnIndex("SubCatID");
 			int ToIDColumn = user.getColumnIndex("ToCatID");
 			int NameColumn = user.getColumnIndex("SubCatName");
 			int NoteColumn = user.getColumnIndex("SubCatNote");
 
 			user.moveToPosition(childPosition);
-			String itemId = user.getString(IDColumn);
+			String itemId = user.getString(0);
 			String itemTo_id = user.getString(ToIDColumn);
 			String itemSubname = user.getString(NameColumn);
 			String itemNote = user.getString(NoteColumn);

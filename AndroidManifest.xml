@@ -92,6 +92,13 @@
             android:name="group.pals.android.lib.ui.lockpattern.LockPatternActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden" >
         </activity>
+
+        <provider
+            android:name="com.databases.example.MyContentProvider"
+            android:authorities="com.databases.example.provider"
+            android:exported="false"
+            android:multiprocess="true" >
+        </provider>
     </application>
 
 </manifest>

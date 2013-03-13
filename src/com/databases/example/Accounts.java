@@ -216,7 +216,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			cursorAccounts = dh.getAccounts();	
+			cursorAccounts = dh.getAccounts();
+			getActivity().managedQuery(MyContentProvider.CONTENT_URI, null, null, null, null);
 		}
 
 		//		getActivity().startManagingCursor(c);

@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlCommand);
 		db.close();
 	}
-	
+
 	//Sum up all the account balances
 	public Cursor sumAccounts(){
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -117,7 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		Cursor cursor = db.rawQuery(sqlCommand, null);
 		return cursor;
 	}
-	
+
 	//Get all accounts
 	public Cursor getAccounts(){
 		Cursor cursor = null;
@@ -168,8 +168,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	//Delete account (and relating transactions if specified)
 	public int deleteAccount(Uri uri,String selection, String[] selectionArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-	    String id = uri.getLastPathSegment();
-	    int rowsDeleted = 0;
+		String id = uri.getLastPathSegment();
+		int rowsDeleted = 0;
 		rowsDeleted = db.delete(TABLE_ACCOUNTS, "AcctID = " + id, null);		
 		return rowsDeleted;
 	}
@@ -182,20 +182,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Get all transactions for an account
-	public Cursor getTransactions(String aID){
+	public Cursor getTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_TRANSACTIONS, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, "ToAcctID = " + aID,
-				null, null, null, null);
-		return cursor;
-	}
-
-	//Get all transactions for all accounts
-	public Cursor getTransactionsAll(){
-		Cursor cursor = null;
-		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_TRANSACTIONS, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, null,
-				null, null, null, null);
+		cursor = db.query(TABLE_TRANSACTIONS, new String[] { "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"}, selection,
+				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}
 
@@ -501,7 +492,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return id; 	
 
 	}
-	
+
 	//Delete planned transaction
 	public void deletePlannedTransaction(String pID){
 		SQLiteDatabase db = this.getWritableDatabase();

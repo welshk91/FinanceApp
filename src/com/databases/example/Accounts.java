@@ -76,7 +76,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		this.getLoaderManager();
 
 		dh = new DatabaseHelper(getActivity());

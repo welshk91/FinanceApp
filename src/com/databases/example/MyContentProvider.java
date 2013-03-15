@@ -20,6 +20,7 @@ public class MyContentProvider extends ContentProvider{
 	public static final int ACCOUNT_SEARCH_ID = 120;
 	public static final int TRANSACTIONS_ID = 200;
 	public static final int TRANSACTION_ID = 210;
+	public static final int TRANSACTION_SEARCH_ID = 220;
 	public static final int CATEGORIES_ID = 300;
 	public static final int CATEGORY_ID = 310;
 	public static final int SUBCATEGORIES_ID = 400;
@@ -38,18 +39,18 @@ public class MyContentProvider extends ContentProvider{
 	private static final String PATH_LINKS = "links";
 
 	public static final Uri ACCOUNTS_URI = Uri.parse("content://" + AUTHORITY
-	       + "/" + PATH_ACCOUNTS);
+			+ "/" + PATH_ACCOUNTS);
 	public static final Uri TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
-		       + "/" + PATH_TRANSACTIONS);
+			+ "/" + PATH_TRANSACTIONS);
 	public static final Uri CATEGORIES_URI = Uri.parse("content://" + AUTHORITY
-		       + "/" + PATH_CATEGORIES);
+			+ "/" + PATH_CATEGORIES);
 	public static final Uri SUBCATEGORIES_URI = Uri.parse("content://" + AUTHORITY
-		       + "/" + PATH_SUBCATEGORIES);
+			+ "/" + PATH_SUBCATEGORIES);
 	public static final Uri PLANNED_TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
-		       + "/" + PATH_TRANSACTIONS);
+			+ "/" + PATH_TRANSACTIONS);
 	public static final Uri LINKS_URI = Uri.parse("content://" + AUTHORITY
-		       + "/" + PATH_LINKS);
-	
+			+ "/" + PATH_LINKS);
+
 	//public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
 	//        + "/mt-tutorial";
 	//public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -63,6 +64,7 @@ public class MyContentProvider extends ContentProvider{
 		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/SEARCH/*", ACCOUNT_SEARCH_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_TRANSACTIONS, TRANSACTIONS_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_TRANSACTIONS + "/#", TRANSACTION_ID);
+		sURIMatcher.addURI(AUTHORITY, PATH_TRANSACTIONS + "/SEARCH/*", TRANSACTION_SEARCH_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_CATEGORIES, CATEGORIES_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_CATEGORIES + "/#", CATEGORY_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_SUBCATEGORIES, SUBCATEGORIES_ID);
@@ -89,7 +91,6 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case ACCOUNTS_ID:
 			cursor = dh.getAccounts();
-			dh.sumAccounts();
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case ACCOUNT_ID:
@@ -101,11 +102,15 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case TRANSACTIONS_ID:
-			cursor = dh.getTransactionsAll();
+			cursor = dh.getTransactions(projection, selection, selectionArgs, sortOrder);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case TRANSACTION_ID:
 			cursor = dh.getTransaction(uri.getLastPathSegment());
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);
+			return cursor;
+		case TRANSACTION_SEARCH_ID:
+			cursor = dh.getSearchedTransactions(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case CATEGORIES_ID:
@@ -145,12 +150,12 @@ public class MyContentProvider extends ContentProvider{
 		}
 
 	}
-	
+
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int uriType = sURIMatcher.match(uri);
 		int rowsDeleted = 0;
-		
+
 		switch (uriType) {
 		case ACCOUNT_ID:
 			rowsDeleted = dh.deleteAccount(uri, selection, selectionArgs);
@@ -179,14 +184,14 @@ public class MyContentProvider extends ContentProvider{
 		default:
 			throw new IllegalArgumentException("Unknown URI");
 		}		
-		
+
 		return rowsDeleted;
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-	    int uriType = sURIMatcher.match(uri);
-	    long id = 0;
+		int uriType = sURIMatcher.match(uri);
+		long id = 0;
 		switch (uriType) {
 		case ACCOUNTS_ID:
 			id = dh.addAccount(values);
@@ -215,18 +220,18 @@ public class MyContentProvider extends ContentProvider{
 		default:
 			throw new IllegalArgumentException("Unknown URI");
 		}
-	    
+
 	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		
+
 		//WHEN YOU WANT TO UPDATE A VALUE IN THE DATABASE
-		
+
 		return 0;
 	}
-	
+
 	@Override
 	public String getType(Uri uri) {
 		// TODO Auto-generated method stub

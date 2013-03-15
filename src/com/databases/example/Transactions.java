@@ -17,12 +17,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
@@ -57,10 +61,11 @@ import com.actionbarsherlock.view.SubMenu;
 import com.databases.example.Accounts.AccountRecord;
 import com.databases.example.Accounts.AddDialogFragment;
 import com.databases.example.Accounts.EditDialogFragment;
+import com.databases.example.Accounts.UserItemAdapter;
 import com.databases.example.Accounts.ViewDialogFragment;
 import com.slidingmenu.lib.SlidingMenu;
 
-public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener{
+public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 
 	//Used to determine if fragment should show all transactions
 	boolean showAllTransactions=false;
@@ -69,8 +74,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	static View promptsView;
 	View myFragmentView;
 
+	private static final int REG_LOADER = 2;
+
 	private static DatabaseHelper dh = null;
-	
+
 	static Spinner tCategory;
 	static Button tTime;
 	static Button tDate;
@@ -105,7 +112,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		this.getLoaderManager();
+		
 		dh = new DatabaseHelper(getActivity());
 		
 		//Arguments
@@ -142,15 +150,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		Bundle bundle=getArguments();
 
 		if(bundle!=null && bundle.getBoolean("showAll")){
-			//Toast.makeText(this.getActivity(), "Could Not Find Account Information", Toast.LENGTH_SHORT).show();
 			showAllTransactions = true;
 		}
 		else if(bundle!=null && showAllTransactions==false) {
 			account_id = bundle.getInt("ID");
-
 			//getActivity().setTitle("Transactions <" + account_name +">");
-
-			//Toast.makeText(this.getActivity(), "ID: "+account_id+"\nName: "+account_name+"\nBalance: "+account_balance+"\nTime: "+account_time+"\nDate: "+account_date, Toast.LENGTH_SHORT).show();
 		}
 		//Set Listener for regular mouse click
 		lv.setOnItemClickListener(new OnItemClickListener(){
@@ -174,21 +178,20 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		//Populate List with Entries
-		populate();
+		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
+		lv.setEmptyView(noResult);
 
+		adapter = new UserItemAdapter(this.getActivity(), null);
+		lv.setAdapter(adapter);
+
+		populate();
+		
 		return myFragmentView;
 	}
 
 	//Populate view with all the transactions of selected account
 	protected void populate(){
 		dropdownResults = new ArrayList<String>();
-
-		Cursor cursorTransactions = null;
-
-		//TextView instructing user if database is empty
-		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
-		noResult.setVisibility(View.GONE);
 
 		//Arguments for fragment
 		Bundle bundle=getArguments();
@@ -199,14 +202,19 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		if(showAllTransactions){
-			cursorTransactions = dh.getTransactionsAll();
+			Bundle b = new Bundle();
+			b.putBoolean("boolShowAll", true);
+			getLoaderManager().restartLoader(REG_LOADER, bundle, this);
 		}
 		else if(searchFragment){
 			//Word being searched
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			try{
-				cursorTransactions = dh.getSearchedTransactions(query);
+				Bundle b = new Bundle();
+				b.putBoolean("boolSearch", true);
+				b.putString("query", query);
+				getLoaderManager().restartLoader(REG_LOADER, b, this);
 			}
 			catch(Exception e){
 				Log.e("Transactions-populate", "Search Failed. Error e=" + e);
@@ -216,66 +224,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		}
 		else{
-			cursorTransactions = dh.getTransactions(account_id+"");
+			Bundle b = new Bundle();
+			b.putInt("aID", account_id);
+			getLoaderManager().restartLoader(REG_LOADER, bundle, this);
 		}
 
-		getActivity().startManagingCursor(cursorTransactions);
-		
-		//int idColumn = cursorTransactions.getColumnIndex("TransID");
-		int acctIDColumn = cursorTransactions.getColumnIndex("ToAcctID");
-		int planIDColumn = cursorTransactions.getColumnIndex("ToPlanID");
-		int nameColumn = cursorTransactions.getColumnIndex("TransName");
-		int valueColumn = cursorTransactions.getColumnIndex("TransValue");
-		int typeColumn = cursorTransactions.getColumnIndex("TransType");
-		int categoryColumn = cursorTransactions.getColumnIndex("TransCategory");
-		int checknumColumn = cursorTransactions.getColumnIndex("TransCheckNum");
-		int memoColumn = cursorTransactions.getColumnIndex("TransMemo");
-		int timeColumn = cursorTransactions.getColumnIndex("TransTime");
-		int dateColumn = cursorTransactions.getColumnIndex("TransDate");
-		int clearedColumn = cursorTransactions.getColumnIndex("TransCleared");
-
-		cursorTransactions.moveToFirst();
-		if (cursorTransactions != null) {
-			if (cursorTransactions.isFirst()) {
-				do {
-					int id = cursorTransactions.getInt(0);
-					//int id = cursorTransactions.getInt(idColumn);
-					int acctId = cursorTransactions.getInt(acctIDColumn);
-					int planId = cursorTransactions.getInt(planIDColumn);
-					String name = cursorTransactions.getString(nameColumn);
-					String value = cursorTransactions.getString(valueColumn);
-					String type = cursorTransactions.getString(typeColumn);
-					String category = cursorTransactions.getString(categoryColumn);
-					String checknum = cursorTransactions.getString(checknumColumn);
-					String memo = cursorTransactions.getString(memoColumn);
-					String time = cursorTransactions.getString(timeColumn);
-					String date = cursorTransactions.getString(dateColumn);
-					String cleared = cursorTransactions.getString(clearedColumn);
-
-					dropdownResults.add(memo);
-
-				} while (cursorTransactions.moveToNext());
-			}
-
-			else {
-				//No Results Found
-				noResult.setVisibility(View.VISIBLE);
-
-				//No Search Result
-				if(bundle==null){
-					noResult.setText("Nothing Found");
-				}
-
-			}
-		} 
-
-		//Set up an adapter for listView
-		adapter = new UserItemAdapter(this.getActivity(), cursorTransactions);
-		lv.setAdapter(adapter);
-
-		//Refresh Balance
-		calculateBalance(cursorTransactions);
-		
 	}//end populate
 
 	//Creates menu for long presses
@@ -355,8 +308,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		dh.deleteTransaction(adapter.getTransaction(itemInfo.position).id +"");
 
-		Transactions.this.populate();
-
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
 
 	}//end of accountDelete
@@ -420,14 +371,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//Calculates the balance
 	public void calculateBalance(Cursor cursor){
 		float totalBalance = 0;
-		
+
 		cursor.moveToFirst();
 		if (cursor != null) {
 			if (cursor.isFirst()) {
 				do {
 					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
 					String type = cursor.getString(cursor.getColumnIndex("TransType"));
-					
+
 					//Add account balance to total balance
 					try{
 
@@ -453,24 +404,17 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 		}
-		
+
 		dh.setBalance(account_id+"", totalBalance);
-		
+
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
-	}
-
-	//Override default resume to also call populate in case view needs refreshing
-	@Override
-	public void onResume(){
-		populate();
-		super.onResume();
 	}
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
 		categoryCursor = dh.getSubCategoriesAll();
-		
+
 		getActivity().startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };
@@ -487,7 +431,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(dh!=null){
 			dh.close();
 		}
-		
+
 		if(categoryCursor!=null){
 			categoryCursor.close();
 		}
@@ -573,16 +517,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
-		private Cursor transactions;
 		private Context context;
 
 		public UserItemAdapter(Context context, Cursor transactions) {
 			super(context, transactions);
-			this.transactions = transactions;
 		}
 
 		public TransactionRecord getTransaction(long position){
-			Cursor group = transactions;
+			Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
 			int idColumn = group.getColumnIndex("TransID");
@@ -619,7 +561,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
-			Cursor user = transactions;
+			Cursor user = getCursor();
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -1209,27 +1151,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						Toast.makeText(getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
-					//Update Transactions ListView
-					((Transactions) getParentFragment()).populate();					
-
-					//Reload account fragment if shown
-					View account_frame = getActivity().findViewById(R.id.account_frag_frame);
-
-					if(account_frame!=null){
-						Accounts account_frag = new Accounts();
-
-						//Bundle for Account fragment
-						Bundle argsAccount = new Bundle();
-						argsAccount.putBoolean("boolSearch", false);
-
-						account_frag.setArguments(argsAccount);
-
-						getFragmentManager().beginTransaction()
-						.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
-
-						getFragmentManager().executePendingTransactions();
-
-					}
 
 				}//end onClick "OK"
 			})
@@ -1373,28 +1294,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					//Close cursor
 					cursor.close();
 
-					//Update Accounts ListView
-					((Transactions) getParentFragment()).populate();					
-
-					//Reload account fragment if shown
-					View account_frame = getActivity().findViewById(R.id.account_frag_frame);
-
-					if(account_frame!=null){
-						Accounts account_frag = new Accounts();
-
-						//Bundle for Account fragment
-						Bundle argsAccount = new Bundle();
-						argsAccount.putBoolean("boolSearch", false);
-
-						account_frag.setArguments(argsAccount);
-
-						getFragmentManager().beginTransaction()
-						.replace(R.id.account_frag_frame, account_frag, "account_frag_tag").commit();
-
-						getFragmentManager().executePendingTransactions();
-
-					}
-
 				}//end onClick "OK"
 			})
 			.setNegativeButton("Cancel",
@@ -1407,6 +1306,64 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			return alertDialogBuilder.create();
 		}
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
+		switch (loaderID) {
+		case REG_LOADER:
+			if(bundle!=null && bundle.getBoolean("boolSearch")){
+				Log.e("Here1", "boolSearch="+bundle.getBoolean("boolSearch"));
+				String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
+				return new CursorLoader(
+						getActivity(),   	// Parent activity context
+						(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/SEARCH/" + query)),// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);
+			}
+			else if(bundle!=null && bundle.getBoolean("boolShowAll")){
+				Log.e("Here2", "boolShowAll="+bundle.getBoolean("boolShowAll"));
+				return new CursorLoader(
+						getActivity(),   	// Parent activity context
+						MyContentProvider.TRANSACTIONS_URI,// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);
+			}
+			else{
+				Log.e("Here3","accout_id="+account_id);
+				//String selection = "stitchlevel='" + args.getString("Level") + "'";
+				String[] projection = new String[]{ "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"};
+				String selection = "ToAcctID=" + account_id;
+				return new CursorLoader(
+						getActivity(),   	// Parent activity context
+						MyContentProvider.TRANSACTIONS_URI,// Table to query
+						projection,     			// Projection to return
+						selection,					// No selection clause
+						null,						// No selection arguments
+						null             			// Default sort order
+						);				
+			}
+		default:
+			Log.e("Transactions-onCreateLoader", "Not a valid CursorLoader ID");
+			return null;
+		}
+
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		adapter.swapCursor(data);		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		adapter.swapCursor(null);	
 	}
 
 

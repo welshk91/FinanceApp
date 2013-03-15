@@ -219,6 +219,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		else{
 			getLoaderManager().initLoader(REG_LOADER, bundle, this);
 		}
+
+		calculateBalance();
 		
 	}//end populate
 
@@ -392,34 +394,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	//Calculates the balance
-	public void calculateBalance(Cursor cursor){
+	public void calculateBalance(){
 		float totalBalance = 0;
 
-		cursor.moveToFirst();
-		if (cursor != null) {
-			if (cursor.isFirst()) {
-				do {
-					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
-
-					//Add account balance to total balance
-					try{
-						totalBalance = totalBalance + Float.parseFloat(value);
-					}
-					catch(Exception e){
-						Log.e("Accounts-calculateBalance", "Could not calculate total balance. Error e=" + e);
-					}
-
-				} while (cursor.moveToNext());
-			}
-
-			else {
-				Log.d("Accounts-calculateBalance", "No results found/Cursor empty");
-			}
-
+		Cursor c = dh.sumAccounts();
+		c.moveToFirst();
+		try{
+			totalBalance = c.getFloat(0);
+			TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
+			balance.setText("Total Balance: " + totalBalance);
+		}
+		catch(Exception e){
+			Log.e("Accounts-calculateBalance", "No Accounts? Error e="+e);
+			TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
+			balance.setText("Total Balance: " + "BALANCED" );
 		}
 
-		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
-		balance.setText("Total Balance: " + totalBalance);
 	}
 
 	//Override default resume to also call populate in case view needs refreshing

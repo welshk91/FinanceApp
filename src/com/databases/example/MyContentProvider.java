@@ -89,6 +89,7 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case ACCOUNTS_ID:
 			cursor = dh.getAccounts();
+			dh.sumAccounts(cursor);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case ACCOUNT_ID:

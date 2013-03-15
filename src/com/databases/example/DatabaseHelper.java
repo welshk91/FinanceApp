@@ -7,13 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Toast;
-
+import android.widget.TextView;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 
-	// All Static variables
 	// Database Version
 	private static final int DATABASE_VERSION = 1;
 
@@ -28,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	private static final String TABLE_SUBCATEGORIES = "tblSubCategory";
 	private static final String TABLE_LINKS = "tblLinks";
 
-	private static Context context = null;
+	private Context context = null;
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -110,7 +109,43 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlCommand);
 		db.close();
 	}
+	
+	//Sum up all the account balances
+	public void sumAccounts(Cursor cursor){
+		float totalBalance = 0;
 
+		cursor.moveToFirst();
+		if (cursor != null) {
+			if (cursor.isFirst()) {
+				do {
+					String value = cursor.getString(cursor.getColumnIndex("AcctBalance"));
+
+					//Add account balance to total balance
+					try{
+						totalBalance = totalBalance + Float.parseFloat(value);
+					}
+					catch(Exception e){
+						Log.e("Accounts-calculateBalance", "Could not calculate total balance. Error e=" + e);
+					}
+
+				} while (cursor.moveToNext());
+			}
+
+			else {
+				Log.d("Accounts-calculateBalance", "No results found/Cursor empty");
+			}
+
+		}
+		
+		LayoutInflater li = LayoutInflater.from(context);
+		View myFragmentView = li.inflate(R.layout.accounts, null, false);
+		
+		TextView balance = (TextView)myFragmentView.findViewById(R.id.account_total_balance);
+		balance.setText("Total Balance: " + totalBalance);
+		Log.e("here!", "Context="+context + " myFragmentView="+myFragmentView + " balance="+balance + " Total Balance="+totalBalance);
+		
+	}
+	
 	//Get all accounts
 	public Cursor getAccounts(){
 		Cursor cursor = null;

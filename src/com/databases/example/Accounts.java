@@ -78,7 +78,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		super.onCreate(savedInstanceState);
 
 		this.getLoaderManager();
-		
+
 		dh = new DatabaseHelper(getActivity());
 
 		//Arguments
@@ -117,7 +117,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				//						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
 
 				Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
-				
+
 				c.moveToFirst();
 				int	entry_id = c.getInt(0);
 
@@ -175,7 +175,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
 		lv.setEmptyView(noResult);
-		
+
 		adapter = new UserItemAdapter(this.getActivity(), null);
 		lv.setAdapter(adapter);
 
@@ -219,7 +219,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		else{
 			getLoaderManager().initLoader(REG_LOADER, bundle, this);
 		}
-
+		
 	}//end populate
 
 	//Creates menu for long presses
@@ -388,12 +388,36 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Toast.makeText(this, "Options Just Changed: Accounts.Java", Toast.LENGTH_SHORT).show();
 		populate();
 	}
 
 	//Calculates the balance
-	public void calculateBalance(float totalBalance){
+	public void calculateBalance(Cursor cursor){
+		float totalBalance = 0;
+
+		cursor.moveToFirst();
+		if (cursor != null) {
+			if (cursor.isFirst()) {
+				do {
+					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
+
+					//Add account balance to total balance
+					try{
+						totalBalance = totalBalance + Float.parseFloat(value);
+					}
+					catch(Exception e){
+						Log.e("Accounts-calculateBalance", "Could not calculate total balance. Error e=" + e);
+					}
+
+				} while (cursor.moveToNext());
+			}
+
+			else {
+				Log.d("Accounts-calculateBalance", "No results found/Cursor empty");
+			}
+
+		}
+
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
 	}
@@ -533,7 +557,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
-
 				if (name != null) {
 					TVname.setText(name);
 				}
@@ -563,7 +586,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			TextView TVbalance = (TextView)v.findViewById(R.id.account_balance);
 			TextView TVtime = (TextView)v.findViewById(R.id.account_time);
 			TextView TVdate = (TextView)v.findViewById(R.id.account_date);
-			
+
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
@@ -728,7 +751,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			//Cursor c = dh.getAccount(ID);
 			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
-			
+
 			getActivity().startManagingCursor(c);
 
 			int entry_id = 0;

@@ -166,11 +166,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Delete account (and relating transactions if specified)
-	public int deleteAccount(Uri uri,String selection, String[] selectionArgs){
+	public int deleteAccount(Uri uri, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-		String id = uri.getLastPathSegment();
 		int rowsDeleted = 0;
-		rowsDeleted = db.delete(TABLE_ACCOUNTS, "AcctID = " + id, null);		
+		rowsDeleted = db.delete(TABLE_ACCOUNTS, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
 
@@ -179,6 +178,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
 		long id = db.insert(TABLE_ACCOUNTS, null, values);
 		return id; 
+	}
+	
+	//Updates an account
+	public int updateAccount(ContentValues values, String whereClause, String[] whereArgs){
+		SQLiteDatabase db = this.getWritableDatabase();
+		//String sqlCommand = "UPDATE " + TABLE_ACCOUNTS + " SET AcctBalance = " + balance + " WHERE AcctID = " + aID+ ";";
+		//db.execSQL(sqlCommand);
+		db.update(TABLE_ACCOUNTS, values, whereClause, whereArgs);
+		return 0;
 	}
 
 	//Get all transactions for an account
@@ -241,59 +249,18 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Delete transaction (and relating transactions if specified)
-	public void deleteTransaction(String id){
+	public int deleteTransaction(Uri uri, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		String sqlDeleteTransaction = "DELETE FROM " + TABLE_TRANSACTIONS + 
-				" WHERE TransID = " + id;
-		db.execSQL(sqlDeleteTransaction);
-
+		int rowsDeleted = 0;
+		rowsDeleted = db.delete(TABLE_TRANSACTIONS, whereClause, whereArgs);		
+		return rowsDeleted;
 	}
 
-	//Add transaction (no ID)
-	public long addTransaction(String a_id, String p_id, String name,String value,String type, String category, String checknum, String memo, String time,String date, String cleared){
+	//Add transaction
+	public long addTransaction(ContentValues values){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues transactionValues=new ContentValues();
-		transactionValues.put("ToAcctID",a_id);
-		transactionValues.put("ToPlanID",p_id);
-		transactionValues.put("TransName",name);
-		transactionValues.put("TransValue",value);
-		transactionValues.put("TransType",type);
-		transactionValues.put("TransCategory",category);
-		transactionValues.put("TransCheckNum",checknum);
-		transactionValues.put("TransMemo",memo);
-		transactionValues.put("TransTime",time);
-		transactionValues.put("TransDate",date);
-		transactionValues.put("TransCleared",cleared);
-
-		long id = db.insert(TABLE_TRANSACTIONS, null, transactionValues);
-
+		long id = db.insert(TABLE_TRANSACTIONS, null, values);
 		return id; 
-	}
-
-	//Add transaction (ID given)
-	public long addTransaction(String t_id, String a_id, String p_id, String name,String value,String type, String category, String checknum, String memo, String time,String date, String cleared){
-		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues transactionValues=new ContentValues();
-		transactionValues.put("TransID",t_id);
-		transactionValues.put("ToAcctID",a_id);
-		transactionValues.put("ToPlanID",p_id);
-		transactionValues.put("TransName",name);
-		transactionValues.put("TransValue",value);
-		transactionValues.put("TransType",type);
-		transactionValues.put("TransCategory",category);
-		transactionValues.put("TransCheckNum",checknum);
-		transactionValues.put("TransMemo",memo);
-		transactionValues.put("TransTime",time);
-		transactionValues.put("TransDate",date);
-		transactionValues.put("TransCleared",cleared);
-
-		long id = db.insert(TABLE_TRANSACTIONS, null, transactionValues);
-
-		return id; 	
-
 	}
 
 	//Get all categories

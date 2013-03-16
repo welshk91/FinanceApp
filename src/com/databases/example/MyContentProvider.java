@@ -152,17 +152,17 @@ public class MyContentProvider extends ContentProvider{
 	}
 
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(Uri uri, String whereClause, String[] whereArgs) {
 		int uriType = sURIMatcher.match(uri);
 		int rowsDeleted = 0;
 
 		switch (uriType) {
 		case ACCOUNT_ID:
-			rowsDeleted = dh.deleteAccount(uri, selection, selectionArgs);
+			rowsDeleted = dh.deleteAccount(uri, whereClause, whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case TRANSACTION_ID:
-			dh.getTransaction(uri.getLastPathSegment());
+			rowsDeleted = dh.deleteTransaction(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case CATEGORY_ID:
@@ -197,8 +197,8 @@ public class MyContentProvider extends ContentProvider{
 			id = dh.addAccount(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_ACCOUNTS + "/" + id);
-		case TRANSACTION_ID:
-			dh.getTransaction(uri.getLastPathSegment());
+		case TRANSACTIONS_ID:
+			id = dh.addTransaction(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_TRANSACTIONS + "/" + id);
 		case CATEGORY_ID:
@@ -224,12 +224,22 @@ public class MyContentProvider extends ContentProvider{
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection,
-			String[] selectionArgs) {
+	public int update(Uri uri, ContentValues values, String whereClause,
+			String[] whereArgs) {
+		int uriType = sURIMatcher.match(uri);
+		int rowsUpdated = 0;
+		switch (uriType) {
+		case TRANSACTION_ID:
+			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
+			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown URI");
+		}
 
-		//WHEN YOU WANT TO UPDATE A VALUE IN THE DATABASE
+		return rowsUpdated;
 
-		return 0;
 	}
 
 	@Override

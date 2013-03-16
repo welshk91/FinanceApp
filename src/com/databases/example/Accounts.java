@@ -305,10 +305,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
 
 		//Delete Account
-		getActivity().getContentResolver().delete(uri, null, null);
+		getActivity().getContentResolver().delete(uri,"AcctID="+record.id, null);
 
+		//Delete Transactions of that account
+		uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
+		getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
+		
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
-
 	}//end of accountDelete
 
 	//For Adding an Account
@@ -738,10 +741,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
 
-			//Cursor c = dh.getAccount(ID);
 			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
-
-			getActivity().startManagingCursor(c);
 
 			int entry_id = 0;
 			String entry_name = null;
@@ -851,7 +851,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					try{
 						//Delete Old Record
 						Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + ID);
-						getActivity().getContentResolver().delete(uri, null, null);
+						getActivity().getContentResolver().delete(uri, "AcctID="+ID, null);
 
 						ContentValues accountValues=new ContentValues();
 						accountValues.put("AcctID",ID);
@@ -977,9 +977,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 							//Insert values into accounts table
 							getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
-
-							//Insert values into transactions table
-							dh.addTransaction(entry_id+"",transactionPlanId,transactionName,transactionValue+"",transactionType,transactionCategory,transactionCheckNum,transactionMemo,transactionTime,transactionDate,transactionCleared);
+							
+							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("ToAcctID", entry_id);
+							transactionValues.put("ToPlanID", transactionPlanId);
+							transactionValues.put("TransName", transactionName);
+							transactionValues.put("TransValue", transactionValue);
+							transactionValues.put("TransType", transactionType);
+							transactionValues.put("TransCategory", transactionCategory);
+							transactionValues.put("TransCheckNum", transactionCheckNum);
+							transactionValues.put("TransMemo", transactionMemo);
+							transactionValues.put("TransTime", transactionTime);
+							transactionValues.put("TransDate", transactionDate);
+							transactionValues.put("TransCleared", transactionCleared);
+							
+							//Insert values into accounts table
+							dh.addTransaction(transactionValues);							
 						} 
 
 						else {

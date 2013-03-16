@@ -49,7 +49,7 @@ public class PlanReceiver extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle bundle = intent.getExtras();
-		
+
 		dh = new DatabaseHelper(context);
 
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
@@ -95,8 +95,20 @@ public class PlanReceiver extends BroadcastReceiver{
 		String time = timeFormat.format(cal.getTime());
 		String date = dateFormat.format(cal.getTime());
 
-		dh.addTransaction(plan.acctId, plan.id, plan.name, plan.value, plan.type, plan.category, "", plan.memo, time, date, plan.cleared);
+		ContentValues transactionValues=new ContentValues();
+		transactionValues.put("ToAcctID", plan.acctId);
+		transactionValues.put("ToPlanID", plan.id);
+		transactionValues.put("TransName", plan.name);
+		transactionValues.put("TransValue", plan.value);
+		transactionValues.put("TransType", plan.type);
+		transactionValues.put("TransCategory", plan.category);
+		transactionValues.put("TransMemo", plan.memo);
+		transactionValues.put("TransTime", time);
+		transactionValues.put("TransDate", date);
+		transactionValues.put("TransCleared", plan.cleared);
 
+		//Insert values into accounts table
+		dh.addTransaction(transactionValues);							
 	}//end of transactionAdd
 
 
@@ -148,7 +160,7 @@ public class PlanReceiver extends BroadcastReceiver{
 	//Method that remakes the planned transaction
 	public void reschedulePlans(Context context){
 		Cursor cursorPlans = dh.getPlannedTransactionsAll();
-		
+
 		//startManagingCursor(cursorPlans);
 		int IDColumn = cursorPlans.getColumnIndex("PlanID");
 		int ToIDColumn = cursorPlans.getColumnIndex("ToAcctID");

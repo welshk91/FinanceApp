@@ -113,9 +113,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.getLoaderManager();
-		
+
 		dh = new DatabaseHelper(getActivity());
-		
+
 		//Arguments
 		Bundle bundle=getArguments();
 
@@ -185,7 +185,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		lv.setAdapter(adapter);
 
 		populate();
-		
+
 		return myFragmentView;
 	}
 
@@ -283,7 +283,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void transactionAdd(){
 		DialogFragment newFragment = AddDialogFragment.newInstance();
 		newFragment.show(getChildFragmentManager(), "dialogAdd");
-
 	}//end of transactionAdd
 
 	//For Editing an Transaction
@@ -293,24 +292,20 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");	
-
 	}
 
 	//For Deleting an Transaction
 	public void transactionDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		Object itemName = adapter.getTransaction(itemInfo.position).name;
+		TransactionRecord record = adapter.getTransaction(itemInfo.position);
 
-		//NOTE: LIMIT *position*,*how many after*
-		//String sqlCommand = "DELETE FROM " + tblTrans + 
-		//		" WHERE TransID IN (SELECT TransID FROM (SELECT TransID FROM " + tblTrans + 
-		//		" LIMIT " + (itemInfo.position-0) + ",1)AS tmp);";
+		Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
+		getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
 
-		dh.deleteTransaction(adapter.getTransaction(itemInfo.position).id +"");
-
-		Toast.makeText(this.getActivity(), "Deleted Item:\n" + itemName, Toast.LENGTH_SHORT).show();
-
-	}//end of accountDelete
+		//((Transactions) getParentFragment()).calculateBalance();
+		calculateBalance();
+		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
+	}//end of transactionDelete
 
 	//For Menu
 	@Override
@@ -369,9 +364,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	}
 
 	//Calculates the balance
-	public void calculateBalance(Cursor cursor){
+	public void calculateBalance(){
 		float totalBalance = 0;
 
+		Cursor cursor = dh.getTransactions(null, "ToAcctID="+account_id, null, null);
+		
 		cursor.moveToFirst();
 		if (cursor != null) {
 			if (cursor.isFirst()) {
@@ -405,8 +402,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		}
 
-		dh.setBalance(account_id+"", totalBalance);
-
+		ContentValues values = new ContentValues();
+		values.put("AcctBalance", totalBalance);		
+		getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
+		
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
 	}
@@ -929,9 +928,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			int id = getArguments().getInt("id");
 
-			Cursor c = dh.getTransaction(id+"");
-
-			getActivity().startManagingCursor(c);
+			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+id), null, null, null, null);
 
 			int entry_id = 0;
 			int entry_acctId = 0;
@@ -1135,11 +1132,27 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = "0";
 							}
 
-							dh.deleteTransaction(tID+"");
+							Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + tID);
+							getActivity().getContentResolver().delete(uri, "TransID="+tID, null);
+
+							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("TransID", tID);
+							transactionValues.put("ToAcctID", aID);
+							transactionValues.put("ToPlanID", pID);
+							transactionValues.put("TransName", transactionName);
+							transactionValues.put("TransValue", transactionValue);
+							transactionValues.put("TransType", transactionType);
+							transactionValues.put("TransCategory", transactionCategory);
+							transactionValues.put("TransCheckNum", transactionCheckNum);
+							transactionValues.put("TransMemo", transactionMemo);
+							transactionValues.put("TransTime", transactionTime);
+							transactionValues.put("TransDate", transactionDate);
+							transactionValues.put("TransCleared", transactionCleared);
 
 							//Make new record with same ID
-							dh.addTransaction(tID+"", aID+"", pID+"", transactionName, transactionValue, transactionType, transactionCategory, transactionCheckNum, transactionMemo, transactionTime, transactionDate, transactionCleared);
-
+							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+							
+							((Transactions) getParentFragment()).calculateBalance();					
 						}
 
 						else{
@@ -1148,6 +1161,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					}
 					catch(Exception e){
+						Log.e("here...", "Error e="+e);
 						Toast.makeText(getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
@@ -1245,11 +1259,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
 					}
 					catch(Exception e){
-						//Usually caused if no category exists
-						//Log.d("Here","exception e:" + e);
+						Log.e("Transaction-addDialog","No Category? Exception e=" + e);
 						dialog.cancel();
 						Toast.makeText(getActivity(), "Needs A Category \n\nUse The Side Menu To Create Categories", Toast.LENGTH_LONG).show();
-
 						return;
 					}
 
@@ -1278,9 +1290,22 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = "0";
 							}
 
-							//Insert values into accounts table
-							dh.addTransaction(account_id+"","0",transactionName, transactionValue+"", transactionType, transactionCategory, transactionCheckNum, transactionMemo, transactionTime, transactionDate, transactionCleared);
+							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("ToAcctID", account_id);
+							transactionValues.put("ToPlanID", 0);
+							transactionValues.put("TransName", transactionName);
+							transactionValues.put("TransValue", transactionValue);
+							transactionValues.put("TransType", transactionType);
+							transactionValues.put("TransCategory", transactionCategory);
+							transactionValues.put("TransCheckNum", transactionCheckNum);
+							transactionValues.put("TransMemo", transactionMemo);
+							transactionValues.put("TransTime", transactionTime);
+							transactionValues.put("TransDate", transactionDate);
+							transactionValues.put("TransCleared", transactionCleared);
 
+							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+							
+							((Transactions) getParentFragment()).calculateBalance();
 						} 
 
 						else {
@@ -1288,10 +1313,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						}
 					}
 					catch(Exception e){
+						Log.e("here...", "Error e="+e);
 						Toast.makeText(getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
-					//Close cursor
 					cursor.close();
 
 				}//end onClick "OK"

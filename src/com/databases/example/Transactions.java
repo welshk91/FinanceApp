@@ -367,8 +367,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void calculateBalance(){
 		float totalBalance = 0;
 
-		Cursor cursor = dh.getTransactions(null, "ToAcctID="+account_id, null, null);
-		
+		Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, "ToAcctID="+account_id, null, null);
+					
 		cursor.moveToFirst();
 		if (cursor != null) {
 			if (cursor.isFirst()) {
@@ -399,7 +399,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			else {
 				Log.e("Transactions-calculateBalance", "No results found/Cursor empty");
 			}
-
 		}
 
 		ContentValues values = new ContentValues();

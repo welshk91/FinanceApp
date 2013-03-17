@@ -264,11 +264,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Get all categories
-	public Cursor getCategories(){
+	public Cursor getCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_CATEGORIES, new String[] { "CatID as _id", "CatName", "CatNote" }, null,
-				null, null, null, null);
+		cursor = db.query(TABLE_CATEGORIES, new String[] { "CatID as _id", "CatName", "CatNote" }, selection,
+				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}
 
@@ -329,21 +329,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.close();
 	}
 
-	//Get subcategories for all categories
-	public Cursor getSubCategoriesAll(){
-		Cursor cursor = null;
-		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote" }, null,
-				null, null, null, null);
-		return cursor;
-	}
-
 	//Get subcategories for a category
-	public Cursor getSubCategories(String cID){
+	public Cursor getSubCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote"}, "ToCatID = " + cID,
-				null, null, null, null);
+		cursor = db.query(TABLE_SUBCATEGORIES, new String[] { "SubCatID as _id", "ToCatID", "SubCatName", "SubCatNote"}, selection,
+				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}
 

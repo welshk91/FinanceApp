@@ -106,7 +106,7 @@ public class Categories extends SherlockFragmentActivity{
 		TextView noResult = (TextView)this.findViewById(R.id.category_noCategory);
 		noResult.setVisibility(View.GONE);
 
-		cursorCategory = dh.getCategories();
+		cursorCategory = dh.getCategories(null,null,null,null);
 
 		startManagingCursor(cursorCategory);
 		int NameColumn = cursorCategory.getColumnIndex("CatName");
@@ -145,7 +145,7 @@ public class Categories extends SherlockFragmentActivity{
 
 	//Method for filling subcategories
 	public void subcategoryPopulate(String catId){		
-		cursorSubCategory = dh.getSubCategories(catId);
+		cursorSubCategory = dh.getSubCategories(null,"ToCatID="+catId,null,null);
 
 		resultsCursor.add(cursorSubCategory);
 

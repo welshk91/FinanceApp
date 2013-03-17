@@ -114,7 +114,7 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case CATEGORIES_ID:
-			cursor = dh.getCategories();
+			cursor = dh.getCategories(projection, selection, selectionArgs, sortOrder);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case CATEGORY_ID:
@@ -122,7 +122,7 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case SUBCATEGORIES_ID:
-			cursor = dh.getSubCategoriesAll();
+			cursor = dh.getSubCategories(projection, selection, selectionArgs, sortOrder);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case SUBCATEGORY_ID:

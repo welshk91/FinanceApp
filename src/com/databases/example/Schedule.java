@@ -602,7 +602,7 @@ public class Schedule extends SherlockFragmentActivity{
 
 	//Method to get the list of categories for spinner
 	public void categoryPopulate(){
-		Cursor categoryCursor = dh.getSubCategoriesAll();
+		Cursor categoryCursor = dh.getSubCategories(null,null,null,null);
 		startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };

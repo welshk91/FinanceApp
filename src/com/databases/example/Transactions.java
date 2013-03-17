@@ -76,8 +76,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	private static final int REG_LOADER = 2;
 
-	private static DatabaseHelper dh = null;
-
 	static Spinner tCategory;
 	static Button tTime;
 	static Button tDate;
@@ -113,8 +111,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.getLoaderManager();
-
-		dh = new DatabaseHelper(getActivity());
 
 		//Arguments
 		Bundle bundle=getArguments();
@@ -411,8 +407,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Method Called to refresh the list of categories if user changes the list
 	public void categoryPopulate(){
-		categoryCursor = dh.getSubCategoriesAll();
-
+		Cursor categoryCursor = getActivity().getContentResolver().query(MyContentProvider.SUBCATEGORIES_URI, null, null, null, null);
+		
 		getActivity().startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };
@@ -422,20 +418,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		tCategory.setAdapter(categorySpinnerAdapter);
 
 	}//end of categoryPopulate
-
-	//Close dialogs to prevent window leaks
-	@Override
-	public void onPause() {
-		if(dh!=null){
-			dh.close();
-		}
-
-		if(categoryCursor!=null){
-			categoryCursor.close();
-		}
-
-		super.onPause();
-	}
 
 	//Method to help create TimePicker
 	public static class TimePickerFragment extends DialogFragment

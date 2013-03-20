@@ -74,7 +74,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	static View promptsView;
 	View myFragmentView;
 
-	private static final int REG_LOADER = 2;
+	private static final int TRANS_LOADER = 987654321;
 
 	static Spinner tCategory;
 	static Button tTime;
@@ -95,9 +95,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	int CONTEXT_MENU_DELETE=7;
 	int CONTEXT_MENU_ATTACH=8;
 
-	//ListView and Adapter
-	ListView lv = null;
-	static UserItemAdapter adapter = null;
+	//ListView Adapter
+	static UserItemAdapter adapterTransaction = null;
 
 	//For Autocomplete
 	static ArrayList<String> dropdownResults = new ArrayList<String>();
@@ -136,7 +135,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//myFragmentView = inflater.inflate(R.layout.transactions, container, false);		
 		myFragmentView = inflater.inflate(R.layout.transactions, null, false);				
 
-		lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
+		ListView lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
 
 		//Turn clicks on
 		lv.setClickable(true);
@@ -156,8 +155,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-				int selectionRowID = (int) adapter.getItemId(position);
-				String item = adapter.getTransaction(position).name;
+				int selectionRowID = (int) adapterTransaction.getItemId(position);
+				String item = adapterTransaction.getTransaction(position).name;
 
 				Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
 
@@ -177,8 +176,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
 		lv.setEmptyView(noResult);
 
-		adapter = new UserItemAdapter(this.getActivity(), null);
-		lv.setAdapter(adapter);
+		adapterTransaction = new UserItemAdapter(this.getActivity(), null);
+		lv.setAdapter(adapterTransaction);
 
 		populate();
 
@@ -200,17 +199,16 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(showAllTransactions){
 			Bundle b = new Bundle();
 			b.putBoolean("boolShowAll", true);
-			getLoaderManager().restartLoader(REG_LOADER, bundle, this);
+			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 		else if(searchFragment){
-			//Word being searched
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
 
 			try{
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				getLoaderManager().restartLoader(REG_LOADER, b, this);
+				getLoaderManager().initLoader(TRANS_LOADER, b, this);
 			}
 			catch(Exception e){
 				Log.e("Transactions-populate", "Search Failed. Error e=" + e);
@@ -222,7 +220,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		else{
 			Bundle b = new Bundle();
 			b.putInt("aID", account_id);
-			getLoaderManager().restartLoader(REG_LOADER, bundle, this);
+			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 
 	}//end populate
@@ -233,7 +231,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = adapter.getTransaction(itemInfo.position).name;
+		String name = adapterTransaction.getTransaction(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -268,7 +266,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Opening a Transaction
 	public void transactionOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		int id = adapter.getTransaction(itemInfo.position).id;
+		int id = adapterTransaction.getTransaction(itemInfo.position).id;
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getChildFragmentManager(), "dialogView");
@@ -284,7 +282,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Editing an Transaction
 	public void transactionEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final TransactionRecord record = adapter.getTransaction(itemInfo.position);
+		final TransactionRecord record = adapterTransaction.getTransaction(itemInfo.position);
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");	
@@ -293,12 +291,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Deleting an Transaction
 	public void transactionDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		TransactionRecord record = adapter.getTransaction(itemInfo.position);
+		TransactionRecord record = adapterTransaction.getTransaction(itemInfo.position);
 
 		Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
 		getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
 
-		//((Transactions) getParentFragment()).calculateBalance();
 		calculateBalance();
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
 	}//end of transactionDelete
@@ -401,6 +398,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		values.put("AcctBalance", totalBalance);		
 		getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
 		
+		//cursor.close();
+		
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + totalBalance);
 	}
@@ -416,7 +415,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);
 		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		tCategory.setAdapter(categorySpinnerAdapter);
-
 	}//end of categoryPopulate
 
 	//Method to help create TimePicker
@@ -541,8 +539,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
-			Cursor user = getCursor();
-
+			Cursor user = cursor;
+			
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
@@ -670,6 +668,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			Log.e("Transaction", "newView. cursor="+cursor);
+			Log.e("Transaction", "newView. size cursor="+cursor.getCount());
+
 			LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View v = vi.inflate(R.layout.transaction_item, null);
 
@@ -977,7 +978,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
 			statsCleared.setText(entry_cleared);
 
-			c.close();
+			//c.close();
 			return alertDialogBuilder.create();
 		}
 	}
@@ -1298,7 +1299,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						Toast.makeText(getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
-					cursor.close();
+					//cursor.close();
 
 				}//end onClick "OK"
 			})
@@ -1317,7 +1318,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		switch (loaderID) {
-		case REG_LOADER:
+		case TRANS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
 				Log.e("Here1", "boolSearch="+bundle.getBoolean("boolSearch"));
 				String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
@@ -1364,12 +1365,21 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		adapter.swapCursor(data);		
+		Log.e("Transaction", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+		adapterTransaction.swapCursor(data);		
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		adapter.swapCursor(null);	
+		/***** 
+		 * NOT SURE HOW TO HANDLE THIS CASE
+		 * If single-pane, no problems with swapping adapter. But with dual-pane, 
+		 * swapping cursor makes the cursor retrieve data correctly, but nullifies it almost instantly
+		 *****/
+		
+		//Log.e("Transaction", "loaderReset on " + loader);
+		loader = null; //Possible Solution????
+		//adapterTransaction.swapCursor(null);	
 	}
 
 

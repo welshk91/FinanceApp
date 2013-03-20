@@ -107,11 +107,6 @@ public class Checkbook extends SherlockFragmentActivity {
 
 	}//end onCreate
 
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-	}
-
 	//For Menu Items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

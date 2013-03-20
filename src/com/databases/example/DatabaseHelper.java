@@ -107,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
 		String sqlCommand = "UPDATE " + TABLE_ACCOUNTS + " SET AcctBalance = " + balance + " WHERE AcctID = " + aID+ ";";
 		db.execSQL(sqlCommand);
-		db.close();
+		//db.close();
 	}
 
 	//Sum up all the account balances
@@ -293,7 +293,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		categoryValues.put("CatNote",note);
 
 		long id = db.insert(TABLE_CATEGORIES, null, categoryValues);
-		db.close();
+		//db.close();
 		return id; 
 	}
 
@@ -307,7 +307,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		categoryValues.put("CatNote",note);
 
 		long id = db.insert(TABLE_CATEGORIES, null, categoryValues);
-		db.close();
+		//db.close();
 		return id; 
 	}
 
@@ -326,7 +326,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 			db.execSQL(sqlDeleteSubCategories);	
 		}
 
-		db.close();
+		//db.close();
 	}
 
 	//Get subcategories for a category
@@ -360,7 +360,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		subcategoryValues.put("SubCatNote",note);
 
 		long id = db.insert(TABLE_SUBCATEGORIES, null, subcategoryValues);
-		db.close();
+		//db.close();
 		return id; 
 	}
 
@@ -375,7 +375,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		subcategoryValues.put("SubCatNote",note);
 
 		long id = db.insert(TABLE_SUBCATEGORIES, null, subcategoryValues);
-		db.close();
+		//db.close();
 		return id; 
 	}
 
@@ -385,7 +385,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		String sqlDeleteSubCategory = "DELETE FROM " + TABLE_SUBCATEGORIES + 
 				" WHERE SubCatID = " + cID;
 		db.execSQL(sqlDeleteSubCategory);
-		db.close();
+		//db.close();
 	}
 
 	//Get all planned transactions for all accounts
@@ -457,7 +457,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		String sqlDeleteTransaction = "DELETE FROM " + TABLE_PLANNED_TRANSACTIONS + 
 				" WHERE PlanID = " + pID;
 		db.execSQL(sqlDeleteTransaction);
-		db.close();
+		//db.close();
 	}
 
 }

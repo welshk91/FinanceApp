@@ -51,7 +51,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	final int PICKFILE_RESULT_CODE = 1;
 
-	private static final int REG_LOADER = 0;
+	private static final int ACCOUNTS_LOADER = 123456789;
 
 	private static DatabaseHelper dh = null;
 
@@ -70,7 +70,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	ListView lv = null;
-	static UserItemAdapter adapter = null;
+	static UserItemAdapter adapterAccounts = null;
 
 	//Method called upon first creation
 	@Override
@@ -109,7 +109,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-				int selectionRowID = (int) adapter.getItemId(position);
+				int selectionRowID = (int) adapterAccounts.getItemId(position);
 				//NOTE: LIMIT *position*,*how many after*
 				//				String sqlCommand = "SELECT * FROM " + tblAccounts + 
 				//						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
@@ -120,10 +120,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				c.moveToFirst();
 				int	entry_id = c.getInt(0);
 
+				c.close();
+				
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
 				if(checkbook_frame!=null){
-
 					//Data to send to transaction fragment
 					Bundle args = new Bundle();
 					args.putInt("ID",entry_id);
@@ -156,7 +157,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.commit();
 					getFragmentManager().executePendingTransactions();
-
 				}
 
 			}// end onItemClick
@@ -175,8 +175,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
 		lv.setEmptyView(noResult);
 
-		adapter = new UserItemAdapter(this.getActivity(), null);
-		lv.setAdapter(adapter);
+		adapterAccounts = new UserItemAdapter(this.getActivity(), null);
+		lv.setAdapter(adapterAccounts);
 
 		populate();
 
@@ -205,7 +205,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				getLoaderManager().restartLoader(REG_LOADER, b, this);
+				getLoaderManager().initLoader(ACCOUNTS_LOADER, b, this);
 			}
 			catch(Exception e){
 				Log.e("Accounts-populate","Search Failed. Error e="+e);
@@ -216,7 +216,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			getLoaderManager().initLoader(REG_LOADER, bundle, this);
+			getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
 		}
 
 		calculateBalance();
@@ -229,7 +229,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapter.getAccount(itemInfo.position).name;
+		String name = "" + adapterAccounts.getAccount(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -270,7 +270,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Opening an Account
 	public void accountOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		String id = adapter.getAccount(itemInfo.position).id;
+		String id = adapterAccounts.getAccount(itemInfo.position).id;
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getChildFragmentManager(), "dialogView");
@@ -280,7 +280,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Editing an Account
 	public void accountEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final AccountRecord record = adapter.getAccount(itemInfo.position);
+		final AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");
@@ -289,7 +289,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Attaching to an Account
 	public void accountAttach(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final AccountRecord record = adapter.getAccount(itemInfo.position);
+		final AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
 
 		Intent intentLink = new Intent(this.getActivity(), Links.class);
 		intentLink.putExtra("AcctID", record.id);
@@ -301,7 +301,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//For Deleting an Account
 	public void accountDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		AccountRecord record = adapter.getAccount(itemInfo.position);
+		AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
 		Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
 
 		//Delete Account
@@ -1022,7 +1022,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
 		switch (loaderID) {
-		case REG_LOADER:
+		case ACCOUNTS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
 				String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
 				return new CursorLoader(
@@ -1048,17 +1048,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
 		}
-
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		adapter.swapCursor(data);
+		Log.e("Accounts", "load done. loader="+loader + " data="+data);
+		adapterAccounts.swapCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		adapter.swapCursor(null);		
+		adapterAccounts.swapCursor(null);		
 	}
 
 }// end Accounts

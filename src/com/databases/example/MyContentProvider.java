@@ -228,6 +228,7 @@ public class MyContentProvider extends ContentProvider{
 			String[] whereArgs) {
 		int uriType = sURIMatcher.match(uri);
 		int rowsUpdated = 0;
+		Log.e("MyContentProvider-update", "updating...");
 		switch (uriType) {
 		case TRANSACTION_ID:
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
@@ -245,6 +246,7 @@ public class MyContentProvider extends ContentProvider{
 	@Override
 	public String getType(Uri uri) {
 		// TODO Auto-generated method stub
+		Log.e("MyContentProvider-getType", "Tried to use getType method, but I didn't do anything but return null here...");
 		return null;
 	}
 

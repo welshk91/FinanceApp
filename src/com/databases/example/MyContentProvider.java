@@ -166,11 +166,11 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case CATEGORY_ID:
-			dh.getCategory(uri.getLastPathSegment());
+			rowsDeleted = dh.deleteCategory(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case SUBCATEGORY_ID:
-			dh.getSubCategory(uri.getLastPathSegment());
+			rowsDeleted = dh.deleteSubCategory(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case PLANNED_TRANSACTION_ID:
@@ -202,11 +202,11 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_TRANSACTIONS + "/" + id);
 		case CATEGORY_ID:
-			dh.getCategory(uri.getLastPathSegment());
+			id = dh.addCategory(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_CATEGORIES + "/" + id);
 		case SUBCATEGORY_ID:
-			dh.getSubCategory(uri.getLastPathSegment());
+			id = dh.addSubCategory(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_SUBCATEGORIES + "/" + id);
 		case PLANNED_TRANSACTION_ID:

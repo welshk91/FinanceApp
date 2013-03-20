@@ -179,7 +179,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		long id = db.insert(TABLE_ACCOUNTS, null, values);
 		return id; 
 	}
-	
+
 	//Updates an account
 	public int updateAccount(ContentValues values, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -284,49 +284,19 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return cursor;
 	}
 
-	//Add category (no ID)
-	public long addCategory(String name, String note){
+	//Add category
+	public long addCategory(ContentValues values){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues categoryValues=new ContentValues();
-		categoryValues.put("CatName",name);
-		categoryValues.put("CatNote",note);
-
-		long id = db.insert(TABLE_CATEGORIES, null, categoryValues);
-		//db.close();
-		return id; 
-	}
-
-	//Add category (ID given)
-	public long addCategory(String cID, String name, String note){
-		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues categoryValues=new ContentValues();
-		categoryValues.put("CatID",cID);
-		categoryValues.put("CatName",name);
-		categoryValues.put("CatNote",note);
-
-		long id = db.insert(TABLE_CATEGORIES, null, categoryValues);
-		//db.close();
+		long id = db.insert(TABLE_CATEGORIES, null, values);
 		return id; 
 	}
 
 	//Delete category (and relating subcategories if specified)
-	public void deleteCategory(String cID, boolean keepSubCategories){
+	public int deleteCategory(Uri uri, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		String sqlDeleteCategory = "DELETE FROM " + TABLE_CATEGORIES + 
-				" WHERE CatID = " + cID;
-
-		db.execSQL(sqlDeleteCategory);
-
-		if(keepSubCategories=false){
-			String sqlDeleteSubCategories = "DELETE FROM " + TABLE_SUBCATEGORIES + 
-					" WHERE ToCatID = " + cID;
-			db.execSQL(sqlDeleteSubCategories);	
-		}
-
-		//db.close();
+		int rowsDeleted = 0;
+		rowsDeleted = db.delete(TABLE_CATEGORIES, whereClause, whereArgs);		
+		return rowsDeleted;
 	}
 
 	//Get subcategories for a category
@@ -350,42 +320,19 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return cursor;
 	}
 
-	//Add subcategory (no ID)
-	public long addSubCategory(String cID, String name, String note){
-		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues subcategoryValues=new ContentValues();
-		subcategoryValues.put("ToCatID",cID);
-		subcategoryValues.put("SubCatName",name);
-		subcategoryValues.put("SubCatNote",note);
-
-		long id = db.insert(TABLE_SUBCATEGORIES, null, subcategoryValues);
-		//db.close();
-		return id; 
-	}
-
 	//Add subcategory (ID given)
-	public long addSubCategory(String sID, String cID, String name, String note){
+	public long addSubCategory(ContentValues values){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues subcategoryValues=new ContentValues();
-		subcategoryValues.put("SubCatID",sID);
-		subcategoryValues.put("ToCatID",cID);
-		subcategoryValues.put("SubCatName",name);
-		subcategoryValues.put("SubCatNote",note);
-
-		long id = db.insert(TABLE_SUBCATEGORIES, null, subcategoryValues);
-		//db.close();
-		return id; 
+		long id = db.insert(TABLE_SUBCATEGORIES, null, values);
+		return id; 	
 	}
 
 	//Delete subcategory
-	public void deleteSubCategory(String cID){
+	public int deleteSubCategory(Uri uri, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-		String sqlDeleteSubCategory = "DELETE FROM " + TABLE_SUBCATEGORIES + 
-				" WHERE SubCatID = " + cID;
-		db.execSQL(sqlDeleteSubCategory);
-		//db.close();
+		int rowsDeleted = 0;
+		rowsDeleted = db.delete(TABLE_SUBCATEGORIES, whereClause, whereArgs);		
+		return rowsDeleted;
 	}
 
 	//Get all planned transactions for all accounts

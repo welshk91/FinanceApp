@@ -30,6 +30,8 @@ import com.slidingmenu.lib.SlidingMenu;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -209,12 +211,23 @@ public class Categories extends SherlockFragmentActivity{
 
 		if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 			String subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
-			dh.deleteSubCategory(subcategoryID);			
+			Uri uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + subcategoryID);
+
+			getContentResolver().delete(uri,"SubCatID="+subcategoryID, null);
+
 			Log.d("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
 		}
 		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 			String categoryID = adapterCategory.getCategory(groupPos).id;
-			dh.deleteCategory(categoryID, false);
+
+			//Delete category
+			Uri uri = Uri.parse(MyContentProvider.CATEGORIES_URI + "/" + categoryID);
+			getContentResolver().delete(uri,"CatID="+categoryID, null);
+
+			//Delete remaining subcategories
+			uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + 0);
+			getContentResolver().delete(uri,"ToCatID="+categoryID, null);
+
 			Log.d("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
 		}
 
@@ -833,13 +846,31 @@ public class Categories extends SherlockFragmentActivity{
 					try{
 						if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 							SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
-							dh.deleteSubCategory(oldRecord.id);
-							dh.addSubCategory(oldRecord.id, oldRecord.catId, newName, newNote);
+							Uri uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + oldRecord.id);
+
+							//Delete Account
+							getActivity().getContentResolver().delete(uri,"SubCatID="+oldRecord.id, null);
+
+							ContentValues subcategoryValues=new ContentValues();
+							subcategoryValues.put("SubCatID",oldRecord.id);
+							subcategoryValues.put("ToCatID",oldRecord.catId);
+							subcategoryValues.put("SubCatName",newName);
+							subcategoryValues.put("SubCatNote",newNote);
+							getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
 						}
 						else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 							CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
-							dh.deleteCategory(oldRecord.id, true);
-							dh.addCategory(oldRecord.id, newName, newNote);
+							Uri uri = Uri.parse(MyContentProvider.CATEGORIES_URI + "/" + oldRecord.id);
+
+							//Delete Account
+							getActivity().getContentResolver().delete(uri,"CatID="+oldRecord.id, null);
+
+							ContentValues categoryValues=new ContentValues();
+							categoryValues.put("CatID",oldRecord.id);
+							categoryValues.put("SubCatName",newName);
+							categoryValues.put("SubCatNote",newNote);
+							getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
+							
 						}
 					}
 					catch(Exception e){
@@ -930,11 +961,18 @@ public class Categories extends SherlockFragmentActivity{
 					try{
 						//Add a category
 						if(isCat){
-							dh.addCategory(name, note);
+							ContentValues categoryValues=new ContentValues();
+							categoryValues.put("CatName",name);
+							categoryValues.put("CatNote",note);
+							getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
 						}
 						//Add a subcategory
 						else{
-							dh.addSubCategory(catID, name, note);
+							ContentValues subcategoryValues=new ContentValues();
+							subcategoryValues.put("ToCatID",catID);
+							subcategoryValues.put("SubCatName",name);
+							subcategoryValues.put("SubCatNote",note);
+							getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
 						}
 
 					}

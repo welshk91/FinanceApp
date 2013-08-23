@@ -63,7 +63,7 @@ import com.databases.example.Accounts.AddDialogFragment;
 import com.databases.example.Accounts.EditDialogFragment;
 import com.databases.example.Accounts.UserItemAdapter;
 import com.databases.example.Accounts.ViewDialogFragment;
-import com.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 

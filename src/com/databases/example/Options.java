@@ -4,7 +4,7 @@ import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

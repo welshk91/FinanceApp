@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
@@ -527,7 +527,6 @@ public class Categories extends SherlockFragmentActivity{
 
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			Cursor temp = subcategory.get(groupPosition);
 			temp.moveToPosition(childPosition);
 			String itemId = temp.getString(0);
@@ -637,7 +636,6 @@ public class Categories extends SherlockFragmentActivity{
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			// TODO Auto-generated method stub
 			Cursor temp = subcategory.get(groupPosition);
 			return temp.getCount();
 		}
@@ -650,7 +648,6 @@ public class Categories extends SherlockFragmentActivity{
 
 		@Override
 		public int getGroupCount() {
-			// TODO Auto-generated method stub
 			return category.getCount();
 		}
 

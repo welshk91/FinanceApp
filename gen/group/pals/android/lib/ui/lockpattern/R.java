@@ -7,44 +7,44 @@
 package group.pals.android.lib.ui.lockpattern;
 
 public final class R {
-	public static final class id {
-		public static final int alp_lpa_text_info = 0x7f050053;
-		public static final int alp_lpa_button_confirm = 0x7f050057;
-		public static final int alp_lpa_lockPattern = 0x7f050054;
-		public static final int alp_lpa_button_cancel = 0x7f050056;
-		public static final int alp_lpa_layout_footer = 0x7f050055;
-	}
-	public static final class string {
-		public static final int alp_msg_pattern_recorded = 0x7f07000b;
-		public static final int alp_lockscreen_access_pattern_cleared = 0x7f070005;
-		public static final int alp_cmd_retry = 0x7f070003;
-		public static final int alp_app_name = 0x7f070000;
-		public static final int alp_lockscreen_access_pattern_cell_added = 0x7f070004;
-		public static final int alp_msg_try_again = 0x7f07000e;
-		public static final int alp_msg_redraw_pattern_to_confirm = 0x7f07000c;
-		public static final int alp_cmd_continue = 0x7f070002;
-		public static final int alp_msg_draw_pattern_to_unlock = 0x7f07000a;
-		public static final int alp_lockscreen_access_pattern_start = 0x7f070007;
-		public static final int alp_cmd_confirm = 0x7f070001;
-		public static final int alp_msg_your_new_unlock_pattern = 0x7f07000f;
-		public static final int alp_lockscreen_access_pattern_detected = 0x7f070006;
-		public static final int alp_msg_connect_4dots = 0x7f070008;
-		public static final int alp_msg_draw_an_unlock_pattern = 0x7f070009;
-		public static final int alp_msg_release_finger_when_done = 0x7f07000d;
-	}
-	public static final class layout {
-		public static final int alp_lock_pattern_activity = 0x7f03001c;
+	public static final class dimen {
+		public static final int alp_lockpatternview_max_size = 0x7f060000;
 	}
 	public static final class drawable {
-		public static final int alp_indicator_code_lock_point_area_red_holo = 0x7f020079;
 		public static final int alp_btn_code_lock_default_holo = 0x7f020073;
 		public static final int alp_btn_code_lock_touched_holo = 0x7f020074;
 		public static final int alp_indicator_code_lock_drag_direction_green_up = 0x7f020075;
 		public static final int alp_indicator_code_lock_drag_direction_red_up = 0x7f020076;
-		public static final int alp_indicator_code_lock_point_area_green_holo = 0x7f020078;
 		public static final int alp_indicator_code_lock_point_area_default_holo = 0x7f020077;
+		public static final int alp_indicator_code_lock_point_area_green_holo = 0x7f020078;
+		public static final int alp_indicator_code_lock_point_area_red_holo = 0x7f020079;
 	}
-	public static final class dimen {
-		public static final int alp_lockpatternview_max_size = 0x7f060000;
+	public static final class id {
+		public static final int alp_lpa_button_cancel = 0x7f050056;
+		public static final int alp_lpa_button_confirm = 0x7f050057;
+		public static final int alp_lpa_layout_footer = 0x7f050055;
+		public static final int alp_lpa_lockPattern = 0x7f050054;
+		public static final int alp_lpa_text_info = 0x7f050053;
+	}
+	public static final class layout {
+		public static final int alp_lock_pattern_activity = 0x7f03001c;
+	}
+	public static final class string {
+		public static final int alp_app_name = 0x7f070000;
+		public static final int alp_cmd_confirm = 0x7f070001;
+		public static final int alp_cmd_continue = 0x7f070002;
+		public static final int alp_cmd_retry = 0x7f070003;
+		public static final int alp_lockscreen_access_pattern_cell_added = 0x7f070004;
+		public static final int alp_lockscreen_access_pattern_cleared = 0x7f070005;
+		public static final int alp_lockscreen_access_pattern_detected = 0x7f070006;
+		public static final int alp_lockscreen_access_pattern_start = 0x7f070007;
+		public static final int alp_msg_connect_4dots = 0x7f070008;
+		public static final int alp_msg_draw_an_unlock_pattern = 0x7f070009;
+		public static final int alp_msg_draw_pattern_to_unlock = 0x7f07000a;
+		public static final int alp_msg_pattern_recorded = 0x7f07000b;
+		public static final int alp_msg_redraw_pattern_to_confirm = 0x7f07000c;
+		public static final int alp_msg_release_finger_when_done = 0x7f07000d;
+		public static final int alp_msg_try_again = 0x7f07000e;
+		public static final int alp_msg_your_new_unlock_pattern = 0x7f07000f;
 	}
 }

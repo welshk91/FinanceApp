@@ -20,7 +20,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class Main extends SherlockActivity {	
 	//Flag used for lockscreen
@@ -58,13 +58,13 @@ public class Main extends SherlockActivity {
 		if(lockEnabled){
 			confirmPattern();
 		}
-
+		
 		setContentView(R.layout.dashboard);
-
+		
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-
+		
 		//Dashboard Buttons
 		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
 		Checkbook_Button.setOnClickListener(buttonListener);
@@ -76,7 +76,7 @@ public class Main extends SherlockActivity {
 		Stats_Button.setOnClickListener(buttonListener);
 		Exit_Button = (Button) findViewById(R.id.dashboard_exit);
 		Exit_Button.setOnClickListener(buttonListener);
-
+		
 	}// end onCreate
 
 	//Method handling 'mouse-click'

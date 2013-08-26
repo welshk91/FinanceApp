@@ -16,6 +16,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,9 +26,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
@@ -50,11 +55,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Schedule extends SherlockFragmentActivity{
+public class Schedule extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 	private SliderMenu menu;
 
 	private static DatabaseHelper dh = null;
-	
+
 	final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
 	//Adapter for category spinner
@@ -66,9 +71,11 @@ public class Schedule extends SherlockFragmentActivity{
 	AlertDialog alertDialogAdd;
 	AlertDialog alertDialogEdit;
 
+	private static final int SCHEDULE_LOADER = 5882300;
+
 	//Cursor (Need to be closed properly)
 	Cursor cursorPlans;
-	
+
 	//Adapter for category spinner
 	SimpleCursorAdapter accountSpinnerAdapter = null;
 	Spinner accountSpinner;
@@ -105,14 +112,14 @@ public class Schedule extends SherlockFragmentActivity{
 		super.onCreate(savedInstanceState);
 
 		dh = new DatabaseHelper(this);
-		
+
 		setTitle("Schedule");
 		setContentView(R.layout.schedule);
 
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		lvPlans = (ListView)this.findViewById(R.id.schedule_list);
 
 		//Turn clicks on
@@ -122,37 +129,20 @@ public class Schedule extends SherlockFragmentActivity{
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lvPlans);
 
+		adapterPlans = new UserItemAdapter(this, cursorPlans);		
+		lvPlans.setAdapter(adapterPlans);
+
 		schedulePopulate();
 
 	}//end onCreate
 
 	//Method to list all plans
 	public void schedulePopulate(){
-		//A textView alerting the user if database is empty
-		TextView noResult = (TextView)this.findViewById(R.id.schedule_noPlans);
-		noResult.setVisibility(View.GONE);
-		
-		cursorPlans = dh.getPlannedTransactionsAll();
+		Bundle b = new Bundle();
+		b.putBoolean("boolShowAll", true);
+		getSupportLoaderManager().initLoader(SCHEDULE_LOADER, null, this);
+		//onCreateLoader(SCHEDULE_LOADER, null);
 
-		startManagingCursor(cursorPlans);
-		cursorPlans.moveToFirst();
-		if (cursorPlans != null) {
-			if (cursorPlans.isFirst()) {
-				do {
-					//Nothing??? Need loop for noResult textview
-				} while (cursorPlans.moveToNext());
-			}
-
-			else {
-				//No Results Found
-				noResult.setVisibility(View.VISIBLE);
-				Log.d("Schedule", "No Plans found");
-			}
-		} 
-		
-		//Give the item adapter a list of all categories and subcategories
-		adapterPlans = new UserItemAdapter(this, cursorPlans);		
-		lvPlans.setAdapter(adapterPlans);
 	}//end of schedulePopulate	
 
 	//For Scheduling a Transaction
@@ -285,7 +275,7 @@ public class Schedule extends SherlockFragmentActivity{
 						Log.d("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
-						
+
 						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
@@ -329,7 +319,7 @@ public class Schedule extends SherlockFragmentActivity{
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
 		dh.deletePlannedTransaction(record.id);
-		
+
 		Log.d("Schedule", "Deleting " + record.name + " id:" + record.id);
 
 		cancelPlan(record);
@@ -513,7 +503,7 @@ public class Schedule extends SherlockFragmentActivity{
 						schedulingDelete(item);
 
 						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
-						
+
 						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
@@ -856,13 +846,10 @@ public class Schedule extends SherlockFragmentActivity{
 			alertDialogAdd.dismiss();
 		}
 
-		if(!cursorPlans.isClosed()){
-			cursorPlans.close();
-		}
-		
-		//if(!cursorSubCategory.isClosed()){
-		//	cursorSubCategory.close();
-		//}
+		//		if(!cursorPlans.isClosed()){
+		//			cursorPlans.close();
+		//		}
+
 		//if(!resultsCursor.isEmpty()){
 		//	resultsCursor.clear();
 		//	resultsCursor = null;
@@ -906,17 +893,17 @@ public class Schedule extends SherlockFragmentActivity{
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
-		private Cursor plans;
+		//private Cursor plans;
 		private Context context;
 
 		public UserItemAdapter(Context context,Cursor plans) {
 			super(context, plans);
-			this.plans = plans;
+			//this.plans = plans;
 			this.context = context;
 		}
 
 		public PlanRecord getPlan(long position){
-			Cursor group = plans;
+			Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
 			int IDColumn = group.getColumnIndex("PlanID");
@@ -950,7 +937,7 @@ public class Schedule extends SherlockFragmentActivity{
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
-			Cursor user = plans;
+			Cursor user = getCursor();
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
@@ -1236,6 +1223,49 @@ public class Schedule extends SherlockFragmentActivity{
 			this.rate = rate;
 			this.cleared = cleared;
 		}
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
+		switch (loaderID) {
+		case SCHEDULE_LOADER:
+			if(bundle!=null && bundle.getBoolean("boolSearch")){
+				String query = this.getIntent().getStringExtra(SearchManager.QUERY);
+				return new CursorLoader(
+						this,   	// Parent activity context
+						(Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_ID + "/SEARCH/" + query)),// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);
+			}
+			else{
+				Log.e("onCreateLoader", "Here");
+				return new CursorLoader(
+						this,   	// Parent activity context
+						MyContentProvider.PLANNED_TRANSACTIONS_URI,// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);				
+			}
+		default:
+			Log.e("Schedule-onCreateLoader", "Not a valid CursorLoader ID");
+			return null;
+		}
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		Log.e("Schedule", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+		adapterPlans.swapCursor(data);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		loader = null; //Possible Solution????	
 	}
 
 }//end of Schedule

@@ -337,6 +337,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	//Get all planned transactions for all accounts
 	public Cursor getPlannedTransactionsAll(){
+		Log.e("DatabaseHelper-getplannedtransactionall", "Here");
+		
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
 		cursor = db.query(TABLE_PLANNED_TRANSACTIONS, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
@@ -346,6 +348,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	//Get single planned transaction
 	public Cursor getPlannedTransaction(String pID){
+		Log.e("DatabaseHelper-getplannedtransaction", "Here");
+
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
 

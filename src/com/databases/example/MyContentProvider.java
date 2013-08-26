@@ -47,7 +47,7 @@ public class MyContentProvider extends ContentProvider{
 	public static final Uri SUBCATEGORIES_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_SUBCATEGORIES);
 	public static final Uri PLANNED_TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + PATH_TRANSACTIONS);
+			+ "/" + PATH_PLANNED_TRANSACTIONS);
 	public static final Uri LINKS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_LINKS);
 
@@ -130,10 +130,14 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case PLANNED_TRANSACTIONS_ID:
+			Log.e("contentProvider-plural", "Here");
+
 			cursor = dh.getPlannedTransactionsAll();
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case PLANNED_TRANSACTION_ID:
+			Log.e("contentprovider-single", "Here");
+
 			cursor = dh.getPlannedTransaction(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;

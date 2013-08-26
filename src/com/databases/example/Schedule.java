@@ -1,4 +1,4 @@
-package com.databases.example;
+ package com.databases.example;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -138,12 +138,8 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 	//Method to list all plans
 	public void schedulePopulate(){
-		Bundle b = new Bundle();
-		b.putBoolean("boolShowAll", true);
 		getSupportLoaderManager().initLoader(SCHEDULE_LOADER, null, this);
-		//onCreateLoader(SCHEDULE_LOADER, null);
-
-	}//end of schedulePopulate	
+	}
 
 	//For Scheduling a Transaction
 	public void schedulingAdd(){
@@ -273,7 +269,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 				try{
 					if (transactionName.length()>0 && validRate && validValue) {
 						Log.d("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
-
+						
 						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 
 						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
@@ -318,10 +314,12 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
-		dh.deletePlannedTransaction(record.id);
+		Uri uri = Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI + "/" + record.id);
+		this.getContentResolver().delete(uri, "PlanID="+record.id, null);
 
 		Log.d("Schedule", "Deleting " + record.name + " id:" + record.id);
 
+		//Cancel all upcoming notifications
 		cancelPlan(record);
 
 		//Refresh the categories list
@@ -846,10 +844,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 			alertDialogAdd.dismiss();
 		}
 
-		//		if(!cursorPlans.isClosed()){
-		//			cursorPlans.close();
-		//		}
-
 		//if(!resultsCursor.isEmpty()){
 		//	resultsCursor.clear();
 		//	resultsCursor = null;
@@ -893,12 +887,10 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
-		//private Cursor plans;
 		private Context context;
 
 		public UserItemAdapter(Context context,Cursor plans) {
 			super(context, plans);
-			//this.plans = plans;
 			this.context = context;
 		}
 
@@ -1241,7 +1233,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 						);
 			}
 			else{
-				Log.e("onCreateLoader", "Here");
 				return new CursorLoader(
 						this,   	// Parent activity context
 						MyContentProvider.PLANNED_TRANSACTIONS_URI,// Table to query

@@ -337,8 +337,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	//Get all planned transactions for all accounts
 	public Cursor getPlannedTransactionsAll(){
-		Log.e("DatabaseHelper-getplannedtransactionall", "Here");
-		
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
 		cursor = db.query(TABLE_PLANNED_TRANSACTIONS, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
@@ -348,8 +346,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	//Get single planned transaction
 	public Cursor getPlannedTransaction(String pID){
-		Log.e("DatabaseHelper-getplannedtransaction", "Here");
-
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
 
@@ -403,12 +399,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Delete planned transaction
-	public void deletePlannedTransaction(String pID){
+	public int deletePlannedTransaction(Uri uri, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-		String sqlDeleteTransaction = "DELETE FROM " + TABLE_PLANNED_TRANSACTIONS + 
-				" WHERE PlanID = " + pID;
-		db.execSQL(sqlDeleteTransaction);
-		//db.close();
+		int rowsDeleted = 0;
+		rowsDeleted = db.delete(TABLE_PLANNED_TRANSACTIONS, whereClause, whereArgs);		
+		return rowsDeleted;
 	}
 
 }

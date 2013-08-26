@@ -130,8 +130,6 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case PLANNED_TRANSACTIONS_ID:
-			Log.e("contentProvider-plural", "Here");
-
 			cursor = dh.getPlannedTransactionsAll();
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
@@ -178,7 +176,7 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case PLANNED_TRANSACTION_ID:
-			dh.getPlannedTransaction(uri.getLastPathSegment());
+			rowsDeleted = dh.deletePlannedTransaction(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case LINK_ID:

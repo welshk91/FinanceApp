@@ -143,7 +143,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 	//For Scheduling a Transaction
 	public void schedulingAdd(){
-		// get transaction_add.xml view
 		LayoutInflater li = LayoutInflater.from(this);
 		promptsView = li.inflate(R.layout.schedule_add, null);
 

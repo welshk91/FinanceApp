@@ -121,7 +121,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				int	entry_id = c.getInt(0);
 
 				c.close();
-				
+
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
 				if(checkbook_frame!=null){
@@ -220,7 +220,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 
 		calculateBalance();
-		
+
 	}//end populate
 
 	//Creates menu for long presses
@@ -310,7 +310,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//Delete Transactions of that account
 		uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
 		getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
-		
+
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
 	}//end of accountDelete
 
@@ -964,8 +964,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						Toast.makeText(getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
 					}
 
-					long entry_id = 0;
-
 					try{
 						if (accountName.length()>0) {
 
@@ -976,10 +974,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							accountValues.put("AcctDate",accountDate);
 
 							//Insert values into accounts table
-							getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
-							
+							Uri u = getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
+
 							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("ToAcctID", entry_id);
+							transactionValues.put("ToAcctID", Long.parseLong(u.getLastPathSegment()));
 							transactionValues.put("ToPlanID", transactionPlanId);
 							transactionValues.put("TransName", transactionName);
 							transactionValues.put("TransValue", transactionValue);
@@ -990,9 +988,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							transactionValues.put("TransTime", transactionTime);
 							transactionValues.put("TransDate", transactionDate);
 							transactionValues.put("TransCleared", transactionCleared);
-							
+
 							//Insert values into accounts table
-							dh.addTransaction(transactionValues);							
+							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
 						} 
 
 						else {

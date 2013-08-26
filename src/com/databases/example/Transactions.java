@@ -1285,7 +1285,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							transactionValues.put("TransDate", transactionDate);
 							transactionValues.put("TransCleared", transactionCleared);
 
-							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+							Uri u = getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
 							
 							((Transactions) getParentFragment()).calculateBalance();
 						} 

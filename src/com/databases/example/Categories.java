@@ -73,13 +73,13 @@ public class Categories extends SherlockFragmentActivity{
 
 		dh = new DatabaseHelper(this);
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-
 		setTitle("Categories");
 		setContentView(R.layout.categories);
 
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
 		lvCategory = (ExpandableListView)this.findViewById(R.id.category_list);
 
 		//Turn clicks on

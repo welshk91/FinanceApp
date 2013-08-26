@@ -22,11 +22,7 @@ public class Checkbook extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
-
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-
+		
 		setContentView(R.layout.checkbook);
 
 		//The transaction frame, if null it means we can't see transactions in this particular view
@@ -43,6 +39,10 @@ public class Checkbook extends SherlockFragmentActivity {
 			}
 		}
 
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
 		 *  in transaction fragment staying in accountsFrame

@@ -106,13 +106,13 @@ public class Schedule extends SherlockFragmentActivity{
 
 		dh = new DatabaseHelper(this);
 		
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-
 		setTitle("Schedule");
 		setContentView(R.layout.schedule);
 
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		
 		lvPlans = (ListView)this.findViewById(R.id.schedule_list);
 
 		//Turn clicks on

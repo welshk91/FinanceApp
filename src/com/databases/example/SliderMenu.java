@@ -34,7 +34,7 @@ public class SliderMenu extends SlidingMenu{
 		//setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		setBehindWidth(250);
 		setFadeDegree(0.50f);
-
+		
 		//SlidingMenu Buttons
 		SlidingMenu_Checkbook_Button = (Button)findViewById(R.id.slidingmenu_checkbook);
 		SlidingMenu_Checkbook_Button.setOnClickListener(myListener);
@@ -52,7 +52,7 @@ public class SliderMenu extends SlidingMenu{
 		SlidingMenu_Help_Button.setOnClickListener(myListener);
 		SlidingMenu_Exit_Button = (Button)findViewById(R.id.slidingmenu_exit);
 		SlidingMenu_Exit_Button.setOnClickListener(myListener);
-
+		
 	}//end constructor
 
 	//Method handling 'mouse-click'

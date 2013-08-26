@@ -134,8 +134,6 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case PLANNED_TRANSACTION_ID:
-			Log.e("contentprovider-single", "Here");
-
 			cursor = dh.getPlannedTransaction(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
@@ -211,8 +209,8 @@ public class MyContentProvider extends ContentProvider{
 			id = dh.addSubCategory(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_SUBCATEGORIES + "/" + id);
-		case PLANNED_TRANSACTION_ID:
-			dh.getPlannedTransaction(uri.getLastPathSegment());
+		case PLANNED_TRANSACTIONS_ID:
+			id = dh.addPlannedTransaction(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_PLANNED_TRANSACTIONS + "/" + id);
 		case LINK_ID:

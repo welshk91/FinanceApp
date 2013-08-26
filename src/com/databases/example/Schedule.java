@@ -1,4 +1,4 @@
- package com.databases.example;
+package com.databases.example;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,8 +58,6 @@ import android.widget.Toast;
 public class Schedule extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 	private SliderMenu menu;
 
-	private static DatabaseHelper dh = null;
-
 	final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
 	//Adapter for category spinner
@@ -110,8 +108,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-
-		dh = new DatabaseHelper(this);
 
 		setTitle("Schedule");
 		setContentView(R.layout.schedule);
@@ -268,10 +264,21 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 				try{
 					if (transactionName.length()>0 && validRate && validValue) {
 						Log.d("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
-						
-						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 
-						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						ContentValues transactionValues = new ContentValues();
+						transactionValues.put("ToAcctID", transactionAccountID);
+						transactionValues.put("PlanName", transactionName);
+						transactionValues.put("PlanValue", transactionValue);
+						transactionValues.put("PlanType", transactionType);
+						transactionValues.put("PlanCategory", transactionCategory);
+						transactionValues.put("PlanMemo", transactionMemo);
+						transactionValues.put("PlanOffset", transactionOffset);
+						transactionValues.put("PlanRate", transactionRate);
+						transactionValues.put("PlanCleared", transactionCleared);
+
+						Uri u = getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
+						
+						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
 						//Refresh the schedule list
@@ -283,12 +290,9 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					}
 				}
 				catch(Exception e){
+					Log.e("Schedule-Edit", "e = " + e);
 					Toast.makeText(Schedule.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
-
-				//Close cursor
-				cursorCategory.close();
-				cursorAccount.close();
 
 			}//end onClick "OK"
 		})
@@ -499,9 +503,20 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 						schedulingDelete(item);
 
-						long planID = dh.addPlannedTransaction(transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						ContentValues transactionValues=new ContentValues();
+						transactionValues.put("ToAcctID", transactionAccountID);
+						transactionValues.put("PlanName", transactionName);
+						transactionValues.put("PlanValue", transactionValue);
+						transactionValues.put("PlanType", transactionType);
+						transactionValues.put("PlanCategory", transactionCategory);
+						transactionValues.put("PlanMemo", transactionMemo);
+						transactionValues.put("PlanOffset", transactionOffset);
+						transactionValues.put("PlanRate", transactionRate);
+						transactionValues.put("PlanCleared", transactionCleared);
 
-						PlanRecord record = new PlanRecord(planID+"", transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						Uri u = getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
+
+						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
 						//Refresh the schedule list
@@ -513,12 +528,9 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					}
 				}
 				catch(Exception e){
+					Log.e("Schedule-Edit", "e = ");
 					Toast.makeText(Schedule.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
-
-				//Close cursor
-				cursorCategory.close();
-				cursorAccount.close();
 
 			}//end onClick "OK"
 		})
@@ -589,7 +601,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 	//Method to get the list of categories for spinner
 	public void categoryPopulate(){
-		Cursor categoryCursor = dh.getSubCategories(null,null,null,null);
+		Cursor categoryCursor = this.getContentResolver().query(MyContentProvider.SUBCATEGORIES_URI, null, null, null, null);
 		startManagingCursor(categoryCursor);
 		String[] from = new String[] {"SubCatName"}; 
 		int[] to = new int[] { android.R.id.text1 };
@@ -601,7 +613,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 	//Method to get the list of accounts for spinner
 	public void accountPopulate(){
-		Cursor accountCursor = dh.getAccounts();
+		Cursor accountCursor = this.getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
 		startManagingCursor(accountCursor);
 		String[] from = new String[] {"AcctName", "_id"}; 
 		int[] to = new int[] { android.R.id.text1};

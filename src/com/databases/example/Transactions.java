@@ -1210,7 +1210,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tTime.setText(timeFormat.format(c.getTime()));
 
 			//Populate Category Drop-down List
-			//categoryPopulate();
 			((Transactions) getParentFragment()).categoryPopulate();					
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());

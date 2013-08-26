@@ -357,45 +357,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Add planned transaction (no ID)
-	public long addPlannedTransaction(String aID, String name,String value,String type, String category, String memo, String offset, String rate, String cleared){
+	public long addPlannedTransaction(ContentValues values){
 		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues transactionValues=new ContentValues();
-		transactionValues.put("ToAcctID",aID);
-		transactionValues.put("PlanName",name);
-		transactionValues.put("PlanValue",value);
-		transactionValues.put("PlanType",type);
-		transactionValues.put("PlanCategory",category);
-		transactionValues.put("PlanMemo",memo);
-		transactionValues.put("PlanOffset",offset);
-		transactionValues.put("PlanRate",rate);
-		transactionValues.put("PlanCleared",cleared);
-
-		long id = db.insert(TABLE_PLANNED_TRANSACTIONS, null, transactionValues);
-
-		return id; 
-	}
-
-	//Add planned transaction (ID given)
-	public long addPlannedTransaction(String pID, String aID, String name,String value,String type, String category, String memo, String offset, String rate, String cleared){
-		SQLiteDatabase db = this.getWritableDatabase();
-
-		ContentValues transactionValues=new ContentValues();
-		transactionValues.put("PlansID",pID);
-		transactionValues.put("ToAcctID",aID);
-		transactionValues.put("PlanName",name);
-		transactionValues.put("PlanValue",value);
-		transactionValues.put("PlanType",type);
-		transactionValues.put("PlanCategory",category);
-		transactionValues.put("PlanMemo",memo);
-		transactionValues.put("PlanOffset",offset);
-		transactionValues.put("PlanRate",rate);
-		transactionValues.put("PlanCleared",cleared);
-
-		long id = db.insert(TABLE_PLANNED_TRANSACTIONS, null, transactionValues);
-
-		return id; 	
-
+		long id = db.insert(TABLE_PLANNED_TRANSACTIONS, null, values);
+		return id;
 	}
 
 	//Delete planned transaction

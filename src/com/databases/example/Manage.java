@@ -3,11 +3,17 @@ package com.databases.example;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxException;
+import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxPath;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +33,11 @@ public class Manage extends SherlockFragmentActivity{
 	AlertDialog alertDialogCreate;
 	AlertDialog alertDialogRestore;
 
+	//DropBox
+	private DbxAccountManager dbAccountManager;
+	static final int REQUEST_LINK_TO_DBX = 123;
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -36,6 +47,9 @@ public class Manage extends SherlockFragmentActivity{
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+
+		//Initialize DropBox Account Manager
+		dbAccountManager = DbxAccountManager.getInstance(getApplicationContext(), "n98lux9z2rp08lb", "exp7ofyw3illtlw");
 
 	}//end onCreate
 
@@ -54,12 +68,12 @@ public class Manage extends SherlockFragmentActivity{
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-//		if(alertDialogCreate!=null){
-//			alertDialogCreate.dismiss();
-//		}
-//		if(alertDialogRestore!=null){
-//			alertDialogRestore.dismiss();
-//		}
+		//		if(alertDialogCreate!=null){
+		//			alertDialogCreate.dismiss();
+		//		}
+		//		if(alertDialogRestore!=null){
+		//			alertDialogRestore.dismiss();
+		//		}
 		super.onPause();
 	}
 
@@ -72,9 +86,56 @@ public class Manage extends SherlockFragmentActivity{
 		DialogFragment newFragment = BackupDialogFragment.newInstance();
 		newFragment.show(getSupportFragmentManager(), "dialogBackup");
 	}
-	
+
 	public void syncTime(View v) {
-		Toast.makeText(this, "Sync Time!!!", Toast.LENGTH_SHORT).show();
+		if(dbAccountManager.hasLinkedAccount()==false){
+			Log.e("Manage-syncTime","Starting link...");
+			dbAccountManager.startLink(this, REQUEST_LINK_TO_DBX);
+		}
+		else{
+			Log.e("Manage-syncTime","Already have a link established!");
+		}
+
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_LINK_TO_DBX) {
+			if (resultCode == SherlockFragmentActivity.RESULT_OK) {
+				// ... Start using Dropbox files.
+				Log.e("Manage-onActivityResult","Result Okay. Start using dropbox...");
+				
+				DbxFileSystem dbxFs = null;
+				
+				try {
+					dbxFs = DbxFileSystem.forAccount(dbAccountManager.getLinkedAccount());
+				} catch (Unauthorized e) {
+					Toast.makeText(this, "Unauthorized to use Dropbox account", Toast.LENGTH_LONG).show();
+					Log.e("Manage-onActivityResult", "Unauthorized to use dropbox account? e = "+e);
+					e.printStackTrace();
+				}
+				
+				//Create a sync folder to house the database currently synced
+				DbxPath syncPath = new DbxPath("/Sync");
+				try {
+					dbxFs.createFolder(syncPath);
+					Log.e("Manage-onActivityResult", "Created Sync Folder successfully");
+				} catch (DbxException e) {
+					Log.e("Manage-onActivityResult", "Could Not create Sync Folder. e = "+e);
+					e.printStackTrace();
+				}
+				
+				//Make the sync file (should be the current database)
+				
+				
+				
+			} else {
+				// ... Link failed or was cancelled by the user.
+				Log.e("Manage-onActivityResult","Result FAILED. Cant use dropbox");
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 
 	public static class RestoreDialogFragment extends SherlockDialogFragment {

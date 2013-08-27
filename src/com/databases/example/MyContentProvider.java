@@ -201,11 +201,11 @@ public class MyContentProvider extends ContentProvider{
 			id = dh.addTransaction(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_TRANSACTIONS + "/" + id);
-		case CATEGORY_ID:
+		case CATEGORIES_ID:
 			id = dh.addCategory(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_CATEGORIES + "/" + id);
-		case SUBCATEGORY_ID:
+		case SUBCATEGORIES_ID:
 			id = dh.addSubCategory(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_SUBCATEGORIES + "/" + id);

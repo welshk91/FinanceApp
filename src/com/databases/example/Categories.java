@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.SimpleCursorTreeAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -969,7 +968,7 @@ public class Categories extends SherlockFragmentActivity{
 
 					}
 					catch(Exception e){
-						Log.e("Categories", "Error adding Categories");
+						Log.e("Categories", "Error adding Categories. e = " + e);
 					}
 
 					//Refresh the categories list

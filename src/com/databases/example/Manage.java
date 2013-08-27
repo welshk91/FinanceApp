@@ -72,6 +72,10 @@ public class Manage extends SherlockFragmentActivity{
 		DialogFragment newFragment = BackupDialogFragment.newInstance();
 		newFragment.show(getSupportFragmentManager(), "dialogBackup");
 	}
+	
+	public void syncTime(View v) {
+		Toast.makeText(this, "Sync Time!!!", Toast.LENGTH_SHORT).show();
+	}
 
 	public static class RestoreDialogFragment extends SherlockDialogFragment {
 

@@ -33,5 +33,17 @@
         android:padding="15dp"
         android:text="Restore" >
     </Button>
+    
+        <Button
+        android:id="@+id/ButtonSync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TextView01"
+        android:layout_margin="5dp"
+        android:layout_toRightOf="@+id/ButtonRestore"
+        android:onClick="syncTime"
+        android:padding="15dp"
+        android:text="Sync" >
+    </Button>
 
 </RelativeLayout>

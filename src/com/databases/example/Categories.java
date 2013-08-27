@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.ContextMenu;
@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.SimpleCursorTreeAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -35,6 +36,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 
@@ -46,6 +50,9 @@ public class Categories extends SherlockFragmentActivity{
 
 	ExpandableListView lvCategory = null;
 	static UserItemAdapter adapterCategory = null;
+
+	private static final int CATEGORY_LOADER = 5605016;
+	private static final int SUBCATEGORY_LOADER = 4534917;
 
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
@@ -79,7 +86,7 @@ public class Categories extends SherlockFragmentActivity{
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		lvCategory = (ExpandableListView)this.findViewById(R.id.category_list);
 
 		//Turn clicks on
@@ -90,11 +97,6 @@ public class Categories extends SherlockFragmentActivity{
 		registerForContextMenu(lvCategory);
 
 		categoryPopulate();
-
-		//Give the item adapter a list of all categories and subcategories
-		//adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
-		//lvCategory.setAdapter(adapterCategory);
-
 	}
 
 	//Method Called to refresh the list of categories if user changes the list
@@ -140,9 +142,7 @@ public class Categories extends SherlockFragmentActivity{
 		//Give the item adapter a list of all categories and subcategories
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
 		lvCategory.setAdapter(adapterCategory);
-
-		//Log.e("Categories","out of category populate");
-
+		
 	}//end of categoryPopulate
 
 	//Method for filling subcategories
@@ -341,17 +341,14 @@ public class Categories extends SherlockFragmentActivity{
 
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_CATEGORY_ADD:
-			//Log.e("Categories","Category Add pressed");
 			categoryAdd(item);
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_VIEW:
-			//Log.e("Categories","Category View pressed");
 			categoryView(item);
 			return true;
 
 		case CONTEXT_MENU_CATEGORY_EDIT:
-			//Log.e("Categories","Category Edit pressed");
 			categoryEdit(item);
 			return true;
 
@@ -360,12 +357,10 @@ public class Categories extends SherlockFragmentActivity{
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_VIEW:
-			//Log.e("Categories","SubCategory View pressed");
 			categoryView(item);
 			return true;
 
 		case CONTEXT_MENU_SUBCATEGORY_EDIT:
-			//Log.e("Categories","SubCategory Edit pressed");
 			categoryEdit(item);
 			return true;
 
@@ -382,7 +377,7 @@ public class Categories extends SherlockFragmentActivity{
 
 	}  
 
-	public class UserItemAdapter extends BaseExpandableListAdapter {
+	public class UserItemAdapter extends BaseExpandableListAdapter{
 		private Cursor category;
 		private ArrayList<Cursor> subcategory;
 		private Context context;
@@ -867,7 +862,7 @@ public class Categories extends SherlockFragmentActivity{
 							categoryValues.put("SubCatName",newName);
 							categoryValues.put("SubCatNote",newNote);
 							getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-							
+
 						}
 					}
 					catch(Exception e){

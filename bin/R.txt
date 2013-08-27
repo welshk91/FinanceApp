@@ -157,6 +157,7 @@ int dimen alp_lockpatternview_max_size 0x7f060000
 int dimen list_padding 0x7f060013
 int dimen shadow_width 0x7f060014
 int dimen slidingmenu_offset 0x7f060012
+int dimen slidingmenu_width 0x7f060015
 int drawable abs__ab_bottom_solid_dark_holo 0x7f020000
 int drawable abs__ab_bottom_solid_inverse_holo 0x7f020001
 int drawable abs__ab_bottom_solid_light_holo 0x7f020002

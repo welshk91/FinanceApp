@@ -22,18 +22,17 @@ public class SliderMenu extends SlidingMenu{
 	public SliderMenu(Context context) {
 		super(context);
 		
-		//Menu attributes
-		setContent(R.layout.sliding_menu);
-		setClickable(true);		
-		setMenu(R.layout.sliding_menu);
+		//Menu attributes (Need a way to adjust width for different resolutions)
+		setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		setMode(SlidingMenu.LEFT);
-		setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 		setShadowWidthRes(R.dimen.shadow_width);
 		setShadowDrawable(R.drawable.shadow);
 		//setAboveOffsetRes(R.dimen.slidingmenu_offset);
 		//setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		//setBehindWidth(R.dimen.slidingmenu_width);
 		setBehindWidth(250);
 		setFadeDegree(0.50f);
+		setMenu(R.layout.sliding_menu);
 		
 		//SlidingMenu Buttons
 		SlidingMenu_Checkbook_Button = (Button)findViewById(R.id.slidingmenu_checkbook);
@@ -60,7 +59,7 @@ public class SliderMenu extends SlidingMenu{
 		public void onClick(View view) {
 			switch (view.getId()) {
 			case R.id.slidingmenu_checkbook:
-				//Log.e("SliderMenu", "Checkbook Listener Fired");
+				Log.d("SliderMenu", "Checkbook Listener Fired");
 				SliderMenu.this.toggle();
 				Intent intentCheckbook = new Intent(getContext(), Checkbook.class);
 				intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -68,7 +67,7 @@ public class SliderMenu extends SlidingMenu{
 				break;
 
 			case R.id.slidingmenu_categories:
-				//Log.e("SliderMenu", "Schedules Listener Fired");
+				Log.d("SliderMenu", "Schedules Listener Fired");
 				SliderMenu.this.toggle();
 				Intent intentCategories = new Intent(getContext(), Categories.class);
 				intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -76,12 +75,12 @@ public class SliderMenu extends SlidingMenu{
 				break;
 				
 			case R.id.slidingmenu_schedules:
-				//Log.e("SliderMenu", "Schedules Listener Fired");
+				Log.d("SliderMenu", "Schedules Listener Fired");
 				SliderMenu.this.toggle();
 				break;
 
 			case R.id.slidingmenu_manage:
-				//Log.e("SliderMenu", "Manage Listener Fired");
+				Log.d("SliderMenu", "Manage Listener Fired");
 				SliderMenu.this.toggle();
 				//	createDatabase();
 				Intent intentManage = new Intent(getContext(), Manage.class);
@@ -89,7 +88,7 @@ public class SliderMenu extends SlidingMenu{
 				break;	
 
 			case R.id.slidingmenu_statistics:
-				//Log.e("SliderMenu", "Statistics Listener Fired");
+				Log.d("SliderMenu", "Statistics Listener Fired");
 				SliderMenu.this.toggle();
 				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
@@ -98,14 +97,14 @@ public class SliderMenu extends SlidingMenu{
 				break;
 
 			case R.id.slidingmenu_options:
-				//Log.e("SliderMenu", "Options Listener Fired");
+				Log.d("SliderMenu", "Options Listener Fired");
 				SliderMenu.this.toggle();
 				Intent intentOptions = new Intent(getContext(), Options.class);
 				getContext().startActivity(intentOptions);
 				break;
 
 			case R.id.slidingmenu_help:
-				//Log.e("SliderMenu", "Help Listener Fired");
+				Log.d("SliderMenu", "Help Listener Fired");
 				SliderMenu.this.toggle();
 				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
@@ -114,7 +113,7 @@ public class SliderMenu extends SlidingMenu{
 				break;
 
 			case R.id.slidingmenu_exit:
-				//Log.e("SliderMenu", "Exit Listener Fired");
+				Log.d("SliderMenu", "Exit Listener Fired");
 				SliderMenu.this.toggle();
 				
 //				if (Main.this.myDB != null){
@@ -127,9 +126,8 @@ public class SliderMenu extends SlidingMenu{
 				break;
 				
 			default:
-				//Log.e("SliderMenu", "Default Listener Fired");
+				Log.d("SliderMenu", "Default Listener Fired");
 				break;
-
 			}
 
 		}// end onClick

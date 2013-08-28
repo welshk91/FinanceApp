@@ -38,7 +38,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
-
 		super.onCreate(savedInstanceState);
 
 		setTitle("Options");

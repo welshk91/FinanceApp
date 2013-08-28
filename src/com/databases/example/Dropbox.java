@@ -103,11 +103,14 @@ public class Dropbox extends SherlockFragmentActivity{
 			Toast.makeText(this, "Not Logged In", Toast.LENGTH_SHORT).show();
 			return;
 		}
-
+		
 		//Make the sync file (should be the current database)
 		DbxPath syncFilePath = new DbxPath("/Sync/dbSync");
 		DbxFile syncFile = null;
 
+		//Need to force sync to stop "conflicting copy" bugs
+		//dbFileSystem.syncNowAndWait();
+				
 		try {
 			syncFile = dbFileSystem.open(syncFilePath);
 			Log.e("Dropbox-dropboxSync", "Opened Sync File successfully");
@@ -144,7 +147,6 @@ public class Dropbox extends SherlockFragmentActivity{
 		} finally{
 			syncFile.close();
 		}
-		
 	}
 
 	@Override

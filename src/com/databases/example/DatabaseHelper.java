@@ -1,5 +1,7 @@
 package com.databases.example;
 
+import java.io.File;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -68,6 +70,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlCommandCategory);
 		db.execSQL(sqlCommandSubCategory);
 		db.execSQL(sqlCommandLinks);
+
+		addDefaultCategories(db);
 	}
 
 	@Override
@@ -87,18 +91,30 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		Log.e("DatabaseHelper-onCreate", "Adding Default Categories...");
 
 		final String sqlDefaultCategories = "INSERT INTO " + TABLE_CATEGORIES
-				+ " (CatName) " + "VALUES ('STARTING BALANCE');";
+				+ " (CatName) " + "VALUES ('Default');";
 		final String sqlDefaultCategories2 = "INSERT INTO " + TABLE_CATEGORIES
 				+ " (CatName) " + "VALUES ('Utils');";
 		final String sqlDefaultSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
 				+ " (SubCatName, ToCatID) " + "VALUES ('Gas',2);";
 		final String sqlDefaultSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
 				+ " (SubCatName, ToCatID) " + "VALUES ('Electricty',2);";
+		final String sqlDefaultSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Heat',2);";
+		final String sqlDefaultSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Water',2);";
+		final String sqlDefaultSubCategories5 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('AC',2);";
+		final String sqlDefaultSubCategories6 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('STARTING BALANCE',1);";
 
 		db.execSQL(sqlDefaultCategories);
 		db.execSQL(sqlDefaultCategories2);
 		db.execSQL(sqlDefaultSubCategories);
 		db.execSQL(sqlDefaultSubCategories2);
+		db.execSQL(sqlDefaultSubCategories3);
+		db.execSQL(sqlDefaultSubCategories4);
+		db.execSQL(sqlDefaultSubCategories5);
+		db.execSQL(sqlDefaultSubCategories6);
 
 	}
 
@@ -107,7 +123,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
 		String sqlCommand = "UPDATE " + TABLE_ACCOUNTS + " SET AcctBalance = " + balance + " WHERE AcctID = " + aID+ ";";
 		db.execSQL(sqlCommand);
-		//db.close();
+	}
+
+	//Returns Database file
+	public File getDatabase(){
+		File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
+		Log.e("DatabaseHelper-getDatabase", "currentDB="+currentDB.getAbsolutePath());
+		return currentDB;
 	}
 
 	//Sum up all the account balances

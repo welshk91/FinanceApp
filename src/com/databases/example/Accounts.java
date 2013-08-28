@@ -185,8 +185,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
-		Log.e("Accounts", "Populate");
-
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
@@ -1050,7 +1048,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("Accounts", "load done. loader="+loader + " data="+data);
+		Log.d("Accounts", "load done. loader="+loader + " data="+data);
 		adapterAccounts.swapCursor(data);
 	}
 

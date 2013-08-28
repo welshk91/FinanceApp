@@ -30,7 +30,7 @@ public class SliderMenu extends SlidingMenu{
 		//setAboveOffsetRes(R.dimen.slidingmenu_offset);
 		//setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		//setBehindWidth(R.dimen.slidingmenu_width);
-		setBehindWidth(250);
+		setBehindWidth(350);
 		setFadeDegree(0.50f);
 		setMenu(R.layout.sliding_menu);
 		

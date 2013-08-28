@@ -104,22 +104,6 @@ public class Dropbox extends SherlockFragmentActivity{
 			return;
 		}
 
-		//Create a sync folder to house the database currently synced
-		DbxPath syncFolderPath = new DbxPath("/Sync");
-		try {
-			dbFileSystem.createFolder(syncFolderPath);
-			Log.e("Dropbox-dropboxSync", "Created Sync Folder successfully");
-		} catch(DbxException.Exists e){
-			Log.e("Dropbox-dropboxSync", "Folder already created? e = "+e);
-			e.printStackTrace();
-		}
-		catch (DbxException e) {
-			Log.e("Dropbox-dropboxSync", "Error creating folder. e = "+e);
-			e.printStackTrace();
-			Toast.makeText(this, "Error creating folder for dropbox syncing", Toast.LENGTH_LONG).show();
-			return;
-		}
-
 		//Make the sync file (should be the current database)
 		DbxPath syncFilePath = new DbxPath("/Sync/dbSync");
 		DbxFile syncFile = null;
@@ -132,21 +116,20 @@ public class Dropbox extends SherlockFragmentActivity{
 			e.printStackTrace();
 			Log.e("Dropbox-dropboxSync", "Create a new file");
 			syncFile = dbFileSystem.create(syncFilePath);
-		}
-		catch (DbxException e) {
+		} catch (DbxException e) {
 			Log.e("Dropbox-dropboxSync", "Error opening file. e = "+e);
 			e.printStackTrace();
 			Toast.makeText(this, "Error opening file for dropbox syncing", Toast.LENGTH_LONG).show();
 			return;
 		}
-
+		
 		//Write current database into the sync file
 		DatabaseHelper dh = new DatabaseHelper(this);
 		File currentDB = dh.getDatabase();
 		try {
-			syncFile.writeFromExistingFile(currentDB, false);					
-			syncFile.close();
+			syncFile.writeFromExistingFile(currentDB, false);
 			Log.e("Dropbox-dropboxSync", "Synced File successfully");
+			Toast.makeText(this, "Synced File successfully", Toast.LENGTH_LONG).show();
 		} catch (IOException e) {
 			Log.e("Dropbox-dropboxSync", "I/O Error syncing file. e = "+e);
 			e.printStackTrace();
@@ -158,7 +141,10 @@ public class Dropbox extends SherlockFragmentActivity{
 			e.printStackTrace();
 			Toast.makeText(this, "Read/Write stream already opened?", Toast.LENGTH_LONG).show();
 			return;
+		} finally{
+			syncFile.close();
 		}
+		
 	}
 
 	@Override

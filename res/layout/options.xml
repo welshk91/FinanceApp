@@ -295,6 +295,20 @@
             </Preference>
         </PreferenceScreen>
 
+        <PreferenceScreen
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:key="pref_screen_backup"
+            android:summary="Backup options"
+            android:title="Backup" >
+
+            <Preference
+                android:key="pref_dropbox"
+                android:summary="Dropbox options"
+                android:title="Dropbox Settings" >
+            </Preference>
+        </PreferenceScreen>
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="haha"

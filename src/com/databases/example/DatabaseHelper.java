@@ -128,7 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	//Returns Database file
 	public File getDatabase(){
 		File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
-		Log.e("DatabaseHelper-getDatabase", "currentDB="+currentDB.getAbsolutePath());
+		//Log.d("DatabaseHelper-getDatabase", "currentDB="+currentDB.getAbsolutePath());
 		return currentDB;
 	}
 

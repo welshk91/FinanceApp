@@ -18,6 +18,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
@@ -25,7 +26,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 	// this is your preferred flag
-	private static final int _ReqCreatePattern = 0;
+	private static final int REQUEST_CREATE_PATTERN = 0;
 	String savedPattern = null;
 
 	//Dialogs to be dismissed
@@ -47,7 +48,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -84,6 +85,18 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 			public boolean onPreferenceClick(Preference preference) {
 				drawPattern();
+				return true;
+			}
+
+		});
+
+		//Dropbox Options
+		Preference prefDropbox = (Preference) findPreference("pref_dropbox");
+		prefDropbox
+		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				dropboxOptions();
 				return true;
 			}
 
@@ -228,13 +241,13 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public void drawPattern(){
 		Intent intent = new Intent(this, LockPatternActivity.class);
 		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
-		startActivityForResult(intent, _ReqCreatePattern);
+		startActivityForResult(intent, REQUEST_CREATE_PATTERN);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case _ReqCreatePattern:
+		case REQUEST_CREATE_PATTERN:
 			if (resultCode == RESULT_OK) {
 				savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
 				SharedPreferences preferences = getPreferenceManager().getSharedPreferences();
@@ -242,6 +255,12 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			}
 			break;
 		}
+	}
+
+	//Launch Dropbox Options screen
+	public void dropboxOptions(){
+		Intent intentDropbox = new Intent(this, Dropbox.class);
+		startActivity(intentDropbox);
 	}
 
 	//For Menu Items

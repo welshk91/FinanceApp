@@ -5,33 +5,33 @@
     android:theme="@style/Theme.Sherlock" >
 
     <TextView
-        android:id="@+id/TextView01"
+        android:id="@+id/TextViewLogStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your current checkbook is " >
+        android:text="Status: " >
     </TextView>
 
     <Button
-        android:id="@+id/ButtonBackup"
+        android:id="@+id/ButtonLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TextView01"
+        android:layout_below="@+id/TextViewLogStatus"
         android:layout_margin="5dp"
-        android:onClick="showBackupDialog"
+        android:onClick="dropboxLogin"
         android:padding="15dp"
-        android:text="Backup" >
+        android:text="Login" >
     </Button>
 
     <Button
-        android:id="@+id/ButtonRestore"
+        android:id="@+id/ButtonSync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TextView01"
+        android:layout_below="@+id/TextViewLogStatus"
         android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/ButtonBackup"
-        android:onClick="showRestoreDialog"
+        android:layout_toRightOf="@+id/ButtonLogin"
+        android:onClick="dropboxSync"
         android:padding="15dp"
-        android:text="Restore" >
+        android:text="Sync" >
     </Button>
 
 </RelativeLayout>

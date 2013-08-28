@@ -64,33 +64,25 @@ public class SearchMain extends SherlockFragmentActivity {
 	} 
 
 	private void handleIntent(Intent intent) { 
-
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) { 
 			query = intent.getStringExtra(SearchManager.QUERY);
 			setTitle("Search <" + query + ">");
 			makeView();
 		}
-
 	}    
 
 	//Method that handles setting up the Tabs
 	public void makeView(){
 		setContentView(R.layout.search);
-		//Toast.makeText(this, "SearchTime Query: " + query, Toast.LENGTH_SHORT).show();
 
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(1);
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
-		/*Accounts.class & Transactions.class don't produce errors
-		 *Might want to check up on that
-		 */
 		mTabsAdapter.addTab(Accounts.class, null);
 		mTabsAdapter.addTab(Transactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
-
-		//Toast.makeText(this, "Added tabs...", Toast.LENGTH_SHORT).show();
 	}
 
 	//Override method to send the search extra data, letting it know which class called it
@@ -141,8 +133,8 @@ public class SearchMain extends SherlockFragmentActivity {
 
 		public int getCount() {
 			//One for Account tab, One for Transactions tab
-			return mTabs.size();
 			//return 2;
+			return mTabs.size();
 		}
 
 		@Override

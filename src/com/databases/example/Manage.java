@@ -128,8 +128,6 @@ public class Manage extends SherlockFragmentActivity{
 			final View categoryAddView = li.inflate(R.layout.manage_backup, null);
 			final String customBackupDir = getArguments().getString("customBackupDir");
 
-			Toast.makeText(getSherlockActivity(), "customBackupDir\n"+customBackupDir, Toast.LENGTH_SHORT).show();
-
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
 			//set account_add.xml to AlertDialog builder
@@ -159,7 +157,7 @@ public class Manage extends SherlockFragmentActivity{
 
 							File backupDir;
 
-							//If Custom Backup Directory
+							//Handle Custom Directory
 							if(customBackupDir.matches("")){
 								Log.e("Manage-BackupDialogFragment", "Use default directory");
 								backupDir = new File(sd.getAbsoluteFile()+DEFAULT_BACKUP_DIR);
@@ -173,7 +171,7 @@ public class Manage extends SherlockFragmentActivity{
 								else{
 									backupDir = new File(sd.getAbsoluteFile()+customBackupDir);
 								}
-								
+
 								backupDir.mkdir();
 							}
 
@@ -190,7 +188,7 @@ public class Manage extends SherlockFragmentActivity{
 								src.close();
 								dst.close();
 								Log.e("Manage-BackupDialogFragment", "Successfully backed up database to " + backupDB.getAbsolutePath());
-								Toast.makeText(getActivity(), "Your backup is named \n" + backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+								Toast.makeText(getActivity(), "Your backup\n" + backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 							}
 						}
 						else{

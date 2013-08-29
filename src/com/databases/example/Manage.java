@@ -12,7 +12,6 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
@@ -24,11 +23,9 @@ import android.widget.Toast;
 
 public class Manage extends SherlockFragmentActivity{
 
-	//public final String dbFinance = "dbFinance";
-	//public SQLiteDatabase myDB = null;
 	private SliderMenu menu;
 
-	private final static String BACKUP_DIR = "/WelshFinanceBackUps";
+	private final static String DEFAULT_BACKUP_DIR = "/WelshFinanceBackUps";
 
 	//Dialogs that need to be dismissed
 	AlertDialog alertDialogCreate;
@@ -64,7 +61,10 @@ public class Manage extends SherlockFragmentActivity{
 	}
 
 	public void showBackupDialog(View v) {
-		DialogFragment newFragment = BackupDialogFragment.newInstance();
+		EditText tvLogStatus = (EditText)findViewById(R.id.EditTextBackupDir);
+		String customBackupDir = tvLogStatus.getText().toString().trim();
+
+		DialogFragment newFragment = BackupDialogFragment.newInstance(customBackupDir);
 		newFragment.show(getSupportFragmentManager(), "dialogBackup");
 	}
 
@@ -109,16 +109,16 @@ public class Manage extends SherlockFragmentActivity{
 			});
 
 			return alertDialogBuilder.create();
-
 		}
 	}
 
 	public static class BackupDialogFragment extends SherlockDialogFragment {
 
-		public static BackupDialogFragment newInstance() {
+		public static BackupDialogFragment newInstance(String customBackupDir) {
 			BackupDialogFragment frag = new BackupDialogFragment();
 			Bundle args = new Bundle();
 			frag.setArguments(args);
+			args.putString("customBackupDir", customBackupDir);			
 			return frag;
 		}
 
@@ -126,37 +126,57 @@ public class Manage extends SherlockFragmentActivity{
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			LayoutInflater li = LayoutInflater.from(this.getActivity());
 			final View categoryAddView = li.inflate(R.layout.manage_backup, null);
+			final String customBackupDir = getArguments().getString("customBackupDir");
+
+			Toast.makeText(getSherlockActivity(), "customBackupDir\n"+customBackupDir, Toast.LENGTH_SHORT).show();
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
-			// set account_add.xml to AlertDialog builder
+			//set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(categoryAddView);
 
 			//set Title
 			alertDialogBuilder.setTitle("Creating A Backup");
 
-			// set dialog message
+			//set dialog message
 			alertDialogBuilder
 			.setCancelable(true)
 			.setPositiveButton("Backup",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
 					EditText backupTextBox = (EditText)categoryAddView.findViewById(R.id.EditBackupName);
 					String backupName = backupTextBox.getText().toString().trim();
-					//Toast.makeText(getActivity(), "Your backup is named " + backupName, Toast.LENGTH_SHORT).show();
-
 
 					/**
 					 * Code derived from StackOverflow
 					 * http://stackoverflow.com/questions/1995320/how-to-backup-database-file-to-sdcard-on-android
-					 * **/
+					 **/
 
 					try {
 						File sd = Environment.getExternalStorageDirectory();
 
 						if (sd.canWrite()) {
 							Log.e("Manage-BackupDialogFragment", "SD can write into");
-							File backupDir = new File(sd.getAbsoluteFile()+BACKUP_DIR);
-							backupDir.mkdir();
+
+							File backupDir;
+
+							//If Custom Backup Directory
+							if(customBackupDir.matches("")){
+								Log.e("Manage-BackupDialogFragment", "Use default directory");
+								backupDir = new File(sd.getAbsoluteFile()+DEFAULT_BACKUP_DIR);
+								backupDir.mkdir();
+							}
+							else{
+								Log.e("Manage-BackupDialogFragment", "Use custom directory");
+								if(!customBackupDir.startsWith("/")){
+									backupDir = new File(sd.getAbsoluteFile()+"/"+customBackupDir);
+								}
+								else{
+									backupDir = new File(sd.getAbsoluteFile()+customBackupDir);
+								}
+								
+								backupDir.mkdir();
+							}
+
 							DatabaseHelper dh = new DatabaseHelper(getActivity());
 							String backupDBPath = backupDir.getAbsolutePath()+"/"+backupName;
 							File currentDB = dh.getDatabase();

@@ -8,14 +8,25 @@
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your current checkbook is " >
+        android:padding="15dp"
+        android:text="Folder: "
+        android:textSize="18sp" >
     </TextView>
+
+    <EditText
+        android:id="@+id/EditTextBackupDir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/TextView01"
+        android:hint="/WelshFinanceBackUps"
+        android:inputType="text" >
+    </EditText>
 
     <Button
         android:id="@+id/ButtonBackup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TextView01"
+        android:layout_below="@+id/EditTextBackupDir"
         android:layout_margin="5dp"
         android:onClick="showBackupDialog"
         android:padding="15dp"
@@ -26,9 +37,8 @@
         android:id="@+id/ButtonRestore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TextView01"
+        android:layout_below="@+id/ButtonBackup"
         android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/ButtonBackup"
         android:onClick="showRestoreDialog"
         android:padding="15dp"
         android:text="Restore" >

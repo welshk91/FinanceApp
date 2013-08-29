@@ -29,7 +29,7 @@ public final class R {
 		public static final int margin = 0x7f0a0002;
 		public static final int right = 0x7f0a0001;
 		public static final int selected_view = 0x7f0a0004;
-		public static final int slidingmenumain = 0x7f0a00cc;
+		public static final int slidingmenumain = 0x7f0a00cd;
 	}
 	public static final class layout {
 		public static final int slidingmenumain = 0x7f03003b;

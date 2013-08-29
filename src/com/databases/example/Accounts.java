@@ -129,8 +129,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Bundle args = new Bundle();
 					args.putInt("ID",entry_id);
 
-					// Add the fragment to the activity, pushing this transaction
-					// on to the back stack.
+					//Add the fragment to the activity, pushing this transaction
+					//on to the back stack.
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -148,8 +148,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					args.putBoolean("boolSearch", false);
 					args.putInt("ID",entry_id);
 
-					// Add the fragment to the activity, pushing this transaction
-					// on to the back stack.
+					//Add the fragment to the activity, pushing this transaction
+					//on to the back stack.
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -410,13 +410,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			balance.setText("Total Balance: " + "BALANCED" );
 		}
 
-	}
-
-	//Override default resume to also call populate in case view needs refreshing
-	@Override
-	public void onResume(){
-		//populate();
-		super.onResume();
+		c.close();
 	}
 
 	//Method used to handle picking a file
@@ -457,7 +451,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
-		//private Cursor accounts;
 		private Context context;
 
 		public UserItemAdapter(Context context, Cursor accounts) {
@@ -488,7 +481,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
-			//Cursor user = accounts;
 			Cursor user = getCursor();
 
 			//For Custom View Properties
@@ -762,13 +754,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 					this.getSherlockActivity());
 
-			// set xml to AlertDialog builder
 			alertDialogBuilder.setView(accountStatsView);
 
-			//set Title
+			//Set Title
 			alertDialogBuilder.setTitle("View Account");
 
-			// set dialog message
+			//Set dialog message
 			alertDialogBuilder
 			.setCancelable(true);
 
@@ -901,13 +892,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
-			// set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(promptsView);
 
-			//set Title
+			//Set Title
 			alertDialogBuilder.setTitle("Add An Account");
 
-			// set dialog message
+			//Set dialog message
 			alertDialogBuilder
 			.setCancelable(false)
 			.setPositiveButton("Save",
@@ -1054,8 +1044,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		//adapterAccounts.swapCursor(null);
+		//Not sure what should go here...
 		loader = null;
 	}
 
-}// end Accounts
+}//End Accounts

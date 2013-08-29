@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.dropbox.chooser.android.DbxChooser;
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
@@ -37,7 +38,8 @@ public class Dropbox extends SherlockFragmentActivity{
 
 	//DropBox
 	private DbxAccountManager dbAccountManager;
-	static final int REQUEST_LINK_TO_DBX = 123;
+	static final int REQUEST_LINK_TO_DBX = 100;
+	static final int DBX_CHOOSER_REQUEST = 200;
 	private static final String appKey = "n98lux9z2rp08lb";
 	private static final String appSecret = "exp7ofyw3illtlw";
 
@@ -85,6 +87,38 @@ public class Dropbox extends SherlockFragmentActivity{
 		}
 	}
 
+	//Login or out
+	public void dropboxRestore(View v){
+		DbxFileSystem dbFileSystem = null;
+
+		//Test Login
+		try {
+			dbFileSystem = DbxFileSystem.forAccount(dbAccountManager.getLinkedAccount());
+		} catch (Unauthorized e) {
+			Toast.makeText(this, "Unauthorized to use Dropbox account", Toast.LENGTH_LONG).show();
+			Log.e("Dropbox-dropboxSync", "Unauthorized to use dropbox account? e = "+e);
+			e.printStackTrace();
+			return;
+		}
+		catch(Exception e){
+			Log.e("Dropbox-dropboxSync", "Are you logged in? Error e ="+e);
+			e.printStackTrace();
+			Toast.makeText(this, "Not Logged In", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		//Create Dropbox Chooser
+		DbxChooser mChooser = new DbxChooser(appKey);
+
+		mChooser.forResultType(DbxChooser.ResultType.PREVIEW_LINK)
+		.launch(this, DBX_CHOOSER_REQUEST);
+	}
+
+	//Login or out
+	public void dropboxBackup(View v){
+		Toast.makeText(this, "Coming Soon...", Toast.LENGTH_SHORT).show();
+	}
+
 	//When the sync button is pressed
 	public void dropboxSync(View v) throws DbxException {
 		DbxFileSystem dbFileSystem = null;
@@ -103,14 +137,14 @@ public class Dropbox extends SherlockFragmentActivity{
 			Toast.makeText(this, "Not Logged In", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		
+
 		//Make the sync file (should be the current database)
 		DbxPath syncFilePath = new DbxPath("/Sync/dbSync");
 		DbxFile syncFile = null;
 
 		//Need to force sync to stop "conflicting copy" bugs
 		//dbFileSystem.syncNowAndWait();
-				
+
 		try {
 			syncFile = dbFileSystem.open(syncFilePath);
 			Log.e("Dropbox-dropboxSync", "Opened Sync File successfully");
@@ -125,7 +159,7 @@ public class Dropbox extends SherlockFragmentActivity{
 			Toast.makeText(this, "Error opening file for dropbox syncing", Toast.LENGTH_LONG).show();
 			return;
 		}
-		
+
 		//Write current database into the sync file
 		DatabaseHelper dh = new DatabaseHelper(this);
 		File currentDB = dh.getDatabase();
@@ -160,9 +194,28 @@ public class Dropbox extends SherlockFragmentActivity{
 				//Link failed or was cancelled by the user.
 				Log.e("Dropbox-onActivityResult","Result FAILED. Cant use dropbox");
 			}
-		} else {
+		} 
+
+		if (requestCode == DBX_CHOOSER_REQUEST) {
+			if (resultCode == SherlockFragmentActivity.RESULT_OK) {
+				DbxChooser.Result result = new DbxChooser.Result(data);
+				Log.d("Dropbox-onActivityResult", "Link to selected file: " + result.getLink());
+				// Handle the result	
+				Toast.makeText(this, "Selected File \n" + result.getLink(), Toast.LENGTH_LONG).show();
+
+			} 
+
+			else {
+				// Failed or was cancelled by the user.
+				Log.d("Dropbox-onActivityResult", "Dropbox Chooser: Failed or Canceled");
+				Toast.makeText(this, "Failed or canceled", Toast.LENGTH_LONG).show();
+			}
+		}
+
+		else {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
+
 	}
 
 	//For Menu Items

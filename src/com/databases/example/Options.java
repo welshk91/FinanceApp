@@ -41,7 +41,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		super.onCreate(savedInstanceState);
 
 		setTitle("Options");
-
 		addPreferencesFromResource(R.layout.options);
 
 		//Add Sliding Menu

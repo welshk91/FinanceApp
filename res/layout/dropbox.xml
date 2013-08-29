@@ -8,7 +8,10 @@
         android:id="@+id/TextViewLogStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status: " >
+        android:layout_margin="5dp"
+        android:text="Status: "
+        android:textSize="18sp"
+        android:textStyle="bold" >
     </TextView>
 
     <Button
@@ -32,6 +35,29 @@
         android:onClick="dropboxSync"
         android:padding="15dp"
         android:text="Sync" >
+    </Button>
+
+    <Button
+        android:id="@+id/ButtonBackup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ButtonSync"
+        android:layout_margin="5dp"
+        android:onClick="dropboxBackup"
+        android:padding="15dp"
+        android:text="Backup" >
+    </Button>
+
+    <Button
+        android:id="@+id/ButtonRestore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ButtonSync"
+        android:layout_margin="5dp"
+        android:layout_toRightOf="@+id/ButtonBackup"
+        android:onClick="dropboxRestore"
+        android:padding="15dp"
+        android:text="Restore" >
     </Button>
 
 </RelativeLayout>

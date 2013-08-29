@@ -55,7 +55,7 @@
         android:layout_below="@+id/ButtonSync"
         android:layout_margin="5dp"
         android:layout_toRightOf="@+id/ButtonBackup"
-        android:onClick="dropboxRestore"
+        android:onClick="dropboxChooser"
         android:padding="15dp"
         android:text="Restore" >
     </Button>

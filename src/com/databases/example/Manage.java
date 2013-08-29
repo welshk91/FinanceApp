@@ -1,5 +1,10 @@
 package com.databases.example;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -9,7 +14,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -17,9 +24,11 @@ import android.widget.Toast;
 
 public class Manage extends SherlockFragmentActivity{
 
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
+	//public final String dbFinance = "dbFinance";
+	//public SQLiteDatabase myDB = null;
 	private SliderMenu menu;
+
+	private final static String BACKUP_DIR = "/WelshFinanceBackUps";
 
 	//Dialogs that need to be dismissed
 	AlertDialog alertDialogCreate;
@@ -133,8 +142,46 @@ public class Manage extends SherlockFragmentActivity{
 				public void onClick(DialogInterface dialog,int id) {
 					EditText backupTextBox = (EditText)categoryAddView.findViewById(R.id.EditBackupName);
 					String backupName = backupTextBox.getText().toString().trim();
+					//Toast.makeText(getActivity(), "Your backup is named " + backupName, Toast.LENGTH_SHORT).show();
 
-					Toast.makeText(getActivity(), "Your backup is named " + backupName, Toast.LENGTH_SHORT).show();
+
+					/**
+					 * Code derived from StackOverflow
+					 * http://stackoverflow.com/questions/1995320/how-to-backup-database-file-to-sdcard-on-android
+					 * **/
+
+					try {
+						File sd = Environment.getExternalStorageDirectory();
+
+						if (sd.canWrite()) {
+							Log.e("Manage-BackupDialogFragment", "SD can write into");
+							File backupDir = new File(sd.getAbsoluteFile()+BACKUP_DIR);
+							backupDir.mkdir();
+							DatabaseHelper dh = new DatabaseHelper(getActivity());
+							String backupDBPath = backupDir.getAbsolutePath()+"/"+backupName;
+							File currentDB = dh.getDatabase();
+							File backupDB = new File(backupDBPath);
+
+							if (currentDB.exists()) {
+								Log.e("Manage-BackupDialogFragment", "currentDB exists");
+								FileChannel src = new FileInputStream(currentDB).getChannel();
+								FileChannel dst = new FileOutputStream(backupDB).getChannel();
+								dst.transferFrom(src, 0, src.size());
+								src.close();
+								dst.close();
+								Log.e("Manage-BackupDialogFragment", "Successfully backed up database to " + backupDB.getAbsolutePath());
+								Toast.makeText(getActivity(), "Your backup is named \n" + backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+							}
+						}
+						else{
+							Log.e("Manage-BackupDialogFragment", "Cannot write into SD");
+							Toast.makeText(getActivity(), "No SD Card Found!", Toast.LENGTH_LONG).show();
+						}
+
+					} catch (Exception e) {
+						Log.e("Manage-BackupDialogFragment", "Error backing up. e="+e);
+						Toast.makeText(getActivity(), "Error backing up \n"+e, Toast.LENGTH_LONG).show();
+					}
 
 				}
 			})

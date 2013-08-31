@@ -1,7 +1,10 @@
 package com.databases.example;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -115,15 +118,28 @@ public class Dropbox extends SherlockFragmentActivity{
 
 	//Restores database file from Dropbox Chooser
 	public void dropboxRestore(Result result){
-		Toast.makeText(this, "Selected File \n" + result.getLink(), Toast.LENGTH_LONG).show();
-
-		File cacheFile = new File(result.getLink().getPath());
 		DatabaseHelper dh = new DatabaseHelper(this);
+		String restoreDBPath = result.getLink().getPath();
 		File currentDB = dh.getDatabase();
-		cacheFile.renameTo(currentDB);
+		File restoreDB = new File(restoreDBPath);
+
+		//write restore file into current database file
+		try{
+			FileChannel src = new FileInputStream(restoreDB).getChannel();
+			FileChannel dst = new FileOutputStream(currentDB).getChannel();
+			dst.transferFrom(src, 0, src.size());
+			src.close();
+			dst.close();
+			Log.e("Dropbox-DropboxRestore", "Successfully restored database to " + restoreDB.getAbsolutePath());
+			Toast.makeText(this, "You restored from \n" + restoreDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+		} catch(Exception e){
+			Log.e("Dropbox-DropboxRestore", "Restore failed \n" + e);
+			Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
+		}		
+
 	}
 
-	//Login or out
+	//Dropbox Drop-In "Saver"
 	public void dropboxBackup(View v){
 		Toast.makeText(this, "Coming Soon...", Toast.LENGTH_SHORT).show();
 	}

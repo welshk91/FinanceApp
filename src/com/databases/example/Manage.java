@@ -11,6 +11,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -65,25 +66,28 @@ public class Manage extends SherlockFragmentActivity{
 			File sd = Environment.getExternalStorageDirectory();
 
 			if (sd.canWrite()) {
-				Log.e("Manage-RestoreDialogFragment", "SD can write into");
+				Log.e("Manage-manageRestore", "SD can write into");
 
 				try{
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 					intent.setType("file/*");
 					startActivityForResult(intent,PICKFILE_RESULT_CODE);
+				} catch(ActivityNotFoundException e){
+					Log.e("Manage-manageRestore", "No program to handle intent? Error e=" + e);
+					Toast.makeText(this, "Please install a file manager", Toast.LENGTH_LONG).show();
 				} catch(Exception e){
-					Log.e("Manage-RestoreDialogFragment", "Error e = "+e);
+					Log.e("Manage-manageRestore", "Error e = "+e);
 					return;
 				}
 
 			}
 			else{
-				Log.e("Manage-RestoreDialogFragment", "Cannot write into SD");
+				Log.e("Manage-manageRestore", "Cannot write into SD");
 				Toast.makeText(this, "No SD Card Found!", Toast.LENGTH_LONG).show();
 			}
 
 		} catch (Exception e) {
-			Log.e("Manage-RestoreDialogFragment", "Error restoring. e="+e);
+			Log.e("Manage-manageRestore", "Error restoring. e="+e);
 			Toast.makeText(this, "Error restoring \n"+e, Toast.LENGTH_LONG).show();
 		}							
 
@@ -222,7 +226,7 @@ public class Manage extends SherlockFragmentActivity{
 					Log.e("Manage-onActivityResult", "Successfully restored database to " + restoreDB.getAbsolutePath());
 					Toast.makeText(this, "You restored from \n" + restoreDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 				} catch(Exception e){
-					Log.e("Manage-onActivityResult", "Successfully restored database to " + restoreDB.getAbsolutePath());
+					Log.e("Manage-onActivityResult", "Restore failed \n" + e);
 					Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
 				}
 			}

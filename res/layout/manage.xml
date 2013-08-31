@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ButtonBackup"
         android:layout_margin="5dp"
-        android:onClick="showRestoreDialog"
+        android:onClick="manageRestore"
         android:padding="15dp"
         android:text="Restore" >
     </Button>

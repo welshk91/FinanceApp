@@ -424,14 +424,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch (requestCode) {
 		case PICKFILE_RESULT_CODE:
 			if(resultCode==getActivity().RESULT_OK){
-				Log.e("onActivityResult:OK", "OK");
+				Log.e("Accounts-onActivityResult", "OK");
 
 				/******CALL POPULATE AGAIN TO SHOW THE ATTACHMENT ICON*******/
 
 			}
 
 			if(resultCode==getActivity().RESULT_CANCELED){
-				Log.e("onActivityResult:CANCELED", "canceled");
+				Log.e("Accounts-onActivityResult", "canceled");
 			}
 
 			break;

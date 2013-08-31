@@ -84,14 +84,14 @@ public class Links extends SherlockFragmentActivity{
 			try {
 				startActivityForResult(Intent.createChooser(intent, "Open with..."), PICKFILE_RESULT_CODE);
 			} catch (android.content.ActivityNotFoundException e) {
-				Log.e("linkView","No App for this type of file. Error e="+e);
+				Log.e("Links-linkView","No App for this type of file. Error e="+e);
 				Toast.makeText(this, "Could not find an app for this type of file.", Toast.LENGTH_SHORT).show();
 			}
 
 		}
 		catch(Exception e){
 			//Most likely caused by not picking a pile first (NullPointer)
-			Log.e("linkView", "Error e=" + e);
+			Log.e("Links-linkView", "Error e=" + e);
 			Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
 		}
 
@@ -100,9 +100,9 @@ public class Links extends SherlockFragmentActivity{
 	//Method for when you click the View button
 	public void linkDone(View v){
 
-		Log.e("linkDone", "linkFilePath=" + linkFilePath);
-		Log.e("linkDone", "AcctID=" + getIntent().getExtras().getString("AcctID"));
-		Log.e("linkDone", "AcctName=" + getIntent().getExtras().getString("AcctName"));
+		Log.e("Links-linkDone", "linkFilePath=" + linkFilePath);
+		Log.e("Links-linkDone", "AcctID=" + getIntent().getExtras().getString("AcctID"));
+		Log.e("Links-linkDone", "AcctName=" + getIntent().getExtras().getString("AcctName"));
 
 		Intent returnIntent = new Intent();
 		setResult(RESULT_OK,returnIntent);     
@@ -131,7 +131,7 @@ public class Links extends SherlockFragmentActivity{
 					}
 					catch(Exception e){
 						//Most likely caused by not picking a file first (NullPointer)
-						Log.e("onActivityResult", "Error e=" + e);
+						Log.e("Links-onActivityResult", "Error e=" + e);
 					}
 
 				}
@@ -140,7 +140,7 @@ public class Links extends SherlockFragmentActivity{
 			case PICKCONTACT_RESULT_CODE:	
 				if(resultCode==RESULT_OK){
 					getContactInfo(data);
-					Log.e("PICKCONTACT_RESULT_CODE","contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
+					Log.e("Links-onActivityResult","contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
 
 					TextView currentLink = (TextView)findViewById(R.id.TextViewCurrentLink);
 					currentLink.setText("Current Attachment : " + contactName);
@@ -151,7 +151,7 @@ public class Links extends SherlockFragmentActivity{
 						image.setImageURI(contactPhoto);
 					}
 					catch(Exception e){
-						Log.e("onActivityResult", "Error e=" + e);
+						Log.e("Links-onActivityResult", "Error e=" + e);
 					}
 
 				}
@@ -161,7 +161,7 @@ public class Links extends SherlockFragmentActivity{
 
 		}
 		catch(Exception e){
-			Log.e("onActivityResult","Error e=" + e);
+			Log.e("Links-onActivityResult","Error e=" + e);
 			Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
 		}
 	}//end of onActivityResult
@@ -308,11 +308,11 @@ public class Links extends SherlockFragmentActivity{
 						getActivity().startActivityForResult(intent,PICKFILE_RESULT_CODE);		
 					}
 					catch(ActivityNotFoundException e){
-						Log.e("onItemClick", "Error e=" + e);
+						Log.e("Links-onItemClick", "Error e=" + e);
 						Toast.makeText(getActivity(), "No Program Found", Toast.LENGTH_SHORT).show();
 					}
 					catch(Exception e){
-						Log.e("onItemClick", "Error e=" + e);
+						Log.e("Links-onItemClick", "Error e=" + e);
 					}
 
 					getDialog().cancel();

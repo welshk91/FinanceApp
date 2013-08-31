@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.dropbox.chooser.android.DbxChooser;
@@ -19,18 +18,12 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,22 +88,6 @@ public class Dropbox extends SherlockFragmentActivity{
 	public void dropboxChooser(View v){
 		DbxFileSystem dbFileSystem = null;
 
-		//Test Login
-		//		try {
-		//			dbFileSystem = DbxFileSystem.forAccount(dbAccountManager.getLinkedAccount());
-		//		} catch (Unauthorized e) {
-		//			Toast.makeText(this, "Unauthorized to use Dropbox account", Toast.LENGTH_LONG).show();
-		//			Log.e("Dropbox-dropboxSync", "Unauthorized to use dropbox account? e = "+e);
-		//			e.printStackTrace();
-		//			return;
-		//		}
-		//		catch(Exception e){
-		//			Log.e("Dropbox-dropboxSync", "Are you logged in? Error e ="+e);
-		//			e.printStackTrace();
-		//			Toast.makeText(this, "Not Logged In", Toast.LENGTH_SHORT).show();
-		//			return;
-		//		}
-
 		//Create Dropbox Chooser
 		DbxChooser mChooser = new DbxChooser(appKey);
 		mChooser.forResultType(DbxChooser.ResultType.FILE_CONTENT).launch(this, DBX_CHOOSER_REQUEST);
@@ -136,7 +113,6 @@ public class Dropbox extends SherlockFragmentActivity{
 			Log.e("Dropbox-DropboxRestore", "Restore failed \n" + e);
 			Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
 		}		
-
 	}
 
 	//Dropbox Drop-In "Saver"

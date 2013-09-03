@@ -1138,8 +1138,38 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 						//Insert values into transaction table
 						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferFromValues);
+
+						//Update Account Info
+						ContentValues accountValues=new ContentValues();
+
+						Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferFromID), null, null, null, null);
+
+						int entry_id = 0;
+						String entry_name = null;
+						String entry_balance = null;
+						String entry_time = null;
+						String entry_date = null;
+
+						c.moveToFirst();
+						do{
+							entry_id = c.getInt(c.getColumnIndex("AcctID"));
+							entry_name = c.getString(c.getColumnIndex("AcctName"));
+							entry_balance = Float.parseFloat(c.getString(c.getColumnIndex("AcctBalance")))-tAmount+"";
+							entry_time = c.getString(c.getColumnIndex("AcctTime"));
+							entry_date = c.getString(c.getColumnIndex("AcctDate"));
+						}while(c.moveToNext());
+
+						accountValues.put("AcctID",entry_id);
+						accountValues.put("AcctName",entry_name);
+						accountValues.put("AcctBalance",entry_balance);
+						accountValues.put("AcctTime",entry_time);
+						accountValues.put("AcctDate",entry_date);
+
+						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferFromID), accountValues,"AcctID ="+transferFromID, null);
+						c.close();
+
 					} catch(Exception e){
-						Log.e("Accounts-transferDialog", "Exception e="+e);
+						Log.e("Accounts-transferDialog", "Transfer From failed. Exception e="+e);
 						Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
 						return;
 					}
@@ -1148,26 +1178,56 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					transferType = "Deposit";
 
 					try{
-						ContentValues transferFromValues=new ContentValues();
-						transferFromValues.put("ToAcctID", transferToID);
-						transferFromValues.put("ToPlanID", transferPlanId);
-						transferFromValues.put("TransName", transferName);
-						transferFromValues.put("TransValue", tAmount);
-						transferFromValues.put("TransType", transferType);
-						transferFromValues.put("TransCategory", transferCategory);
-						transferFromValues.put("TransCheckNum", transferCheckNum);
-						transferFromValues.put("TransMemo", transferMemo);
-						transferFromValues.put("TransTime", transferTime);
-						transferFromValues.put("TransDate", transferDate);
-						transferFromValues.put("TransCleared", transferCleared);
+						ContentValues transferToValues=new ContentValues();
+						transferToValues.put("ToAcctID", transferToID);
+						transferToValues.put("ToPlanID", transferPlanId);
+						transferToValues.put("TransName", transferName);
+						transferToValues.put("TransValue", tAmount);
+						transferToValues.put("TransType", transferType);
+						transferToValues.put("TransCategory", transferCategory);
+						transferToValues.put("TransCheckNum", transferCheckNum);
+						transferToValues.put("TransMemo", transferMemo);
+						transferToValues.put("TransTime", transferTime);
+						transferToValues.put("TransDate", transferDate);
+						transferToValues.put("TransCleared", transferCleared);
 
 						//Insert values into transaction table
-						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferFromValues);
-					} catch(Exception e){
-						Log.e("Accounts-transferDialog", "Exception e="+e);
-						Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
-					}
+						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferToValues);
 
+						//Update Account Info
+						ContentValues accountValues=new ContentValues();
+
+						Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), null, null, null, null);
+
+						int entry_id = 0;
+						String entry_name = null;
+						String entry_balance = null;
+						String entry_time = null;
+						String entry_date = null;
+
+						c.moveToFirst();
+						do{
+							entry_id = c.getInt(c.getColumnIndex("AcctID"));
+							entry_name = c.getString(c.getColumnIndex("AcctName"));
+							entry_balance = Float.parseFloat(c.getString(c.getColumnIndex("AcctBalance")))+tAmount+"";
+							entry_time = c.getString(c.getColumnIndex("AcctTime"));
+							entry_date = c.getString(c.getColumnIndex("AcctDate"));
+						}while(c.moveToNext());
+
+						accountValues.put("AcctID",entry_id);
+						accountValues.put("AcctName",entry_name);
+						accountValues.put("AcctBalance",entry_balance);
+						accountValues.put("AcctTime",entry_time);
+						accountValues.put("AcctDate",entry_date);
+
+						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), accountValues,"AcctID ="+transferToID, null);
+						c.close();
+						
+					} catch(Exception e){
+						Log.e("Accounts-transferDialog", "Transfer To failed. Exception e="+e);
+						Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
+						return;
+					}
 
 				}//end onClick "OK"
 			})
@@ -1179,6 +1239,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 			});
 
+			
 			return alertDialogBuilder.create();
 		}
 	}

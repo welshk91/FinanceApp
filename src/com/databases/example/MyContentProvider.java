@@ -228,12 +228,19 @@ public class MyContentProvider extends ContentProvider{
 			String[] whereArgs) {
 		int uriType = sURIMatcher.match(uri);
 		int rowsUpdated = 0;
-		Log.e("MyContentProvider-update", "updating...");
+
 		switch (uriType) {
 		case TRANSACTION_ID:
+			Log.e("MyContentProvider-update", "Updating transaction & account information");
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
+			break;
+		case ACCOUNT_ID:
+			Log.e("MyContentProvider-update", "Updating account information");
+			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
+			//getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI");

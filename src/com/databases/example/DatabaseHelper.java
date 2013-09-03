@@ -205,8 +205,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	//Updates an account
 	public int updateAccount(ContentValues values, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
-		//String sqlCommand = "UPDATE " + TABLE_ACCOUNTS + " SET AcctBalance = " + balance + " WHERE AcctID = " + aID+ ";";
-		//db.execSQL(sqlCommand);
 		db.update(TABLE_ACCOUNTS, values, whereClause, whereArgs);
 		return 0;
 	}

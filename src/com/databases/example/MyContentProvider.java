@@ -240,7 +240,6 @@ public class MyContentProvider extends ContentProvider{
 			Log.e("MyContentProvider-update", "Updating account information");
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
-			//getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI");

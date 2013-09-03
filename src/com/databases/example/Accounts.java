@@ -1222,7 +1222,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), accountValues,"AcctID ="+transferToID, null);
 						c.close();
-						
+
 					} catch(Exception e){
 						Log.e("Accounts-transferDialog", "Transfer To failed. Exception e="+e);
 						Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
@@ -1239,7 +1239,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 			});
 
-			
 			return alertDialogBuilder.create();
 		}
 	}

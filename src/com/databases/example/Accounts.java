@@ -1081,10 +1081,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					String transferAmount = tAmount.getText().toString().trim();
 					String transferFrom = null;
 					String transferTo = null;
+					String transferToID = null;
+					String transferFromID = null;
 
 					try{
 						transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex("AcctName"));
+						transferFromID = cursorAccount1.getString(cursorAccount1.getColumnIndex("_id"));
 						transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex("AcctName"));
+						transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
 					}
 					catch(Exception e){
 						Log.e("Account-transferDialog","No Accounts? Exception e=" + e);
@@ -1094,9 +1098,77 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					}					
 
 					Log.d("Account-Transfer", "From:"+transferFrom + " To:"+transferTo + " Amount:" + transferAmount);
-				
-					
-					
+
+					//Transfer From
+					final Calendar cal = Calendar.getInstance();
+					String transferTime = timeFormat.format(cal.getTime());
+					String transferDate = dateFormat.format(cal.getTime());
+
+					float tAmount;
+					final String transferName = "TRANSFER";
+					final String transferPlanId = "0";
+					final String transferCategory = "TRANSFER";
+					final String transferCheckNum = "None";
+					final String transferMemo = "This is an automatically generated transaction created when you transfer money";
+					final String transferCleared = "true";
+					String transferType = "Withdraw";
+
+					//Check Value to see if it's valid
+					try{
+						tAmount = Float.parseFloat(transferAmount);
+					}
+					catch(Exception e){
+						Log.e("Accounts-transfer", "Invalid amount? Error e="+e);
+						return;
+					}				
+
+					try{
+						ContentValues transferFromValues=new ContentValues();
+						transferFromValues.put("ToAcctID", transferFromID);
+						transferFromValues.put("ToPlanID", transferPlanId);
+						transferFromValues.put("TransName", transferName);
+						transferFromValues.put("TransValue", tAmount);
+						transferFromValues.put("TransType", transferType);
+						transferFromValues.put("TransCategory", transferCategory);
+						transferFromValues.put("TransCheckNum", transferCheckNum);
+						transferFromValues.put("TransMemo", transferMemo);
+						transferFromValues.put("TransTime", transferTime);
+						transferFromValues.put("TransDate", transferDate);
+						transferFromValues.put("TransCleared", transferCleared);
+
+						//Insert values into transaction table
+						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferFromValues);
+					} catch(Exception e){
+						Log.e("Accounts-transferDialog", "Exception e="+e);
+						Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
+						return;
+					}
+
+					//Transfer To
+					transferType = "Deposit";
+
+					try{
+						ContentValues transferFromValues=new ContentValues();
+						transferFromValues.put("ToAcctID", transferToID);
+						transferFromValues.put("ToPlanID", transferPlanId);
+						transferFromValues.put("TransName", transferName);
+						transferFromValues.put("TransValue", tAmount);
+						transferFromValues.put("TransType", transferType);
+						transferFromValues.put("TransCategory", transferCategory);
+						transferFromValues.put("TransCheckNum", transferCheckNum);
+						transferFromValues.put("TransMemo", transferMemo);
+						transferFromValues.put("TransTime", transferTime);
+						transferFromValues.put("TransDate", transferDate);
+						transferFromValues.put("TransCleared", transferCleared);
+
+						//Insert values into transaction table
+						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferFromValues);
+					} catch(Exception e){
+						Log.e("Accounts-transferDialog", "Exception e="+e);
+						Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
+					}
+
+
 				}//end onClick "OK"
 			})
 			.setNegativeButton("Cancel",

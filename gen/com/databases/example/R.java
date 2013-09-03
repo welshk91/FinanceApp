@@ -1287,7 +1287,7 @@ containing a value of this type.
         public static final int EditTransactionValue=0x7f0a0099;
         public static final int ScrollView01=0x7f0a0038;
         public static final int SpinnerAccountFrom=0x7f0a004f;
-        public static final int SpinnerAccountTo=0x7f0a0050;
+        public static final int SpinnerAccountTo=0x7f0a0051;
         public static final int TextAccountDate=0x7f0a004d;
         public static final int TextAccountName=0x7f0a0049;
         public static final int TextAccountTime=0x7f0a004e;
@@ -1311,7 +1311,7 @@ containing a value of this type.
         public static final int TextView00=0x7f0a0095;
         public static final int TextView01=0x7f0a003a;
         public static final int TextView02=0x7f0a004a;
-        public static final int TextView03=0x7f0a0051;
+        public static final int TextView03=0x7f0a0050;
         public static final int TextView04=0x7f0a0097;
         public static final int TextView05=0x7f0a00b1;
         public static final int TextView06=0x7f0a009c;

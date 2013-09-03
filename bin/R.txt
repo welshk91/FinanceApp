@@ -430,7 +430,7 @@ int id EditTransactionName 0x7f0a0098
 int id EditTransactionValue 0x7f0a0099
 int id ScrollView01 0x7f0a0038
 int id SpinnerAccountFrom 0x7f0a004f
-int id SpinnerAccountTo 0x7f0a0050
+int id SpinnerAccountTo 0x7f0a0051
 int id TextAccountDate 0x7f0a004d
 int id TextAccountName 0x7f0a0049
 int id TextAccountTime 0x7f0a004e
@@ -454,7 +454,7 @@ int id TextTransactionValue 0x7f0a00b3
 int id TextView00 0x7f0a0095
 int id TextView01 0x7f0a003a
 int id TextView02 0x7f0a004a
-int id TextView03 0x7f0a0051
+int id TextView03 0x7f0a0050
 int id TextView04 0x7f0a0097
 int id TextView05 0x7f0a00b1
 int id TextView06 0x7f0a009c

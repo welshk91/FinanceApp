@@ -24,8 +24,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView01"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/TextView01" >
+            android:layout_toRightOf="@+id/TextView03" >
         </Spinner>
 
         <TextView
@@ -41,7 +40,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView02"
-            android:layout_toRightOf="@+id/TextView02" >
+            android:layout_toRightOf="@+id/TextView03" >
         </Spinner>
 
         <TextView

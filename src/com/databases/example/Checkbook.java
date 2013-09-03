@@ -10,9 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 public class Checkbook extends SherlockFragmentActivity {
 
@@ -22,7 +19,6 @@ public class Checkbook extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.checkbook);
 
 		//The transaction frame, if null it means we can't see transactions in this particular view
@@ -42,12 +38,12 @@ public class Checkbook extends SherlockFragmentActivity {
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
+
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
-		 *  in transaction fragment staying in accountsFrame
-		 *  if you went to transactions in a single pane and then rotated
-		 *  Removing if forces the frags to be replaced every time so not very efficient
+		 * in transaction fragment staying in accountsFrame
+		 * if you went to transactions in a single pane and then rotated
+		 * Removing if forces the frags to be replaced every time so not very efficient
 		 */
 
 		//if (savedInstanceState==null){
@@ -67,16 +63,18 @@ public class Checkbook extends SherlockFragmentActivity {
 		account_frag.setArguments(argsAccount);
 
 		if(checkbook_frame==null){
+			Log.e("Checkbook-onCreate","checkbook_frame=null");
 			getSupportFragmentManager().beginTransaction()
 			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 		}
 		else{
+			Log.e("Checkbook-onCreate","checkbook_frame!=null");
 			getSupportFragmentManager().beginTransaction().
 			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
 		}
 
 		getSupportFragmentManager().executePendingTransactions();
-
+		
 		//}
 		//
 		//		else{
@@ -104,9 +102,13 @@ public class Checkbook extends SherlockFragmentActivity {
 		//
 		//		}
 
-
 	}//end onCreate
 
+	@Override
+	protected void onSaveInstanceState(Bundle bundle1){
+		Log.e("Checkbook-saveInstanceState", "here...");
+	}
+	
 	//For Menu Items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -130,6 +132,5 @@ public class Checkbook extends SherlockFragmentActivity {
 		DialogFragment newFragment = new DatePickerFragment();
 		newFragment.show(this.getSupportFragmentManager(), "datePicker");
 	}
-	
-	
+
 }//end Checkbook

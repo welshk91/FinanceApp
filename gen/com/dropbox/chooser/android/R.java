@@ -128,27 +128,27 @@ public final class R {
 		public static final int tab_dropbox_inactive = 0x7f02008f;
 	}
 	public static final class id {
-		public static final int dbx_bottom_bar = 0x7f0a0062;
-		public static final int dbx_bottom_bar_cancel_button = 0x7f0a0063;
-		public static final int dbx_bottom_bar_ok_button = 0x7f0a0064;
-		public static final int dbx_bottom_space = 0x7f0a0061;
-		public static final int dbx_button_bar = 0x7f0a0059;
-		public static final int dbx_button_container = 0x7f0a0058;
-		public static final int dbx_icon = 0x7f0a005e;
-		public static final int dbx_install_main = 0x7f0a005f;
-		public static final int dbx_install_sub = 0x7f0a0060;
-		public static final int dbx_install_title = 0x7f0a005b;
-		public static final int dbx_main_container = 0x7f0a005a;
-		public static final int dbx_separator = 0x7f0a005c;
-		public static final int dbx_top_space = 0x7f0a005d;
+		public static final int dbx_bottom_bar = 0x7f0a0066;
+		public static final int dbx_bottom_bar_cancel_button = 0x7f0a0067;
+		public static final int dbx_bottom_bar_ok_button = 0x7f0a0068;
+		public static final int dbx_bottom_space = 0x7f0a0065;
+		public static final int dbx_button_bar = 0x7f0a005d;
+		public static final int dbx_button_container = 0x7f0a005c;
+		public static final int dbx_icon = 0x7f0a0062;
+		public static final int dbx_install_main = 0x7f0a0063;
+		public static final int dbx_install_sub = 0x7f0a0064;
+		public static final int dbx_install_title = 0x7f0a005f;
+		public static final int dbx_main_container = 0x7f0a005e;
+		public static final int dbx_separator = 0x7f0a0060;
+		public static final int dbx_top_space = 0x7f0a0061;
 	}
 	public static final class integer {
 		public static final int dbx_max_action_buttons = 0x7f060000;
 	}
 	public static final class layout {
-		public static final int app_store_interstitial = 0x7f03001d;
-		public static final int bottom_bar_light = 0x7f03001e;
-		public static final int bottom_buttons_light = 0x7f03001f;
+		public static final int app_store_interstitial = 0x7f03001e;
+		public static final int bottom_bar_light = 0x7f03001f;
+		public static final int bottom_buttons_light = 0x7f030020;
 	}
 	public static final class string {
 		public static final int dbx_install = 0x7f080002;

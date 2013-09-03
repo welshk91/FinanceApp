@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fadeScrollbars="true" >
+
+    <RelativeLayout
+        android:id="@+id/layout_account_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp" >
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="From:" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/SpinnerAccountFrom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView01"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/TextView01" >
+        </Spinner>
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SpinnerAccountFrom"
+            android:text="To:" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/SpinnerAccountTo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView02"
+            android:layout_toRightOf="@+id/TextView02" >
+        </Spinner>
+
+        <TextView
+            android:id="@+id/TextView03"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SpinnerAccountTo"
+            android:text="Amount:" >
+        </TextView>
+
+        <EditText
+            android:id="@+id/EditAccountAmount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView03"
+            android:layout_toRightOf="@+id/TextView03"
+            android:digits="1234567890.-"
+            android:imeOptions="actionNext"
+            android:inputType="number|numberDecimal|numberSigned|phone" >
+        </EditText>
+    </RelativeLayout>
+
+</ScrollView>

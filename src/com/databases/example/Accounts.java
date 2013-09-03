@@ -31,6 +31,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
@@ -58,6 +60,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	int CONTEXT_MENU_EDIT=2;
 	int CONTEXT_MENU_DELETE=3;
 	int CONTEXT_MENU_ATTACH=4;
+
+	//Spinners for transfers
+	static Spinner transferSpinnerTo;
+	static Spinner transferSpinnerFrom;
+	static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
+	static SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
 	View myFragmentView;
 
@@ -183,6 +191,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
+		Log.e("Accounts","populating");
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
@@ -316,6 +325,32 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		newFragment.show(getChildFragmentManager(), "dialogAdd");
 	}	
 
+	//For Transferring from an Account
+	public void accountTransfer(){
+		DialogFragment newFragment = TransferDialogFragment.newInstance();
+		newFragment.show(getChildFragmentManager(), "dialogTransfer");		
+	}	
+
+	//Method to get the list of accounts for spinner
+	public void accountPopulate(){
+		Cursor accountCursor1 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
+		Cursor accountCursor2 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
+		getActivity().startManagingCursor(accountCursor1);
+		getActivity().startManagingCursor(accountCursor2);
+		String[] from = new String[] {"AcctName", "_id"}; 
+		int[] to = new int[] { android.R.id.text1};
+
+		transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor1, from, to);
+		transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor2, from, to);
+		transferSpinnerAdapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
+		transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
+	}//end of accountPopulate
+
+
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {
@@ -373,7 +408,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			return true;
 
 		case R.id.account_menu_transfer:    
-			//accountTransfer();
+			accountTransfer();
 			return true;
 
 		case R.id.account_menu_unknown:    
@@ -425,7 +460,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		case PICKFILE_RESULT_CODE:
 			if(resultCode==getActivity().RESULT_OK){
 				Log.e("Accounts-onActivityResult", "OK");
-
 				/******CALL POPULATE AGAIN TO SHOW THE ATTACHMENT ICON*******/
 
 			}
@@ -855,9 +889,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						Toast.makeText(getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
-					//Update Accounts ListView
-					((Accounts) getParentFragment()).populate();
-
 				}//end onClick "OK"
 			})
 			.setNegativeButton("Cancel",
@@ -1003,8 +1034,87 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 	}
 
+	//Class that handles transfers fragment
+	public static class TransferDialogFragment extends SherlockDialogFragment {
+
+		public static TransferDialogFragment newInstance() {
+			TransferDialogFragment frag = new TransferDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(getActivity());
+			final View promptsView = li.inflate(R.layout.account_transfer, null);
+
+			final EditText tAmount = (EditText) promptsView.findViewById(R.id.EditAccountAmount);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			alertDialogBuilder.setView(promptsView);
+
+			//Set Title
+			alertDialogBuilder.setTitle("Transfer Money");
+
+			transferSpinnerFrom = (Spinner)promptsView.findViewById(R.id.SpinnerAccountFrom);
+			transferSpinnerTo = (Spinner)promptsView.findViewById(R.id.SpinnerAccountTo);
+
+			//Populate Account Drop-down List
+			((Accounts) getParentFragment()).accountPopulate();
+
+			//Set dialog message
+			alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Transfer",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+
+					//Needed to get account's name from DB-populated spinner
+					int accountPosition1 = transferSpinnerFrom.getSelectedItemPosition();
+					Cursor cursorAccount1 = (Cursor) transferSpinnerAdapterFrom.getItem(accountPosition1);				
+
+					int accountPosition2 = transferSpinnerTo.getSelectedItemPosition();
+					Cursor cursorAccount2 = (Cursor) transferSpinnerAdapterTo.getItem(accountPosition2);
+
+					String transferAmount = tAmount.getText().toString().trim();
+					String transferFrom = null;
+					String transferTo = null;
+
+					try{
+						transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex("AcctName"));
+						transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex("AcctName"));
+					}
+					catch(Exception e){
+						Log.e("Account-transferDialog","No Accounts? Exception e=" + e);
+						dialog.cancel();
+						Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
+						return;
+					}					
+
+					Log.d("Account-Transfer", "From:"+transferFrom + " To:"+transferTo + " Amount:" + transferAmount);
+				
+					
+					
+				}//end onClick "OK"
+			})
+			.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "Cancel"
+					dialog.cancel();
+				}
+			});
+
+			return alertDialogBuilder.create();
+		}
+	}
+
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
+		Log.e("Accounts-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case ACCOUNTS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
@@ -1036,14 +1146,15 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.d("Accounts", "load done. loader="+loader + " data="+data);
+		Log.e("Accounts", "load done. loader="+loader + " data="+data);
 		adapterAccounts.swapCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
+		Log.e("Accounts", "loaderReset on " + loader);
 		//Not sure what should go here...
-		loader = null;
+		//loader = null;
 	}
 
 }//End Accounts

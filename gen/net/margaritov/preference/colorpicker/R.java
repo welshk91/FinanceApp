@@ -11,16 +11,16 @@ public final class R {
 		public static final int icon = 0x7f020089;
 	}
 	public static final class id {
-		public static final int color_picker_view = 0x7f0a007c;
-		public static final int new_color_panel = 0x7f0a007e;
-		public static final int old_color_panel = 0x7f0a007d;
+		public static final int color_picker_view = 0x7f0a0080;
+		public static final int new_color_panel = 0x7f0a0082;
+		public static final int old_color_panel = 0x7f0a0081;
 	}
 	public static final class integer {
 		public static final int COLOR_BLACK = 0x7f060001;
 		public static final int COLOR_GREEN = 0x7f060002;
 	}
 	public static final class layout {
-		public static final int dialog_color_picker = 0x7f030026;
+		public static final int dialog_color_picker = 0x7f030027;
 	}
 	public static final class string {
 		public static final int app_name = 0x7f08001a;

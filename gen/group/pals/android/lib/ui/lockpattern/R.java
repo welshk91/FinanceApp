@@ -20,14 +20,14 @@ public final class R {
 		public static final int alp_indicator_code_lock_point_area_red_holo = 0x7f020079;
 	}
 	public static final class id {
-		public static final int alp_lpa_button_cancel = 0x7f0a0056;
-		public static final int alp_lpa_button_confirm = 0x7f0a0057;
-		public static final int alp_lpa_layout_footer = 0x7f0a0055;
-		public static final int alp_lpa_lockPattern = 0x7f0a0054;
-		public static final int alp_lpa_text_info = 0x7f0a0053;
+		public static final int alp_lpa_button_cancel = 0x7f0a005a;
+		public static final int alp_lpa_button_confirm = 0x7f0a005b;
+		public static final int alp_lpa_layout_footer = 0x7f0a0059;
+		public static final int alp_lpa_lockPattern = 0x7f0a0058;
+		public static final int alp_lpa_text_info = 0x7f0a0057;
 	}
 	public static final class layout {
-		public static final int alp_lock_pattern_activity = 0x7f03001c;
+		public static final int alp_lock_pattern_activity = 0x7f03001d;
 	}
 	public static final class string {
 		public static final int alp_app_name = 0x7f080009;

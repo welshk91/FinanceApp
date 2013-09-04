@@ -18,7 +18,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.util.Log;
 import android.widget.Toast;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
@@ -88,6 +87,18 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		});
 
+		//Local Backup Options
+		Preference prefSD = (Preference) findPreference("pref_sd");
+		prefSD
+		.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			public boolean onPreferenceClick(Preference preference) {
+				sdOptions();
+				return true;
+			}
+
+		});
+		
 		//Dropbox Options
 		Preference prefDropbox = (Preference) findPreference("pref_dropbox");
 		prefDropbox
@@ -255,12 +266,18 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		}
 	}
 
+	//Launch SD Options screen
+	public void sdOptions(){
+		Intent intentSD = new Intent(this, SD.class);
+		startActivity(intentSD);
+	}
+	
 	//Launch Dropbox Options screen
 	public void dropboxOptions(){
 		Intent intentDropbox = new Intent(this, Dropbox.class);
 		startActivity(intentDropbox);
 	}
-
+	
 	//For Menu Items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

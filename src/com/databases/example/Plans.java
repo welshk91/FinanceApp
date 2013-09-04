@@ -124,6 +124,9 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lvPlans);
 
+		TextView noResult = (TextView)findViewById(R.id.plans_noPlans);
+		lvPlans.setEmptyView(noResult);
+		
 		adapterPlans = new UserItemAdapter(this, cursorPlans);		
 		lvPlans.setAdapter(adapterPlans);
 

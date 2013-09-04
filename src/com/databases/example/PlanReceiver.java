@@ -190,7 +190,7 @@ public class PlanReceiver extends BroadcastReceiver{
 					String cleared = cursorPlans.getString(ClearedColumn);
 
 					/****RESET ALARMS HERE****/
-					Log.e("reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
+					Log.e("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
 					PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,cleared);
 					schedule(record,context);
 
@@ -199,13 +199,13 @@ public class PlanReceiver extends BroadcastReceiver{
 
 			else {
 				//No Results Found
-				Log.d("Schedule", "No Plans to reschedule");
+				Log.d("PlanReceiver-reschedulePlans", "No Plans to reschedule");
 			}
 		} 
 
 	}
 
-	//Re-Hash of the schedule method Schedule.java
+	//Re-Hash of the schedule method of Plans.java
 	private void schedule(PlanRecord plan, Context context) {
 		PlanRecord record = plan;
 		Date d = null;
@@ -213,14 +213,14 @@ public class PlanReceiver extends BroadcastReceiver{
 		try {
 			d = dateFormat.parse(record.offset);
 		}catch (java.text.ParseException e) {
-			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
+			Log.e("PlanReceiver-schedule", "Couldn't schedule " + record.name + "\n e:"+e);
 			e.printStackTrace();
 		}
 
-		Log.e("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+		Log.e("PlanReceiver-schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
 		Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
-		Log.e("Schedule", "FirstRun:" + firstRun);
+		Log.e("PlanReceiver-schedule", "FirstRun:" + firstRun);
 
 		Intent intent = new Intent(context, PlanReceiver.class);
 		intent.putExtra("plan_id", record.id);
@@ -246,29 +246,29 @@ public class PlanReceiver extends BroadcastReceiver{
 		AlarmManager am = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
 
 		if(tokens[1].contains("Days")){
-			Log.d("schedule", "Days");
+			Log.d("PlanReceiver-schedule", "Days");
 
 			//If Starting Time is in the past, fire off next month(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
 
-			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 		}
 		else if(tokens[1].contains("Weeks")){
-			Log.d("schedule", "Weeks");
+			Log.d("PlanReceiver-schedule", "Weeks");
 
 			//If Starting Time is in the past, fire off next month(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
 
-			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
-			Log.d("schedule", "Months");
+			Log.d("PlanReceiver-schedule", "Months");
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(cal.getTimeInMillis());
 			cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
@@ -278,11 +278,11 @@ public class PlanReceiver extends BroadcastReceiver{
 				firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
 			}
 
-			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
 		}
 		else{
-			Log.e("Schedule", "Could not set alarm; Something wrong with the rate");
+			Log.e("PlanReceiver-schedule", "Could not set alarm; Something wrong with the rate");
 		}
 
 		//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);

@@ -26,7 +26,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Manage extends SherlockFragmentActivity{
+public class SD extends SherlockFragmentActivity{
 
 	private SliderMenu menu;
 
@@ -40,8 +40,8 @@ public class Manage extends SherlockFragmentActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setTitle("Manage");
-		setContentView(R.layout.manage);
+		setTitle("Local Backup");
+		setContentView(R.layout.sd);
 
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
@@ -61,33 +61,33 @@ public class Manage extends SherlockFragmentActivity{
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void manageRestore(View v) {
+	public void sdRestore(View v) {
 		try {
 			File sd = Environment.getExternalStorageDirectory();
 
 			if (sd.canWrite()) {
-				Log.e("Manage-manageRestore", "SD can write into");
+				Log.e("SD-sdRestore", "SD can write into");
 
 				try{
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 					intent.setType("file/*");
 					startActivityForResult(intent,PICKFILE_RESULT_CODE);
 				} catch(ActivityNotFoundException e){
-					Log.e("Manage-manageRestore", "No program to handle intent? Error e=" + e);
+					Log.e("SD-sdRestore", "No program to handle intent? Error e=" + e);
 					Toast.makeText(this, "Please install a file manager", Toast.LENGTH_LONG).show();
 				} catch(Exception e){
-					Log.e("Manage-manageRestore", "Error e = "+e);
+					Log.e("SD-sdRestore", "Error e = "+e);
 					return;
 				}
 
 			}
 			else{
-				Log.e("Manage-manageRestore", "Cannot write into SD");
+				Log.e("SD-sdRestore", "Cannot write into SD");
 				Toast.makeText(this, "No SD Card Found!", Toast.LENGTH_LONG).show();
 			}
 
 		} catch (Exception e) {
-			Log.e("Manage-manageRestore", "Error restoring. e="+e);
+			Log.e("SD-sdRestore", "Error restoring. e="+e);
 			Toast.makeText(this, "Error restoring \n"+e, Toast.LENGTH_LONG).show();
 		}							
 
@@ -114,7 +114,7 @@ public class Manage extends SherlockFragmentActivity{
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			LayoutInflater li = LayoutInflater.from(this.getActivity());
-			final View categoryAddView = li.inflate(R.layout.manage_backup, null);
+			final View categoryAddView = li.inflate(R.layout.sd_backup, null);
 			final String customBackupDir = getArguments().getString("customBackupDir");
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -142,18 +142,18 @@ public class Manage extends SherlockFragmentActivity{
 						File sd = Environment.getExternalStorageDirectory();
 
 						if (sd.canWrite()) {
-							Log.e("Manage-BackupDialogFragment", "SD can write into");
+							Log.d("SD-BackupDialogFragment", "SD can write into");
 
 							File backupDir;
 
 							//Handle Custom Directory
 							if(customBackupDir.matches("")){
-								Log.e("Manage-BackupDialogFragment", "Use default directory");
+								Log.d("SD-BackupDialogFragment", "Use default directory");
 								backupDir = new File(sd.getAbsoluteFile()+DEFAULT_BACKUP_DIR);
 								backupDir.mkdir();
 							}
 							else{
-								Log.e("Manage-BackupDialogFragment", "Use custom directory");
+								Log.d("SD-BackupDialogFragment", "Use custom directory");
 								if(!customBackupDir.startsWith("/")){
 									backupDir = new File(sd.getAbsoluteFile()+"/"+customBackupDir);
 								}
@@ -170,23 +170,23 @@ public class Manage extends SherlockFragmentActivity{
 							File backupDB = new File(backupDBPath);
 
 							if (currentDB.exists()) {
-								Log.e("Manage-BackupDialogFragment", "currentDB exists");
+								Log.d("SD-BackupDialogFragment", "currentDB exists");
 								FileChannel src = new FileInputStream(currentDB).getChannel();
 								FileChannel dst = new FileOutputStream(backupDB).getChannel();
 								dst.transferFrom(src, 0, src.size());
 								src.close();
 								dst.close();
-								Log.e("Manage-BackupDialogFragment", "Successfully backed up database to " + backupDB.getAbsolutePath());
+								Log.d("SD-BackupDialogFragment", "Successfully backed up database to " + backupDB.getAbsolutePath());
 								Toast.makeText(getActivity(), "Your backup\n" + backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 							}
 						}
 						else{
-							Log.e("Manage-BackupDialogFragment", "Cannot write into SD");
+							Log.e("SD-BackupDialogFragment", "Cannot write into SD");
 							Toast.makeText(getActivity(), "No SD Card Found!", Toast.LENGTH_LONG).show();
 						}
 
 					} catch (Exception e) {
-						Log.e("Manage-BackupDialogFragment", "Error backing up. e="+e);
+						Log.e("SD-BackupDialogFragment", "Error backing up. e="+e);
 						Toast.makeText(getActivity(), "Error backing up \n"+e, Toast.LENGTH_LONG).show();
 					}
 
@@ -209,7 +209,7 @@ public class Manage extends SherlockFragmentActivity{
 		switch (requestCode) {
 		case PICKFILE_RESULT_CODE:
 			if(resultCode==RESULT_OK){
-				Log.e("Manage-onActivityResult", "OK. Picked "+ getPath(data.getData()));
+				Log.e("SD-onActivityResult", "OK. Picked "+ getPath(data.getData()));
 
 				DatabaseHelper dh = new DatabaseHelper(this);
 				String restoreDBPath = getPath(data.getData());
@@ -223,16 +223,16 @@ public class Manage extends SherlockFragmentActivity{
 					dst.transferFrom(src, 0, src.size());
 					src.close();
 					dst.close();
-					Log.e("Manage-onActivityResult", "Successfully restored database to " + restoreDB.getAbsolutePath());
+					Log.e("SD-onActivityResult", "Successfully restored database to " + restoreDB.getAbsolutePath());
 					Toast.makeText(this, "You restored from \n" + restoreDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 				} catch(Exception e){
-					Log.e("Manage-onActivityResult", "Restore failed \n" + e);
+					Log.e("SD-onActivityResult", "Restore failed \n" + e);
 					Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
 				}
 			}
 
 			if(resultCode==RESULT_CANCELED){
-				Log.e("Manage-onActivityResult", "canceled");
+				Log.e("SD-onActivityResult", "canceled");
 			}
 
 			break;
@@ -258,4 +258,4 @@ public class Manage extends SherlockFragmentActivity{
 		return linkFilePath;
 	}
 
-}//end of Manage
+}//end of SD

@@ -96,7 +96,7 @@ public class Main extends SherlockActivity {
 
 			case R.id.dashboard_manage:
 				//	createDatabase();
-				Intent intentManage = new Intent(Main.this, Manage.class);
+				Intent intentManage = new Intent(Main.this, SD.class);
 				startActivity(intentManage);
 				break;
 

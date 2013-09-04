@@ -83,7 +83,7 @@ public class SliderMenu extends SlidingMenu{
 				Log.d("SliderMenu", "Manage Listener Fired");
 				SliderMenu.this.toggle();
 				//	createDatabase();
-				Intent intentManage = new Intent(getContext(), Manage.class);
+				Intent intentManage = new Intent(getContext(), SD.class);
 				getContext().startActivity(intentManage);
 				break;	
 

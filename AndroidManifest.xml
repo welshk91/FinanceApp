@@ -59,7 +59,7 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".Manage"
+            android:name=".SD"
             android:label="@string/app_name" >
         </activity>
         <activity

@@ -759,7 +759,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		//Add
 		MenuItem subMenu1Item = menu.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
 		subMenu1Item.setIcon(android.R.drawable.ic_menu_add);
-		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
 		return true;
 	}

@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -206,14 +207,13 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 					public void onClick(DialogInterface arg0,
 							int arg1) {
 
-						DatabaseHelper dh = null;
-						dh.deleteDatabase();
+						Uri uri = Uri.parse(MyContentProvider.DATABASE_URI+"");
+						getContentResolver().delete(uri, null, null);
 
 						//Navigate User back to dashboard
 						Intent intentDashboard = new Intent(Options.this, Main.class);
 						intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						startActivity(intentDashboard);
-
 					}
 				})
 				.setNegativeButton("No",

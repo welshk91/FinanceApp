@@ -9,10 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 
@@ -74,19 +70,21 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 		addDefaultCategories(db);
 	}
-	
-	public void deleteDatabase(){
+
+	public int deleteDatabase(){
 		Log.d("DatabaseHelper-deleteDatabase","Deleting database...");
-		
-		try{
-			this.getWritableDatabase().execSQL("DROP DATABASE IF EXISTS " + DATABASE_NAME);
+
+		try{			
+			context.deleteDatabase(DATABASE_NAME);
+			return 1;
 		}
 		catch(Exception e){
 			Log.e("DatabaseHelper-deleteDatabase", "Couldn't delete database. Error e="+e);
 		}
-		
+
+		return 0;
 	}
-	
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d("DatabaseHelper-onUpgrade", "Upgrading database from " + oldVersion + " to " + newVersion);
@@ -130,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlDefaultSubCategories4);
 		db.execSQL(sqlDefaultSubCategories5);
 		db.execSQL(sqlDefaultSubCategories6);
+		db.execSQL(sqlDefaultSubCategories7);
 	}
 
 	//Updates balance of an account
@@ -145,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		//Log.d("DatabaseHelper-getDatabase", "currentDB="+currentDB.getAbsolutePath());
 		return currentDB;
 	}
-	
+
 	//Sum up all the account balances
 	public Cursor sumAccounts(){
 		SQLiteDatabase db = this.getReadableDatabase();

@@ -1285,8 +1285,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		Log.e("Accounts", "loaderReset on " + loader);
-		//Not sure what should go here...
-		//loader = null;
+		//Not sure what should go here....
+		adapterAccounts.swapCursor(null);
 	}
 
 }//End Accounts

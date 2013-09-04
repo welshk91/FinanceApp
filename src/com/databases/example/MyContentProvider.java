@@ -1,9 +1,7 @@
 package com.databases.example;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,6 +13,7 @@ public class MyContentProvider extends ContentProvider{
 	private static DatabaseHelper dh = null;
 
 	//IDs
+	public static final int DATABASE_ID = 123;
 	public static final int ACCOUNTS_ID = 100;
 	public static final int ACCOUNT_ID = 110;
 	public static final int ACCOUNT_SEARCH_ID = 120;
@@ -38,6 +37,8 @@ public class MyContentProvider extends ContentProvider{
 	private static final String PATH_PLANNED_TRANSACTIONS = "plannedTransactions";
 	private static final String PATH_LINKS = "links";
 
+	public static final Uri DATABASE_URI = Uri.parse("content://" + AUTHORITY);
+	
 	public static final Uri ACCOUNTS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_ACCOUNTS);
 	public static final Uri TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
@@ -51,14 +52,11 @@ public class MyContentProvider extends ContentProvider{
 	public static final Uri LINKS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_LINKS);
 
-	//public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	//        + "/mt-tutorial";
-	//public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-	//       + "/mt-tutorial";
-
 	private static final UriMatcher sURIMatcher = new UriMatcher(
 			UriMatcher.NO_MATCH);
+
 	static{
+		sURIMatcher.addURI(AUTHORITY, null, DATABASE_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS, ACCOUNTS_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/#", ACCOUNT_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/SEARCH/*", ACCOUNT_SEARCH_ID);
@@ -91,6 +89,7 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case ACCOUNTS_ID:
 			cursor = dh.getAccounts();
+			Log.e("MyContentProvider-query", "URI="+uri);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case ACCOUNT_ID:
@@ -157,6 +156,16 @@ public class MyContentProvider extends ContentProvider{
 		int rowsDeleted = 0;
 
 		switch (uriType) {
+		case DATABASE_ID:
+			dh.deleteDatabase();
+			Log.e("MyContentProvider-delete", "URI="+ACCOUNTS_URI);
+			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
+			getContext().getContentResolver().notifyChange(TRANSACTIONS_URI, null);
+			getContext().getContentResolver().notifyChange(CATEGORIES_URI, null);
+			getContext().getContentResolver().notifyChange(SUBCATEGORIES_URI, null);
+			getContext().getContentResolver().notifyChange(LINKS_URI, null);
+			getContext().getContentResolver().notifyChange(PLANNED_TRANSACTIONS_URI, null);
+			break;
 		case ACCOUNT_ID:
 			rowsDeleted = dh.deleteAccount(uri, whereClause, whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
@@ -187,7 +196,7 @@ public class MyContentProvider extends ContentProvider{
 
 		return rowsDeleted;
 	}
-
+	
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		int uriType = sURIMatcher.match(uri);

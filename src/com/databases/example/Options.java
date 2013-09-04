@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -22,9 +21,6 @@ import android.widget.Toast;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
-	// this is your preferred flag
 	private static final int REQUEST_CREATE_PATTERN = 0;
 	String savedPattern = null;
 
@@ -98,7 +94,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			}
 
 		});
-		
+
 		//Dropbox Options
 		Preference prefDropbox = (Preference) findPreference("pref_dropbox");
 		prefDropbox
@@ -209,7 +205,15 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 						new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface arg0,
 							int arg1) {
-						destroyDatabase();
+
+						DatabaseHelper dh = null;
+						dh.deleteDatabase();
+
+						//Navigate User back to dashboard
+						Intent intentDashboard = new Intent(Options.this, Main.class);
+						intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						startActivity(intentDashboard);
+
 					}
 				})
 				.setNegativeButton("No",
@@ -220,31 +224,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 				}).show();
 
 	}//end of clearDB
-
-	//Method for Deleting Database
-	public void destroyDatabase(){
-
-		//Make sure database exist so you don't attempt to delete nothing
-		myDB = openOrCreateDatabase(dbFinance, MODE_PRIVATE, null);
-
-		//Make sure database is closed before deleting; not sure if necessary
-		if (myDB != null){
-			myDB.close();
-		}
-
-		try{
-			this.deleteDatabase(dbFinance);
-		}
-		catch(Exception e){
-			Toast.makeText(this, "Error Deleting Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
-		}
-
-		//Navigate User back to dashboard
-		Intent intentDashboard = new Intent(Options.this, Main.class);
-		intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(intentDashboard);
-
-	}//end of destroyDatabase
 
 	//Draw a lockscreen pattern
 	public void drawPattern(){
@@ -271,13 +250,13 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		Intent intentSD = new Intent(this, SD.class);
 		startActivity(intentSD);
 	}
-	
+
 	//Launch Dropbox Options screen
 	public void dropboxOptions(){
 		Intent intentDropbox = new Intent(this, Dropbox.class);
 		startActivity(intentDropbox);
 	}
-	
+
 	//For Menu Items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

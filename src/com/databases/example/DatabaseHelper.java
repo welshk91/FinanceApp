@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 
@@ -73,7 +74,19 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 		addDefaultCategories(db);
 	}
-
+	
+	public void deleteDatabase(){
+		Log.d("DatabaseHelper-deleteDatabase","Deleting database...");
+		
+		try{
+			this.getWritableDatabase().execSQL("DROP DATABASE IF EXISTS " + DATABASE_NAME);
+		}
+		catch(Exception e){
+			Log.e("DatabaseHelper-deleteDatabase", "Couldn't delete database. Error e="+e);
+		}
+		
+	}
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d("DatabaseHelper-onUpgrade", "Upgrading database from " + oldVersion + " to " + newVersion);
@@ -132,7 +145,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		//Log.d("DatabaseHelper-getDatabase", "currentDB="+currentDB.getAbsolutePath());
 		return currentDB;
 	}
-
+	
 	//Sum up all the account balances
 	public Cursor sumAccounts(){
 		SQLiteDatabase db = this.getReadableDatabase();

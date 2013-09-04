@@ -756,11 +756,12 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
 		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+		//Add
 		MenuItem subMenu1Item = menu.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
+		subMenu1Item.setIcon(android.R.drawable.ic_menu_add);
 		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
 		return true;
-
 	}
 
 	//For ActionBar Menu Items (and home icon)
@@ -803,7 +804,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	//Handles which methods are called when using the long presses menu
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_OPEN:
 			planView(item);

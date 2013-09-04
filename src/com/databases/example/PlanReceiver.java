@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import com.databases.example.Schedule.PlanRecord;
+import com.databases.example.Plans.PlanRecord;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

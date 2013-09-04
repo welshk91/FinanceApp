@@ -102,7 +102,7 @@ public class Main extends SherlockActivity {
 
 			case R.id.dashboard_schedules:
 				//	createDatabase();
-				Intent intentSchedules = new Intent(Main.this, Schedule.class);
+				Intent intentSchedules = new Intent(Main.this, Plans.class);
 				startActivity(intentSchedules);
 				//confirmPattern();
 				break;

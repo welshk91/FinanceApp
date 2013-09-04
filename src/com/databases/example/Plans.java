@@ -23,7 +23,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -55,7 +54,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Schedule extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class Plans extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 	private SliderMenu menu;
 
 	final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
@@ -69,7 +68,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 	AlertDialog alertDialogAdd;
 	AlertDialog alertDialogEdit;
 
-	private static final int SCHEDULE_LOADER = 5882300;
+	private static final int PLAN_LOADER = 5882300;
 
 	//Cursor (Need to be closed properly)
 	Cursor cursorPlans;
@@ -109,14 +108,14 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
-		setTitle("Schedule");
-		setContentView(R.layout.schedule);
+		setTitle("Plans");
+		setContentView(R.layout.plans);
 
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
-		lvPlans = (ListView)this.findViewById(R.id.schedule_list);
+		lvPlans = (ListView)this.findViewById(R.id.plans_list);
 
 		//Turn clicks on
 		lvPlans.setClickable(true);
@@ -128,19 +127,19 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		adapterPlans = new UserItemAdapter(this, cursorPlans);		
 		lvPlans.setAdapter(adapterPlans);
 
-		schedulePopulate();
+		plansPopulate();
 
 	}//end onCreate
 
 	//Method to list all plans
-	public void schedulePopulate(){
-		getSupportLoaderManager().initLoader(SCHEDULE_LOADER, null, this);
+	public void plansPopulate(){
+		getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
 	}
 
 	//For Scheduling a Transaction
 	public void schedulingAdd(){
 		LayoutInflater li = LayoutInflater.from(this);
-		promptsView = li.inflate(R.layout.schedule_add, null);
+		promptsView = li.inflate(R.layout.plan_add, null);
 
 		final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
 		final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
@@ -216,7 +215,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					//Usually caused if no category exists
 					Log.e("transactionAdd","No Account? Exception e:" + e);
 					dialog.cancel();
-					Toast.makeText(Schedule.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
+					Toast.makeText(Plans.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -228,7 +227,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					//Usually caused if no category exists
 					Log.e("transactionAdd","No Category? Exception e:" + e);
 					dialog.cancel();
-					Toast.makeText(Schedule.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
+					Toast.makeText(Plans.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -246,7 +245,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					validValue=true;
 				}
 				catch(Exception e){
-					Log.e("Schedule","Value not valid; transactionValue=" + transactionValue);
+					Log.e("Plans","Value not valid; transactionValue=" + transactionValue);
 					validValue=false;
 				}
 
@@ -257,13 +256,13 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					validRate=true;
 				}
 				catch(Exception e){
-					Log.e("Schedule","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
+					Log.e("Plans","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
 					validRate=false;
 				}
 
 				try{
 					if (transactionName.length()>0 && validRate && validValue) {
-						Log.d("Schedule", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
+						Log.d("Plans", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 						ContentValues transactionValues = new ContentValues();
 						transactionValues.put("ToAcctID", transactionAccountID);
@@ -277,21 +276,21 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 						transactionValues.put("PlanCleared", transactionCleared);
 
 						Uri u = getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
-						
+
 						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
-						//Refresh the schedule list
-						schedulePopulate();
+						//Refresh the plans list
+						plansPopulate();
 					} 
 
 					else {
-						Toast.makeText(Schedule.this, "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
+						Toast.makeText(Plans.this, "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
 					}
 				}
 				catch(Exception e){
-					Log.e("Schedule-Edit", "e = " + e);
-					Toast.makeText(Schedule.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Log.e("Plans-Edit", "e = " + e);
+					Toast.makeText(Plans.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 			}//end onClick "OK"
@@ -320,13 +319,13 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		Uri uri = Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI + "/" + record.id);
 		this.getContentResolver().delete(uri, "PlanID="+record.id, null);
 
-		Log.d("Schedule", "Deleting " + record.name + " id:" + record.id);
+		Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
 
 		//Cancel all upcoming notifications
 		cancelPlan(record);
 
 		//Refresh the categories list
-		schedulePopulate();
+		plansPopulate();
 
 	}//end categoryDelete
 
@@ -336,7 +335,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
 		LayoutInflater li = LayoutInflater.from(this);
-		promptsView = li.inflate(R.layout.schedule_add, null);
+		promptsView = li.inflate(R.layout.plan_add, null);
 
 		final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
 		final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
@@ -451,7 +450,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					//Usually caused if no category exists
 					Log.e("transactionAdd","No Account? Exception e:" + e);
 					dialog.cancel();
-					Toast.makeText(Schedule.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
+					Toast.makeText(Plans.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -463,7 +462,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					//Usually caused if no category exists
 					Log.e("transactionAdd","No Category? Exception e:" + e);
 					dialog.cancel();
-					Toast.makeText(Schedule.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
+					Toast.makeText(Plans.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -481,7 +480,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					validValue=true;
 				}
 				catch(Exception e){
-					Log.e("Schedule","Value not valid; transactionValue=" + transactionValue);
+					Log.e("Plans-Edit","Value not valid; transactionValue=" + transactionValue);
 					validValue=false;
 				}
 
@@ -492,14 +491,14 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 					validRate=true;
 				}
 				catch(Exception e){
-					Log.e("Schedule","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
+					Log.e("Plans-Edit","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
 					validRate=false;
 				}
 
 				try{
 					if (transactionName.length()>0 && validRate && validValue) {
 
-						Log.d("Schedule Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
+						Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 						schedulingDelete(item);
 
@@ -520,16 +519,16 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 						schedule(record);
 
 						//Refresh the schedule list
-						schedulePopulate();
+						plansPopulate();
 					} 
 
 					else {
-						Toast.makeText(Schedule.this, "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
+						Toast.makeText(Plans.this, "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
 					}
 				}
 				catch(Exception e){
-					Log.e("Schedule-Edit", "e = ");
-					Toast.makeText(Schedule.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					Log.e("Plans-Edit", "e = ");
+					Toast.makeText(Plans.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 				}
 
 			}//end onClick "OK"
@@ -551,21 +550,21 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 	}//end of transactionAdd
 
 	//View Plan
-	public void scheduleView(android.view.MenuItem item){
+	public void planView(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
 		LayoutInflater li = LayoutInflater.from(this);
-		final View scheduleStatsView = li.inflate(R.layout.schedule_stats, null);
+		final View planStatsView = li.inflate(R.layout.plan_stats, null);
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				this);
 
 		// set xml to AlertDialog builder
-		alertDialogBuilder.setView(scheduleStatsView);
+		alertDialogBuilder.setView(planStatsView);
 
 		//set Title
-		alertDialogBuilder.setTitle("View Schedule");
+		alertDialogBuilder.setTitle("View Plan");
 
 		// set dialog message
 		alertDialogBuilder
@@ -575,23 +574,23 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		alertDialogView = alertDialogBuilder.create();
 
 		//Set Statistics
-		TextView statsName = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionName);
+		TextView statsName = (TextView)planStatsView.findViewById(R.id.TextTransactionName);
 		statsName.setText(record.name);
-		TextView statsAccount = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionAccount);
+		TextView statsAccount = (TextView)planStatsView.findViewById(R.id.TextTransactionAccount);
 		statsAccount.setText(record.acctId);
-		TextView statsValue = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionValue);
+		TextView statsValue = (TextView)planStatsView.findViewById(R.id.TextTransactionValue);
 		statsValue.setText(record.value);
-		TextView statsType = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionType);
+		TextView statsType = (TextView)planStatsView.findViewById(R.id.TextTransactionType);
 		statsType.setText(record.type);
-		TextView statsCategory = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionCategory);
+		TextView statsCategory = (TextView)planStatsView.findViewById(R.id.TextTransactionCategory);
 		statsCategory.setText(record.category);
-		TextView statsMemo = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionMemo);
+		TextView statsMemo = (TextView)planStatsView.findViewById(R.id.TextTransactionMemo);
 		statsMemo.setText(record.memo);
-		TextView statsOffset = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionOffset);
+		TextView statsOffset = (TextView)planStatsView.findViewById(R.id.TextTransactionOffset);
 		statsOffset.setText(record.offset);
-		TextView statsRate = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionRate);
+		TextView statsRate = (TextView)planStatsView.findViewById(R.id.TextTransactionRate);
 		statsRate.setText(record.rate);
-		TextView statsCleared = (TextView)scheduleStatsView.findViewById(R.id.TextTransactionCleared);
+		TextView statsCleared = (TextView)planStatsView.findViewById(R.id.TextTransactionCleared);
 		statsCleared.setText(record.cleared);
 
 		// show it
@@ -630,14 +629,13 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		try {
 			d = dateFormat.parse(record.offset);
 		}catch (java.text.ParseException e) {
-			Log.e("schedule", "Couldn't schedule " + record.name + "\n e:"+e);
-			//e.printStackTrace();
+			Log.e("Plans-schedule", "Couldn't schedule " + record.name + "\n e:"+e);
 		}
 
-		Log.d("Schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+		Log.d("Plans-schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
 		Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
-		Log.d("Schedule", "FirstRun:" + firstRun);
+		Log.d("Plans-schedule", "FirstRun:" + firstRun);
 
 		Intent intent = new Intent(this, PlanReceiver.class);
 		intent.putExtra("plan_id", record.id);
@@ -663,35 +661,34 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
 		if(tokens[1].contains("Days")){
-			Log.d("schedule", "Days");
+			Log.d("Plans-schedule", "Days");
 
 			//If Starting Time is in the past, fire off next month(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
 
-			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Log.d("Plans-schedule", "firstRun is " + firstRun);
 			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 		}
 		else if(tokens[1].contains("Weeks")){
-			Log.d("schedule", "Weeks");
+			Log.d("Plans-schedule", "Weeks");
 
 			//If Starting Time is in the past, fire off next month(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
 
-			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Log.d("Plans-schedule", "firstRun is " + firstRun);
 			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
-			Log.d("schedule", "Months");
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(cal.getTimeInMillis());
 			cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
@@ -701,7 +698,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 				firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
 			}
 
-			Log.d("PlanReceiver", "firstRun is " + firstRun);
+			Log.d("Plans-schedule", "firstRun is " + firstRun);
 			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
@@ -709,7 +706,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*30, sender);
 		}
 		else{
-			Log.e("Schedule", "Could not set alarm; Something wrong with the rate");
+			Log.e("Plans-schedule", "Could not set alarm; Something wrong with the rate");
 		}
 
 		//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
@@ -741,7 +738,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		try {
 			am.cancel(sender);
 		} catch (Exception e) {
-			Log.e("Schedule", "AlarmManager update was not canceled. " + e.toString());
+			Log.e("Plans-schedule", "AlarmManager update was not canceled. " + e.toString());
 		}
 
 	}
@@ -806,12 +803,10 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 		switch (item.getItemId()) {
 		case CONTEXT_MENU_OPEN:
-			//Log.e("Categories","Category View pressed");
-			scheduleView(item);
+			planView(item);
 			return true;
 
 		case CONTEXT_MENU_EDIT:
-			//Log.e("Categories","Category Edit pressed");
 			schedulingEdit(item);
 			return true;
 
@@ -826,12 +821,11 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 			return true;
 
 		default:
-			Log.e("Schedules", "Context Menu defualt listener fired?");
+			Log.e("Plans-onContextItemSelected", "Context Menu defualt listener fired?");
 			break;
 		}
 
 		return super.onContextItemSelected(item);
-
 	}  
 
 	//Method for selecting a Date when adding a transaction
@@ -839,8 +833,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		DialogFragment newFragment = new DatePickerFragment();
 		newFragment.show(getSupportFragmentManager(), "datePicker");
 	}
-
-	//Method to help create DatePicker
 
 	//Close dialogs to prevent window leaks
 	@Override
@@ -854,12 +846,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		if(alertDialogAdd!=null){
 			alertDialogAdd.dismiss();
 		}
-
-		//if(!resultsCursor.isEmpty()){
-		//	resultsCursor.clear();
-		//	resultsCursor = null;
-		//}
-
 		super.onPause();
 	}
 
@@ -879,7 +865,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 			int month = Integer.parseInt(dateFormatMonth.format(c.getTime()))-1;
 			int day = Integer.parseInt(dateFormatDay.format(c.getTime()));
 
-			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
 
@@ -931,8 +916,6 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 			String rate = group.getString(RateColumn);
 			String cleared = group.getString(ClearedColumn);
 
-			//Log.e("HERE", "columns " + IDColumn + " " + NameColumn + " " + NoteColumn);
-
 			PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
 			return record;
 		}
@@ -943,7 +926,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 			Cursor user = getCursor();
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Plans.this);
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			if (user != null) {
@@ -1011,9 +994,8 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 				}
 				catch(Exception e){
-					Toast.makeText(Schedule.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+					Toast.makeText(Plans.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
-
 
 				if (name != null) {
 					TVname.setText(name);
@@ -1050,10 +1032,10 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		@Override
 		public View newView(Context context, Cursor plans, ViewGroup parent) {
 			LayoutInflater inflater = LayoutInflater.from(context);
-			View v = inflater.inflate(R.layout.schedule_item, parent, false);
+			View v = inflater.inflate(R.layout.plan_item, parent, false);
 
 			//For Custom View Properties
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Schedule.this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Plans.this);
 			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
 
 			//Change Background Colors
@@ -1075,12 +1057,12 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 			}
 			catch(Exception e){
-				Toast.makeText(Schedule.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Plans.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 			}
 
 			//Change Size of main field
 			try{
-				String DefaultSize = prefs.getString(Schedule.this.getString(R.string.pref_key_account_nameSize), "16");
+				String DefaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_account_nameSize), "16");
 				TextView t;
 				t=(TextView)v.findViewById(R.id.plan_name);
 
@@ -1093,7 +1075,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 			}
 			catch(Exception e){
-				Toast.makeText(Schedule.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Plans.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 			}
 
 			try{
@@ -1110,11 +1092,11 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 			}
 			catch(Exception e){
-				Toast.makeText(Schedule.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Plans.this, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 			}
 
 			try{
-				String DefaultSize = prefs.getString(Schedule.this.getString(R.string.pref_key_account_fieldSize), "10");
+				String DefaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_account_fieldSize), "10");
 				TextView tmp;
 
 				if(useDefaults){
@@ -1152,7 +1134,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 			}
 			catch(Exception e){
-				Toast.makeText(Schedule.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Plans.this, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
 			}
 
 			try{
@@ -1194,7 +1176,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 
 			}
 			catch(Exception e){
-				Toast.makeText(Schedule.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+				Toast.makeText(Plans.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
 			}
 
 			return v;
@@ -1231,7 +1213,7 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
 		switch (loaderID) {
-		case SCHEDULE_LOADER:
+		case PLAN_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
 				String query = this.getIntent().getStringExtra(SearchManager.QUERY);
 				return new CursorLoader(
@@ -1254,14 +1236,14 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 						);				
 			}
 		default:
-			Log.e("Schedule-onCreateLoader", "Not a valid CursorLoader ID");
+			Log.e("Plans-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
 		}
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("Schedule", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+		Log.e("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 		adapterPlans.swapCursor(data);
 	}
 
@@ -1270,4 +1252,4 @@ public class Schedule extends SherlockFragmentActivity implements LoaderManager.
 		loader = null; //Possible Solution????	
 	}
 
-}//end of Schedule
+}//end of Plans

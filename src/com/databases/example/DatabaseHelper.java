@@ -106,6 +106,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 				+ " (SubCatName, ToCatID) " + "VALUES ('AC',2);";
 		final String sqlDefaultSubCategories6 = "INSERT INTO " + TABLE_SUBCATEGORIES
 				+ " (SubCatName, ToCatID) " + "VALUES ('STARTING BALANCE',1);";
+		final String sqlDefaultSubCategories7 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('TRANSFER',1);";
 
 		db.execSQL(sqlDefaultCategories);
 		db.execSQL(sqlDefaultCategories2);
@@ -115,7 +117,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL(sqlDefaultSubCategories4);
 		db.execSQL(sqlDefaultSubCategories5);
 		db.execSQL(sqlDefaultSubCategories6);
-
 	}
 
 	//Updates balance of an account

@@ -4,12 +4,12 @@
     android:layout_height="fill_parent" >
 
     <ListView
-        android:id="@+id/schedule_list"
+        android:id="@+id/plans_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
     <TextView
-        android:id="@+id/schedule_noPlans"
+        android:id="@+id/plans_noPlans"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

@@ -300,7 +300,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		intentLink.putExtra("AcctID", record.id);
 		intentLink.putExtra("AcctName", record.name);
 		startActivityForResult(intentLink, PICKFILE_RESULT_CODE);
-
 	}
 
 	//For Deleting an Account

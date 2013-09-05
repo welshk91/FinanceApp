@@ -74,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	public int deleteDatabase(){
 		Log.d("DatabaseHelper-deleteDatabase","Deleting database...");
 
-		try{			
+		try{
 			context.deleteDatabase(DATABASE_NAME);
 			return 1;
 		}

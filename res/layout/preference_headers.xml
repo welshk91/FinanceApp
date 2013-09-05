@@ -1,0 +1,21 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <header
+        android:fragment="com.databases.example.Options$AppearanceSettingsPreferenceFragment"
+        android:summary="Appearance Settings"
+        android:title="Appearance" >
+    </header>
+
+    <header
+        android:fragment="com.databases.example.Options$BehaviorSettingsPreferenceFragment"
+        android:summary="Behavior Settings"
+        android:title="Behavior" >
+    </header>
+
+    <header
+        android:fragment="com.databases.example.Options$MiscSettingsPreferenceFragment"
+        android:summary="Miscellanous Settings"
+        android:title="Misc" >
+    </header>
+
+</preference-headers>

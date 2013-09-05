@@ -38,7 +38,7 @@ public class MyContentProvider extends ContentProvider{
 	private static final String PATH_LINKS = "links";
 
 	public static final Uri DATABASE_URI = Uri.parse("content://" + AUTHORITY);
-	
+
 	public static final Uri ACCOUNTS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_ACCOUNTS);
 	public static final Uri TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
@@ -145,7 +145,7 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		default:
-			throw new IllegalArgumentException("Unknown URI");
+			throw new IllegalArgumentException("MyContentProvider-query: Unknown URI");
 		}
 
 	}
@@ -191,12 +191,12 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		default:
-			throw new IllegalArgumentException("Unknown URI");
+			throw new IllegalArgumentException("MyContentProvider-delete: Unknown URI");
 		}		
 
 		return rowsDeleted;
 	}
-	
+
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		int uriType = sURIMatcher.match(uri);
@@ -227,7 +227,7 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_LINKS + "/" + id);
 		default:
-			throw new IllegalArgumentException("Unknown URI");
+			throw new IllegalArgumentException("MyContentProvider-insert: Unknown URI");
 		}
 
 	}
@@ -251,7 +251,7 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		default:
-			throw new IllegalArgumentException("Unknown URI");
+			throw new IllegalArgumentException("MyContentProvider-update: Unknown URI");
 		}
 
 		return rowsUpdated;

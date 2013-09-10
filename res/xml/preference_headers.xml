@@ -2,18 +2,21 @@
 
     <header
         android:fragment="com.databases.example.Options$AppearanceSettingsPreferenceFragment"
+        android:icon="@android:drawable/ic_menu_more"
         android:summary="Appearance Settings"
         android:title="Appearance" >
     </header>
 
     <header
         android:fragment="com.databases.example.Options$BehaviorSettingsPreferenceFragment"
+        android:icon="@android:drawable/ic_menu_more"
         android:summary="Behavior Settings"
         android:title="Behavior" >
     </header>
 
     <header
         android:fragment="com.databases.example.Options$MiscSettingsPreferenceFragment"
+        android:icon="@android:drawable/ic_menu_more"
         android:summary="Miscellanous Settings"
         android:title="Misc" >
     </header>

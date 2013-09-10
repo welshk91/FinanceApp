@@ -38,6 +38,6 @@ public final class R {
 		public static final int press_color_to_apply = 0x7f08001c;
 	}
 	public static final class xml {
-		public static final int settings = 0x7f040001;
+		public static final int settings = 0x7f040005;
 	}
 }

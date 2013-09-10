@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
     android:key="pref_screen_misc" >
 
-    <PreferenceCategory
-        android:summary="Random Options"
-        android:title="Misc" >
-
+    <PreferenceCategory>
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="checkbox_default"
@@ -17,14 +12,11 @@
 
         <Preference
             android:key="pref_reset"
-            android:onClick="prefsReset"
             android:summary="Will reset all custom values to their defaults."
             android:title="Reset Defaults" >
         </Preference>
-
         <Preference
             android:key="pref_clearDB"
-            android:onClick="clearDB"
             android:summary="Will delete all the checkbook data. Use with extreme caution."
             android:title="Delete Checkbook" >
         </Preference>

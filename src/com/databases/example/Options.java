@@ -17,6 +17,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -30,10 +32,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	private static final int REQUEST_CREATE_PATTERN = 0;
 	String savedPattern = null;
 
-	//Dialogs to be dismissed
-	AlertDialog alertDialogReset;
-	AlertDialog.Builder builderDelete;
-
 	//SlidingMenu
 	private SliderMenu menu;
 
@@ -43,11 +41,11 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		setTitle("Options");
 
 		if (Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB) {
-			addPreferencesFromResource(R.layout.preference_appearance);
-			addPreferencesFromResource(R.layout.preference_behavior);
-			addPreferencesFromResource(R.layout.preference_misc);
+			addPreferencesFromResource(R.xml.preference_appearance);
+			addPreferencesFromResource(R.xml.preference_behavior);
+			addPreferencesFromResource(R.xml.preference_misc);
 
-			checkDefaults();
+			//checkDefaults();
 		}//End if Build<Honeycomb
 
 		//Add Sliding Menu
@@ -63,7 +61,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	public void onBuildHeaders(List<Header> target) {
-		loadHeadersFromResource(R.layout.preference_headers, target);
+		loadHeadersFromResource(R.xml.preference_headers, target);
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -72,9 +70,9 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.layout.preference_appearance);
+			addPreferencesFromResource(R.xml.preference_appearance);
+			getActivity().setTitle("Appearance");
 		}
-
 
 	}
 
@@ -84,8 +82,66 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.layout.preference_behavior);
+			addPreferencesFromResource(R.xml.preference_behavior);
+			getActivity().setTitle("Behavior");
+
+			//Draw Pattern
+			Preference prefDraw = (Preference) findPreference("pref_setlock");
+			prefDraw
+			.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+				public boolean onPreferenceClick(Preference preference) {
+					drawPattern();
+					return true;
+				}
+
+			});
+
+			//Local Backup Options
+			Preference prefSD = (Preference) findPreference("pref_sd");
+			prefSD
+			.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+				public boolean onPreferenceClick(Preference preference) {
+					sdOptions();
+					return true;
+				}
+
+			});
+
+			//Dropbox Options
+			Preference prefDropbox = (Preference) findPreference("pref_dropbox");
+			prefDropbox
+			.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+				public boolean onPreferenceClick(Preference preference) {
+					dropboxOptions();
+					return true;
+				}
+
+			});			
+
 		}
+
+		//Draw a lockscreen pattern
+		public void drawPattern(){
+			Intent intent = new Intent(getActivity(), LockPatternActivity.class);
+			intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
+			startActivityForResult(intent, REQUEST_CREATE_PATTERN);
+		}
+
+		//Launch SD Options screen
+		public void sdOptions(){
+			Intent intentSD = new Intent(getActivity(), SD.class);
+			startActivity(intentSD);
+		}
+
+		//Launch Dropbox Options screen
+		public void dropboxOptions(){
+			Intent intentDropbox = new Intent(getActivity(), Dropbox.class);
+			startActivity(intentDropbox);
+		}
+
 
 	}
 
@@ -95,20 +151,111 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.layout.preference_misc);
+			addPreferencesFromResource(R.xml.preference_misc);
+			getActivity().setTitle("Misc");
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			prefs.registerOnSharedPreferenceChangeListener(this);
 
+			//Reset Preferences
+			Preference prefReset = (Preference) findPreference("pref_reset");
+			prefReset
+			.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+				public boolean onPreferenceClick(Preference preference) {
+					prefsReset();
+					return true;
+				}
+
+			});
+
+			//Clear Database
+			Preference prefClearDB = (Preference) findPreference("pref_clearDB");
+			prefClearDB
+			.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+				public boolean onPreferenceClick(Preference preference) {
+					clearDB();
+					return true;
+				}
+
+			});
+
 		}
 
 		//Reset Preferences
-		public void prefsReset(View v){
+		public void prefsReset(){
 			Log.e("prefsReset","clicked!");
+			//Set an alert dialog to confirm
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+			// set title
+			alertDialogBuilder.setTitle("Reset Preferences?");
+
+			// set dialog message
+			alertDialogBuilder
+			.setMessage("Do you wish to reset all the preferences?")
+			.setCancelable(false)
+			.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					//Reset Preferences
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+					prefs.edit().clear().commit();
+					getActivity().finish();
+					startActivity(getActivity().getIntent());
+				}
+			})
+			.setNegativeButton("No",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+
+			// create alert dialog
+			AlertDialog	alertDialogReset = alertDialogBuilder.create();
+
+			// show it
+			alertDialogReset.show();
+
 		}//end of prefsReset
+
+		//Ask if user wants to delete checkbook
+		public void clearDB(){
+			AlertDialog.Builder builderDelete;
+			builderDelete = new AlertDialog.Builder(getActivity());
+
+			// set title
+			builderDelete.setTitle("Delete Your Checkbook?");
+
+			builderDelete.setMessage(
+					"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
+					.setCancelable(false)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface arg0,
+								int arg1) {
+
+							Uri uri = Uri.parse(MyContentProvider.DATABASE_URI+"");
+							getActivity().getContentResolver().delete(uri, null, null);
+
+							//Navigate User back to dashboard
+							Intent intentDashboard = new Intent(getActivity(), Main.class);
+							intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+							startActivity(intentDashboard);
+						}
+					})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							// no action taken
+						}
+					}).show();
+
+		}//end of clearDB
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+			Log.e("MiscSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
 		}
 
 	}
@@ -116,7 +263,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		checkDefaults();
+		//checkDefaults();
 	}
 
 	//Set visibility of options depending on whether user wants to use defaults
@@ -159,82 +306,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 	}//end Check Defaults
 
-	//Reset Preferences
-	public void prefsReset(View v){
-		Log.e("prefsReset","clicked!");
-		//Set an alert dialog to confirm
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		// set title
-		alertDialogBuilder.setTitle("Reset Preferences?");
-
-		// set dialog message
-		alertDialogBuilder
-		.setMessage("Do you wish to reset all the preferences?")
-		.setCancelable(false)
-		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				//Reset Preferences
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);
-				prefs.edit().clear().commit();
-				finish();
-				startActivity(getIntent());
-			}
-		})
-		.setNegativeButton("No",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogReset = alertDialogBuilder.create();
-
-		// show it
-		alertDialogReset.show();
-
-	}//end of prefsReset
-
-	//Ask if user wants to delete checkbook
-	public void clearDB(View v){
-		builderDelete = new AlertDialog.Builder(this);
-
-		// set title
-		builderDelete.setTitle("Delete Your Checkbook?");
-
-		builderDelete.setMessage(
-				"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
-				.setCancelable(false)
-				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface arg0,
-							int arg1) {
-
-						Uri uri = Uri.parse(MyContentProvider.DATABASE_URI+"");
-						getContentResolver().delete(uri, null, null);
-
-						//Navigate User back to dashboard
-						Intent intentDashboard = new Intent(Options.this, Main.class);
-						intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						startActivity(intentDashboard);
-					}
-				})
-				.setNegativeButton("No",
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface arg0, int arg1) {
-						// no action taken
-					}
-				}).show();
-
-	}//end of clearDB
-
-	//Draw a lockscreen pattern
-	public void drawPattern(View v){
-		Intent intent = new Intent(this, LockPatternActivity.class);
-		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
-		startActivityForResult(intent, REQUEST_CREATE_PATTERN);
-	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -246,18 +317,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			}
 			break;
 		}
-	}
-
-	//Launch SD Options screen
-	public void sdOptions(View v){
-		Intent intentSD = new Intent(this, SD.class);
-		startActivity(intentSD);
-	}
-
-	//Launch Dropbox Options screen
-	public void dropboxOptions(View v){
-		Intent intentDropbox = new Intent(this, Dropbox.class);
-		startActivity(intentDropbox);
 	}
 
 	//For Menu Items
@@ -275,9 +334,9 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		if(alertDialogReset!=null){
-			alertDialogReset.dismiss();
-		}
+		//		if(alertDialogReset!=null){
+		//			alertDialogReset.dismiss();
+		//		}
 		super.onPause();
 	}
 

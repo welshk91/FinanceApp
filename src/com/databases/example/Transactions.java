@@ -533,7 +533,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
 
 			if (user != null) {
 				TextView TVname = (TextView) v.findViewById(R.id.transaction_name);
@@ -676,7 +676,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			TextView TVcleared = (TextView)v.findViewById(R.id.transaction_cleared);
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this.getActivity());
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
 
 			//Change Background Colors
 			try{

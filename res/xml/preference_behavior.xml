@@ -2,8 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="pref_screen_behavior" >
 
-    <!-- BEHAVIOR -->
-
     <PreferenceCategory>
         <PreferenceScreen
             android:layout_width="fill_parent"

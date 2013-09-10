@@ -20,6 +20,13 @@
             android:summary="Will delete all the checkbook data. Use with extreme caution."
             android:title="Delete Checkbook" >
         </Preference>
+
+        <SeekBarPreference
+            android:defaultValue="16"
+            android:key="pref_key_testSeekBar"
+            android:max="64"
+            android:title="SeekBar Test" >
+        </SeekBarPreference>
     </PreferenceCategory>
 
 </PreferenceScreen>

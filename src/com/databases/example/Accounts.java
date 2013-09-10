@@ -422,7 +422,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		populate();
+		Log.e("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
+		//adapterAccounts.notifyDataSetChanged();
 	}
 
 	//Calculates the balance
@@ -487,7 +488,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public UserItemAdapter(Context context, Cursor accounts) {
 			super(context, accounts);
 			this.context = context;
-			//this.accounts = accounts;
 		}
 
 		public AccountRecord getAccount(long position){
@@ -516,7 +516,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
 
 			if (user != null) {
 				TextView TVname = (TextView) v.findViewById(R.id.account_name);
@@ -602,7 +602,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
 
 			//Change Background Colors
 			try{

@@ -2,9 +2,122 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="pref_screen_appearance" >
 
-    <!-- APPEARANCE -->
-
     <PreferenceCategory android:key="category_appearance" >
+
+        <!-- ACCOUNT APPEARANCE -->
+
+        <PreferenceScreen
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:key="pref_screen_accounts"
+            android:summary="Change appearance of accounts"
+            android:title="Account Appearance" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:disableDependentsState="true"
+                android:key="checkbox_default_appearance_account"
+                android:summary="Use Default Values instead of User-Defined Ones"
+                android:title="Use Default Values" >
+            </CheckBoxPreference>
+
+            <PreferenceCategory
+                android:summary="Change background"
+                android:title="Background" >
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-1513240"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:key="key_account_startBackgroundColor"
+                    android:summary="Starting background color of each account row."
+                    android:title="Background Starting Color" >
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-1"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:key="key_account_endBackgroundColor"
+                    android:summary="Ending background color of each account row."
+                    android:title="Background Ending Color" >
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:summary="Change fonts"
+                android:title="Fonts" >
+                <EditTextPreference
+                    android:defaultValue="16"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:digits="0123456789"
+                    android:inputType="number|phone"
+                    android:key="@string/pref_key_account_nameSize"
+                    android:summary="Change the size of Name field. Default is &apos;16&apos;"
+                    android:title="Size of main field" >
+                </EditTextPreference>
+
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-16777216"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:key="key_account_nameColor"
+                    android:summary="Change the color of Name field."
+                    android:title="Color of main field" >
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
+
+                <EditTextPreference
+                    android:defaultValue="10"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:digits="0123456789"
+                    android:inputType="number|phone"
+                    android:key="@string/pref_key_account_fieldSize"
+                    android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
+                    android:title="Size of secondary fields" >
+                </EditTextPreference>
+
+                <net.margaritov.preference.colorpicker.ColorPickerPreference
+                    alphaSlider="true"
+                    android:defaultValue="-16737844"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:key="key_account_fieldColor"
+                    android:summary="Change the color of secondary fields."
+                    android:title="Color of secondary fields" >
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:summary="Change fields"
+                android:title="Fields" >
+                <PreferenceScreen
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:dependency="checkbox_default_appearance_account"
+                    android:key="pref_screen_account_fields"
+                    android:summary="Change fields visible for account"
+                    android:title="Account Fields" >
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_account_nameField"
+                        android:summary="Name Field"
+                        android:title="Name" >
+                    </CheckBoxPreference>
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_account_balanceField"
+                        android:summary="Balance Field"
+                        android:title="Balance" >
+                    </CheckBoxPreference>
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_account_dateField"
+                        android:summary="Date Field"
+                        android:title="Date" >
+                    </CheckBoxPreference>
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="checkbox_account_timeField"
+                        android:summary="Time Field"
+                        android:title="Time" >
+                    </CheckBoxPreference>
+                </PreferenceScreen>
+            </PreferenceCategory>
+        </PreferenceScreen>
 
         <!-- TRANSACTION APPEARANCE -->
 
@@ -14,18 +127,28 @@
             android:key="pref_screen_transactions"
             android:summary="Change appearance of transactions"
             android:title="Transaction Appearance" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:disableDependentsState="true"
+                android:key="checkbox_default_appearance_transaction"
+                android:summary="Use Default Values instead of User-Defined Ones"
+                android:title="Use Default Values" >
+            </CheckBoxPreference>
+
             <PreferenceCategory
                 android:summary="Change background"
                 android:title="Background" >
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-1513240"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:key="key_transaction_startBackgroundColor"
                     android:summary="Starting background color of each transaction row."
                     android:title="Background Starting Color" />
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-1"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:key="key_transaction_endBackgroundColor"
                     android:summary="Ending background color of each transaction row."
                     android:title="Background Ending Color" >
@@ -36,6 +159,7 @@
                 android:title="Fonts" >
                 <EditTextPreference
                     android:defaultValue="18"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:digits="0123456789"
                     android:inputType="number|phone"
                     android:key="@string/pref_key_transaction_nameSize"
@@ -46,6 +170,7 @@
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-16777216"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:key="key_transaction_nameColor"
                     android:summary="Change the color of Name field."
                     android:title="Color of main field" >
@@ -53,6 +178,7 @@
 
                 <EditTextPreference
                     android:defaultValue="10"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:digits="0123456789"
                     android:inputType="number|phone"
                     android:key="@string/pref_key_transaction_fieldSize"
@@ -63,6 +189,7 @@
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-16737844"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:key="key_transaction_fieldColor"
                     android:summary="Change the color of Name field."
                     android:title="Color of secondary fields" >
@@ -74,6 +201,7 @@
                 <PreferenceScreen
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:dependency="checkbox_default_appearance_transaction"
                     android:key="pref_screen_transaction_fields"
                     android:summary="Change fields visible for transaction"
                     android:title="Transaction Fields" >
@@ -135,105 +263,5 @@
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
-
-    <!-- ACCOUNT APPEARANCE -->
-
-    <PreferenceScreen
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:key="pref_screen_accounts"
-        android:summary="Change appearance of accounts"
-        android:title="Account Appearance" >
-        <PreferenceCategory
-            android:summary="Change background"
-            android:title="Background" >
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-1513240"
-                android:key="key_account_startBackgroundColor"
-                android:summary="Starting background color of each account row."
-                android:title="Background Starting color" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-1"
-                android:key="key_account_endBackgroundColor"
-                android:summary="Ending background color of each account row."
-                android:title="Background Ending Color" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-        </PreferenceCategory>
-        <PreferenceCategory
-            android:summary="Change fonts"
-            android:title="Fonts" >
-            <EditTextPreference
-                android:defaultValue="16"
-                android:digits="0123456789"
-                android:inputType="number|phone"
-                android:key="@string/pref_key_account_nameSize"
-                android:summary="Change the size of Name field. Default is &apos;16&apos;"
-                android:title="Size of main field" >
-            </EditTextPreference>
-
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-16777216"
-                android:key="key_account_nameColor"
-                android:summary="Change the color of Name field."
-                android:title="Color of main field" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-
-            <EditTextPreference
-                android:defaultValue="10"
-                android:digits="0123456789"
-                android:inputType="number|phone"
-                android:key="@string/pref_key_account_fieldSize"
-                android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
-                android:title="Size of secondary fields" >
-            </EditTextPreference>
-
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-16737844"
-                android:key="key_account_fieldColor"
-                android:summary="Change the color of secondary fields."
-                android:title="Color of secondary fields" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-        </PreferenceCategory>
-        <PreferenceCategory
-            android:summary="Change fields"
-            android:title="Fields" >
-            <PreferenceScreen
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:key="pref_screen_account_fields"
-                android:summary="Change fields visible for account"
-                android:title="Account Fields" >
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_nameField"
-                    android:summary="Name Field"
-                    android:title="Name" >
-                </CheckBoxPreference>
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_balanceField"
-                    android:summary="Balance Field"
-                    android:title="Balance" >
-                </CheckBoxPreference>
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_dateField"
-                    android:summary="Date Field"
-                    android:title="Date" >
-                </CheckBoxPreference>
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_timeField"
-                    android:summary="Time Field"
-                    android:title="Time" >
-                </CheckBoxPreference>
-            </PreferenceScreen>
-        </PreferenceCategory>
-    </PreferenceScreen>
 
 </PreferenceScreen>

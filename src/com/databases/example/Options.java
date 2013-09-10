@@ -39,22 +39,22 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setTitle("Options");
-
+		
 		if (Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(R.xml.preference_appearance);
 			addPreferencesFromResource(R.xml.preference_behavior);
 			addPreferencesFromResource(R.xml.preference_misc);
-
-			//checkDefaults();
+			PreferenceManager.setDefaultValues(this, R.xml.preference_appearance, false);
+			PreferenceManager.setDefaultValues(this, R.xml.preference_behavior, false);
+			PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
 		}//End if Build<Honeycomb
 
 		//Add Sliding Menu
-		//menu = new SliderMenu(this);
-		//menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-
+		prefs.registerOnSharedPreferenceChangeListener(this);		
 	}//end onCreate
 
 
@@ -65,7 +65,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class AppearanceSettingsPreferenceFragment extends PreferenceFragment {
+	public static class AppearanceSettingsPreferenceFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener{
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -73,11 +73,15 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			addPreferencesFromResource(R.xml.preference_appearance);
 			getActivity().setTitle("Appearance");
 		}
-
+		
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+			Log.e("AppearanceSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
+		}
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class BehaviorSettingsPreferenceFragment extends PreferenceFragment {
+	public static class BehaviorSettingsPreferenceFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener{
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -142,6 +146,10 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			startActivity(intentDropbox);
 		}
 
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+			Log.e("BehaviorSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
+		}
 
 	}
 
@@ -263,32 +271,32 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//checkDefaults();
+		Log.e("Options-onSharedPreferenceChanged","Here...");
 	}
 
 	//Set visibility of options depending on whether user wants to use defaults
 	public void checkDefaults(){
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);		
 		boolean defaultOn = prefs.getBoolean("checkbox_default", true);
 		//Toast.makeText(this, "Default: " + defaultOn, Toast.LENGTH_SHORT).show();
 		if(defaultOn){
-			try{
-				PreferenceCategory aCategory = (PreferenceCategory)findPreference("category_appearance");
-				PreferenceScreen tScreen = (PreferenceScreen)findPreference("pref_screen_transactions");
-				PreferenceScreen aScreen = (PreferenceScreen)findPreference("pref_screen_accounts");
-				aCategory.setSelectable(false);
-				aCategory.setEnabled(false);
+			//try{
+				//PreferenceCategory aCategory = (PreferenceCategory)findPreference("category_appearance");
+				PreferenceScreen tScreen = (PreferenceScreen)Options.this.findPreference("pref_screen_transactions");
+				PreferenceScreen aScreen = (PreferenceScreen)Options.this.findPreference("pref_screen_accounts");
+				//aCategory.setSelectable(false);
+				//aCategory.setEnabled(false);
 				tScreen.setEnabled(false);
 				tScreen.setSelectable(false);
 				aScreen.setEnabled(false);
 				aScreen.setSelectable(false);
-			}
-			catch(Exception e){
-				Toast.makeText(Options.this, "ERROR PREFERENCES\n" + e.toString(), Toast.LENGTH_LONG).show();
-			}
+			//}
+			//catch(Exception e){
+			//	Toast.makeText(Options.this, "ERROR PREFERENCES\n" + e.toString(), Toast.LENGTH_LONG).show();
+			//}
 		}
 		else{
-			try{
+			//try{
 				PreferenceCategory aCategory = (PreferenceCategory)findPreference("category_appearance");
 				PreferenceScreen tScreen = (PreferenceScreen)findPreference("pref_screen_transactions");
 				PreferenceScreen aScreen = (PreferenceScreen)findPreference("pref_screen_accounts");
@@ -298,10 +306,10 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 				tScreen.setSelectable(true);
 				aScreen.setEnabled(true);
 				aScreen.setSelectable(true);
-			}
-			catch(Exception e){
-				Toast.makeText(Options.this, "ERROR PREFERENCES\n" + e.toString(), Toast.LENGTH_LONG).show();
-			}
+			//}
+			//catch(Exception e){
+			//	Toast.makeText(Options.this, "ERROR PREFERENCES\n" + e.toString(), Toast.LENGTH_LONG).show();
+			//}
 		}
 
 	}//end Check Defaults

@@ -80,6 +80,7 @@ Attachments Not Working
 
 - .avi files (found through the filemanager) can be returned. When you select the video player to view it, it only has audio. NOT JUST MY PROGRAM/VIDEO PLAYER ALSO HAS PROBLEMS WITH IT.
 
+
 Third-Party Libraries Used
 ------------------------------------------
 * [ActionBarSherlock](http://actionbarsherlock.com/) by Jake Wharton

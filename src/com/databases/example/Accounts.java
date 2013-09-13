@@ -422,8 +422,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		// TODO Need to refresh appearance after options change
 		Log.e("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
-		//adapterAccounts.notifyDataSetChanged();
+		getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
 	}
 
 	//Calculates the balance

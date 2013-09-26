@@ -1,13 +1,10 @@
 package com.databases.example;
 
 import java.util.List;
-
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
-
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -24,8 +21,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 
@@ -271,7 +267,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		Log.e("Options-onSharedPreferenceChanged","Here...");
+		//Log.e("Options-onSharedPreferenceChanged","Here...");
 	}
 
 	//Set visibility of options depending on whether user wants to use defaults

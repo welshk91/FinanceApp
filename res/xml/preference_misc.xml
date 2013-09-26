@@ -2,31 +2,29 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="pref_screen_misc" >
 
-    <PreferenceCategory>
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="checkbox_default"
-            android:summary="Use Default Values instead of User-Defined Ones"
-            android:title="Use Default Values" >
-        </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="checkbox_default"
+        android:summary="Use Default Values instead of User-Defined Ones"
+        android:title="Use Default Values" >
+    </CheckBoxPreference>
 
-        <Preference
-            android:key="pref_reset"
-            android:summary="Will reset all custom values to their defaults."
-            android:title="Reset Defaults" >
-        </Preference>
-        <Preference
-            android:key="pref_clearDB"
-            android:summary="Will delete all the checkbook data. Use with extreme caution."
-            android:title="Delete Checkbook" >
-        </Preference>
+    <Preference
+        android:key="pref_reset"
+        android:summary="Will reset all custom values to their defaults."
+        android:title="Reset Defaults" >
+    </Preference>
+    <Preference
+        android:key="pref_clearDB"
+        android:summary="Will delete all the checkbook data. Use with extreme caution."
+        android:title="Delete Checkbook" >
+    </Preference>
 
-        <SeekBarPreference
-            android:defaultValue="16"
-            android:key="pref_key_testSeekBar"
-            android:max="64"
-            android:title="SeekBar Test" >
-        </SeekBarPreference>
-    </PreferenceCategory>
+    <SeekBarPreference
+        android:defaultValue="16"
+        android:key="pref_key_testSeekBar"
+        android:max="64"
+        android:title="SeekBar Test" >
+    </SeekBarPreference>
 
 </PreferenceScreen>

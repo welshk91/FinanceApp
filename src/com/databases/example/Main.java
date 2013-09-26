@@ -26,13 +26,6 @@ public class Main extends SherlockActivity {
 	//SlidingMenu
 	private SliderMenu menu;
 
-	//Dashboard Buttons
-	Button Checkbook_Button;
-	Button Manage_Button;
-	Button Stats_Button;
-	Button Schedule_Button;
-	Button Exit_Button;
-
 	private SQLiteOpenHelper dh = null;
 
 	//Variables for the ListView
@@ -56,24 +49,12 @@ public class Main extends SherlockActivity {
 			confirmPattern();
 		}
 		
-		setContentView(R.layout.dashboard);
+		setContentView(R.layout.cards);
 		
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		
-		//Dashboard Buttons
-		Checkbook_Button = (Button) findViewById(R.id.dashboard_checkbook);
-		Checkbook_Button.setOnClickListener(buttonListener);
-		Manage_Button = (Button) findViewById(R.id.dashboard_manage);
-		Manage_Button.setOnClickListener(buttonListener);
-		Schedule_Button = (Button) findViewById(R.id.dashboard_schedules);
-		Schedule_Button.setOnClickListener(buttonListener);
-		Stats_Button = (Button) findViewById(R.id.dashboard_statistics);
-		Stats_Button.setOnClickListener(buttonListener);
-		Exit_Button = (Button) findViewById(R.id.dashboard_exit);
-		Exit_Button.setOnClickListener(buttonListener);
-		
+				
 	}// end onCreate
 
 	//Method handling 'mouse-click'
@@ -229,7 +210,6 @@ public class Main extends SherlockActivity {
 			break;
 
 		}
-
 	}
 
 }// end Main 

@@ -270,46 +270,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		//Log.e("Options-onSharedPreferenceChanged","Here...");
 	}
 
-	//Set visibility of options depending on whether user wants to use defaults
-	public void checkDefaults(){
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Options.this);		
-		boolean defaultOn = prefs.getBoolean("checkbox_default", true);
-		//Toast.makeText(this, "Default: " + defaultOn, Toast.LENGTH_SHORT).show();
-		if(defaultOn){
-			//try{
-				//PreferenceCategory aCategory = (PreferenceCategory)findPreference("category_appearance");
-				PreferenceScreen tScreen = (PreferenceScreen)Options.this.findPreference("pref_screen_transactions");
-				PreferenceScreen aScreen = (PreferenceScreen)Options.this.findPreference("pref_screen_accounts");
-				//aCategory.setSelectable(false);
-				//aCategory.setEnabled(false);
-				tScreen.setEnabled(false);
-				tScreen.setSelectable(false);
-				aScreen.setEnabled(false);
-				aScreen.setSelectable(false);
-			//}
-			//catch(Exception e){
-			//	Toast.makeText(Options.this, "ERROR PREFERENCES\n" + e.toString(), Toast.LENGTH_LONG).show();
-			//}
-		}
-		else{
-			//try{
-				PreferenceCategory aCategory = (PreferenceCategory)findPreference("category_appearance");
-				PreferenceScreen tScreen = (PreferenceScreen)findPreference("pref_screen_transactions");
-				PreferenceScreen aScreen = (PreferenceScreen)findPreference("pref_screen_accounts");
-				aCategory.setSelectable(true);
-				aCategory.setEnabled(true);
-				tScreen.setEnabled(true);
-				tScreen.setSelectable(true);
-				aScreen.setEnabled(true);
-				aScreen.setSelectable(true);
-			//}
-			//catch(Exception e){
-			//	Toast.makeText(Options.this, "ERROR PREFERENCES\n" + e.toString(), Toast.LENGTH_LONG).show();
-			//}
-		}
-
-	}//end Check Defaults
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {

@@ -2,14 +2,14 @@
 
     <header
         android:fragment="com.databases.example.Options$AppearanceSettingsPreferenceFragment"
-        android:icon="@android:drawable/ic_menu_more"
+        android:icon="@android:drawable/ic_menu_edit"
         android:summary="Appearance Settings"
         android:title="Appearance" >
     </header>
 
     <header
         android:fragment="com.databases.example.Options$BehaviorSettingsPreferenceFragment"
-        android:icon="@android:drawable/ic_menu_more"
+        android:icon="@android:drawable/ic_menu_manage"
         android:summary="Behavior Settings"
         android:title="Behavior" >
     </header>

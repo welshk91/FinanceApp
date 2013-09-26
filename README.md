@@ -88,4 +88,4 @@ Third-Party Libraries Used
 * [Sliding Menu](https://github.com/jfeinstein10/SlidingMenu/) by Jeremy Feinstein
 * Soon: [Showcase View](https://github.com/Espiandev/ShowcaseView) by Alex Curran
 * Soon: [ChartView](https://github.com/nadavfima/ChartView/) by nadavfima
-* Soon: [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima
+* Soon: [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide

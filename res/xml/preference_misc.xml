@@ -2,13 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="pref_screen_misc" >
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="checkbox_default"
-        android:summary="Use Default Values instead of User-Defined Ones"
-        android:title="Use Default Values" >
-    </CheckBoxPreference>
-
     <Preference
         android:key="pref_reset"
         android:summary="Will reset all custom values to their defaults."

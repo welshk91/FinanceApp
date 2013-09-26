@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu; //import com.slidingmenu.lib.SlidingMenu;
 
 //An Object Class used to hold the data of each account record
@@ -77,12 +78,14 @@ public class SliderMenu extends SlidingMenu{
 			case R.id.slidingmenu_schedules:
 				Log.d("SliderMenu", "Schedules Listener Fired");
 				SliderMenu.this.toggle();
+				Intent intentSchedule = new Intent(getContext(), Categories.class);
+				intentSchedule.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				getContext().startActivity(intentSchedule);
 				break;
 
 			case R.id.slidingmenu_manage:
 				Log.d("SliderMenu", "Manage Listener Fired");
 				SliderMenu.this.toggle();
-				//	createDatabase();
 				Intent intentManage = new Intent(getContext(), SD.class);
 				getContext().startActivity(intentManage);
 				break;	
@@ -90,7 +93,6 @@ public class SliderMenu extends SlidingMenu{
 			case R.id.slidingmenu_statistics:
 				Log.d("SliderMenu", "Statistics Listener Fired");
 				SliderMenu.this.toggle();
-				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
 				//	startActivity(intentStats);
 				//drawPattern();
@@ -106,7 +108,6 @@ public class SliderMenu extends SlidingMenu{
 			case R.id.slidingmenu_help:
 				Log.d("SliderMenu", "Help Listener Fired");
 				SliderMenu.this.toggle();
-				//	createDatabase();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
 				//	startActivity(intentStats);
 				//drawPattern();
@@ -115,14 +116,7 @@ public class SliderMenu extends SlidingMenu{
 			case R.id.slidingmenu_exit:
 				Log.d("SliderMenu", "Exit Listener Fired");
 				SliderMenu.this.toggle();
-				
-//				if (Main.this.myDB != null){
-//					myDB.close();
-//					
-//				}
-
-				//	Main.this.finish();
-				//	onDestroy();
+				closeApp();
 				break;
 				
 			default:
@@ -131,6 +125,13 @@ public class SliderMenu extends SlidingMenu{
 			}
 
 		}// end onClick
+
+		
 	};// end onClickListener
+	
+	//Method to exit app
+	private void closeApp() {
+		System.exit(0);
+	}
 
 }//end class

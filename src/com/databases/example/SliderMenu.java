@@ -68,7 +68,7 @@ public class SliderMenu extends SlidingMenu{
 				break;
 
 			case R.id.slidingmenu_categories:
-				Log.d("SliderMenu", "Schedules Listener Fired");
+				Log.d("SliderMenu", "Categories Listener Fired");
 				SliderMenu.this.toggle();
 				Intent intentCategories = new Intent(getContext(), Categories.class);
 				intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);

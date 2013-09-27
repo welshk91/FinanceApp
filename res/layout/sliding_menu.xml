@@ -3,7 +3,7 @@
     android:id="@+id/ScrollView01"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#123456"
+    android:background="#dddddd"
     android:fadeScrollbars="true" >
 
     <RelativeLayout
@@ -17,10 +17,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@android:color/transparent"
-            android:drawableLeft="@android:drawable/ic_menu_sort_by_size"
+            android:drawableLeft="@android:drawable/ic_dialog_email"
             android:padding="15dp"
             android:text="Checkbook"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <Button
@@ -33,7 +33,7 @@
             android:drawableLeft="@android:drawable/ic_menu_sort_by_size"
             android:padding="15dp"
             android:text="Categories"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <Button
@@ -46,7 +46,7 @@
             android:drawableLeft="@android:drawable/ic_menu_today"
             android:padding="15dp"
             android:text="Schedules"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <Button
@@ -59,7 +59,7 @@
             android:drawableLeft="@android:drawable/ic_menu_manage"
             android:padding="15dp"
             android:text="Manage"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <Button
@@ -72,7 +72,7 @@
             android:drawableLeft="@android:drawable/ic_menu_agenda"
             android:padding="15dp"
             android:text="Statistics"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <View
@@ -92,7 +92,7 @@
             android:drawableLeft="@android:drawable/ic_menu_preferences"
             android:padding="15dp"
             android:text="Options"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <Button
@@ -105,7 +105,7 @@
             android:drawableLeft="@android:drawable/ic_menu_help"
             android:padding="15dp"
             android:text="Help"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
 
         <Button
@@ -118,7 +118,7 @@
             android:drawableLeft="@android:drawable/ic_menu_close_clear_cancel"
             android:padding="15dp"
             android:text="@string/exit"
-            android:textColor="#FFFFFF" >
+            android:textColor="#ff8d8d8d" >
         </Button>
     </RelativeLayout>
 

@@ -137,7 +137,6 @@ public class Main extends SherlockActivity {
 		public void onClick(View view) {
 			switch (view.getId()) {
 
-
 			/*			case R.id.dashboard_exit:
 				Main.this.finish();
 				//android.os.Process.killProcess(android.os.Process.myPid());				

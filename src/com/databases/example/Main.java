@@ -3,33 +3,39 @@ package com.databases.example;
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
 import java.util.ArrayList;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.View.OnLongClickListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.fima.cardsui.objects.Card;
+import com.fima.cardsui.objects.CardStack;
+import com.fima.cardsui.views.CardUI;
 
 public class Main extends SherlockActivity {	
 	//Flag used for lockscreen
-	private static final int _ReqSignIn = 1;
+	private static final int LOCKSCREEN_SIGNIN = 1;
 
 	//SlidingMenu
 	private SliderMenu menu;
-
-	private SQLiteOpenHelper dh = null;
-
-	//Variables for the ListView
-	public ArrayList<String> results = new ArrayList<String>();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -48,13 +54,84 @@ public class Main extends SherlockActivity {
 		if(lockEnabled){
 			confirmPattern();
 		}
-		
-		setContentView(R.layout.cards);
-		
+
+		setContentView(R.layout.main);
+
+		//Card View
+		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
+		mCardView.setSwipeable(true);
+
+		CardStack stack2 = new CardStack();
+		stack2.setTitle("REGULAR CARDS");
+		mCardView.addStack(stack2);
+
+		// add AndroidViews Cards
+		mCardView.addCard(new MyCard("Get the CardsUI view"));
+		mCardView.addCardToLastStack(new MyCard("for Android at"));
+		MyCard androidViewsCard = new MyCard("www.androidviews.net");
+		androidViewsCard.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("http://www.androidviews.net/"));
+				startActivity(intent);
+
+			}
+		});
+		androidViewsCard.setOnLongClickListener(new OnLongClickListener() {    		
+
+			@Override
+			public boolean onLongClick(View v) {
+				Toast.makeText(v.getContext(), "This is a long click", Toast.LENGTH_SHORT).show();
+				return true;
+			}
+
+		});
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse("http://www.androidviews.net/"));
+
+		mCardView.addCardToLastStack(androidViewsCard);
+
+		CardStack stackPlay = new CardStack();
+		stackPlay.setTitle("GOOGLE PLAY CARDS");
+		mCardView.addStack(stackPlay);
+
+		// add one card, and then add another one to the last stack.
+		mCardView.addCard(new MyCard("Google Play Cards"));
+		mCardView.addCardToLastStack(new MyCard("By Androguide & GadgetCheck"));
+
+		mCardView.addCardToLastStack(new MyPlayCard("Google Play",
+				"This card mimics the new Google play cards look", "#33b6ea",
+				"#33b6ea", true, false));
+
+		mCardView
+		.addCardToLastStack(new MyPlayCard(
+				"Menu Overflow",
+				"The PlayCards allow you to easily set a menu overflow on your card.\nYou can also declare the left stripe's color in a String, like \"#33B5E5\" for the holo blue color, same for the title color.",
+				"#e00707", "#e00707", false, true));
+
+		// add one card
+		mCardView
+		.addCard(new MyPlayCard(
+				"Different Colors for Title & Stripe",
+				"You can set any color for the title and any other color for the left stripe",
+				"#f2a400", "#9d36d0", false, false));
+
+		mCardView
+		.addCardToLastStack(new MyPlayCard(
+				"Set Clickable or Not",
+				"You can easily implement an onClickListener on any card, but the last boolean parameter of the PlayCards allow you to toggle the clickable background.",
+				"#4ac925", "#222222", true, true));
+
+		// draw cards
+		mCardView.refresh();		
+
+
 		//Add Sliding Menu
 		menu = new SliderMenu(this);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-				
+
 	}// end onCreate
 
 	//Method handling 'mouse-click'
@@ -62,37 +139,8 @@ public class Main extends SherlockActivity {
 		public void onClick(View view) {
 			switch (view.getId()) {
 
-			case R.id.dashboard_checkbook:
-				createDatabase();
-				Intent intentCheckbook = new Intent(Main.this, Checkbook.class);
-				startActivity(intentCheckbook);
-				break;
 
-			case R.id.slidingmenu_checkbook:
-				Toast.makeText(Main.this, "Here...", Toast.LENGTH_LONG).show();
-				break;
-
-			case R.id.dashboard_manage:
-				//	createDatabase();
-				Intent intentManage = new Intent(Main.this, SD.class);
-				startActivity(intentManage);
-				break;
-
-			case R.id.dashboard_schedules:
-				//	createDatabase();
-				Intent intentSchedules = new Intent(Main.this, Plans.class);
-				startActivity(intentSchedules);
-				//confirmPattern();
-				break;
-
-			case R.id.dashboard_statistics:
-				//	createDatabase();
-				//	Intent intentStats = new Intent(Main.this, Accounts.class);
-				//	startActivity(intentStats);
-				//drawPattern();
-				break;
-
-			case R.id.dashboard_exit:
+			/*			case R.id.dashboard_exit:
 				Main.this.finish();
 				//android.os.Process.killProcess(android.os.Process.myPid());				
 				onDestroy();
@@ -102,7 +150,7 @@ public class Main extends SherlockActivity {
 				//startActivity(i); 
 				finish(); 
 				break;	
-
+			 */
 			default:
 				Log.e("Main", "Default onClickListner fired?");
 				break;	
@@ -111,36 +159,6 @@ public class Main extends SherlockActivity {
 		}// end onClick
 	};// end onClickListener
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
-	//Over-rode method to handle database closing, prevent corruption
-	@Override
-	public void onPause(){
-		if(dh!=null){
-			dh.close();
-		}
-		super.onPause();
-	}
-	//Method for Creating Database
-	public void createDatabase(){
-
-		//If this is the first time running program...
-		if(true){
-			try {
-				dh = new DatabaseHelper(this);
-				dh.getWritableDatabase();
-			} 
-			catch (Exception e) {
-				Log.e("Main-createDatabase", "Error e=" + e);
-				Toast.makeText(this, "Error Creating Database!!!\n\n" + e, Toast.LENGTH_LONG).show();
-			}
-
-		}//end if
-
-	}//end createDatabase
 
 	//For Menu
 	@Override
@@ -186,7 +204,7 @@ public class Main extends SherlockActivity {
 
 		if(savedPattern!=null){
 			intent.putExtra(LockPatternActivity._Pattern, savedPattern);
-			startActivityForResult(intent, _ReqSignIn);
+			startActivityForResult(intent, LOCKSCREEN_SIGNIN);
 		}
 		else{
 			Toast.makeText(Main.this, "Cannot Use Lockscreen\nNo Pattern Set Yet", Toast.LENGTH_LONG).show();
@@ -196,7 +214,7 @@ public class Main extends SherlockActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case _ReqSignIn:
+		case LOCKSCREEN_SIGNIN:
 			if (resultCode == RESULT_OK) {
 				// signing in ok
 				Toast.makeText(Main.this, "Sign In\nAccepted", Toast.LENGTH_SHORT).show();
@@ -211,5 +229,76 @@ public class Main extends SherlockActivity {
 
 		}
 	}
+
+	//MyCard Class
+	public class MyCard extends Card {
+
+		public MyCard(String title){
+			super(title);
+		}
+
+		@Override
+		public View getCardContent(Context context) {
+			View view = LayoutInflater.from(context).inflate(R.layout.card_ex, null);
+			((TextView) view.findViewById(R.id.title)).setText(title);
+			return view;
+		}
+
+	}//End of MyCard Class
+
+	//MyImageCard Class
+	public class MyImageCard extends Card {
+
+		public MyImageCard(String title, int image){
+			super(title, image);
+		}
+
+		@Override
+		public View getCardContent(Context context) {
+			View view = LayoutInflater.from(context).inflate(R.layout.card_picture, null);
+
+			((TextView) view.findViewById(R.id.title)).setText(title);
+			((ImageView) view.findViewById(R.id.imageView1)).setImageResource(image);
+
+			return view;
+		}	
+
+	}//End of MyImageCard
+
+
+	//MyPlayCard Class
+	public class MyPlayCard extends Card {
+
+		public MyPlayCard(String titlePlay, String description, String color,
+				String titleColor, Boolean hasOverflow, Boolean isClickable) {
+			super(titlePlay, description, color, titleColor, hasOverflow,
+					isClickable);
+		}
+
+		@Override
+		public View getCardContent(Context context) {
+			View v = LayoutInflater.from(context).inflate(R.layout.card_play, null);
+
+			((TextView) v.findViewById(R.id.title)).setText(titlePlay);
+			((TextView) v.findViewById(R.id.title)).setTextColor(Color
+					.parseColor(titleColor));
+			((TextView) v.findViewById(R.id.description)).setText(description);
+			((ImageView) v.findViewById(R.id.stripe)).setBackgroundColor(Color
+					.parseColor(color));
+
+			if (isClickable == true)
+				((LinearLayout) v.findViewById(R.id.contentLayout))
+				.setBackgroundResource(R.drawable.selectable_background_cardbank);
+
+			if (hasOverflow == true)
+				((ImageView) v.findViewById(R.id.overflow))
+				.setVisibility(View.VISIBLE);
+			else
+				((ImageView) v.findViewById(R.id.overflow))
+				.setVisibility(View.GONE);
+
+			return v;
+		}
+	}//End of MyPlayCard Class	
 
 }// end Main 

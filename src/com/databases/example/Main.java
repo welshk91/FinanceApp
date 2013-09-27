@@ -2,8 +2,6 @@ package com.databases.example;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,14 +59,14 @@ public class Main extends SherlockActivity {
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
-		CardStack stack2 = new CardStack();
-		stack2.setTitle("REGULAR CARDS");
-		mCardView.addStack(stack2);
+		CardStack stackRegular = new CardStack();
+		stackRegular.setTitle("REGULAR CARDS");
+		mCardView.addStack(stackRegular);
 
 		// add AndroidViews Cards
-		mCardView.addCard(new MyCard("Get the CardsUI view"));
-		mCardView.addCardToLastStack(new MyCard("for Android at"));
-		MyCard androidViewsCard = new MyCard("www.androidviews.net");
+		mCardView.addCard(new MyCard("Get the CardsUI view", "get view description"));
+		mCardView.addCardToLastStack(new MyCard("for Android at", "Android description"));
+		MyCard androidViewsCard = new MyCard("www.androidviews.net", ".net descrpition");
 		androidViewsCard.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -98,8 +96,8 @@ public class Main extends SherlockActivity {
 		mCardView.addStack(stackPlay);
 
 		// add one card, and then add another one to the last stack.
-		mCardView.addCard(new MyCard("Google Play Cards"));
-		mCardView.addCardToLastStack(new MyCard("By Androguide & GadgetCheck"));
+		mCardView.addCard(new MyCard("Google Play Cards","Description for play cards"));
+		mCardView.addCardToLastStack(new MyCard("By Androguide & GadgetCheck", "androguide description"));
 
 		mCardView.addCardToLastStack(new MyPlayCard("Google Play",
 				"This card mimics the new Google play cards look", "#33b6ea",
@@ -233,15 +231,16 @@ public class Main extends SherlockActivity {
 	//MyCard Class
 	public class MyCard extends Card {
 
-		public MyCard(String title){
-			super(title);
+		public MyCard(String title, String desc){
+			super(title, desc);			
 		}
 
 		@Override
 		public View getCardContent(Context context) {
-			View view = LayoutInflater.from(context).inflate(R.layout.card_ex, null);
-			((TextView) view.findViewById(R.id.title)).setText(title);
-			return view;
+			View v = LayoutInflater.from(context).inflate(R.layout.card_ex, null);
+			((TextView) v.findViewById(R.id.title)).setText(title);
+			((TextView) v.findViewById(R.id.description)).setText(desc);
+			return v;
 		}
 
 	}//End of MyCard Class
@@ -255,12 +254,12 @@ public class Main extends SherlockActivity {
 
 		@Override
 		public View getCardContent(Context context) {
-			View view = LayoutInflater.from(context).inflate(R.layout.card_picture, null);
+			View v = LayoutInflater.from(context).inflate(R.layout.card_picture, null);
 
-			((TextView) view.findViewById(R.id.title)).setText(title);
-			((ImageView) view.findViewById(R.id.imageView1)).setImageResource(image);
+			((TextView) v.findViewById(R.id.title)).setText(title);
+			((ImageView) v.findViewById(R.id.imageView1)).setImageResource(image);
 
-			return view;
+			return v;
 		}	
 
 	}//End of MyImageCard

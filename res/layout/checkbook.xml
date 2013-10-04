@@ -7,7 +7,6 @@
     <FrameLayout
         android:id="@+id/checkbook_frag_frame"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#123456" />
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

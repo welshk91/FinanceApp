@@ -11,9 +11,9 @@ public final class R {
 		public static final int icon = 0x7f020096;
 	}
 	public static final class id {
-		public static final int color_picker_view = 0x7f0a0084;
-		public static final int new_color_panel = 0x7f0a0086;
-		public static final int old_color_panel = 0x7f0a0085;
+		public static final int color_picker_view = 0x7f0a0085;
+		public static final int new_color_panel = 0x7f0a0087;
+		public static final int old_color_panel = 0x7f0a0086;
 	}
 	public static final class integer {
 		public static final int COLOR_BLACK = 0x7f080001;

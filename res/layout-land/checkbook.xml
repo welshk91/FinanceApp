@@ -10,8 +10,13 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_margin="2dp"
-        android:layout_weight=".5"
-        android:background="#999999" />
+        android:layout_weight=".5" />
+
+    <View
+        android:id="@+id/slidingmenu_line1"
+        android:layout_width="2dp"
+        android:layout_height="wrap_content"
+        android:background="#33b5e5" />
 
     <FrameLayout
         android:id="@+id/transaction_frag_frame"

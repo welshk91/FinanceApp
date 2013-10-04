@@ -3,7 +3,7 @@
     android:id="@+id/ScrollView01"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#eeeeee"
+    android:background="#F8F8F8"
     android:fadeScrollbars="true" >
 
     <RelativeLayout

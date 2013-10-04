@@ -205,8 +205,8 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 					//Reset Preferences
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 					prefs.edit().clear().commit();
-					getActivity().finish();
-					startActivity(getActivity().getIntent());
+					//getActivity().finish();
+					//startActivity(getActivity().getIntent());
 				}
 			})
 			.setNegativeButton("No",new DialogInterface.OnClickListener() {

@@ -680,7 +680,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			//Change Background Colors
 			try{
-				int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#E8E8E8"));
+				int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#F5F5F5"));
 				int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
 
 				GradientDrawable defaultGradient = new GradientDrawable(

@@ -604,12 +604,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-
+			
 			//Change Background Colors
 			try{
 				LinearLayout l;
 				l=(LinearLayout)v.findViewById(R.id.account_layout);
-				int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+				int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#F5F5F5"));
 				int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
 				GradientDrawable defaultGradient = new GradientDrawable(
 						GradientDrawable.Orientation.BOTTOM_TOP,

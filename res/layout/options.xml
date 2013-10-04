@@ -26,7 +26,7 @@
 
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
-                    android:defaultValue="-1513240"
+                    android:defaultValue="-657931"
                     android:key="key_transaction_startBackgroundColor"
                     android:summary="Starting background color of each transaction row."
                     android:title="Background Starting Color" />
@@ -172,7 +172,7 @@
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-1513240"
+                android:defaultValue="-657931"
                 android:key="key_account_startBackgroundColor"
                 android:summary="Starting background color of each account row."
                 android:title="Background Starting color" >

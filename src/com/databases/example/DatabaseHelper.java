@@ -404,4 +404,4 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return rowsDeleted;
 	}
 
-}
+}//End DatabaseHelper

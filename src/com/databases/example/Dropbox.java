@@ -228,4 +228,4 @@ public class Dropbox extends SherlockFragmentActivity{
 		return super.onOptionsItemSelected(item);
 	}
 
-}//end of Manage
+}//end of Dropbox

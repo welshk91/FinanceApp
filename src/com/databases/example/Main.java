@@ -299,4 +299,4 @@ public class Main extends SherlockActivity {
 		}
 	}//End of MyPlayCard Class	
 
-}// end Main 
+}// end Main

@@ -217,4 +217,4 @@ public class SearchMain extends SherlockFragmentActivity {
 		return true;
 	}
 
-}//end SearchTime
+}//end SearchMain

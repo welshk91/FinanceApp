@@ -325,4 +325,4 @@ public class Links extends SherlockFragmentActivity{
 		}
 	}
 
-}//end of Manage
+}//end of Links

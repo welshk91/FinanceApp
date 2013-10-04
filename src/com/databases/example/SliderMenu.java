@@ -11,10 +11,10 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu; //import com.slidingmenu
 //An Object Class used to hold the data of each account record
 public class SliderMenu extends SlidingMenu{
 	//Slidingmenu Buttons
+	Button SlidingMenu_Home_Button;
 	Button SlidingMenu_Checkbook_Button;
 	Button SlidingMenu_Categories_Button;
 	Button SlidingMenu_Schedule_Button;
-	Button SlidingMenu_Manage_Button;
 	Button SlidingMenu_Stats_Button;
 	Button SlidingMenu_Options_Button;
 	Button SlidingMenu_Help_Button;
@@ -22,7 +22,7 @@ public class SliderMenu extends SlidingMenu{
 
 	public SliderMenu(Context context) {
 		super(context);
-		
+
 		//Menu attributes (Need a way to adjust width for different resolutions)
 		setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		setMode(SlidingMenu.LEFT);
@@ -34,16 +34,16 @@ public class SliderMenu extends SlidingMenu{
 		setBehindWidth(350);
 		setFadeDegree(0.50f);
 		setMenu(R.layout.sliding_menu);
-		
+
 		//SlidingMenu Buttons
+		SlidingMenu_Home_Button = (Button)findViewById(R.id.slidingmenu_home);
+		SlidingMenu_Home_Button.setOnClickListener(myListener);
 		SlidingMenu_Checkbook_Button = (Button)findViewById(R.id.slidingmenu_checkbook);
 		SlidingMenu_Checkbook_Button.setOnClickListener(myListener);
 		SlidingMenu_Categories_Button = (Button)findViewById(R.id.slidingmenu_categories);
 		SlidingMenu_Categories_Button.setOnClickListener(myListener);
 		SlidingMenu_Schedule_Button = (Button)findViewById(R.id.slidingmenu_schedules);
 		SlidingMenu_Schedule_Button.setOnClickListener(myListener);
-		SlidingMenu_Manage_Button = (Button)findViewById(R.id.slidingmenu_manage);
-		SlidingMenu_Manage_Button.setOnClickListener(myListener);
 		SlidingMenu_Stats_Button = (Button)findViewById(R.id.slidingmenu_statistics);
 		SlidingMenu_Stats_Button.setOnClickListener(myListener);
 		SlidingMenu_Options_Button = (Button)findViewById(R.id.slidingmenu_options);
@@ -52,13 +52,21 @@ public class SliderMenu extends SlidingMenu{
 		SlidingMenu_Help_Button.setOnClickListener(myListener);
 		SlidingMenu_Exit_Button = (Button)findViewById(R.id.slidingmenu_exit);
 		SlidingMenu_Exit_Button.setOnClickListener(myListener);
-		
+
 	}//end constructor
 
 	//Method handling 'mouse-click'
 	public OnClickListener myListener = new OnClickListener() {
 		public void onClick(View view) {
 			switch (view.getId()) {
+			case R.id.slidingmenu_home:
+				Log.d("SliderMenu", "Home Listener Fired");
+				SliderMenu.this.toggle();
+				Intent intentHome = new Intent(getContext(), Main.class);
+				intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				getContext().startActivity(intentHome);
+				break;	
+
 			case R.id.slidingmenu_checkbook:
 				Log.d("SliderMenu", "Checkbook Listener Fired");
 				SliderMenu.this.toggle();
@@ -74,7 +82,7 @@ public class SliderMenu extends SlidingMenu{
 				intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				getContext().startActivity(intentCategories);				
 				break;
-				
+
 			case R.id.slidingmenu_schedules:
 				Log.d("SliderMenu", "Schedules Listener Fired");
 				SliderMenu.this.toggle();
@@ -82,13 +90,6 @@ public class SliderMenu extends SlidingMenu{
 				intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				getContext().startActivity(intentPlans);
 				break;
-
-			case R.id.slidingmenu_manage:
-				Log.d("SliderMenu", "Manage Listener Fired");
-				SliderMenu.this.toggle();
-				Intent intentManage = new Intent(getContext(), SD.class);
-				getContext().startActivity(intentManage);
-				break;	
 
 			case R.id.slidingmenu_statistics:
 				Log.d("SliderMenu", "Statistics Listener Fired");
@@ -118,7 +119,7 @@ public class SliderMenu extends SlidingMenu{
 				SliderMenu.this.toggle();
 				closeApp();
 				break;
-				
+
 			default:
 				Log.d("SliderMenu", "Default Listener Fired");
 				break;
@@ -126,9 +127,9 @@ public class SliderMenu extends SlidingMenu{
 
 		}// end onClick
 
-		
+
 	};// end onClickListener
-	
+
 	//Method to exit app
 	private void closeApp() {
 		System.exit(0);

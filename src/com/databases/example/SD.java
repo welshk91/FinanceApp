@@ -93,7 +93,7 @@ public class SD extends SherlockFragmentActivity{
 
 	}
 
-	public void showBackupDialog(View v) {
+	public void sdBackup(View v) {
 		EditText tvLogStatus = (EditText)findViewById(R.id.EditTextBackupDir);
 		String customBackupDir = tvLogStatus.getText().toString().trim();
 

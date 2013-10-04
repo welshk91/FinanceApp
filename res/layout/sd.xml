@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/EditTextBackupDir"
         android:layout_margin="5dp"
-        android:onClick="showBackupDialog"
+        android:onClick="sdBackup"
         android:padding="15dp"
         android:text="Backup" >
     </Button>
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ButtonBackup"
         android:layout_margin="5dp"
-        android:onClick="manageRestore"
+        android:onClick="sdRestore"
         android:padding="15dp"
         android:text="Restore" >
     </Button>

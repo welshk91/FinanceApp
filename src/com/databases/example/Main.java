@@ -6,14 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -59,68 +57,54 @@ public class Main extends SherlockActivity {
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
-		CardStack stackRegular = new CardStack();
-		stackRegular.setTitle("REGULAR CARDS");
-		mCardView.addStack(stackRegular);
+		CardStack stackCheckbook = new CardStack();
+		stackCheckbook.setTitle("CHECKBOOK");
+		mCardView.addStack(stackCheckbook);
 
-		// add AndroidViews Cards
-		mCardView.addCard(new MyCard("Get the CardsUI view", "get view description"));
-		mCardView.addCardToLastStack(new MyCard("for Android at", "Android description"));
-		MyCard androidViewsCard = new MyCard("www.androidviews.net", ".net descrpition");
-		androidViewsCard.setOnClickListener(new OnClickListener() {
+		mCardView.addCard(new MyPlayCard("Lake Michigan Credit Union",
+				"This account is overdrawn.\nYou might want to review the total balance", 
+				"#e00707", "#222222", false, false));
 
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setData(Uri.parse("http://www.androidviews.net/"));
-				startActivity(intent);
+		mCardView.addCardToLastStack(new MyPlayCard("Cash",
+				"This account is doing well.\nPerhaps you should deposit some money into Lake Michigan Credit Union",
+				"#4ac925", "#222222", false, false));
 
-			}
-		});
-		androidViewsCard.setOnLongClickListener(new OnLongClickListener() {    		
+		mCardView.addCard(new MyPlayCard("Rent",
+				"This transaction occured recently",
+				"#f2a400", "#222222", false, false));
 
-			@Override
-			public boolean onLongClick(View v) {
-				Toast.makeText(v.getContext(), "This is a long click", Toast.LENGTH_SHORT).show();
-				return true;
-			}
+		mCardView.addCardToLastStack(new MyPlayCard("IOU",
+				"This transaction occured recently",
+				"#f2a400", "#222222", false, false));
 
-		});
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse("http://www.androidviews.net/"));
+		CardStack stackPlans = new CardStack();
+		stackPlans.setTitle("PLANS");
+		mCardView.addStack(stackPlans);
 
-		mCardView.addCardToLastStack(androidViewsCard);
+		mCardView.addCard(new MyPlayCard("Paycheck",
+				"This planned transaction occured recently", 
+				"#33b6ea", "#222222", false, false));
 
-		CardStack stackPlay = new CardStack();
-		stackPlay.setTitle("GOOGLE PLAY CARDS");
-		mCardView.addStack(stackPlay);
+		mCardView.addCardToLastStack(new MyPlayCard("Gas Bill",
+				"This planned transaction occured recently",
+				"#f2a400", "#222222", false, false));
 
-		// add one card, and then add another one to the last stack.
-		mCardView.addCard(new MyCard("Google Play Cards","Description for play cards"));
-		mCardView.addCardToLastStack(new MyCard("By Androguide & GadgetCheck", "androguide description"));
+		CardStack stackStatistics = new CardStack();
+		stackStatistics.setTitle("STATISTICS");
+		mCardView.addStack(stackStatistics);
 
-		mCardView.addCardToLastStack(new MyPlayCard("Google Play",
-				"This card mimics the new Google play cards look", "#33b6ea",
-				"#33b6ea", true, false));
+		mCardView.addCard(new MyPlayCard("Lake Michigan Credit Union",
+				"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"Car-New Tires\" ", 
+				"#e00707", "#222222", false, false));
 
-		mCardView
-		.addCardToLastStack(new MyPlayCard(
-				"Menu Overflow",
-				"The PlayCards allow you to easily set a menu overflow on your card.\nYou can also declare the left stripe's color in a String, like \"#33B5E5\" for the holo blue color, same for the title color.",
-				"#e00707", "#e00707", false, true));
+		mCardView.addCardToLastStack(new MyPlayCard("Lake Michigan Credit Union",
+				"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"House-New Roof\" ",
+				"#e00707", "#222222", false, false));
 
-		// add one card
-		mCardView
-		.addCard(new MyPlayCard(
-				"Different Colors for Title & Stripe",
-				"You can set any color for the title and any other color for the left stripe",
-				"#f2a400", "#9d36d0", false, false));
+		mCardView.addCardToLastStack(new MyPlayCard("Cash",
+				"You are making more money than usual for this account",
+				"#4ac925", "#222222", false, false));
 
-		mCardView
-		.addCardToLastStack(new MyPlayCard(
-				"Set Clickable or Not",
-				"You can easily implement an onClickListener on any card, but the last boolean parameter of the PlayCards allow you to toggle the clickable background.",
-				"#4ac925", "#222222", true, true));
 
 		// draw cards
 		mCardView.refresh();		

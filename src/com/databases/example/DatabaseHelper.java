@@ -222,6 +222,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return 0;
 	}
 
+	//Sum up all the transactions balances 
+	//****************NOT BEING USED*********************
+	public Cursor sumTransactions(int AcctID){
+		SQLiteDatabase db = this.getReadableDatabase();
+		String sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID;
+		Cursor cursor = db.rawQuery(sqlCommand, null);
+		return cursor;
+	}
+	
 	//Get all transactions for an account
 	public Cursor getTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;

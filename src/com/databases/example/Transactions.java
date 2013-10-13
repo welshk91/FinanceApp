@@ -351,7 +351,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		float totalBalance = 0;
 
 		Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, "ToAcctID="+account_id, null, null);
-
+		
 		cursor.moveToFirst();
 		if (cursor != null) {
 			if (cursor.isFirst()) {

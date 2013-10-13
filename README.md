@@ -11,8 +11,8 @@ Known Issues
 --------------------------------------
 * Dialogs close on rotate.
 * Going into checkbook, rotating, then adding an account will cause populate not to change the update the appearance of the fragment.
-* Deleting the database, then using the sliding menu to navigate to a different activity will cause the app to crash because the recreating of the database is not set in the proper place just yet...
 * Setting my application to target anything above android:targetSdkVersion="13" causes slidingMenu not to work.
+* [FIXED]Deleting the database, then using the sliding menu to navigate to a different activity will cause the app to crash because the recreating of the database is not set in the proper place just yet...
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 * [FIXED] Hitting Back on search goes back to the last search, not exiting the search (singleTop Mode). Update: changing FragmentPageAdapter to FragmentStatePageAdapter allowed old fragments to be replaced.
 * [FIXED] Need to fix addtobackstack for fragments so hitting back goes back to either accounts from transactions (single-pane) or 'home' if dual-pane. Update: popped old fragments off back stack. 

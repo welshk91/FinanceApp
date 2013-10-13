@@ -3,6 +3,8 @@ package com.databases.example;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -11,6 +13,7 @@ import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
@@ -170,7 +173,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		lv.setAdapter(adapterTransaction);
 
 		populate();
-		
+
 		return myFragmentView;
 	}
 
@@ -181,7 +184,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//Arguments for fragment
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
-		
+
 		if(bundle!=null){
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
@@ -332,7 +335,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			return true;
 
 		case R.id.transaction_menu_schedule:    
-			//transactionSchedule
+			Intent intentPlans = new Intent(getActivity(), Plans.class);
+			getActivity().startActivity(intentPlans);
 			return true;
 		}
 
@@ -351,7 +355,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		float totalBalance = 0;
 
 		Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, "ToAcctID="+account_id, null, null);
-		
+
 		cursor.moveToFirst();
 		if (cursor != null) {
 			if (cursor.isFirst()) {
@@ -1164,9 +1168,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
+
 			if(account_id==0){
-				Toast.makeText(getActivity(), "Please Select an Account First", Toast.LENGTH_LONG).show();
-				return null;
+				Log.e("AddDialog", "in if statement");
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+				alertDialogBuilder.setTitle("No Account Selected");
+				alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");
+				alertDialogBuilder.setNeutralButton("Okay", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int id) {
+						dialog.cancel();
+					}
+				});
+				return alertDialogBuilder.create();
 			}
 
 			// get transaction_add.xml view

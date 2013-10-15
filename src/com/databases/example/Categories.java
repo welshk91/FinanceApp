@@ -141,7 +141,7 @@ public class Categories extends SherlockFragmentActivity{
 		//Give the item adapter a list of all categories and subcategories
 		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
 		lvCategory.setAdapter(adapterCategory);
-		
+
 	}//end of categoryPopulate
 
 	//Method for filling subcategories
@@ -698,23 +698,12 @@ public class Categories extends SherlockFragmentActivity{
 
 	//Close dialogs to prevent window leaks
 	@Override
-	public void onPause() {
-		//if(!cursorCategory.isClosed()){
-		//	cursorCategory.close();
-		//}
-		//if(!cursorSubCategory.isClosed()){
-		//	cursorSubCategory.close();
-		//}
-		//if(!resultsCursor.isEmpty()){
-		//	resultsCursor.clear();
-		//	resultsCursor = null;
-		//}
-
+	public void onDestroy() {
 		if(dh!=null){
 			dh.close();
-		}
+		}		
 
-		super.onPause();
+		super.onDestroy();
 	}
 
 	//Class that handles view fragment

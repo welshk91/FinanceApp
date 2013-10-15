@@ -1,10 +1,13 @@
 package com.databases.example;
 
 import java.util.List;
+
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
+
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,12 +24,12 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.widget.Toast;
 
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 
 	private static final int REQUEST_CREATE_PATTERN = 0;
-	String savedPattern = null;
 
 	//SlidingMenu
 	private SliderMenu menu;
@@ -35,7 +38,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setTitle("Options");
-		
+
 		if (Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(R.xml.preference_appearance);
 			addPreferencesFromResource(R.xml.preference_behavior);
@@ -69,7 +72,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			addPreferencesFromResource(R.xml.preference_appearance);
 			getActivity().setTitle("Appearance");
 		}
-		
+
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 			Log.e("AppearanceSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
@@ -145,6 +148,25 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 			Log.e("BehaviorSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
+		}
+
+		@Override
+		public void onActivityResult(int requestCode, int resultCode, Intent data) {
+			switch (requestCode) {
+			case REQUEST_CREATE_PATTERN:
+				if (resultCode == RESULT_OK) {
+					String savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
+					SharedPreferences preferences = getPreferenceManager().getSharedPreferences();
+					preferences.edit().putString("myPattern", savedPattern).commit();
+					Toast.makeText(this.getActivity(), "Saved Pattern", Toast.LENGTH_SHORT).show();
+					Log.d("onActivityResult","Saved a lockscreen pattern");
+				}
+				else{
+					Toast.makeText(this.getActivity(), "Could not save pattern", Toast.LENGTH_LONG).show();
+					Log.e("onActivityResult","Failed to save a lockscreen pattern");
+				}
+				break;
+			}
 		}
 
 	}
@@ -268,19 +290,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		//Log.e("Options-onSharedPreferenceChanged","Here...");
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case REQUEST_CREATE_PATTERN:
-			if (resultCode == RESULT_OK) {
-				savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
-				SharedPreferences preferences = getPreferenceManager().getSharedPreferences();
-				preferences.edit().putString("myPattern", savedPattern).commit();
-			}
-			break;
-		}
 	}
 
 	//For Menu Items

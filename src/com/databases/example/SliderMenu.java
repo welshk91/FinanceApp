@@ -24,7 +24,7 @@ public class SliderMenu extends SlidingMenu{
 		super(context);
 
 		//Menu attributes (Need a way to adjust width for different resolutions)
-		setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 		setMode(SlidingMenu.LEFT);
 		setShadowWidthRes(R.dimen.shadow_width);
 		setShadowDrawable(R.drawable.shadow);

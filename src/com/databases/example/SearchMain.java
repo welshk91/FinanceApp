@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -49,11 +50,6 @@ public class SearchMain extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
-
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-
 		handleIntent(getIntent()); 
 	}
 
@@ -83,6 +79,10 @@ public class SearchMain extends SherlockFragmentActivity {
 		mTabsAdapter.addTab(Accounts.class, null);
 		mTabsAdapter.addTab(Transactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
+		
+		//Add Sliding Menu
+		menu = new SliderMenu(this);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 	}
 
 	//Override method to send the search extra data, letting it know which class called it

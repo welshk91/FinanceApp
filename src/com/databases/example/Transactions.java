@@ -583,11 +583,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					l=(LinearLayout)v.findViewById(R.id.transaction_gradient);
 					GradientDrawable defaultGradientPos = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {0xFF00FF33,0xFF000000});
+							new int[] {0xFF4ac925,0xFF4ac925});
 
 					GradientDrawable defaultGradientNeg = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {0xFFFF0000,0xFF000000});
+							new int[] {0xFFe00707,0xFFe00707});
 
 					if(useDefaults){
 						if(type.contains("Deposit")){

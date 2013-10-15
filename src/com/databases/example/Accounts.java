@@ -540,13 +540,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				try{
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.account_gradient);
+					//Old color to black gradient (0xFF00FF33,0xFF000000)
 					GradientDrawable defaultGradientPos = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {0xFF00FF33,0xFF000000});
-
+							new int[] {0xFF4ac925,0xFF4ac925});
 					GradientDrawable defaultGradientNeg = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {0xFFFF0000,0xFF000000});
+							new int[] {0xFFe00707,0xFFe00707});
 
 					if(useDefaults){
 						if(Float.parseFloat(balance) >=0){

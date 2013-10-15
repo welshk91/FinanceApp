@@ -139,7 +139,7 @@ public class PlanReceiver extends BroadcastReceiver{
 		Notification notification = new NotificationCompat.Builder(context).
 				setContentTitle(from+ ": " + plan_name)
 				.setContentText(plan_id + " " + plan_name + " " + plan_value + " " + plan_offset + " " + plan_rate)
-				.setSmallIcon(R.drawable.calculator)
+				.setSmallIcon(R.drawable.ic_launcher)
 				.setContentIntent(contentIntent)
 				.build();
 

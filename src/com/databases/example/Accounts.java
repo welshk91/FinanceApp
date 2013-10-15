@@ -353,6 +353,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Handle closing database properly to avoid corruption
 	@Override
 	public void onDestroy() {
+		if(dh!=null){
+			dh.close();
+		}
+		
 		super.onDestroy();
 	}
 
@@ -472,15 +476,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			break;
 		}
 
-	}
-
-	//Close dialogs to prevent window leaks
-	@Override
-	public void onPause() {
-		if(dh!=null){
-			dh.close();
-		}
-		super.onPause();
 	}
 
 	public class UserItemAdapter extends CursorAdapter {

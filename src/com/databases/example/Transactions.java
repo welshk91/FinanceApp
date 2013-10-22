@@ -1029,7 +1029,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
 			final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
 			final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+
 			tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+
 			final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
 			final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
 			final Button tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
@@ -1079,12 +1081,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					//Needed to get category's name from DB-populated spinner
 					int categoryPosition = tCategory.getSelectedItemPosition();
-					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
+					Cursor cursorCategory = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
 
 					String transactionName = tName.getText().toString().trim();
 					String transactionValue = tValue.getText().toString().trim();
 					String transactionType = tType.getSelectedItem().toString().trim();
-					String transactionCategory = cursor.getString(cursor.getColumnIndex("CateName"));
+					String transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
 					String transactionCheckNum = tCheckNum.getText().toString().trim();
 					String transactionMemo = tMemo.getText().toString().trim();
 					String transactionCleared = tCleared.isChecked()+"";
@@ -1236,7 +1238,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionName = tName.getText().toString().trim();
 					String transactionValue = tValue.getText().toString().trim();
 					String transactionType = tType.getSelectedItem().toString().trim();
-
 					String transactionCategory = null;
 
 					try{

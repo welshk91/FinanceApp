@@ -1,8 +1,12 @@
 package com.databases.example;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Currency;
+import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -359,7 +363,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(dh!=null){
 			dh.close();
 		}
-		
+
 		super.onDestroy();
 	}
 
@@ -436,21 +440,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Calculates the balance
 	public void calculateBalance(){
-		float totalBalance = 0;
-
 		Cursor c = dh.sumAccounts();
 		c.moveToFirst();
 		try{
-			totalBalance = c.getFloat(0);
+			Money totalBalance = new Money(c.getFloat(0));
 			TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
-			balance.setText("Total Balance: " + totalBalance);
+			balance.setText("Total Balance: " + totalBalance.getNumberFormat(getResources().getConfiguration().locale));
 		}
 		catch(Exception e){
 			Log.e("Accounts-calculateBalance", "No Accounts? Error e="+e);
 			TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
 			balance.setText("Total Balance: " + "BALANCED" );
 		}
-
 		c.close();
 	}
 
@@ -530,9 +531,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 				String id = user.getString(0);
 				String name = user.getString(NameColumn);
-				String balance = user.getString(BalanceColumn);
+				Money balance = new Money(user.getString(BalanceColumn));
 				String time = user.getString(TimeColumn);
 				String date = user.getString(DateColumn);
+				Locale locale=getResources().getConfiguration().locale;
 
 				//Change gradient
 				try{
@@ -547,7 +549,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							new int[] {0xFFe00707,0xFFe00707});
 
 					if(useDefaults){
-						if(Float.parseFloat(balance) >=0){
+						if(balance.isPositive(locale)){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -556,7 +558,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					}
 					else{
-						if(Float.parseFloat(balance) >=0){
+						if(balance.isPositive(locale)){
 							l.setBackgroundDrawable(defaultGradientPos);
 						}
 						else{
@@ -574,7 +576,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 				if(balance != null) {
-					TVbalance.setText("Balance: " + balance );
+					TVbalance.setText("Balance: " + balance.getNumberFormat(locale));
 				}
 
 				if(date != null) {
@@ -602,7 +604,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-			
+
 			//Change Background Colors
 			try{
 				LinearLayout l;
@@ -932,14 +934,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				public void onClick(DialogInterface dialog,int id) {
 					String accountName = null;
 					String accountTime = null;
-					String accountBalance = null;
 					String accountDate = null;
 
 					//Variables for adding the account
 					EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
 					EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
 					accountName = aName.getText().toString().trim();
-					accountBalance = aBalance.getText().toString().trim();
+					Money accountBalance = new Money(aBalance.getText().toString().trim());
 
 					final Calendar cal = Calendar.getInstance();
 					accountTime = timeFormat.format(cal.getTime());
@@ -947,8 +948,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					//Variables for adding Starting Balance transaction
 					final String transactionName = "STARTING BALANCE";
-					float transactionValue;
 					final String transactionPlanId = "0";
+					Money transactionValue=null;
 					final String transactionCategory = "STARTING BALANCE";
 					final String transactionCheckNum = "None";
 					final String transactionMemo = "This is an automatically generated transaction created when you add an account";
@@ -957,22 +958,24 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					final String transactionCleared = "true";
 					String transactionType = "Unknown";
 
+					Locale locale=getResources().getConfiguration().locale;
+					
 					//Check Value to see if it's valid
 					try{
-						transactionValue = Float.parseFloat(accountBalance);
+						transactionValue = new Money(Float.parseFloat(accountBalance.getBigDecimal(locale)+""));
 					}
 					catch(Exception e){
-						transactionValue = (float) 0.00;
-						accountBalance = "0";
+						transactionValue = new Money("0.00");
+						accountBalance = new Money("0.00");
 					}				
 
 					try{
-						if(Float.parseFloat(accountBalance)>=0){
+						if(accountBalance.isPositive(locale)){
 							transactionType = "Deposit";
 						}
 						else{
 							transactionType = "Withdrawl";
-							transactionValue = transactionValue * -1;
+							transactionValue = new Money (transactionValue.getBigDecimal(locale).multiply(new BigDecimal(-1)));
 						}
 					}
 					catch(Exception e){
@@ -984,7 +987,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 							ContentValues accountValues=new ContentValues();
 							accountValues.put("AcctName",accountName);
-							accountValues.put("AcctBalance",accountBalance);
+							accountValues.put("AcctBalance",accountBalance.getBigDecimal(locale)+"");
 							accountValues.put("AcctTime",accountTime);
 							accountValues.put("AcctDate",accountDate);
 
@@ -995,7 +998,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							transactionValues.put("ToAcctID", Long.parseLong(u.getLastPathSegment()));
 							transactionValues.put("ToPlanID", transactionPlanId);
 							transactionValues.put("TransName", transactionName);
-							transactionValues.put("TransValue", transactionValue);
+							transactionValues.put("TransValue", transactionValue.getBigDecimal(locale)+"");
 							transactionValues.put("TransType", transactionType);
 							transactionValues.put("TransCategory", transactionCategory);
 							transactionValues.put("TransCheckNum", transactionCheckNum);

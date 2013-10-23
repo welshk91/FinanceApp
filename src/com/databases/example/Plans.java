@@ -958,13 +958,16 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				String id = user.getString(0);
 				String to_id = user.getString(ToIDColumn);
 				String name = user.getString(NameColumn);
-				String value = user.getString(ValueColumn);
+				Money value = new Money(user.getString(ValueColumn));
 				String type = user.getString(TypeColumn);
 				String category = user.getString(CategoryColumn);
 				String memo = user.getString(MemoColumn);
 				String offset = user.getString(OffsetColumn);
 				String rate = user.getString(RateColumn);
 				String cleared = user.getString(ClearedColumn);
+				
+				Locale locale=getResources().getConfiguration().locale;
+
 
 				//Change gradient
 				try{
@@ -1008,7 +1011,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					TVaccount.setText("Account ID: " + to_id);
 				}
 				if (value != null) {
-					TVvalue.setText("Value: " + value);
+					TVvalue.setText("Value: " + value.getNumberFormat(locale));
 				}
 				if (type != null) {
 					TVtype.setText("Type: " + type);

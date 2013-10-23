@@ -3,6 +3,7 @@ package com.databases.example;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -29,17 +30,19 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
-
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.app.LoaderManager;
+
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Currency;
+import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -568,7 +569,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				int acctId = user.getInt(acctIDColumn);
 				int planId = user.getInt(planIDColumn);
 				String name = user.getString(nameColumn);
-				String value = user.getString(valueColumn);
+				Money value = new Money(user.getString(valueColumn));
 				String type = user.getString(typeColumn);
 				String category = user.getString(categoryColumn);
 				String checknum = user.getString(checknumColumn);
@@ -576,6 +577,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				String time = user.getString(timeColumn);
 				String date = user.getString(dateColumn);
 				String cleared = user.getString(clearedColumn);
+				Locale locale=getResources().getConfiguration().locale;
 
 				//Change gradient
 				try{
@@ -625,7 +627,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				}
 
 				if(value != null) {
-					TVvalue.setText("Value: " + value );
+					TVvalue.setText("Value: " + value.getNumberFormat(locale));
 				}
 
 				if(type != null) {
@@ -1084,7 +1086,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					Cursor cursorCategory = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
 
 					String transactionName = tName.getText().toString().trim();
-					String transactionValue = tValue.getText().toString().trim();
+					Money transactionValue = null;
 					String transactionType = tType.getSelectedItem().toString().trim();
 					String transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
 					String transactionCheckNum = tCheckNum.getText().toString().trim();
@@ -1092,11 +1094,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionCleared = tCleared.isChecked()+"";
 					String transactionTime = tTime.getText().toString().trim();
 					String transactionDate = tDate.getText().toString().trim();
+					Locale locale=getResources().getConfiguration().locale;
 
 					//Check to see if value is a number
 					boolean validValue=false;
 					try{
-						Float.parseFloat(transactionValue);
+						transactionValue = new Money(tValue.getText().toString().trim());
 						validValue=true;
 					}
 					catch(Exception e){
@@ -1107,7 +1110,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						if(transactionName.length()>0){
 
 							if(!validValue){
-								transactionValue = "0";
+								transactionValue = new Money("0.00");
 							}
 
 							Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + tID);
@@ -1118,7 +1121,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							transactionValues.put("ToAcctID", aID);
 							transactionValues.put("ToPlanID", pID);
 							transactionValues.put("TransName", transactionName);
-							transactionValues.put("TransValue", transactionValue);
+							transactionValues.put("TransValue", transactionValue.getBigDecimal(locale)+"");
 							transactionValues.put("TransType", transactionType);
 							transactionValues.put("TransCategory", transactionCategory);
 							transactionValues.put("TransCheckNum", transactionCheckNum);
@@ -1234,11 +1237,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					//Needed to get category's name from DB-populated spinner
 					int categoryPosition = tCategory.getSelectedItemPosition();
 					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-
 					String transactionName = tName.getText().toString().trim();
-					String transactionValue = tValue.getText().toString().trim();
+					Money transactionValue = null;
 					String transactionType = tType.getSelectedItem().toString().trim();
 					String transactionCategory = null;
+					Locale locale=getResources().getConfiguration().locale;
 
 					try{
 						transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
@@ -1261,7 +1264,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					//Check to see if value is a number
 					boolean validValue=false;
 					try{
-						Float.parseFloat(transactionValue);
+						transactionValue = new Money(tValue.getText().toString().trim());
 						validValue=true;
 					}
 					catch(Exception e){
@@ -1272,14 +1275,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						if (transactionName.length()>0) {
 
 							if(!validValue){
-								transactionValue = "0";
+								transactionValue = new Money("0.00");
 							}
 
 							ContentValues transactionValues=new ContentValues();
 							transactionValues.put("ToAcctID", account_id);
 							transactionValues.put("ToPlanID", 0);
 							transactionValues.put("TransName", transactionName);
-							transactionValues.put("TransValue", transactionValue);
+							transactionValues.put("TransValue", transactionValue.getBigDecimal(locale)+"");
 							transactionValues.put("TransType", transactionType);
 							transactionValues.put("TransCategory", transactionCategory);
 							transactionValues.put("TransCheckNum", transactionCheckNum);

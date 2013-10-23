@@ -974,7 +974,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							transactionType = "Deposit";
 						}
 						else{
-							transactionType = "Withdrawl";
+							transactionType = "Withdraw";
 							transactionValue = new Money (transactionValue.getBigDecimal(locale).multiply(new BigDecimal(-1)));
 						}
 					}

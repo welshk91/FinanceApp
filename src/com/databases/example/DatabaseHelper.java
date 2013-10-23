@@ -222,11 +222,19 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return 0;
 	}
 
-	//Sum up all the transactions balances 
-	//****************NOT BEING USED*********************
-	public Cursor sumTransactions(int AcctID){
+	//Sum up all the positive transactions 
+	public Cursor sumDeposits(int AcctID){
 		SQLiteDatabase db = this.getReadableDatabase();
-		String sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID;
+		//String sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID + " AND TransType=Deposit";
+		String sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID + " AND TransType='Deposit'";
+		Cursor cursor = db.rawQuery(sqlCommand, null);
+		return cursor;
+	}
+	
+	//Sum up all the negative transactions 
+	public Cursor sumWithdraws(int AcctID){
+		SQLiteDatabase db = this.getReadableDatabase();
+		String sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID + " AND TransType='Withdraw'";
 		Cursor cursor = db.rawQuery(sqlCommand, null);
 		return cursor;
 	}

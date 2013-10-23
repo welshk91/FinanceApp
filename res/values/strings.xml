@@ -31,7 +31,7 @@
     <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
 
     <string-array name="transaction_type">
-        <item>Withdrawl</item>
+        <item>Withdraw</item>
         <item>Deposit</item>
     </string-array>
     <string-array name="rate_type">

@@ -401,12 +401,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		Cursor cDeposit = dh.sumDeposits(account_id);
 		cDeposit.moveToFirst();
 		Money sumDeposits = new Money(cDeposit.getFloat(0));
-		Log.e("Transactions-calculateBalance","sum Deposits:"+sumDeposits.getBigDecimal(locale));
 		
 		Cursor cWithdraw = dh.sumWithdraws(account_id);
 		cWithdraw.moveToFirst();
 		Money sumWithdraws = new Money(cWithdraw.getFloat(0));
-		Log.e("Transactions-calculateBalance","sum Withdraws:"+ sumWithdraws.getBigDecimal(locale));
 		
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
 		balance.setText("Total Balance: " + sumDeposits.getBigDecimal(locale).subtract(sumWithdraws.getBigDecimal(locale)));

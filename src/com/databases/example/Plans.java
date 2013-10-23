@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -126,7 +127,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 		TextView noResult = (TextView)findViewById(R.id.plans_noPlans);
 		lvPlans.setEmptyView(noResult);
-		
+
 		adapterPlans = new UserItemAdapter(this, cursorPlans);		
 		lvPlans.setAdapter(adapterPlans);
 
@@ -190,13 +191,14 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				String transactionAccountID = null;
 				String transactionAccount = null;
 				String transactionName = null;
-				String transactionValue = null;
+				Money transactionValue = null;
 				String transactionType = null;
 				String transactionCategory = null;
 				String transactionMemo = null;
 				String transactionOffset = null;
 				String transactionRate = null;
 				String transactionCleared = null;
+				Locale locale=getResources().getConfiguration().locale;
 
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = categorySpinner.getSelectedItemPosition();
@@ -207,7 +209,16 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				Cursor cursorAccount = (Cursor) accountSpinnerAdapter.getItem(accountPosition);				
 
 				transactionName = tName.getText().toString().trim();
-				transactionValue = tValue.getText().toString().trim();
+				try{
+					transactionValue = new Money(tValue.getText().toString().trim());	
+				}
+				catch(Exception e){
+					Log.e("Plans-schedulingAdd","Invalid Value? Exception e:" + e);
+					dialog.cancel();
+					Toast.makeText(Plans.this, "Invalid Value", Toast.LENGTH_LONG).show();
+					return;
+				}
+
 				transactionType = tType.getSelectedItem().toString().trim();
 
 				try{
@@ -215,8 +226,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
 				}
 				catch(Exception e){
-					//Usually caused if no category exists
-					Log.e("transactionAdd","No Account? Exception e:" + e);
+					//Usually caused if no account exists
+					Log.e("Plans-schedulingAdd","No Account? Exception e:" + e);
 					dialog.cancel();
 					Toast.makeText(Plans.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 					return;
@@ -228,7 +239,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				}
 				catch(Exception e){
 					//Usually caused if no category exists
-					Log.e("transactionAdd","No Category? Exception e:" + e);
+					Log.e("Plans-schedulingAdd","No Category? Exception e:" + e);
 					dialog.cancel();
 					Toast.makeText(Plans.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
 					return;
@@ -242,17 +253,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				transactionCleared = tCleared.isChecked()+"";
 
 				//Check to see if value is a number
-				boolean validValue=false;
-				try{
-					Float.parseFloat(transactionValue);
-					validValue=true;
-				}
-				catch(Exception e){
-					Log.e("Plans","Value not valid; transactionValue=" + transactionValue);
-					validValue=false;
-				}
-
-				//Check to see if value is a number
 				boolean validRate=false;
 				try{
 					Integer.parseInt(tRate.getText().toString().trim());
@@ -264,13 +264,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				}
 
 				try{
-					if (transactionName.length()>0 && validRate && validValue) {
+					if (transactionName.length()>0 && validRate) {
 						Log.d("Plans", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 						ContentValues transactionValues = new ContentValues();
 						transactionValues.put("ToAcctID", transactionAccountID);
 						transactionValues.put("PlanName", transactionName);
-						transactionValues.put("PlanValue", transactionValue);
+						transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
 						transactionValues.put("PlanType", transactionType);
 						transactionValues.put("PlanCategory", transactionCategory);
 						transactionValues.put("PlanMemo", transactionMemo);
@@ -280,7 +280,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 						Uri u = getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
 
-						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
 						//Refresh the plans list
@@ -425,13 +425,14 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				String transactionAccountID = null;
 				String transactionAccount = null;
 				String transactionName = null;
-				String transactionValue = null;
+				Money transactionValue = null;
 				String transactionType = null;
 				String transactionCategory = null;
 				String transactionMemo = null;
 				String transactionOffset = null;
 				String transactionRate = null;
 				String transactionCleared = null;
+				Locale locale=getResources().getConfiguration().locale;
 
 				//Needed to get category's name from DB-populated spinner
 				int categoryPosition = categorySpinner.getSelectedItemPosition();
@@ -442,7 +443,18 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				Cursor cursorAccount = (Cursor) accountSpinnerAdapter.getItem(accountPosition);				
 
 				transactionName = tName.getText().toString().trim();
-				transactionValue = tValue.getText().toString().trim();
+
+				try{
+					transactionValue = new Money(tValue.getText().toString().trim());	
+				}
+				catch(Exception e){
+					Log.e("Plans-schedulingEdit","Invalid Value? Exception e:" + e);
+					dialog.cancel();
+					Toast.makeText(Plans.this, "Invalid Value", Toast.LENGTH_LONG).show();
+					return;
+				}
+
+
 				transactionType = tType.getSelectedItem().toString().trim();
 
 				try{
@@ -450,8 +462,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
 				}
 				catch(Exception e){
-					//Usually caused if no category exists
-					Log.e("transactionAdd","No Account? Exception e:" + e);
+					//Usually caused if no account exists
+					Log.e("Plans-schedulingEdit","No Account? Exception e:" + e);
 					dialog.cancel();
 					Toast.makeText(Plans.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 					return;
@@ -463,7 +475,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				}
 				catch(Exception e){
 					//Usually caused if no category exists
-					Log.e("transactionAdd","No Category? Exception e:" + e);
+					Log.e("Plans-schedulingEdit","No Category? Exception e:" + e);
 					dialog.cancel();
 					Toast.makeText(Plans.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
 					return;
@@ -477,17 +489,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				transactionCleared = tCleared.isChecked()+"";
 
 				//Check to see if value is a number
-				boolean validValue=false;
-				try{
-					Float.parseFloat(transactionValue);
-					validValue=true;
-				}
-				catch(Exception e){
-					Log.e("Plans-Edit","Value not valid; transactionValue=" + transactionValue);
-					validValue=false;
-				}
-
-				//Check to see if value is a number
 				boolean validRate=false;
 				try{
 					Integer.parseInt(tRate.getText().toString().trim());
@@ -499,7 +500,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				}
 
 				try{
-					if (transactionName.length()>0 && validRate && validValue) {
+					if (transactionName.length()>0 && validRate) {
 
 						Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
@@ -508,7 +509,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 						ContentValues transactionValues=new ContentValues();
 						transactionValues.put("ToAcctID", transactionAccountID);
 						transactionValues.put("PlanName", transactionName);
-						transactionValues.put("PlanValue", transactionValue);
+						transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
 						transactionValues.put("PlanType", transactionType);
 						transactionValues.put("PlanCategory", transactionCategory);
 						transactionValues.put("PlanMemo", transactionMemo);
@@ -518,7 +519,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 						Uri u = getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
 
-						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue, transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
 						schedule(record);
 
 						//Refresh the schedule list

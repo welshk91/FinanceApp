@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import com.databases.example.Plans.PlanRecord;
 
@@ -53,13 +54,12 @@ public class PlanReceiver extends BroadcastReceiver{
 		dh = new DatabaseHelper(context);
 
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-			Log.d("PlanReceiver", "Notified of boot");
-			Toast.makeText(context, "PlanReceiver received from boot", Toast.LENGTH_LONG).show();
+			Log.d("PlanReceiver-onReceive", "Notified of boot");
 			reschedulePlans(context);
 		}
 		else{
 			String name = bundle.getString("plan_name");
-			Toast.makeText(context, "PlanReceiver received " + name, Toast.LENGTH_LONG).show();
+			Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
 
 			try {
 

@@ -2,6 +2,7 @@ package com.databases.example;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ public class SliderMenu extends SlidingMenu{
 	Button SlidingMenu_Options_Button;
 	Button SlidingMenu_Help_Button;
 	Button SlidingMenu_Exit_Button;
+    private DrawerLayout mDrawerLayout;
     
     
 	public SliderMenu(Context context) {

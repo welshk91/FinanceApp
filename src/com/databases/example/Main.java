@@ -1,13 +1,13 @@
 package com.databases.example;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +33,6 @@ public class Main extends SherlockActivity {
 	//SlidingMenu
 	private SliderMenu menu;
 
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,9 +51,14 @@ public class Main extends SherlockActivity {
 		}
 
 		setContentView(R.layout.main);
-
+		
+		/**New SlidingMenu Stuff Here...**/
+	    DrawerLayout mDrawerLayout;
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);		
+		
+		
 		//Card View
-		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
+/*		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
 		CardStack stackCheckbook = new CardStack();
@@ -108,11 +112,11 @@ public class Main extends SherlockActivity {
 
 		// draw cards
 		mCardView.refresh();		
-
+*/
 
 		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//menu = new SliderMenu(this);
+		//menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 
 	}// end onCreate
 

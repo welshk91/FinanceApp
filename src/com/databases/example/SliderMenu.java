@@ -19,7 +19,8 @@ public class SliderMenu extends SlidingMenu{
 	Button SlidingMenu_Options_Button;
 	Button SlidingMenu_Help_Button;
 	Button SlidingMenu_Exit_Button;
-
+    
+    
 	public SliderMenu(Context context) {
 		super(context);
 

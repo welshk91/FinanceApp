@@ -1,5 +1,6 @@
 package com.databases.example;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -218,7 +219,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		calculateBalance();
-		
+
 	}//end populate
 
 	//Creates menu for long presses
@@ -355,60 +356,65 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Calculates the balance
 	public void calculateBalance(){
-//		float totalBalance = 0;
-//
-//		Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, "ToAcctID="+account_id, null, null);
-//
-//		cursor.moveToFirst();
-//		if (cursor != null) {
-//			if (cursor.isFirst()) {
-//				do {
-//					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
-//					String type = cursor.getString(cursor.getColumnIndex("TransType"));
-//
-//					//Add account balance to total balance
-//					try{
-//
-//						//Withdraws should subtract totalBalance
-//						if(type.contains("Withdraw")){
-//							totalBalance = totalBalance - (Float.parseFloat(value));
-//						}
-//						//Deposit should add to totalBalance
-//						else{
-//							totalBalance = totalBalance + Float.parseFloat(value);
-//						}
-//
-//					}
-//					catch(Exception e){
-//						Log.e("Transactions-calculateBalance", "Could not calculate total balance. Error e=" + e);
-//					}
-//
-//				} while (cursor.moveToNext());
-//			}
-//
-//			else {
-//				Log.e("Transactions-calculateBalance", "No results found/Cursor empty");
-//			}
-//		}
-//
-//		ContentValues values = new ContentValues();
-//		values.put("AcctBalance", totalBalance);		
-//		getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
-		
+		//		float totalBalance = 0;
+		//
+		//		Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, "ToAcctID="+account_id, null, null);
+		//
+		//		cursor.moveToFirst();
+		//		if (cursor != null) {
+		//			if (cursor.isFirst()) {
+		//				do {
+		//					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
+		//					String type = cursor.getString(cursor.getColumnIndex("TransType"));
+		//
+		//					//Add account balance to total balance
+		//					try{
+		//
+		//						//Withdraws should subtract totalBalance
+		//						if(type.contains("Withdraw")){
+		//							totalBalance = totalBalance - (Float.parseFloat(value));
+		//						}
+		//						//Deposit should add to totalBalance
+		//						else{
+		//							totalBalance = totalBalance + Float.parseFloat(value);
+		//						}
+		//
+		//					}
+		//					catch(Exception e){
+		//						Log.e("Transactions-calculateBalance", "Could not calculate total balance. Error e=" + e);
+		//					}
+		//
+		//				} while (cursor.moveToNext());
+		//			}
+		//
+		//			else {
+		//				Log.e("Transactions-calculateBalance", "No results found/Cursor empty");
+		//			}
+		//		}
+		//
+
 		DatabaseHelper dh = new DatabaseHelper(getActivity());
 		Locale locale = getResources().getConfiguration().locale;
-		
+
 		Cursor cDeposit = dh.sumDeposits(account_id);
 		cDeposit.moveToFirst();
 		Money sumDeposits = new Money(cDeposit.getFloat(0));
-		
+
 		Cursor cWithdraw = dh.sumWithdraws(account_id);
 		cWithdraw.moveToFirst();
 		Money sumWithdraws = new Money(cWithdraw.getFloat(0));
-		
+
+		BigDecimal totalBalance = sumDeposits.getBigDecimal(locale).subtract(sumWithdraws.getBigDecimal(locale));
+
 		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
-		balance.setText("Total Balance: " + sumDeposits.getBigDecimal(locale).subtract(sumWithdraws.getBigDecimal(locale)));
-		
+		balance.setText("Total Balance: " + totalBalance);
+
+		if(account_id!=0){
+			ContentValues values = new ContentValues();
+			values.put("AcctBalance", totalBalance+"");		
+			getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
+		}
+
 		cDeposit.close();
 		cWithdraw.close();
 	}
@@ -1156,7 +1162,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					}
 					catch(Exception e){
-						Log.e("here...", "Error e="+e);
+						Log.e("Transactions-EditDialog", "Couldn't edit transaction. Error e="+e);
 						Toast.makeText(getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 

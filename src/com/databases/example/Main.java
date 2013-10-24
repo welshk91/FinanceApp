@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +33,11 @@ public class Main extends SherlockActivity {
 	private static final int LOCKSCREEN_SIGNIN = 1;
 
 	//SlidingMenu
-	private SliderMenu menu;
+	//private SliderMenu menu;
+
+	private ActionBarDrawerToggle mDrawerToggle;
+	private DrawerLayout mDrawerLayout;
+	private ScrollView mDrawerView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,14 +57,14 @@ public class Main extends SherlockActivity {
 		}
 
 		setContentView(R.layout.main);
-		
+
 		/**New SlidingMenu Stuff Here...**/
-	    DrawerLayout mDrawerLayout;
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);		
-		
-		
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerView = (ScrollView) findViewById(R.id.left_drawer);
+
+
 		//Card View
-/*		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
+		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
 		CardStack stackCheckbook = new CardStack();
@@ -112,7 +118,7 @@ public class Main extends SherlockActivity {
 
 		// draw cards
 		mCardView.refresh();		
-*/
+
 
 		//Add Sliding Menu
 		//menu = new SliderMenu(this);
@@ -158,9 +164,12 @@ public class Main extends SherlockActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-
 		case android.R.id.home:
-			menu.toggle();
+			if (mDrawerLayout.isDrawerOpen(mDrawerView)) {
+				mDrawerLayout.closeDrawer(mDrawerView);
+			} else {
+				mDrawerLayout.openDrawer(mDrawerView);
+			}
 			break;
 
 		case R.id.main_menu_search:    

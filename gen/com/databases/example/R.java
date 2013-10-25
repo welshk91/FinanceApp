@@ -1958,6 +1958,7 @@ containing a value of this type.
         public static final int Item=0x7f070005;
         public static final int Item_Sticky=0x7f070007;
         public static final int Item_Top=0x7f070006;
+        public static final int NavigationDrawer=0x7f070068;
         public static final int Sherlock___TextAppearance_Small=0x7f070059;
         public static final int Sherlock___Theme=0x7f07005d;
         public static final int Sherlock___Theme_DarkActionBar=0x7f07005f;

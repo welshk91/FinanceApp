@@ -1021,6 +1021,7 @@ int style DialogWindowTitle_Sherlock_Light 0x7f070046
 int style Item 0x7f070005
 int style Item_Sticky 0x7f070007
 int style Item_Top 0x7f070006
+int style NavigationDrawer 0x7f070068
 int style Sherlock___TextAppearance_Small 0x7f070059
 int style Sherlock___Theme 0x7f07005d
 int style Sherlock___Theme_DarkActionBar 0x7f07005f

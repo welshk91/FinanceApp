@@ -53,7 +53,7 @@ public class Main extends SherlockActivity {
 		}
 
 		setContentView(R.layout.main);
-
+		
 		//Card View
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
@@ -107,8 +107,8 @@ public class Main extends SherlockActivity {
 				"#4ac925", "#222222", false, false));
 
 		// draw cards
-		mCardView.refresh();		
-
+		mCardView.refresh();
+		
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ScrollView drawer = (ScrollView) findViewById(R.id.left_drawer);

@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="NavigationDrawer">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#00FF00</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+</resources>

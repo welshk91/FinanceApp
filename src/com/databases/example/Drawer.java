@@ -28,7 +28,7 @@ public class Drawer extends Activity{
 	public Drawer(Context context, DrawerLayout layout, ScrollView drawer) {
 		this.context=context;
 		this.mDrawerLayout=layout;
-		this.mDrawerView=drawer;
+		this.mDrawerView=drawer;		
 
 		drawerHome = (Button)drawer.findViewById(R.id.slidingmenu_home);
 		drawerHome.setOnClickListener(myListener);
@@ -46,7 +46,6 @@ public class Drawer extends Activity{
 		drawerHelp.setOnClickListener(myListener);
 		drawerExit = (Button)drawer.findViewById(R.id.slidingmenu_exit);
 		drawerExit.setOnClickListener(myListener);
-
 	}//end constructor
 
 	//Method handling 'mouse-click'

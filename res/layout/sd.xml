@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:text="Folder: "
-        android:textSize="18sp" >
-    </TextView>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
-    <EditText
-        android:id="@+id/EditTextBackupDir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/TextView01"
-        android:hint="/WelshFinanceBackUps"
-        android:inputType="text" >
-    </EditText>
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="Folder: "
+            android:textSize="18sp" >
+        </TextView>
 
-    <Button
-        android:id="@+id/ButtonBackup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/EditTextBackupDir"
-        android:layout_margin="5dp"
-        android:onClick="sdBackup"
-        android:padding="15dp"
-        android:text="Backup" >
-    </Button>
+        <EditText
+            android:id="@+id/EditTextBackupDir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/TextView01"
+            android:hint="/WelshFinanceBackUps"
+            android:inputType="text" >
+        </EditText>
 
-    <Button
-        android:id="@+id/ButtonRestore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ButtonBackup"
-        android:layout_margin="5dp"
-        android:onClick="sdRestore"
-        android:padding="15dp"
-        android:text="Restore" >
-    </Button>
+        <Button
+            android:id="@+id/ButtonBackup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/EditTextBackupDir"
+            android:layout_margin="5dp"
+            android:onClick="sdBackup"
+            android:padding="15dp"
+            android:text="Backup" >
+        </Button>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/ButtonRestore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ButtonBackup"
+            android:layout_margin="5dp"
+            android:onClick="sdRestore"
+            android:padding="15dp"
+            android:text="Restore" >
+        </Button>
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/drawer"
+        layout="@layout/drawer" />
+
+</android.support.v4.widget.DrawerLayout>

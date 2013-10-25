@@ -16,18 +16,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-
-/*
- * NOTE TO MYSELF
- * Adding "android:launchMode="singleTop"" for this activity makes it only be able
- * to search once. Multiple attempts make the fragments not launch.
- * Possible explanation: 
- * http://stackoverflow.com/questions/6611504/android-fragment-lifecycle-of-single-instance-activity
- */
+import android.support.v4.widget.DrawerLayout;
 
 /*
  * NOTE TO MYSELF
@@ -44,8 +38,8 @@ public class SearchMain extends SherlockFragmentActivity {
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
 
-	//SlidingMenu
-	private SliderMenu menu;
+	//NavigationDrawer
+	private Drawer mDrawerLayout;	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
@@ -79,10 +73,11 @@ public class SearchMain extends SherlockFragmentActivity {
 		mTabsAdapter.addTab(Accounts.class, null);
 		mTabsAdapter.addTab(Transactions.class, null);
 		mTabsAdapter.notifyDataSetChanged();
-		
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 	}
 
 	//Override method to send the search extra data, letting it know which class called it
@@ -188,7 +183,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	@Override
 	public void onDestroy(){
 		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
-		
+
 		super.onDestroy();
 	}
 
@@ -206,7 +201,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 
 		case R.id.search_menu_search:    

@@ -34,7 +34,7 @@ public class Main extends SherlockActivity {
 
 	//NavigationDrawer
 	private Drawer mDrawerLayout;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,7 +111,7 @@ public class Main extends SherlockActivity {
 		
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.left_drawer);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
 	}// end onCreate

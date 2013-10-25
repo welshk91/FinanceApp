@@ -1,57 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/TextViewCurrentLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your current attachment is " >
-    </TextView>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
-    <Button
-        android:id="@+id/ButtonAddLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TextViewCurrentLink"
-        android:layout_margin="5dp"
-        android:onClick="linkAdd"
-        android:padding="15dp"
-        android:text="Add" >
-    </Button>
+        <TextView
+            android:id="@+id/TextViewCurrentLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your current attachment is " >
+        </TextView>
 
-    <Button
-        android:id="@+id/ButtonViewLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TextViewCurrentLink"
-        android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/ButtonAddLink"
-        android:onClick="linkView"
-        android:padding="15dp"
-        android:text="View" >
-    </Button>
+        <Button
+            android:id="@+id/ButtonAddLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TextViewCurrentLink"
+            android:layout_margin="5dp"
+            android:onClick="linkAdd"
+            android:padding="15dp"
+            android:text="Add" >
+        </Button>
 
-    <Button
-        android:id="@+id/ButtonDoneLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TextViewCurrentLink"
-        android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/ButtonViewLink"
-        android:onClick="linkDone"
-        android:padding="15dp"
-        android:text="Done" >
-    </Button>
+        <Button
+            android:id="@+id/ButtonViewLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TextViewCurrentLink"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/ButtonAddLink"
+            android:onClick="linkView"
+            android:padding="15dp"
+            android:text="View" >
+        </Button>
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ButtonViewLink"
-        android:adjustViewBounds="true"
-        android:contentDescription="Your Last Link"
-        android:src="@android:drawable/stat_notify_sdcard" />
+        <Button
+            android:id="@+id/ButtonDoneLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TextViewCurrentLink"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/ButtonViewLink"
+            android:onClick="linkDone"
+            android:padding="15dp"
+            android:text="Done" >
+        </Button>
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ButtonViewLink"
+            android:adjustViewBounds="true"
+            android:contentDescription="Your Last Link"
+            android:src="@android:drawable/stat_notify_sdcard" />
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/drawer"
+        layout="@layout/drawer" />
+
+</android.support.v4.widget.DrawerLayout>

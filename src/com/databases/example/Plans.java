@@ -34,6 +34,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.DrawerLayout;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -50,16 +51,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Plans extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-	private SliderMenu menu;
-
 	final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
+	
 	//Adapter for category spinner
 	SimpleCursorAdapter categorySpinnerAdapter = null;
 	Spinner categorySpinner;
@@ -112,9 +115,10 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		setTitle("Plans");
 		setContentView(R.layout.plans);
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 
 		lvPlans = (ListView)this.findViewById(R.id.plans_list);
 
@@ -770,7 +774,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:

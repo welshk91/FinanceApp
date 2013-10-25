@@ -1,62 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/TextViewLogStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Status: "
-        android:textSize="18sp"
-        android:textStyle="bold" >
-    </TextView>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
 
-    <Button
-        android:id="@+id/ButtonLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TextViewLogStatus"
-        android:layout_margin="5dp"
-        android:onClick="dropboxLogin"
-        android:padding="15dp"
-        android:text="Login" >
-    </Button>
+        <TextView
+            android:id="@+id/TextViewLogStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Status: "
+            android:textSize="18sp"
+            android:textStyle="bold" >
+        </TextView>
 
-    <Button
-        android:id="@+id/ButtonSync"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TextViewLogStatus"
-        android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/ButtonLogin"
-        android:onClick="dropboxSync"
-        android:padding="15dp"
-        android:text="Sync" >
-    </Button>
+        <Button
+            android:id="@+id/ButtonLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TextViewLogStatus"
+            android:layout_margin="5dp"
+            android:onClick="dropboxLogin"
+            android:padding="15dp"
+            android:text="Login" >
+        </Button>
 
-    <Button
-        android:id="@+id/ButtonBackup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ButtonSync"
-        android:layout_margin="5dp"
-        android:onClick="dropboxBackup"
-        android:padding="15dp"
-        android:text="Backup" >
-    </Button>
+        <Button
+            android:id="@+id/ButtonSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TextViewLogStatus"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/ButtonLogin"
+            android:onClick="dropboxSync"
+            android:padding="15dp"
+            android:text="Sync" >
+        </Button>
 
-    <Button
-        android:id="@+id/ButtonRestore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ButtonSync"
-        android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/ButtonBackup"
-        android:onClick="dropboxChooser"
-        android:padding="15dp"
-        android:text="Restore" >
-    </Button>
+        <Button
+            android:id="@+id/ButtonBackup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ButtonSync"
+            android:layout_margin="5dp"
+            android:onClick="dropboxBackup"
+            android:padding="15dp"
+            android:text="Backup" >
+        </Button>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/ButtonRestore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ButtonSync"
+            android:layout_margin="5dp"
+            android:layout_toRightOf="@+id/ButtonBackup"
+            android:onClick="dropboxChooser"
+            android:padding="15dp"
+            android:text="Restore" >
+        </Button>
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/drawer"
+        layout="@layout/drawer" />
+
+</android.support.v4.widget.DrawerLayout>

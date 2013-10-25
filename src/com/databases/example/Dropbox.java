@@ -21,9 +21,11 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +33,9 @@ public class Dropbox extends SherlockFragmentActivity{
 
 	public final String dbFinance = "dbFinance";
 	public SQLiteDatabase myDB = null;
-	private SliderMenu menu;
+
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
 
 	//DropBox
 	private DbxAccountManager dbAccountManager;
@@ -46,9 +50,10 @@ public class Dropbox extends SherlockFragmentActivity{
 		setTitle("Dropbox");
 		setContentView(R.layout.dropbox);
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 
 		//Initialize DropBox Account Manager
 		dbAccountManager = DbxAccountManager.getInstance(getApplicationContext(), appKey, appSecret);
@@ -222,7 +227,7 @@ public class Dropbox extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 		}
 		return super.onOptionsItemSelected(item);

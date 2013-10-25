@@ -1,24 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:key="pref_screen_default" >
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <!-- APPEARANCE -->
+    <PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:key="pref_screen_default" >
 
-    <PreferenceCategory
-        android:key="category_appearance"
-        android:summary="Change looks"
-        android:title="Appearance" >
+        <!-- APPEARANCE -->
 
-        <!-- TRANSACTION APPEARANCE -->
+        <PreferenceCategory
+            android:key="category_appearance"
+            android:summary="Change looks"
+            android:title="Appearance" >
+
+            <!-- TRANSACTION APPEARANCE -->
+
+            <PreferenceScreen
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:key="pref_screen_transactions"
+                android:summary="Change appearance of transactions"
+                android:title="Transaction Appearance" >
+
+                <PreferenceCategory
+                    android:summary="Change background"
+                    android:title="Background" >
+
+                    <net.margaritov.preference.colorpicker.ColorPickerPreference
+                        alphaSlider="true"
+                        android:defaultValue="-657931"
+                        android:key="key_transaction_startBackgroundColor"
+                        android:summary="Starting background color of each transaction row."
+                        android:title="Background Starting Color" />
+
+                    <net.margaritov.preference.colorpicker.ColorPickerPreference
+                        alphaSlider="true"
+                        android:defaultValue="-1"
+                        android:key="key_transaction_endBackgroundColor"
+                        android:summary="Ending background color of each transaction row."
+                        android:title="Background Ending Color" >
+                    </net.margaritov.preference.colorpicker.ColorPickerPreference>
+                </PreferenceCategory>
+
+                <PreferenceCategory
+                    android:summary="Change fonts"
+                    android:title="Fonts" >
+
+                    <EditTextPreference
+                        android:defaultValue="18"
+                        android:digits="0123456789"
+                        android:inputType="number|phone"
+                        android:key="@string/pref_key_transaction_nameSize"
+                        android:summary="Change the size of Name field. Default is &apos;20&apos;"
+                        android:title="Size of main field" >
+                    </EditTextPreference>
+
+                    <net.margaritov.preference.colorpicker.ColorPickerPreference
+                        alphaSlider="true"
+                        android:defaultValue="-16777216"
+                        android:key="key_transaction_nameColor"
+                        android:summary="Change the color of Name field."
+                        android:title="Color of main field" >
+                    </net.margaritov.preference.colorpicker.ColorPickerPreference>
+
+                    <EditTextPreference
+                        android:defaultValue="10"
+                        android:digits="0123456789"
+                        android:inputType="number|phone"
+                        android:key="@string/pref_key_transaction_fieldSize"
+                        android:summary="Change the size of Name field. Default is &apos;10&apos;"
+                        android:title="Size of secondary fields" >
+                    </EditTextPreference>
+
+                    <net.margaritov.preference.colorpicker.ColorPickerPreference
+                        alphaSlider="true"
+                        android:defaultValue="-16737844"
+                        android:key="key_transaction_fieldColor"
+                        android:summary="Change the color of Name field."
+                        android:title="Color of secondary fields" >
+                    </net.margaritov.preference.colorpicker.ColorPickerPreference>
+                </PreferenceCategory>
+
+                <PreferenceCategory
+                    android:summary="Change fields"
+                    android:title="Fields" >
+
+                    <PreferenceScreen
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:key="pref_screen_transaction_fields"
+                        android:summary="Change fields visible for transaction"
+                        android:title="Transaction Fields" >
+
+                        <CheckBoxPreference
+                            android:defaultValue="true"
+                            android:key="checkbox_transaction_nameField"
+                            android:summary="Name Field"
+                            android:title="Name" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="true"
+                            android:key="checkbox_transaction_valueField"
+                            android:summary="Value Field"
+                            android:title="Value" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="checkbox_transaction_typeField"
+                            android:summary="Type Field"
+                            android:title="Type" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="true"
+                            android:key="checkbox_transaction_categoryField"
+                            android:summary="Category Field"
+                            android:title="Category" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="true"
+                            android:key="checkbox_transaction_checknumField"
+                            android:summary="Check Number Field"
+                            android:title="Check Number" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="checkbox_transaction_memoField"
+                            android:summary="Memo Field"
+                            android:title="Memo" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="true"
+                            android:key="checkbox_transaction_dateField"
+                            android:summary="Date Field"
+                            android:title="Date" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="true"
+                            android:key="checkbox_transaction_timeField"
+                            android:summary="Time Field"
+                            android:title="Time" >
+                        </CheckBoxPreference>
+
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="checkbox_transaction_clearedField"
+                            android:summary="Cleared Field"
+                            android:title="Cleared" >
+                        </CheckBoxPreference>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+            </PreferenceScreen>
+        </PreferenceCategory>
+
+        <!-- ACCOUNT APPEARANCE -->
 
         <PreferenceScreen
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:key="pref_screen_transactions"
-            android:summary="Change appearance of transactions"
-            android:title="Transaction Appearance" >
+            android:key="pref_screen_accounts"
+            android:summary="Change appearance of accounts"
+            android:title="Account Appearance" >
 
             <PreferenceCategory
                 android:summary="Change background"
@@ -27,15 +179,16 @@
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-657931"
-                    android:key="key_transaction_startBackgroundColor"
-                    android:summary="Starting background color of each transaction row."
-                    android:title="Background Starting Color" />
+                    android:key="key_account_startBackgroundColor"
+                    android:summary="Starting background color of each account row."
+                    android:title="Background Starting color" >
+                </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-1"
-                    android:key="key_transaction_endBackgroundColor"
-                    android:summary="Ending background color of each transaction row."
+                    android:key="key_account_endBackgroundColor"
+                    android:summary="Ending background color of each account row."
                     android:title="Background Ending Color" >
                 </net.margaritov.preference.colorpicker.ColorPickerPreference>
             </PreferenceCategory>
@@ -45,18 +198,18 @@
                 android:title="Fonts" >
 
                 <EditTextPreference
-                    android:defaultValue="18"
+                    android:defaultValue="16"
                     android:digits="0123456789"
                     android:inputType="number|phone"
-                    android:key="@string/pref_key_transaction_nameSize"
-                    android:summary="Change the size of Name field. Default is &apos;20&apos;"
+                    android:key="@string/pref_key_account_nameSize"
+                    android:summary="Change the size of Name field. Default is &apos;16&apos;"
                     android:title="Size of main field" >
                 </EditTextPreference>
 
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-16777216"
-                    android:key="key_transaction_nameColor"
+                    android:key="key_account_nameColor"
                     android:summary="Change the color of Name field."
                     android:title="Color of main field" >
                 </net.margaritov.preference.colorpicker.ColorPickerPreference>
@@ -65,16 +218,16 @@
                     android:defaultValue="10"
                     android:digits="0123456789"
                     android:inputType="number|phone"
-                    android:key="@string/pref_key_transaction_fieldSize"
-                    android:summary="Change the size of Name field. Default is &apos;10&apos;"
+                    android:key="@string/pref_key_account_fieldSize"
+                    android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
                     android:title="Size of secondary fields" >
                 </EditTextPreference>
 
                 <net.margaritov.preference.colorpicker.ColorPickerPreference
                     alphaSlider="true"
                     android:defaultValue="-16737844"
-                    android:key="key_transaction_fieldColor"
-                    android:summary="Change the color of Name field."
+                    android:key="key_account_fieldColor"
+                    android:summary="Change the color of secondary fields."
                     android:title="Color of secondary fields" >
                 </net.margaritov.preference.colorpicker.ColorPickerPreference>
             </PreferenceCategory>
@@ -86,265 +239,123 @@
                 <PreferenceScreen
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:key="pref_screen_transaction_fields"
-                    android:summary="Change fields visible for transaction"
-                    android:title="Transaction Fields" >
+                    android:key="pref_screen_account_fields"
+                    android:summary="Change fields visible for account"
+                    android:title="Account Fields" >
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="checkbox_transaction_nameField"
+                        android:key="checkbox_account_nameField"
                         android:summary="Name Field"
                         android:title="Name" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="checkbox_transaction_valueField"
-                        android:summary="Value Field"
-                        android:title="Value" >
-                    </CheckBoxPreference>
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_typeField"
-                        android:summary="Type Field"
-                        android:title="Type" >
+                        android:key="checkbox_account_balanceField"
+                        android:summary="Balance Field"
+                        android:title="Balance" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="checkbox_transaction_categoryField"
-                        android:summary="Category Field"
-                        android:title="Category" >
-                    </CheckBoxPreference>
-
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="checkbox_transaction_checknumField"
-                        android:summary="Check Number Field"
-                        android:title="Check Number" >
-                    </CheckBoxPreference>
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_memoField"
-                        android:summary="Memo Field"
-                        android:title="Memo" >
-                    </CheckBoxPreference>
-
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="checkbox_transaction_dateField"
+                        android:key="checkbox_account_dateField"
                         android:summary="Date Field"
                         android:title="Date" >
                     </CheckBoxPreference>
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        android:key="checkbox_transaction_timeField"
+                        android:key="checkbox_account_timeField"
                         android:summary="Time Field"
                         android:title="Time" >
-                    </CheckBoxPreference>
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="checkbox_transaction_clearedField"
-                        android:summary="Cleared Field"
-                        android:title="Cleared" >
                     </CheckBoxPreference>
                 </PreferenceScreen>
             </PreferenceCategory>
         </PreferenceScreen>
-    </PreferenceCategory>
 
-    <!-- ACCOUNT APPEARANCE -->
-
-    <PreferenceScreen
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:key="pref_screen_accounts"
-        android:summary="Change appearance of accounts"
-        android:title="Account Appearance" >
+        <!-- BEHAVIOR -->
 
         <PreferenceCategory
-            android:summary="Change background"
-            android:title="Background" >
-
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-657931"
-                android:key="key_account_startBackgroundColor"
-                android:summary="Starting background color of each account row."
-                android:title="Background Starting color" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-1"
-                android:key="key_account_endBackgroundColor"
-                android:summary="Ending background color of each account row."
-                android:title="Background Ending Color" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:summary="Change fonts"
-            android:title="Fonts" >
-
-            <EditTextPreference
-                android:defaultValue="16"
-                android:digits="0123456789"
-                android:inputType="number|phone"
-                android:key="@string/pref_key_account_nameSize"
-                android:summary="Change the size of Name field. Default is &apos;16&apos;"
-                android:title="Size of main field" >
-            </EditTextPreference>
-
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-16777216"
-                android:key="key_account_nameColor"
-                android:summary="Change the color of Name field."
-                android:title="Color of main field" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-
-            <EditTextPreference
-                android:defaultValue="10"
-                android:digits="0123456789"
-                android:inputType="number|phone"
-                android:key="@string/pref_key_account_fieldSize"
-                android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
-                android:title="Size of secondary fields" >
-            </EditTextPreference>
-
-            <net.margaritov.preference.colorpicker.ColorPickerPreference
-                alphaSlider="true"
-                android:defaultValue="-16737844"
-                android:key="key_account_fieldColor"
-                android:summary="Change the color of secondary fields."
-                android:title="Color of secondary fields" >
-            </net.margaritov.preference.colorpicker.ColorPickerPreference>
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:summary="Change fields"
-            android:title="Fields" >
+            android:summary="Change behavior"
+            android:title="Behavior" >
 
             <PreferenceScreen
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:key="pref_screen_account_fields"
-                android:summary="Change fields visible for account"
-                android:title="Account Fields" >
+                android:key="pref_screen_lock"
+                android:summary="Lockscreen options"
+                android:title="Lockscreen" >
 
                 <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_nameField"
-                    android:summary="Name Field"
-                    android:title="Name" >
+                    android:defaultValue="false"
+                    android:key="checkbox_lock_enabled"
+                    android:summary="Enable lockscreen"
+                    android:title="Lockscreen" >
                 </CheckBoxPreference>
 
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_balanceField"
-                    android:summary="Balance Field"
-                    android:title="Balance" >
-                </CheckBoxPreference>
-
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_dateField"
-                    android:summary="Date Field"
-                    android:title="Date" >
-                </CheckBoxPreference>
-
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="checkbox_account_timeField"
-                    android:summary="Time Field"
-                    android:title="Time" >
-                </CheckBoxPreference>
+                <Preference
+                    android:key="pref_setlock"
+                    android:summary="Define a pattern for your lockscreen"
+                    android:title="Set a Pattern" >
+                </Preference>
             </PreferenceScreen>
-        </PreferenceCategory>
-    </PreferenceScreen>
 
-    <!-- BEHAVIOR -->
+            <PreferenceScreen
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:key="pref_screen_backup"
+                android:summary="Backup options"
+                android:title="Backup" >
 
-    <PreferenceCategory
-        android:summary="Change behavior"
-        android:title="Behavior" >
+                <Preference
+                    android:key="pref_sd"
+                    android:summary="Local Backup options"
+                    android:title="Local Backup Settings" >
+                </Preference>
 
-        <PreferenceScreen
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:key="pref_screen_lock"
-            android:summary="Lockscreen options"
-            android:title="Lockscreen" >
+                <Preference
+                    android:key="pref_dropbox"
+                    android:summary="Dropbox options"
+                    android:title="Dropbox Settings" >
+                </Preference>
+            </PreferenceScreen>
 
             <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="checkbox_lock_enabled"
-                android:summary="Enable lockscreen"
-                android:title="Lockscreen" >
+                android:defaultValue="true"
+                android:key="haha"
+                android:summary="Here&apos;s a simple Checkbox"
+                android:title="To Do..." >
+            </CheckBoxPreference>
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:summary="Random Options"
+            android:title="Misc" >
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="checkbox_default"
+                android:summary="Use Default Values instead of User-Defined Ones"
+                android:title="Use Default Values" >
             </CheckBoxPreference>
 
             <Preference
-                android:key="pref_setlock"
-                android:summary="Define a pattern for your lockscreen"
-                android:title="Set a Pattern" >
-            </Preference>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:key="pref_screen_backup"
-            android:summary="Backup options"
-            android:title="Backup" >
-
-            <Preference
-                android:key="pref_sd"
-                android:summary="Local Backup options"
-                android:title="Local Backup Settings" >
+                android:key="pref_reset"
+                android:summary="Will reset all custom values to their defaults."
+                android:title="Reset Defaults" >
             </Preference>
 
             <Preference
-                android:key="pref_dropbox"
-                android:summary="Dropbox options"
-                android:title="Dropbox Settings" >
+                android:key="pref_clearDB"
+                android:summary="Will delete all the checkbook data. Use with extreme caution."
+                android:title="Delete Checkbook" >
             </Preference>
-        </PreferenceScreen>
+        </PreferenceCategory>
+    </PreferenceScreen>
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="haha"
-            android:summary="Here&apos;s a simple Checkbox"
-            android:title="To Do..." >
-        </CheckBoxPreference>
-    </PreferenceCategory>
+    <include
+        android:id="@+id/drawer"
+        layout="@layout/drawer" />
 
-    <PreferenceCategory
-        android:summary="Random Options"
-        android:title="Misc" >
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="checkbox_default"
-            android:summary="Use Default Values instead of User-Defined Ones"
-            android:title="Use Default Values" >
-        </CheckBoxPreference>
-
-        <Preference
-            android:key="pref_reset"
-            android:summary="Will reset all custom values to their defaults."
-            android:title="Reset Defaults" >
-        </Preference>
-
-        <Preference
-            android:key="pref_clearDB"
-            android:summary="Will delete all the checkbook data. Use with extreme caution."
-            android:title="Delete Checkbook" >
-        </Preference>
-    </PreferenceCategory>
-
-</PreferenceScreen>
+</android.support.v4.widget.DrawerLayout>

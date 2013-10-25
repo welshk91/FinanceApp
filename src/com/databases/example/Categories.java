@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ScrollView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 
@@ -45,7 +47,8 @@ public class Categories extends SherlockFragmentActivity{
 
 	private static DatabaseHelper dh = null;
 
-	private SliderMenu menu;
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
 
 	ExpandableListView lvCategory = null;
 	static UserItemAdapter adapterCategory = null;
@@ -82,9 +85,10 @@ public class Categories extends SherlockFragmentActivity{
 		setTitle("Categories");
 		setContentView(R.layout.categories);
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 
 		lvCategory = (ExpandableListView)this.findViewById(R.id.category_list);
 
@@ -283,7 +287,7 @@ public class Categories extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 
 		case ACTIONBAR_MENU_ADD_CATEGORY_ID:

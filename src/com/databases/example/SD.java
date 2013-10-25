@@ -9,6 +9,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -20,18 +21,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class SD extends SherlockFragmentActivity{
-
-	private SliderMenu menu;
-
 	private final static String DEFAULT_BACKUP_DIR = "/WelshFinanceBackUps";
 	private final static int PICKFILE_RESULT_CODE = 123;
+
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
 
 	//Dialogs that need to be dismissed
 	AlertDialog alertDialogCreate;
@@ -43,9 +46,10 @@ public class SD extends SherlockFragmentActivity{
 		setTitle("Local Backup");
 		setContentView(R.layout.sd);
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 
 	}//end onCreate
 
@@ -54,7 +58,7 @@ public class SD extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 		}
 

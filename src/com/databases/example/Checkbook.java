@@ -9,12 +9,14 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.DrawerLayout;
 
 public class Checkbook extends SherlockFragmentActivity {
 
-	//SlidingMenu
-	private SliderMenu menu;
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
@@ -35,10 +37,12 @@ public class Checkbook extends SherlockFragmentActivity {
 			}
 		}
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 
+		
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
 		 * in transaction fragment staying in accountsFrame
@@ -74,7 +78,7 @@ public class Checkbook extends SherlockFragmentActivity {
 		}
 
 		getSupportFragmentManager().executePendingTransactions();
-		
+
 		//}
 		//
 		//		else{
@@ -108,13 +112,13 @@ public class Checkbook extends SherlockFragmentActivity {
 	protected void onSaveInstanceState(Bundle bundle1){
 		Log.e("Checkbook-saveInstanceState", "here...");
 	}
-	
+
 	//For Menu Items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 		}
 

@@ -23,7 +23,9 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 
@@ -31,8 +33,8 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 	private static final int REQUEST_CREATE_PATTERN = 0;
 
-	//SlidingMenu
-	private SliderMenu menu;
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -48,9 +50,10 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
 		}//End if Build<Honeycomb
 
-		//Add Sliding Menu
-		menu = new SliderMenu(this);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		//DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		//ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		//mDrawerLayout = new Drawer(this,view,drawer);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);		
@@ -297,7 +300,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			menu.toggle();
+			mDrawerLayout.toggle();
 			break;
 		}
 

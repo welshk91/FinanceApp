@@ -32,12 +32,8 @@ public class Main extends SherlockActivity {
 	//Flag used for lockscreen
 	private static final int LOCKSCREEN_SIGNIN = 1;
 
-	//SlidingMenu
-	//private SliderMenu menu;
-
-	private ActionBarDrawerToggle mDrawerToggle;
-	private DrawerLayout mDrawerLayout;
-	private ScrollView mDrawerView;
+	//NavigationDrawer
+	private Drawer mDrawerLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,11 +53,6 @@ public class Main extends SherlockActivity {
 		}
 
 		setContentView(R.layout.main);
-
-		/**New SlidingMenu Stuff Here...**/
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerView = (ScrollView) findViewById(R.id.left_drawer);
-
 
 		//Card View
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
@@ -115,41 +106,15 @@ public class Main extends SherlockActivity {
 				"You are making more money than usual for this account",
 				"#4ac925", "#222222", false, false));
 
-
 		// draw cards
 		mCardView.refresh();		
 
-
-		//Add Sliding Menu
-		//menu = new SliderMenu(this);
-		//menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		//NavigationDrawer
+		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.left_drawer);
+		mDrawerLayout = new Drawer(this,view,drawer);
 
 	}// end onCreate
-
-	//Method handling 'mouse-click'
-	public OnClickListener buttonListener = new OnClickListener() {
-		public void onClick(View view) {
-			switch (view.getId()) {
-
-			/*			case R.id.dashboard_exit:
-				Main.this.finish();
-				//android.os.Process.killProcess(android.os.Process.myPid());				
-				onDestroy();
-				//Intent i = new Intent();
-				//i.setAction(Intent.ACTION_MAIN);
-				//i.addCategory(Intent.CATEGORY_HOME);
-				//startActivity(i); 
-				finish(); 
-				break;	
-			 */
-			default:
-				Log.e("Main", "Default onClickListner fired?");
-				break;	
-			}
-
-		}// end onClick
-	};// end onClickListener
-
 
 	//For Menu
 	@Override
@@ -165,11 +130,7 @@ public class Main extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			if (mDrawerLayout.isDrawerOpen(mDrawerView)) {
-				mDrawerLayout.closeDrawer(mDrawerView);
-			} else {
-				mDrawerLayout.openDrawer(mDrawerView);
-			}
+			mDrawerLayout.toggle();
 			break;
 
 		case R.id.main_menu_search:    

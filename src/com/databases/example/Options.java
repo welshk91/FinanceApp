@@ -49,7 +49,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
 		}//End if Build<Honeycomb
 
-		
+
 		//NavigationDrawer
 		//DrawerLayout view = (DrawerLayout) this.findViewById(R.id.drawer_layout);
 		//ScrollView drawer = (ScrollView) this.findViewById(R.id.drawer);
@@ -287,7 +287,8 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			mDrawerLayout.toggle();
+			//mDrawerLayout.toggle();
+			Toast.makeText(this, "Navigation Drawer\nComing Soon", Toast.LENGTH_SHORT).show();;
 			break;
 		}
 
@@ -303,32 +304,32 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		super.onPause();
 	}
 
-	@Override
-	public void setContentView(int layoutResID) {
-		setContentView(getLayoutInflater().inflate(layoutResID, null));
-	}
-
-	@Override
-	public void setContentView(View view) {
-		setContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-	}
-
-	//Needed for navigation drawer, not sure how to handle this yet...
-	@Override
-	public void setContentView(View view, LayoutParams params) {
-		super.setContentView(R.layout.drawer_options);
-
-		DrawerLayout v = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
-		Log.d("Options", "v="+v+" \ndrawer="+drawer);
-
-		mDrawerLayout = new Drawer(this,v,drawer);
-
-		Log.d("Options-setContentView", "After new Drawer");
-
-		// Call onContentsChanged() to let the Activity know it needs to refresh itself.
-		onContentChanged();
-		Log.d("Options-setContentView", "After onCntentChanged");
-	}
+	//	@Override
+	//	public void setContentView(int layoutResID) {
+	//		setContentView(getLayoutInflater().inflate(layoutResID, null));
+	//	}
+	//
+	//	@Override
+	//	public void setContentView(View view) {
+	//		setContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+	//	}
+	//
+	//	//Needed for navigation drawer, not sure how to handle this yet...
+	//	@Override
+	//	public void setContentView(View view, LayoutParams params) {
+	//		super.setContentView(R.layout.drawer_options);
+	//
+	//		DrawerLayout v = (DrawerLayout) findViewById(R.id.drawer_layout);
+	//		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+	//		Log.d("Options", "v="+v+" \ndrawer="+drawer);
+	//
+	//		mDrawerLayout = new Drawer(this,v,drawer);
+	//
+	//		Log.d("Options-setContentView", "After new Drawer");
+	//
+	//		// Call onContentsChanged() to let the Activity know it needs to refresh itself.
+	//		onContentChanged();
+	//		Log.d("Options-setContentView", "After onCntentChanged");
+	//	}
 
 }//end of Options

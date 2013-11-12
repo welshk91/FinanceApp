@@ -1,3 +1,7 @@
+/* Class that handles the BroadcastReceiver needed for Scheduling Transactions
+ * Handles rescheduling previous plans if the user reboots the phone 
+ */
+
 package com.databases.example;
 
 import java.text.SimpleDateFormat;
@@ -50,7 +54,6 @@ public class PlanReceiver extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle bundle = intent.getExtras();
-
 		dh = new DatabaseHelper(context);
 
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
@@ -62,7 +65,6 @@ public class PlanReceiver extends BroadcastReceiver{
 			Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
 
 			try {
-
 				String plan_id = bundle.getString("plan_id");
 				String plan_acct_id = bundle.getString("plan_acct_id");
 				String plan_name = bundle.getString("plan_name");

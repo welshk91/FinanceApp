@@ -1,3 +1,7 @@
+/* Class that handles how money is represented
+ * Mostly just formats monetary values
+ */
+
 package com.databases.example;
 
 import java.math.BigDecimal;

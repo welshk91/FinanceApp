@@ -1,3 +1,7 @@
+/* Class that handles the options in the options screen
+ * Handles options for Appearance, Behavior, Misc
+ */
+
 package com.databases.example;
 
 import java.util.List;
@@ -6,7 +10,6 @@ import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -19,21 +22,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
-
 	private static final int REQUEST_CREATE_PATTERN = 0;
-
-	//NavigationDrawer
 	private Drawer mDrawerLayout;
 
 	@Override
@@ -50,15 +49,17 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
 		}//End if Build<Honeycomb
 
+		
 		//NavigationDrawer
-		//DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		//ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		//DrawerLayout view = (DrawerLayout) this.findViewById(R.id.drawer_layout);
+		//ScrollView drawer = (ScrollView) this.findViewById(R.id.drawer);
+		//Log.e("Options", "view="+view+" \ndrawer"+drawer);
+
 		//mDrawerLayout = new Drawer(this,view,drawer);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);		
 	}//end onCreate
-
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
@@ -214,24 +215,15 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		//Reset Preferences
 		public void prefsReset(){
-			Log.e("prefsReset","clicked!");
-			//Set an alert dialog to confirm
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-			// set title
 			alertDialogBuilder.setTitle("Reset Preferences?");
-
-			// set dialog message
 			alertDialogBuilder
 			.setMessage("Do you wish to reset all the preferences?")
 			.setCancelable(false)
 			.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					//Reset Preferences
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 					prefs.edit().clear().commit();
-					//getActivity().finish();
-					//startActivity(getActivity().getIntent());
 				}
 			})
 			.setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -240,10 +232,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 				}
 			});
 
-			// create alert dialog
 			AlertDialog	alertDialogReset = alertDialogBuilder.create();
-
-			// show it
 			alertDialogReset.show();
 
 		}//end of prefsReset
@@ -252,8 +241,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		public void clearDB(){
 			AlertDialog.Builder builderDelete;
 			builderDelete = new AlertDialog.Builder(getActivity());
-
-			// set title
 			builderDelete.setTitle("Delete Your Checkbook?");
 
 			builderDelete.setMessage(
@@ -267,7 +254,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 							Uri uri = Uri.parse(MyContentProvider.DATABASE_URI+"");
 							getActivity().getContentResolver().delete(uri, null, null);
 
-							//Navigate User back to dashboard
+							//Navigate User back home
 							Intent intentDashboard = new Intent(getActivity(), Main.class);
 							intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 							startActivity(intentDashboard);
@@ -292,7 +279,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Log.e("Options-onSharedPreferenceChanged","Here...");
+		//Log.d("Options-onSharedPreferenceChanged","Settings changed");
 	}
 
 	//For Menu Items
@@ -314,6 +301,34 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		//			alertDialogReset.dismiss();
 		//		}
 		super.onPause();
+	}
+
+	@Override
+	public void setContentView(int layoutResID) {
+		setContentView(getLayoutInflater().inflate(layoutResID, null));
+	}
+
+	@Override
+	public void setContentView(View view) {
+		setContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+	}
+
+	//Needed for navigation drawer, not sure how to handle this yet...
+	@Override
+	public void setContentView(View view, LayoutParams params) {
+		super.setContentView(R.layout.drawer_options);
+
+		DrawerLayout v = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		Log.d("Options", "v="+v+" \ndrawer="+drawer);
+
+		mDrawerLayout = new Drawer(this,v,drawer);
+
+		Log.d("Options-setContentView", "After new Drawer");
+
+		// Call onContentsChanged() to let the Activity know it needs to refresh itself.
+		onContentChanged();
+		Log.d("Options-setContentView", "After onCntentChanged");
 	}
 
 }//end of Options

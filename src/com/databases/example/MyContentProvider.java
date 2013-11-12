@@ -1,3 +1,8 @@
+/* Class that handles the content provider used
+ * Lets my app not have to worry about cursors so much, 
+ * though can be used to expose information in the future if need be
+ */
+
 package com.databases.example;
 
 import android.content.ContentProvider;

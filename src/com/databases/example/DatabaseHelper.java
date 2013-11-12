@@ -1,3 +1,8 @@
+/* Class that handles database operations
+ * Does everything from simple insert/update/deleting of information to
+ * more complex database operations like balances
+ */
+
 package com.databases.example;
 
 import java.io.File;

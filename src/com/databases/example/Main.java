@@ -1,3 +1,7 @@
+/* Class that handles the Card Notification View seen in the Home Screen
+ * Sets up the app and displays the cards notifying the user of important events
+ */
+
 package com.databases.example;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
@@ -7,12 +11,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -28,22 +30,13 @@ import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 
-public class Main extends SherlockActivity {	
-	//Flag used for lockscreen
+public class Main extends SherlockActivity {
 	private static final int LOCKSCREEN_SIGNIN = 1;
-
-	//NavigationDrawer
 	private Drawer mDrawerLayout;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		//For Clear preferences!!!!!! REMOVE EVENTUALLY
-		//SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		//Editor editor = settings.edit();
-		//editor.clear();
-		//editor.commit();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
 		boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
@@ -53,8 +46,8 @@ public class Main extends SherlockActivity {
 		}
 
 		setContentView(R.layout.main);
-		
-		//Card View
+
+		//Initialize Card View
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
@@ -106,9 +99,9 @@ public class Main extends SherlockActivity {
 				"You are making more money than usual for this account",
 				"#4ac925", "#222222", false, false));
 
-		// draw cards
+		//Draw cards
 		mCardView.refresh();
-		
+
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
@@ -171,10 +164,10 @@ public class Main extends SherlockActivity {
 		switch (requestCode) {
 		case LOCKSCREEN_SIGNIN:
 			if (resultCode == RESULT_OK) {
-				// signing in ok
+				//Lockscreen signing in ok
 				Toast.makeText(Main.this, "Sign In\nAccepted", Toast.LENGTH_SHORT).show();
 			} else {
-				// signing in failed
+				//Lockscreen signing in failed
 				Toast.makeText(Main.this, "Sign In\nFailed", Toast.LENGTH_SHORT).show();
 				this.finish();
 				this.moveTaskToBack(true);
@@ -187,7 +180,6 @@ public class Main extends SherlockActivity {
 
 	//MyCard Class
 	public class MyCard extends Card {
-
 		public MyCard(String title, String desc){
 			super(title, desc);			
 		}
@@ -204,7 +196,6 @@ public class Main extends SherlockActivity {
 
 	//MyImageCard Class
 	public class MyImageCard extends Card {
-
 		public MyImageCard(String title, int image){
 			super(title, image);
 		}
@@ -224,7 +215,6 @@ public class Main extends SherlockActivity {
 
 	//MyPlayCard Class
 	public class MyPlayCard extends Card {
-
 		public MyPlayCard(String titlePlay, String description, String color,
 				String titleColor, Boolean hasOverflow, Boolean isClickable) {
 			super(titlePlay, description, color, titleColor, hasOverflow,

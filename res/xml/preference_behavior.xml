@@ -1,43 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="pref_screen_behavior"
-    android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <PreferenceScreen
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:key="pref_screen_lock"
-        android:summary="Lockscreen options"
-        android:title="Lockscreen" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="checkbox_lock_enabled"
-            android:summary="Enable lockscreen"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:key="pref_screen_behavior"
+        android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+        <PreferenceScreen
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:key="pref_screen_lock"
+            android:summary="Lockscreen options"
             android:title="Lockscreen" >
-        </CheckBoxPreference>
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="checkbox_lock_enabled"
+                android:summary="Enable lockscreen"
+                android:title="Lockscreen" >
+            </CheckBoxPreference>
 
-        <Preference
-            android:key="pref_setlock"
-            android:summary="Define a pattern for your lockscreen"
-            android:title="Set a Pattern" >
-        </Preference>
-    </PreferenceScreen>
-    <PreferenceScreen
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:key="pref_screen_backup"
-        android:summary="Backup options"
-        android:title="Backup" >
-        <Preference
-            android:key="pref_sd"
-            android:summary="Local Backup options"
-            android:title="Local Backup Settings" >
-        </Preference>
-        <Preference
-            android:key="pref_dropbox"
-            android:summary="Dropbox options"
-            android:title="Dropbox Settings" >
-        </Preference>
+            <Preference
+                android:key="pref_setlock"
+                android:summary="Define a pattern for your lockscreen"
+                android:title="Set a Pattern" >
+            </Preference>
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:key="pref_screen_backup"
+            android:summary="Backup options"
+            android:title="Backup" >
+            <Preference
+                android:key="pref_sd"
+                android:summary="Local Backup options"
+                android:title="Local Backup Settings" >
+            </Preference>
+            <Preference
+                android:key="pref_dropbox"
+                android:summary="Dropbox options"
+                android:title="Dropbox Settings" >
+            </Preference>
+        </PreferenceScreen>
     </PreferenceScreen>
 
-</PreferenceScreen>
+    <include
+        android:id="@+id/drawer"
+        layout="@layout/drawer" />
+
+</android.support.v4.widget.DrawerLayout>

@@ -1,10 +1,13 @@
+/* Class that handles the Categories/SubCategories ExpandableListView seen in the Categories screen
+ * Does everything from setting up the view to Add/Delete/Edit
+ */
+
 package com.databases.example;
 
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,7 +30,6 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
@@ -36,15 +38,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 
 public class Categories extends SherlockFragmentActivity{
-
 	private static DatabaseHelper dh = null;
 
 	//NavigationDrawer
@@ -52,9 +50,6 @@ public class Categories extends SherlockFragmentActivity{
 
 	ExpandableListView lvCategory = null;
 	static UserItemAdapter adapterCategory = null;
-
-	private static final int CATEGORY_LOADER = 5605016;
-	private static final int SUBCATEGORY_LOADER = 4534917;
 
 	//Constant for ActionbarId
 	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
@@ -79,7 +74,6 @@ public class Categories extends SherlockFragmentActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-
 		dh = new DatabaseHelper(this);
 
 		setTitle("Categories");
@@ -138,7 +132,7 @@ public class Categories extends SherlockFragmentActivity{
 			else {
 				//No Results Found
 				noResult.setVisibility(View.VISIBLE);
-				Log.d("Category", "No Categories found");
+				Log.d("Category-categoryPopulate", "No Categories found");
 			}
 		} 
 
@@ -151,7 +145,6 @@ public class Categories extends SherlockFragmentActivity{
 	//Method for filling subcategories
 	public void subcategoryPopulate(String catId){		
 		cursorSubCategory = dh.getSubCategories(null,"ToCatID="+catId,null,null);
-
 		resultsCursor.add(cursorSubCategory);
 
 		startManagingCursor(cursorSubCategory);
@@ -177,7 +170,7 @@ public class Categories extends SherlockFragmentActivity{
 
 			else {
 				//No Results Found
-				Log.d("Category", "No Subcategories found");
+				Log.d("Category-subcategoryPopulate", "No Subcategories found");
 			}
 		} 
 
@@ -218,7 +211,7 @@ public class Categories extends SherlockFragmentActivity{
 
 			getContentResolver().delete(uri,"SubCatID="+subcategoryID, null);
 
-			Log.d("categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
+			Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
 		}
 		else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 			String categoryID = adapterCategory.getCategory(groupPos).id;
@@ -231,7 +224,7 @@ public class Categories extends SherlockFragmentActivity{
 			uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + 0);
 			getContentResolver().delete(uri,"ToCatID="+categoryID, null);
 
-			Log.d("categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
+			Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
 		}
 
 		//Refresh the categories list
@@ -259,7 +252,6 @@ public class Categories extends SherlockFragmentActivity{
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(groupPos,childPos,type);
 		newFragment.show(getSupportFragmentManager(), "dialogView");
-
 	}
 
 	//For ActionBar Menu
@@ -279,7 +271,6 @@ public class Categories extends SherlockFragmentActivity{
 		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
 		return true;
-
 	}
 
 	//For ActionBar Menu Items (and home icon)
@@ -297,7 +288,6 @@ public class Categories extends SherlockFragmentActivity{
 		case R.id.account_menu_search:    
 			onSearchRequested();
 			return true;
-
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -332,11 +322,11 @@ public class Categories extends SherlockFragmentActivity{
 			break;
 
 		default:
-			Log.e("Categories", "Context Menu type is not child or group");
+			Log.e("Categories-onCreateContextMenu", "Context Menu type is not child or group");
 			break;	
 		}
 
-	}  
+	}
 
 	//Handles which methods are called when using the long presses menu
 	@Override
@@ -372,12 +362,11 @@ public class Categories extends SherlockFragmentActivity{
 			return true;
 
 		default:
-			Log.e("Categories", "Context Menu type is not child or group");
+			Log.e("Categories-onContextItemSelected", "Context Menu type is not child or group");
 			break;
 		}
 
 		return super.onContextItemSelected(item);
-
 	}  
 
 	public class UserItemAdapter extends BaseExpandableListAdapter{
@@ -508,7 +497,7 @@ public class Categories extends SherlockFragmentActivity{
 			String itemId = user.getString(0);
 			String itemName = user.getString(NameColumn);
 			String itemNote = user.getString(NoteColumn);
-			//Log.e("getGroupView", "Found Category: " + itemName);
+			//Log.d("getGroupView", "Found Category: " + itemName);
 
 			if (itemName != null) {
 				name.setText(itemName);
@@ -529,10 +518,9 @@ public class Categories extends SherlockFragmentActivity{
 			temp.moveToPosition(childPosition);
 			String itemId = temp.getString(0);
 
-			//Log.e("getChildID", "returning " + Long.parseLong(itemId));
+			//Log.d("getChildID", "returning " + Long.parseLong(itemId));
 
 			return Long.parseLong(itemId);
-
 		}
 
 		@Override
@@ -574,17 +562,16 @@ public class Categories extends SherlockFragmentActivity{
 					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
-				//Change Size of main field
+				//Change Size/color of main field
+				TextView subName=(TextView)v.findViewById(R.id.subcategory_name);
 				try{
 					String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "16");
-					TextView t;
-					t=(TextView)v.findViewById(R.id.subcategory_name);
 
 					if(useDefaults){
-						t.setTextSize(16);
+						subName.setTextSize(16);
 					}
 					else{
-						t.setTextSize(Integer.parseInt(DefaultSize));
+						subName.setTextSize(Integer.parseInt(DefaultSize));
 					}
 
 				}
@@ -594,14 +581,12 @@ public class Categories extends SherlockFragmentActivity{
 
 				try{
 					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
-					TextView t;
-					t=(TextView)v.findViewById(R.id.subcategory_name);
 
 					if(useDefaults){
-						t.setTextColor(Color.parseColor("#000000"));
+						subName.setTextColor(Color.parseColor("#000000"));
 					}
 					else{
-						t.setTextColor(DefaultColor);
+						subName.setTextColor(DefaultColor);
 					}
 
 				}
@@ -611,7 +596,7 @@ public class Categories extends SherlockFragmentActivity{
 
 			}
 
-			TextView name = (TextView) v.findViewById(R.id.subcategory_name);
+			TextView name = (TextView) v.findViewById(R.id.subcategory_name);			
 			int ToIDColumn = user.getColumnIndex("ToCatID");
 			int NameColumn = user.getColumnIndex("SubCatName");
 			int NoteColumn = user.getColumnIndex("SubCatNote");
@@ -652,7 +637,6 @@ public class Categories extends SherlockFragmentActivity{
 		@Override
 		public long getGroupId(int groupPosition) {
 			// TODO Auto-generated method stub
-
 			return 0;
 		}
 
@@ -697,7 +681,6 @@ public class Categories extends SherlockFragmentActivity{
 			this.name = name;
 			this.note = note;
 		}
-
 	}
 
 	//Close dialogs to prevent window leaks
@@ -712,7 +695,6 @@ public class Categories extends SherlockFragmentActivity{
 
 	//Class that handles view fragment
 	public static class ViewDialogFragment extends SherlockDialogFragment {
-
 		public static ViewDialogFragment newInstance(int gPos, int cPos,int t) {
 			ViewDialogFragment frag = new ViewDialogFragment();
 			Bundle args = new Bundle();
@@ -733,16 +715,9 @@ public class Categories extends SherlockFragmentActivity{
 			final int childPos = getArguments().getInt("child");
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-			// set xml to AlertDialog builder
 			alertDialogBuilder.setView(categoryStatsView);
-
-			//set Title
 			alertDialogBuilder.setTitle("View Category");
-
-			// set dialog message
-			alertDialogBuilder
-			.setCancelable(true);
+			alertDialogBuilder.setCancelable(true);
 
 			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 				SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
@@ -769,13 +744,11 @@ public class Categories extends SherlockFragmentActivity{
 			}
 
 			return alertDialogBuilder.create();
-
 		}
 	}
 
 	//Class that handles edit fragment
 	public static class EditDialogFragment extends SherlockDialogFragment {
-
 		public static EditDialogFragment newInstance(int gPos, int cPos,int t) {
 			EditDialogFragment frag = new EditDialogFragment();
 			Bundle args = new Bundle();
@@ -816,10 +789,7 @@ public class Categories extends SherlockFragmentActivity{
 				editNote.setText(record.note);			
 			}
 
-			// set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(categoryAddView);
-
-			// set dialog message
 			alertDialogBuilder
 			.setCancelable(true)
 			.setPositiveButton("Done",new DialogInterface.OnClickListener() {
@@ -858,7 +828,7 @@ public class Categories extends SherlockFragmentActivity{
 						}
 					}
 					catch(Exception e){
-						Log.e("Categories", "Error editing Categories");
+						Log.e("Categories-EditDialog", "Error editing Categories");
 					}
 
 					//Refresh the categories list
@@ -873,7 +843,6 @@ public class Categories extends SherlockFragmentActivity{
 			});		
 
 			return alertDialogBuilder.create();
-
 		}
 	}
 
@@ -921,20 +890,17 @@ public class Categories extends SherlockFragmentActivity{
 			final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
-
-			// set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(categoryAddView);
 
+			//Set title
 			if(isCat){
-				//set Title
 				alertDialogBuilder.setTitle("Create A Category");
 			}
 			else{
-				//set Title
 				alertDialogBuilder.setTitle("Create A SubCategory");			
 			}
 
-			// set dialog message
+			//Set dialog message
 			alertDialogBuilder
 			.setCancelable(true)
 			.setPositiveButton("Add",new DialogInterface.OnClickListener() {
@@ -961,7 +927,7 @@ public class Categories extends SherlockFragmentActivity{
 
 					}
 					catch(Exception e){
-						Log.e("Categories", "Error adding Categories. e = " + e);
+						Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
 					}
 
 					//Refresh the categories list
@@ -976,8 +942,7 @@ public class Categories extends SherlockFragmentActivity{
 			});
 
 			return alertDialogBuilder.create();
-
 		}
 	}
 
-}//end category
+}//end Categories

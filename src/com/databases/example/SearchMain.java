@@ -1,3 +1,9 @@
+/* A simple Activity for the Search screen
+ * Sets up the PageAdapter for the Search screen.
+ * Most of the work seen in the Search screen is actually the fragments,
+ * not this class. This class is just a simple parent Activity for the fragments.
+ */
+
 package com.databases.example;
 
 import java.util.ArrayList;

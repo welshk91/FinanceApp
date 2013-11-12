@@ -1,3 +1,9 @@
+/* Class that handles the Local Storage Options seen in the Options screen
+ * Allows user to make a local backup to a custom folder
+ * and restore from a local backup file
+ * No error checking yet...
+ */
+
 package com.databases.example;
 
 import java.io.File;

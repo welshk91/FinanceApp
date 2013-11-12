@@ -1,11 +1,13 @@
+/* Class that handles the Account Fragment seen in the Checkbook screen
+ * Does everything from setting up the view to Add/Delete/Edit Accounts to calculating the balance
+ */
+
 package com.databases.example;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Currency;
 import java.util.Locale;
 
 import android.app.AlertDialog;
@@ -34,12 +36,10 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
@@ -55,11 +55,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
-
 	final int PICKFILE_RESULT_CODE = 1;
-
 	private static final int ACCOUNTS_LOADER = 123456789;
-
 	private static DatabaseHelper dh = null;
 
 	//Constants for ContextMenu
@@ -106,15 +103,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	}// end onCreate
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		//myFragmentView = inflater.inflate(R.layout.accounts, container, false);	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 		myFragmentView = inflater.inflate(R.layout.accounts, null, false);
-
 		lv = (ListView)myFragmentView.findViewById(R.id.account_list);
 
-		//Turn clicks on
 		lv.setClickable(true);
 		lv.setLongClickable(true);
 
@@ -123,11 +115,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 				int selectionRowID = (int) adapterAccounts.getItemId(position);
-				//NOTE: LIMIT *position*,*how many after*
-				//				String sqlCommand = "SELECT * FROM " + tblAccounts + 
-				//						" WHERE AcctID IN (SELECT AcctID FROM (SELECT AcctID FROM " + tblAccounts + 
-				//						" LIMIT " + (selectionRowID-1) + ",1)AS tmp)";
-
 				Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
 
 				c.moveToFirst();
@@ -142,8 +129,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Bundle args = new Bundle();
 					args.putInt("ID",entry_id);
 
-					//Add the fragment to the activity, pushing this transaction
-					//on to the back stack.
+					//Add the fragment to the activity, pushing this transaction on to the back stack.
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -161,8 +147,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					args.putBoolean("boolSearch", false);
 					args.putInt("ID",entry_id);
 
-					//Add the fragment to the activity, pushing this transaction
-					//on to the back stack.
+					//Add the fragment to the activity, pushing this transaction on to the back stack.
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -177,8 +162,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}//end onItemClickListener
 				);//end setOnItemClickListener
 
-
-		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lv);
 
 		//Set up a listener for changes in settings menu
@@ -198,7 +181,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method called after creation, populates list with account information
 	protected void populate() {
-		Log.e("Accounts","populating");
+		Log.d("Accounts","populating");
 		//Arguments sent by Account Fragment
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
@@ -248,7 +231,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
 		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
 		menu.add(0, CONTEXT_MENU_ATTACH, 3, "Attach");
-
 	}  
 
 	//Handles which methods are called when using the long presses menu
@@ -272,8 +254,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			return true;
 		}
 		else {
-			//return false;
-			//return super.onContextItemSelected(item);
+			Log.e("Accounts-onContextItemSelected","Item selected is unknown!");		
 		}  
 
 		return super.onContextItemSelected(item);  
@@ -286,7 +267,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getChildFragmentManager(), "dialogView");
-
 	}
 
 	//For Editing an Account
@@ -318,7 +298,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//Delete Account
 		getActivity().getContentResolver().delete(uri,"AcctID="+record.id, null);
 
-		//Delete Transactions of that account
+		//Delete All Transactions of that account
 		uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
 		getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
 
@@ -335,7 +315,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	public void accountTransfer(){
 		DialogFragment newFragment = TransferDialogFragment.newInstance();
 		newFragment.show(getChildFragmentManager(), "dialogTransfer");		
-	}	
+	}
 
 	//Method to get the list of accounts for spinner
 	public void accountPopulate(){
@@ -356,8 +336,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
 	}//end of accountPopulate
 
-
-	//Handle closing database properly to avoid corruption
+	//Handle closing database helper properly to avoid corruption
 	@Override
 	public void onDestroy() {
 		if(dh!=null){
@@ -371,15 +350,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-
 		View transaction_frame = getActivity().findViewById(R.id.transaction_frag_frame);
 
 		//Clear any leftover junk
 		menu.clear();
 
+		//If you're in dual-pane mode
 		if(transaction_frame!=null){
-
-			//Show Search
 			MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 			menuSearch.setIcon(android.R.drawable.ic_menu_search);
 			menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -433,7 +410,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		// TODO Need to refresh appearance after options change
 		Log.e("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
 		getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
 	}
@@ -468,13 +444,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch (requestCode) {
 		case PICKFILE_RESULT_CODE:
 			if(resultCode==getActivity().RESULT_OK){
-				Log.e("Accounts-onActivityResult", "OK");
+				Log.d("Accounts-onActivityResult", "OK");
 				/******CALL POPULATE AGAIN TO SHOW THE ATTACHMENT ICON*******/
-
 			}
 
 			if(resultCode==getActivity().RESULT_CANCELED){
-				Log.e("Accounts-onActivityResult", "canceled");
+				Log.d("Accounts-onActivityResult", "canceled");
 			}
 
 			break;
@@ -696,7 +671,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				Toast.makeText(Accounts.this.getActivity(), "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
 			}
 
-
 			//For User-Defined Field Visibility
 			if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
 				TVname.setVisibility(View.VISIBLE);
@@ -762,7 +736,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-
 			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
 
 			int entry_id = 0;
@@ -787,13 +760,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					this.getSherlockActivity());
 
 			alertDialogBuilder.setView(accountStatsView);
-
-			//Set Title
 			alertDialogBuilder.setTitle("View Account");
-
-			//Set dialog message
-			alertDialogBuilder
-			.setCancelable(true);
+			alertDialogBuilder.setCancelable(true);
 
 			//Set Statistics
 			TextView statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
@@ -807,7 +775,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			c.close();
 			return alertDialogBuilder.create();
-
 		}
 	}
 
@@ -836,11 +803,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			final View promptsView = li.inflate(R.layout.account_add, null);
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-			// set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(promptsView);
-
-			//set Title
 			alertDialogBuilder.setTitle("Edit An Account");
 
 			//Add the previous info into the fields, remove unnecessary fields
@@ -894,13 +857,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "Cancel"
 					dialog.cancel();
 				}
 			});
 
 			return alertDialogBuilder.create();
-
 		}
 	}
 
@@ -920,10 +881,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			final View promptsView = li.inflate(R.layout.account_add, null);
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
 			alertDialogBuilder.setView(promptsView);
-
-			//Set Title
 			alertDialogBuilder.setTitle("Add An Account");
 
 			//Set dialog message
@@ -959,7 +917,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					String transactionType = "Unknown";
 
 					Locale locale=getResources().getConfiguration().locale;
-					
+
 					//Check Value to see if it's valid
 					try{
 						transactionValue = new Money(Float.parseFloat(accountBalance.getBigDecimal(locale)+""));
@@ -1026,7 +984,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "Cancel"
 					dialog.cancel();
 				}
 			});
@@ -1049,14 +1006,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			LayoutInflater li = LayoutInflater.from(getActivity());
 			final View promptsView = li.inflate(R.layout.account_transfer, null);
-
 			final EditText tAmount = (EditText) promptsView.findViewById(R.id.EditAccountAmount);
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
 			alertDialogBuilder.setView(promptsView);
-
-			//Set Title
 			alertDialogBuilder.setTitle("Transfer Money");
 
 			transferSpinnerFrom = (Spinner)promptsView.findViewById(R.id.SpinnerAccountFrom);

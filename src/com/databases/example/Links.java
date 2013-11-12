@@ -1,3 +1,7 @@
+/* Currently unused Class that handles will allow user to attach a file to a Transaction
+ * Everything appears to work. Just needs to be integrated with Checkbook screen
+ */
+
 package com.databases.example;
 
 import java.io.File;

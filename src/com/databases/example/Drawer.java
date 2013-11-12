@@ -1,3 +1,7 @@
+/* Class that handles the NavigationDrawer when a user swipes from the right or 
+ * clicks the icon in the ActionBar
+ */
+
 package com.databases.example;
 
 import android.app.Activity;

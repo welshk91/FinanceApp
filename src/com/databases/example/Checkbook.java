@@ -1,3 +1,8 @@
+/* A simple Activity for the Checkbook screen
+ * Most of the work seen in the Checkbook screen is actually the fragments,
+ * not this class. This class is just a simple parent Activity for the fragments
+ */
+
 package com.databases.example;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -42,7 +47,6 @@ public class Checkbook extends SherlockFragmentActivity {
 		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
-		
 		/*NOTE To Self
 		 * took out the if because changing orientation resulted
 		 * in transaction fragment staying in accountsFrame

@@ -1,3 +1,7 @@
+/* Class that handles the Transaction Fragment seen in the Checkbook screen
+ * Does everything from setting up the view to Add/Delete/Edit Transactions to calculating the balance
+ */
+
 package com.databases.example;
 
 import java.math.BigDecimal;

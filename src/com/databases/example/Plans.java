@@ -1,3 +1,8 @@
+/* Class that handles the Scheduled Transactions seen in the Plans Screen
+ * Does everything from setting up the view to Add/Delete/Edit
+ * Hands over the actual scheduling to PlanReceiver Class
+ */
+
 package com.databases.example;
 
 import java.text.SimpleDateFormat;

@@ -1,3 +1,8 @@
+/* Class that handles the Dropbox Options in the Options Menu
+ * Incomplete: still doesn't do syncing to multiple devices, Dropbox Drop-In Saver not available yet
+ * Complete: Dropbox Drop-In Chooser works
+ */
+
 package com.databases.example;
 
 import java.io.File;

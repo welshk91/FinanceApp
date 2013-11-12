@@ -48,28 +48,28 @@ public class Categories extends SherlockFragmentActivity{
 	//NavigationDrawer
 	private Drawer mDrawerLayout;
 
-	ExpandableListView lvCategory = null;
-	static UserItemAdapter adapterCategory = null;
+	private ExpandableListView lvCategory = null;
+	private static UserItemAdapter adapterCategory = null;
 
 	//Constant for ActionbarId
-	final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
+	private final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
 
 	//Constants for ContextMenu (Category)
-	final int CONTEXT_MENU_CATEGORY_ADD=1;
-	final int CONTEXT_MENU_CATEGORY_VIEW=2;
-	final int CONTEXT_MENU_CATEGORY_EDIT=3;
-	final int CONTEXT_MENU_CATEGORY_DELETE=4;
+	private final int CONTEXT_MENU_CATEGORY_ADD=1;
+	private final int CONTEXT_MENU_CATEGORY_VIEW=2;
+	private final int CONTEXT_MENU_CATEGORY_EDIT=3;
+	private final int CONTEXT_MENU_CATEGORY_DELETE=4;
 
 	//Constants for ContextMenu (SubCategory)
-	final int CONTEXT_MENU_SUBCATEGORY_VIEW=5;
-	final int CONTEXT_MENU_SUBCATEGORY_EDIT=6;
-	final int CONTEXT_MENU_SUBCATEGORY_DELETE=7;
+	private final int CONTEXT_MENU_SUBCATEGORY_VIEW=5;
+	private final int CONTEXT_MENU_SUBCATEGORY_EDIT=6;
+	private final int CONTEXT_MENU_SUBCATEGORY_DELETE=7;
 
-	ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
-	ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
-	ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
-	Cursor cursorCategory;
-	Cursor cursorSubCategory;
+	private ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
+	private ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
+	private ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
+	private Cursor cursorCategory;
+	private Cursor cursorSubCategory;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -452,17 +452,16 @@ public class Categories extends SherlockFragmentActivity{
 					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
 				}
 
-				//Change Size of main field
+				//Change Size/Color of main field
+				TextView catName=(TextView)v.findViewById(R.id.category_name);
 				try{
 					String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "16");
-					TextView t;
-					t=(TextView)v.findViewById(R.id.category_name);
 
 					if(useDefaults){
-						t.setTextSize(16);
+						catName.setTextSize(16);
 					}
 					else{
-						t.setTextSize(Integer.parseInt(DefaultSize));
+						catName.setTextSize(Integer.parseInt(DefaultSize));
 					}
 
 				}
@@ -472,14 +471,12 @@ public class Categories extends SherlockFragmentActivity{
 
 				try{
 					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
-					TextView t;
-					t=(TextView)v.findViewById(R.id.category_name);
 
 					if(useDefaults){
-						t.setTextColor(Color.parseColor("#000000"));
+						catName.setTextColor(Color.parseColor("#000000"));
 					}
 					else{
-						t.setTextColor(DefaultColor);
+						catName.setTextColor(DefaultColor);
 					}
 
 				}

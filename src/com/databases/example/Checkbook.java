@@ -71,12 +71,12 @@ public class Checkbook extends SherlockFragmentActivity {
 		account_frag.setArguments(argsAccount);
 
 		if(checkbook_frame==null){
-			Log.e("Checkbook-onCreate","checkbook_frame=null");
+			Log.d("Checkbook-onCreate","checkbook_frame=null");
 			getSupportFragmentManager().beginTransaction()
 			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 		}
 		else{
-			Log.e("Checkbook-onCreate","checkbook_frame!=null");
+			Log.d("Checkbook-onCreate","checkbook_frame!=null");
 			getSupportFragmentManager().beginTransaction().
 			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
 		}
@@ -114,7 +114,7 @@ public class Checkbook extends SherlockFragmentActivity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle bundle1){
-		Log.e("Checkbook-saveInstanceState", "here...");
+		Log.d("Checkbook-saveInstanceState", "Save anything important...");
 	}
 
 	//For Menu Items

@@ -14,7 +14,6 @@ import java.nio.channels.FileChannel;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,10 +40,6 @@ public class SD extends SherlockFragmentActivity{
 
 	//NavigationDrawer
 	private Drawer mDrawerLayout;
-
-	//Dialogs that need to be dismissed
-	AlertDialog alertDialogCreate;
-	AlertDialog alertDialogRestore;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){

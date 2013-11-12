@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.util.Log;
 
 public class MyContentProvider extends ContentProvider{
-
 	// Contacts table name
 	private static DatabaseHelper dh = null;
 
@@ -94,7 +93,7 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case ACCOUNTS_ID:
 			cursor = dh.getAccounts();
-			Log.e("MyContentProvider-query", "URI="+uri);
+			Log.d("MyContentProvider-query", "URI="+uri);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case ACCOUNT_ID:
@@ -163,7 +162,7 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case DATABASE_ID:
 			dh.deleteDatabase();
-			Log.e("MyContentProvider-delete", "URI="+ACCOUNTS_URI);
+			Log.d("MyContentProvider-delete", "URI="+ACCOUNTS_URI);
 			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
 			getContext().getContentResolver().notifyChange(TRANSACTIONS_URI, null);
 			getContext().getContentResolver().notifyChange(CATEGORIES_URI, null);
@@ -245,13 +244,13 @@ public class MyContentProvider extends ContentProvider{
 
 		switch (uriType) {
 		case TRANSACTION_ID:
-			Log.e("MyContentProvider-update", "Updating transaction & account information");
+			Log.d("MyContentProvider-update", "Updating transaction & account information");
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
 			break;
 		case ACCOUNT_ID:
-			Log.e("MyContentProvider-update", "Updating account information");
+			Log.d("MyContentProvider-update", "Updating account information");
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
@@ -266,7 +265,7 @@ public class MyContentProvider extends ContentProvider{
 	@Override
 	public String getType(Uri uri) {
 		// TODO Auto-generated method stub
-		Log.e("MyContentProvider-getType", "Tried to use getType method, but I didn't do anything but return null here...");
+		Log.d("MyContentProvider-getType", "Tried to use getType method, but I didn't do anything but return null here...");
 		return null;
 	}
 

@@ -37,28 +37,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Links extends SherlockFragmentActivity{
-
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
-	final static int PICKFILE_RESULT_CODE = 1;
-	final static int PICKCONTACT_RESULT_CODE = 2;
+	private final static int PICKFILE_RESULT_CODE = 1;
+	private final static int PICKCONTACT_RESULT_CODE = 2;
 
 	//NavigationDrawer
 	private Drawer mDrawerLayout;
 
-	Intent lastLink;
-	String linkFilePath = null;
-	static int linkItem;
+	private Intent lastLink;
+	private String linkFilePath = null;
+	private static int linkItem;
 
 	//Contact Info
-	long contactId = 0;
-	String contactName = null;
-	String contactPhone = null;
-	String contactEmail = null;
-	Uri contactPhoto = null;
+	private long contactId = 0;
+	private String contactName = null;
+	private String contactPhone = null;
+	private String contactEmail = null;
+	private Uri contactPhoto = null;
 
-	static Intent intent = null;
-	AlertDialog alertDialogAttachment;
+	private static Intent intent = null;
+	private AlertDialog alertDialogAttachment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){

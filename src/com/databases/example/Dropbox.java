@@ -35,17 +35,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Dropbox extends SherlockFragmentActivity{
-
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
-
 	//NavigationDrawer
 	private Drawer mDrawerLayout;
 
 	//DropBox
 	private DbxAccountManager dbAccountManager;
-	static final int REQUEST_LINK_TO_DBX = 100;
-	static final int DBX_CHOOSER_REQUEST = 200;
+	private static final int REQUEST_LINK_TO_DBX = 100;
+	private static final int DBX_CHOOSER_REQUEST = 200;
 	private static final String appKey = "n98lux9z2rp08lb";
 	private static final String appSecret = "exp7ofyw3illtlw";
 

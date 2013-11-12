@@ -63,55 +63,53 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Plans extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-	final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
+	private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
 	//NavigationDrawer
 	private Drawer mDrawerLayout;
-	
+
 	//Adapter for category spinner
-	SimpleCursorAdapter categorySpinnerAdapter = null;
-	Spinner categorySpinner;
+	private SimpleCursorAdapter categorySpinnerAdapter = null;
+	private Spinner categorySpinner;
 
 	//Alert Dialogs (Need to be closed properly)
-	AlertDialog alertDialogView;
-	AlertDialog alertDialogAdd;
-	AlertDialog alertDialogEdit;
+	private AlertDialog alertDialogView;
+	private AlertDialog alertDialogAdd;
+	private AlertDialog alertDialogEdit;
 
 	private static final int PLAN_LOADER = 5882300;
 
 	//Cursor (Need to be closed properly)
-	Cursor cursorPlans;
+	private Cursor cursorPlans;
 
 	//Adapter for category spinner
-	SimpleCursorAdapter accountSpinnerAdapter = null;
-	Spinner accountSpinner;
+	private SimpleCursorAdapter accountSpinnerAdapter = null;
+	private Spinner accountSpinner;
 
 	//Date Format to use for time (01:42 PM)
-	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
 
 	//Date Format to use for date (03-26-2013)
-	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
+	private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	//Variables for the transaction Table
-	static String transactionDate = null;
+	private static String transactionDate = null;
 
 	//Constants for ContextMenu
-	final int CONTEXT_MENU_OPEN=1;
-	final int CONTEXT_MENU_EDIT=2;
-	final int CONTEXT_MENU_DELETE=3;
-	final int CONTEXT_MENU_CANCEL=4;
+	private final int CONTEXT_MENU_OPEN=1;
+	private final int CONTEXT_MENU_EDIT=2;
+	private final int CONTEXT_MENU_DELETE=3;
+	private final int CONTEXT_MENU_CANCEL=4;
 
 	//Dialog for Adding Transaction
-	static View promptsView;
+	private static View promptsView;
 
-	static Button pDate;
-
-	UserItemAdapter adapterPlans;
-
-	ListView lvPlans;
+	private static Button pDate;
+	private UserItemAdapter adapterPlans;
+	private ListView lvPlans;
 
 	//For Memo autocomplete
-	ArrayList<String> dropdownResults = new ArrayList<String>();
+	private ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -974,7 +972,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 				String offset = user.getString(OffsetColumn);
 				String rate = user.getString(RateColumn);
 				String cleared = user.getString(ClearedColumn);
-				
+
 				Locale locale=getResources().getConfiguration().locale;
 
 

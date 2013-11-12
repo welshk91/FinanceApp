@@ -55,32 +55,32 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
-	final int PICKFILE_RESULT_CODE = 1;
+	private final int PICKFILE_RESULT_CODE = 1;
 	private static final int ACCOUNTS_LOADER = 123456789;
 	private static DatabaseHelper dh = null;
 
 	//Constants for ContextMenu
-	int CONTEXT_MENU_OPEN=1;
-	int CONTEXT_MENU_EDIT=2;
-	int CONTEXT_MENU_DELETE=3;
-	int CONTEXT_MENU_ATTACH=4;
+	private int CONTEXT_MENU_OPEN=1;
+	private int CONTEXT_MENU_EDIT=2;
+	private int CONTEXT_MENU_DELETE=3;
+	private int CONTEXT_MENU_ATTACH=4;
 
 	//Spinners for transfers
-	static Spinner transferSpinnerTo;
-	static Spinner transferSpinnerFrom;
-	static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
-	static SimpleCursorAdapter transferSpinnerAdapterTo = null;
+	private static Spinner transferSpinnerTo;
+	private static Spinner transferSpinnerFrom;
+	private static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
+	private static SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
-	View myFragmentView;
+	private View myFragmentView;
 
 	//Date Format to use for time (01:42 PM)
-	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
 
 	//Date Format to use for date (03-26-2013)
-	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
+	private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
-	ListView lv = null;
-	static UserItemAdapter adapterAccounts = null;
+	private ListView lv = null;
+	private static UserItemAdapter adapterAccounts = null;
 
 	//Method called upon first creation
 	@Override
@@ -410,7 +410,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		Log.e("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
+		Log.d("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
 		getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
 	}
 
@@ -1200,7 +1200,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
-		Log.e("Accounts-onCreateLoader", "calling create loader...");
+		Log.d("Accounts-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case ACCOUNTS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
@@ -1232,13 +1232,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("Accounts", "load done. loader="+loader + " data="+data);
+		Log.d("Accounts", "load done. loader="+loader + " data="+data);
 		adapterAccounts.swapCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.e("Accounts", "loaderReset on " + loader);
+		Log.d("Accounts", "loaderReset on " + loader);
 		//Not sure what should go here....
 		adapterAccounts.swapCursor(null);
 	}

@@ -63,44 +63,43 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
-
-	//Used to determine if fragment should show all transactions
-	boolean showAllTransactions=false;
-
-	//Dialog for Adding Transaction
-	static View promptsView;
-	View myFragmentView;
-
 	private static final int TRANS_LOADER = 987654321;
 
-	static Spinner tCategory;
-	static Button tTime;
-	static Button tDate;
+	//Used to determine if fragment should show all transactions
+	private boolean showAllTransactions=false;
+
+	//Dialog for Adding Transaction
+	private static View promptsView;
+	private View myFragmentView;
+
+	private static Spinner tCategory;
+	private static Button tTime;
+	private static Button tDate;
 
 	//Date Format to use for time (01:42 PM)
-	final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
 
 	//Date Format to use for date (03-26-2013)
-	final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
+	private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	//Variables of the Account Used
-	static int account_id;
+	private static int account_id;
 
 	//Constants for ContextMenu
-	int CONTEXT_MENU_OPEN=5;
-	int CONTEXT_MENU_EDIT=6;
-	int CONTEXT_MENU_DELETE=7;
-	int CONTEXT_MENU_ATTACH=8;
+	private int CONTEXT_MENU_OPEN=5;
+	private int CONTEXT_MENU_EDIT=6;
+	private int CONTEXT_MENU_DELETE=7;
+	private int CONTEXT_MENU_ATTACH=8;
 
 	//ListView Adapter
-	static UserItemAdapter adapterTransaction = null;
+	private static UserItemAdapter adapterTransaction = null;
 
 	//For Autocomplete
-	static ArrayList<String> dropdownResults = new ArrayList<String>();
+	private static ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	//Adapter for category spinner
-	static SimpleCursorAdapter categorySpinnerAdapter = null;
-	Cursor categoryCursor;
+	private static SimpleCursorAdapter categorySpinnerAdapter = null;
+	private Cursor categoryCursor;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -1198,7 +1197,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 			if(account_id==0){
-				Log.e("AddDialog", "in if statement");
+				Log.d("Transaction-AddDialog", "in if statement");
 				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 				alertDialogBuilder.setTitle("No Account Selected");
 				alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");
@@ -1346,7 +1345,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
-		Log.e("Transactions-onCreateLoader", "calling create loader...");
+		Log.d("Transactions-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case TRANS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
@@ -1392,7 +1391,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("Transaction", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+		Log.d("Transaction", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 		adapterTransaction.swapCursor(data);		
 	}
 
@@ -1404,7 +1403,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		 * swapping cursor makes the cursor retrieve data correctly, but nullifies it almost instantly
 		 *****/
 
-		Log.e("Transaction", "loaderReset on " + loader);
+		Log.d("Transaction", "loaderReset on " + loader);
 		//loader = null; //Possible Solution????	
 	}
 

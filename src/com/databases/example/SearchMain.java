@@ -38,12 +38,6 @@ public class SearchMain extends SherlockFragmentActivity {
 	//The word being searched
 	private String query;
 
-	//Variables for the Database
-	public final String tblAccounts = "tblAccounts";
-	final String tblTrans = "tblTrans";
-	public final String dbFinance = "dbFinance";
-	public SQLiteDatabase myDB = null;
-
 	//NavigationDrawer
 	private Drawer mDrawerLayout;	
 

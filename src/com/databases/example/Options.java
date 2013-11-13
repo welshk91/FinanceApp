@@ -24,6 +24,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -303,6 +304,19 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		//			alertDialogReset.dismiss();
 		//		}
 		super.onPause();
+	}
+
+	//Fixes theme problems on devices lower than Honeycomb
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference)
+	{
+		super.onPreferenceTreeClick(preferenceScreen, preference);
+		if (preference!=null)
+			if (preference instanceof PreferenceScreen)
+				if (((PreferenceScreen)preference).getDialog()!=null)
+					((PreferenceScreen)preference).getDialog().getWindow().getDecorView().setBackgroundDrawable(this.getWindow().getDecorView().getBackground().getConstantState().newDrawable());
+		return false;
 	}
 
 	//	@Override

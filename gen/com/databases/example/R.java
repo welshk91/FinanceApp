@@ -1842,6 +1842,7 @@ containing a value of this type.
         public static final int Item_Sticky=0x7f070007;
         public static final int Item_Top=0x7f070006;
         public static final int NavigationDrawer=0x7f070068;
+        public static final int PrefsTheme=0x7f070069;
         public static final int Sherlock___TextAppearance_Small=0x7f070059;
         public static final int Sherlock___Theme=0x7f07005d;
         public static final int Sherlock___Theme_DarkActionBar=0x7f07005f;
@@ -1876,6 +1877,7 @@ containing a value of this type.
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Large=0x7f070051;
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Small=0x7f070053;
         public static final int TextAppearance_Sherlock_Widget_TextView_SpinnerItem=0x7f070055;
+        public static final int Theme_Preferences=0x7f07006b;
         public static final int Theme_Sherlock=0x7f070061;
         public static final int Theme_Sherlock_Dialog=0x7f070066;
         public static final int Theme_Sherlock_Light=0x7f070062;
@@ -1931,6 +1933,8 @@ containing a value of this type.
         public static final int Widget_Sherlock_Spinner_DropDown_ActionBar=0x7f070033;
         public static final int Widget_Sherlock_TextView_SpinnerItem=0x7f070041;
         public static final int _CommonButtonBase=0x7f07000c;
+        public static final int lightListView=0x7f07006c;
+        public static final int listViewPrefs=0x7f07006a;
     }
     public static final class xml {
         public static final int preference_appearance=0x7f040000;

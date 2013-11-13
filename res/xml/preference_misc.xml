@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="pref_screen_misc"
-    android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+    android:key="pref_screen_misc" >
 
     <Preference
         android:key="pref_reset"

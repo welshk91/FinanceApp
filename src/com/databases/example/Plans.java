@@ -15,7 +15,6 @@ import java.util.Locale;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;

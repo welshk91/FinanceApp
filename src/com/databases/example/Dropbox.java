@@ -21,7 +21,6 @@ import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;

@@ -76,8 +76,10 @@ public class Categories extends SherlockFragmentActivity{
 		super.onCreate(savedInstanceState);
 		dh = new DatabaseHelper(this);
 
-		setTitle("Categories");
 		setContentView(R.layout.categories);
+		setTitle("Categories");
+		getSupportActionBar().setHomeButtonEnabled(true);
+
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);

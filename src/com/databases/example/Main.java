@@ -45,7 +45,8 @@ public class Main extends SherlockActivity {
 		}
 
 		setContentView(R.layout.main);
-
+		getSupportActionBar().setHomeButtonEnabled(true);
+		
 		//Initialize Card View
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);

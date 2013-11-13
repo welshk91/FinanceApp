@@ -59,8 +59,10 @@ public class Links extends SherlockFragmentActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setTitle("Attachments");
 		setContentView(R.layout.links);
+		setTitle("Attachments");
+		getSupportActionBar().setHomeButtonEnabled(true);
+
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);

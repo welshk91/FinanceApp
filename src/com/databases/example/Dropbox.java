@@ -47,8 +47,10 @@ public class Dropbox extends SherlockFragmentActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setTitle("Dropbox");
 		setContentView(R.layout.dropbox);
+		setTitle("Dropbox");
+		getSupportActionBar().setHomeButtonEnabled(true);
+
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);

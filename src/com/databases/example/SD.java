@@ -44,8 +44,10 @@ public class SD extends SherlockFragmentActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setTitle("Local Backup");
 		setContentView(R.layout.sd);
+		setTitle("Local Backup");
+		getSupportActionBar().setHomeButtonEnabled(true);
+
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);

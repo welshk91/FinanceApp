@@ -26,6 +26,7 @@ public class Checkbook extends SherlockFragmentActivity {
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.checkbook);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);

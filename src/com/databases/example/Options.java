@@ -39,6 +39,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setTitle("Options");
+		getSupportActionBar().setHomeButtonEnabled(true);
 
 		if (Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(R.xml.preference_appearance);

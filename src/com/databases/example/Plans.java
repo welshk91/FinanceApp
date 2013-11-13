@@ -114,8 +114,10 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 
-		setTitle("Plans");
 		setContentView(R.layout.plans);
+		setTitle("Plans");
+		getSupportActionBar().setHomeButtonEnabled(true);
+
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -1256,7 +1258,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+		Log.d("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 		adapterPlans.swapCursor(data);
 	}
 

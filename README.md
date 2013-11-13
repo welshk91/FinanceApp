@@ -78,7 +78,6 @@ Third-Party Libraries Used
 * [ActionBarSherlock](http://actionbarsherlock.com/) by Jake Wharton
 * [Android Lock Pattern](https://code.google.com/p/android-lockpattern/)
 * [ColorPickerPreference](https://github.com/attenzione/android-ColorPickerPreference) by Sergey Margaritov
-* [Sliding Menu](https://github.com/jfeinstein10/SlidingMenu/) by Jeremy Feinstein
 * [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide
 * Soon: [Showcase View](https://github.com/Espiandev/ShowcaseView) by Alex Curran
 * Soon: [ChartView](https://github.com/nadavfima/ChartView/) by nadavfima

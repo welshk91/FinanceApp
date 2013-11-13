@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_home"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Home"
             android:textColor="#ff707070" >
         </Button>
@@ -30,7 +30,7 @@
             android:layout_below="@+id/slidingmenu_home"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_archive"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Checkbook"
             android:textColor="#ff707070" >
         </Button>
@@ -42,7 +42,7 @@
             android:layout_below="@+id/slidingmenu_checkbook"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_sort_by_size"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Categories"
             android:textColor="#ff707070" >
         </Button>
@@ -54,7 +54,7 @@
             android:layout_below="@+id/slidingmenu_categories"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_today"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Schedules"
             android:textColor="#ff707070" >
         </Button>
@@ -66,7 +66,7 @@
             android:layout_below="@+id/slidingmenu_schedules"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_agenda"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Statistics"
             android:textColor="#ff707070" >
         </Button>
@@ -85,7 +85,7 @@
             android:layout_below="@+id/slidingmenu_statistics"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_preferences"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Options"
             android:textColor="#ff707070" >
         </Button>
@@ -97,7 +97,7 @@
             android:layout_below="@+id/slidingmenu_options"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_help"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="Help"
             android:textColor="#ff707070" >
         </Button>
@@ -109,7 +109,7 @@
             android:layout_below="@+id/slidingmenu_help"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_close_clear_cancel"
-            android:padding="15dp"
+            android:padding="5dp"
             android:text="@string/exit"
             android:textColor="#ff707070" >
         </Button>

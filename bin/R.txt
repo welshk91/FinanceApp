@@ -1002,7 +1002,6 @@ int style Item 0x7f070005
 int style Item_Sticky 0x7f070007
 int style Item_Top 0x7f070006
 int style NavigationDrawer 0x7f070068
-int style PrefsTheme 0x7f070069
 int style Sherlock___TextAppearance_Small 0x7f070059
 int style Sherlock___Theme 0x7f07005d
 int style Sherlock___Theme_DarkActionBar 0x7f07005f
@@ -1037,7 +1036,6 @@ int style TextAppearance_Sherlock_Widget_PopupMenu 0x7f070050
 int style TextAppearance_Sherlock_Widget_PopupMenu_Large 0x7f070051
 int style TextAppearance_Sherlock_Widget_PopupMenu_Small 0x7f070053
 int style TextAppearance_Sherlock_Widget_TextView_SpinnerItem 0x7f070055
-int style Theme_Preferences 0x7f07006b
 int style Theme_Sherlock 0x7f070061
 int style Theme_Sherlock_Dialog 0x7f070066
 int style Theme_Sherlock_Light 0x7f070062
@@ -1093,8 +1091,6 @@ int style Widget_Sherlock_SearchAutoCompleteTextView 0x7f070043
 int style Widget_Sherlock_Spinner_DropDown_ActionBar 0x7f070033
 int style Widget_Sherlock_TextView_SpinnerItem 0x7f070041
 int style _CommonButtonBase 0x7f07000c
-int style lightListView 0x7f07006c
-int style listViewPrefs 0x7f07006a
 int[] styleable SherlockActionBar { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004, 0x7f010005, 0x7f010048, 0x7f010049, 0x7f01004a, 0x7f01004b, 0x7f01004c, 0x7f01004d, 0x7f01004e, 0x7f01004f, 0x7f010050, 0x7f010051, 0x7f010052, 0x7f010053, 0x7f010054 }
 int styleable SherlockActionBar_background 2
 int styleable SherlockActionBar_backgroundSplit 3
@@ -1167,7 +1163,7 @@ int styleable SherlockSearchView_android_inputType 1
 int styleable SherlockSearchView_android_maxWidth 0
 int styleable SherlockSearchView_iconifiedByDefault 3
 int styleable SherlockSearchView_queryHint 4
-int[] styleable SherlockSpinner { 0x010100af, 0x01010175, 0x01010176, 0x0101017b, 0x01010262, 0x010102ac, 0x010102ad, 0x0101041f }
+int[] styleable SherlockSpinner { 0x010100af, 0x01010175, 0x01010176, 0x0101017b, 0x01010262, 0x010102ac, 0x010102ad, 0x0101043a }
 int styleable SherlockSpinner_android_dropDownHorizontalOffset 5
 int styleable SherlockSpinner_android_dropDownSelector 1
 int styleable SherlockSpinner_android_dropDownVerticalOffset 6

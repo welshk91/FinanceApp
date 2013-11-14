@@ -319,6 +319,12 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		return false;
 	}
 
+	//checks to see if fragment is allowed to be attached
+	@Override
+	protected boolean isValidFragment (String fragmentName){
+		return true;
+	 }
+	
 	//	@Override
 	//	public void setContentView(int layoutResID) {
 	//		setContentView(getLayoutInflater().inflate(layoutResID, null));

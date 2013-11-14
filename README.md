@@ -5,7 +5,7 @@ A simple app to handle transactions on the go. Originally designed as a knockoff
 
 Screen Shots
 -------------
-[Home](Screenshots/Screenshots/Main.png)
+[Home](Screenshots/Screenshots/Home/Main.png)
 
 
 

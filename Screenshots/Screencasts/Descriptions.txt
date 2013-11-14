@@ -1,0 +1,15 @@
+Categories - This screen is where the user can add, delete, or edit Categories & SubCategories used to describe Transactions. I created this screen with an ExpandableListView, with the "parents" being Categories and the "children" being SubCategories.
+
+Checkbook - This screen is where a user can add, delete, or edit Accounts or Transactions. What you see is a Checkbook parent class that holds either one fragment or two, depending on if you're using a phone or a tablet. If you use a tablet (like the recording), you see both the Accounts Fragment and the Transactions Fragment at the same time in a dual-pane view. If you're using a phone, you only see one fragment at a time (clicking on an account loads its transactions).
+
+Home - This screen shows the user general information that might be useful. Multiple "cards" (similar to Google Now's cards) are displayed to the user, showing information about Accounts, Transactions, Plans, and Statistics. Currently these cards are hard-coded to show off the look, but soon will work. I used a third-party library for the cards.
+
+Options-Appearance - This screen shows the Options for my app. It's built with a PreferenceActivity and PreferenceHeaders. The user can change the look of Accounts and Transactions (Plans and Categories coming soon), from colors to size of the fonts to which information is displayed. 
+
+Options-Behavior-Dropbox - This screen shows the Dropbox Options. You can Login or Logout of Dropbox, Sync your data to multiple devices, Backup from the cloud, and Restore from the cloud. Currently, the code for Sync is only half-done and I'm currently waiting for Dropbox to release the Drop-In API for Backing up. Restoring does work.
+
+Options-Behavior-LocalBackup - This screen shows the Local Storage Options. Users can Backup and Restore from a custom folder on their SD Card.
+
+Options-Behavior-Lockscreen - This screen shows the Lockscreen Options. Users can enable a lockscreen. Once enabled, if the user has set a pattern, the app will require that pattern every time you close out of the app. I use a third-party library to accomplish this.
+
+Plans - This screen is where users can add, delete, or edit Plans (ie Scheduled Transactions). This is just a simple ListView of all the Plans. The real scheduling of the plans occurs in the PlanReceiver class, which also handles rescheduling if the user reboots.

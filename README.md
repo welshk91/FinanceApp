@@ -23,7 +23,6 @@ Known Issues
 --------------------------------------
 * Dialogs close on rotate.
 * Going into checkbook, rotating, then adding an account will cause populate not to change the update the appearance of the fragment.
-* Setting my application to target anything above android:targetSdkVersion="13" causes slidingMenu not to work. You can slide the menu over, but clicking the icon in the actionbar no longer revels the launcher (is this intended?)
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 
 Things To Do
@@ -61,16 +60,15 @@ Optimizations
 
 Notes to Self
 --------------------------------------
-* GIT Reminders for Myself:
-	- git add -A
-	- git commit -a -m 'Fixed some warnings'
-	- git push -u origin master
 * Need more spinners, less typing
 * Possibly 'hide' advance options in add dialogs, 'expand' for more options
 * Link a contact (own table?)
 * Possibly a payee field, own table. Can avoid if description is dropdown.
 * What should happen when a user clicks on a search result?
-
+* GIT Reminders for Myself:
+	- git add -A
+	- git commit -a -m 'Fixed some warnings'
+	- git push -u origin master
 
 Attachments
 ---------------------------------------

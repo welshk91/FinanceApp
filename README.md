@@ -3,6 +3,13 @@ FinanceApp
 
 A simple app to handle transactions on the go. Originally designed as a knockoff of ["Checkbook"](https://play.google.com/store/apps/details?id=com.tts.checkbookenhanced#?t=W251bGwsMSwxLDIxMiwiY29tLnR0cy5jaGVja2Jvb2tlbmhhbmNlZCJd) by Digital Life Solutions, it has since evolved to attempt to follow the Google Android Design Guidelines better (Holo Design, ActionBar, Fragments, ...). 
 
+Screen Shots
+-------------
+[Home](/Screenshots/Screenshots/Main.png)
+
+
+
+
 Usage
 -----
 There is currently no license I'm releasing this code under (subject to change). Feel free to use it in whatever way you see fit. 

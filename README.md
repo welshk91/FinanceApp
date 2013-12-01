@@ -22,7 +22,6 @@ There is currently no license I'm releasing this code under (subject to change).
 Known Issues
 --------------------------------------
 * Dialogs close on rotate.
-* Going into checkbook, rotating, then adding an account will cause populate not to change the update the appearance of the fragment.
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 
 Things To Do

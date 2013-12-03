@@ -55,7 +55,7 @@
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_today"
             android:padding="5dp"
-            android:text="Schedules"
+            android:text="Plans"
             android:textColor="#ff707070" >
         </Button>
 

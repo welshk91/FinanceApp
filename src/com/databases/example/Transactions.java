@@ -269,7 +269,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getChildFragmentManager(), "dialogView");
-
 	}  
 
 	//For Adding a Transaction
@@ -1196,7 +1195,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 			if(account_id==0){
-				Log.d("Transaction-AddDialog", "in if statement");
+				Log.d("Transaction-AddDialog", "No account selected before attempting to add transaction...");
 				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 				alertDialogBuilder.setTitle("No Account Selected");
 				alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");

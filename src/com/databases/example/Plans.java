@@ -19,6 +19,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.Categories.CategoryRecord;
 import com.databases.example.Categories.SubCategoryRecord;
 import com.databases.example.Categories.ViewDialogFragment;
+import com.databases.example.Transactions.AddDialogFragment;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -73,8 +74,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	private Drawer mDrawerLayout;
 
 	//Adapter for category spinner
-	private SimpleCursorAdapter categorySpinnerAdapter = null;
-	private Spinner categorySpinner;
+	private static SimpleCursorAdapter categorySpinnerAdapter = null;
+	private static Spinner categorySpinner;
 
 	//Alert Dialogs (Need to be closed properly)
 	//private AlertDialog alertDialogView;
@@ -87,8 +88,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	private Cursor cursorPlans;
 
 	//Adapter for category spinner
-	private SimpleCursorAdapter accountSpinnerAdapter = null;
-	private Spinner accountSpinner;
+	private static SimpleCursorAdapter accountSpinnerAdapter = null;
+	private static Spinner accountSpinner;
 
 	//Date Format to use for time (01:42 PM)
 	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
@@ -113,7 +114,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	private ListView lvPlans;
 
 	//For Memo autocomplete
-	private ArrayList<String> dropdownResults = new ArrayList<String>();
+	private static ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -154,181 +155,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	}
 
 	//For Scheduling a Transaction
-	public void schedulingAdd(){
-		LayoutInflater li = LayoutInflater.from(this);
-		promptsView = li.inflate(R.layout.plan_add, null);
-
-		final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-		final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-		final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-		categorySpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-		accountSpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_account);
-		final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
-		final EditText tRate = (EditText) promptsView.findViewById(R.id.EditRate);
-		final Spinner rateSpinner = (Spinner)promptsView.findViewById(R.id.spinner_rate_type);
-		final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-
-		final Calendar c = Calendar.getInstance();
-		pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-		pDate.setText(dateFormat.format(c.getTime()));
-
-		//Adapter for memo's autocomplete
-		ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dropdownResults);
-		tMemo.setAdapter(dropdownAdapter);
-
-		//Add dictionary back to autocomplete
-		TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
-		tMemo.setKeyListener(input);
-
-		//Populate Category Drop-down List
-		categoryPopulate();
-
-		//Populate Account Drop-down List
-		accountPopulate();
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		// set account_add.xml to AlertDialog builder
-		alertDialogBuilder.setView(promptsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("Schedule A Transaction");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(false)
-		.setPositiveButton("Add",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				//Variables for the transaction Table
-				String transactionAccountID = null;
-				String transactionAccount = null;
-				String transactionName = null;
-				Money transactionValue = null;
-				String transactionType = null;
-				String transactionCategory = null;
-				String transactionMemo = null;
-				String transactionOffset = null;
-				String transactionRate = null;
-				String transactionCleared = null;
-				Locale locale=getResources().getConfiguration().locale;
-
-				//Needed to get category's name from DB-populated spinner
-				int categoryPosition = categorySpinner.getSelectedItemPosition();
-				Cursor cursorCategory = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);	
-
-				//Needed to get account's name from DB-populated spinner
-				int accountPosition = accountSpinner.getSelectedItemPosition();
-				Cursor cursorAccount = (Cursor) accountSpinnerAdapter.getItem(accountPosition);				
-
-				transactionName = tName.getText().toString().trim();
-				try{
-					transactionValue = new Money(tValue.getText().toString().trim());	
-				}
-				catch(Exception e){
-					Log.e("Plans-schedulingAdd","Invalid Value? Exception e:" + e);
-					dialog.cancel();
-					Toast.makeText(Plans.this, "Invalid Value", Toast.LENGTH_LONG).show();
-					return;
-				}
-
-				transactionType = tType.getSelectedItem().toString().trim();
-
-				try{
-					transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex("AcctName"));
-					transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
-				}
-				catch(Exception e){
-					//Usually caused if no account exists
-					Log.e("Plans-schedulingAdd","No Account? Exception e:" + e);
-					dialog.cancel();
-					Toast.makeText(Plans.this, "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
-					return;
-				}
-
-				try{
-					//	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
-					transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
-				}
-				catch(Exception e){
-					//Usually caused if no category exists
-					Log.e("Plans-schedulingAdd","No Category? Exception e:" + e);
-					dialog.cancel();
-					Toast.makeText(Plans.this, "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
-					return;
-				}
-
-				transactionMemo = tMemo.getText().toString().trim();
-
-				//Set Time
-				transactionOffset = pDate.getText().toString().trim();
-				transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
-				transactionCleared = tCleared.isChecked()+"";
-
-				//Check to see if value is a number
-				boolean validRate=false;
-				try{
-					Integer.parseInt(tRate.getText().toString().trim());
-					validRate=true;
-				}
-				catch(Exception e){
-					Log.e("Plans","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
-					validRate=false;
-				}
-
-				try{
-					if (transactionName.length()>0 && validRate) {
-						Log.d("Plans", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
-
-						ContentValues transactionValues = new ContentValues();
-						transactionValues.put("ToAcctID", transactionAccountID);
-						transactionValues.put("PlanName", transactionName);
-						transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
-						transactionValues.put("PlanType", transactionType);
-						transactionValues.put("PlanCategory", transactionCategory);
-						transactionValues.put("PlanMemo", transactionMemo);
-						transactionValues.put("PlanOffset", transactionOffset);
-						transactionValues.put("PlanRate", transactionRate);
-						transactionValues.put("PlanCleared", transactionCleared);
-
-						Uri u = getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
-
-						PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
-						schedule(record);
-
-						//Refresh the plans list
-						plansPopulate();
-					} 
-
-					else {
-						Toast.makeText(Plans.this, "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
-					}
-				}
-				catch(Exception e){
-					Log.e("Plans-Edit", "e = " + e);
-					Toast.makeText(Plans.this, "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-				}
-
-			}//end onClick "OK"
-		})
-		.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog,int id) {
-				// CODE FOR "Cancel"
-				dialog.cancel();
-			}
-		});
-
-		// create alert dialog
-		alertDialogAdd = alertDialogBuilder.create();
-
-		// show it
-		alertDialogAdd.show();
-
-	}//end of transactionAdd
+	public void planAdd(){
+		DialogFragment newFragment = AddDialogFragment.newInstance();
+		newFragment.show(getSupportFragmentManager(), "dialogAdd");		
+	}//end of planAdd
 
 	//Delete Plan
-	public void schedulingDelete(android.view.MenuItem item){
+	public void planDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
@@ -343,10 +176,10 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		//Refresh the categories list
 		plansPopulate();
 
-	}//end categoryDelete
+	}//end planDelete
 
 	//For Editing a Scheduled Transaction
-	public void schedulingEdit(final android.view.MenuItem item){
+	public void planEdit(final android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
@@ -517,7 +350,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 						Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
-						schedulingDelete(item);
+						planDelete(item);
 
 						ContentValues transactionValues=new ContentValues();
 						transactionValues.put("ToAcctID", transactionAccountID);
@@ -747,7 +580,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			break;
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:
-			schedulingAdd();
+			planAdd();
 			//PlanRecord testRecord = new PlanRecord(1+"", 1+"", "test record", "50", "Deposit", "Electrical", "Memo things", "02-25-2013", "3 Months", "false");
 			//schedule(testRecord);
 			break;
@@ -784,11 +617,11 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			return true;
 
 		case CONTEXT_MENU_EDIT:
-			schedulingEdit(item);
+			planEdit(item);
 			return true;
 
 		case CONTEXT_MENU_DELETE:
-			schedulingDelete(item);
+			planDelete(item);
 			return true;
 
 		case CONTEXT_MENU_CANCEL:
@@ -1161,7 +994,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	}//end UserItem
 
 	//An Object Class used to hold the data of each transaction record
-	public class PlanRecord {
+	public static class PlanRecord {
 		protected String id;
 		protected String acctId;
 		protected String name;
@@ -1244,7 +1077,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
 			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI+"/"+(ID)), null, null, null, null);
-			
+
 			int entry_id = 0;
 			String entry_acctId = null;
 			String entry_name = null;
@@ -1300,6 +1133,186 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 			return alertDialogBuilder.create();
 
+		}
+	}
+
+	public static class AddDialogFragment extends SherlockDialogFragment {
+
+		public static AddDialogFragment newInstance() {
+			AddDialogFragment frag = new AddDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			promptsView = li.inflate(R.layout.plan_add, null);
+
+			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
+			final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
+			final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
+			categorySpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
+			accountSpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_account);
+			final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+			final EditText tRate = (EditText) promptsView.findViewById(R.id.EditRate);
+			final Spinner rateSpinner = (Spinner)promptsView.findViewById(R.id.spinner_rate_type);
+			final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+
+			final Calendar c = Calendar.getInstance();
+			pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+			pDate.setText(dateFormat.format(c.getTime()));
+
+			//Adapter for memo's autocomplete
+			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getSherlockActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
+			tMemo.setAdapter(dropdownAdapter);
+
+			//Add dictionary back to autocomplete
+			TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+			tMemo.setKeyListener(input);
+
+			//Populate Category Drop-down List
+			((Plans) getSherlockActivity()).categoryPopulate();
+
+			//Populate Account Drop-down List
+			((Plans) getSherlockActivity()).accountPopulate();
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+
+			// set account_add.xml to AlertDialog builder
+			alertDialogBuilder.setView(promptsView);
+
+			//set Title
+			alertDialogBuilder.setTitle("Schedule A Transaction");
+
+			// set dialog message
+			alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Add",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					//Variables for the transaction Table
+					String transactionAccountID = null;
+					String transactionAccount = null;
+					String transactionName = null;
+					Money transactionValue = null;
+					String transactionType = null;
+					String transactionCategory = null;
+					String transactionMemo = null;
+					String transactionOffset = null;
+					String transactionRate = null;
+					String transactionCleared = null;
+					Locale locale=getResources().getConfiguration().locale;
+
+					//Needed to get category's name from DB-populated spinner
+					int categoryPosition = categorySpinner.getSelectedItemPosition();
+					Cursor cursorCategory = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);	
+
+					//Needed to get account's name from DB-populated spinner
+					int accountPosition = accountSpinner.getSelectedItemPosition();
+					Cursor cursorAccount = (Cursor) accountSpinnerAdapter.getItem(accountPosition);				
+
+					transactionName = tName.getText().toString().trim();
+					try{
+						transactionValue = new Money(tValue.getText().toString().trim());	
+					}
+					catch(Exception e){
+						Log.e("Plans-schedulingAdd","Invalid Value? Exception e:" + e);
+						dialog.cancel();
+						Toast.makeText(getSherlockActivity(), "Invalid Value", Toast.LENGTH_LONG).show();
+						return;
+					}
+
+					transactionType = tType.getSelectedItem().toString().trim();
+
+					try{
+						transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex("AcctName"));
+						transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
+					}
+					catch(Exception e){
+						//Usually caused if no account exists
+						Log.e("Plans-schedulingAdd","No Account? Exception e:" + e);
+						dialog.cancel();
+						Toast.makeText(getSherlockActivity(), "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
+						return;
+					}
+
+					try{
+						//	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
+						transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
+					}
+					catch(Exception e){
+						//Usually caused if no category exists
+						Log.e("Plans-schedulingAdd","No Category? Exception e:" + e);
+						dialog.cancel();
+						Toast.makeText(getSherlockActivity(), "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
+						return;
+					}
+
+					transactionMemo = tMemo.getText().toString().trim();
+
+					//Set Time
+					transactionOffset = pDate.getText().toString().trim();
+					transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
+					transactionCleared = tCleared.isChecked()+"";
+
+					//Check to see if value is a number
+					boolean validRate=false;
+					try{
+						Integer.parseInt(tRate.getText().toString().trim());
+						validRate=true;
+					}
+					catch(Exception e){
+						Log.e("Plans","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
+						validRate=false;
+					}
+
+					try{
+						if (transactionName.length()>0 && validRate) {
+							Log.d("Plans", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
+
+							ContentValues transactionValues = new ContentValues();
+							transactionValues.put("ToAcctID", transactionAccountID);
+							transactionValues.put("PlanName", transactionName);
+							transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
+							transactionValues.put("PlanType", transactionType);
+							transactionValues.put("PlanCategory", transactionCategory);
+							transactionValues.put("PlanMemo", transactionMemo);
+							transactionValues.put("PlanOffset", transactionOffset);
+							transactionValues.put("PlanRate", transactionRate);
+							transactionValues.put("PlanCleared", transactionCleared);
+
+							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
+
+							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+							((Plans) getSherlockActivity()).schedule(record);
+
+							//Refresh the plans list
+							((Plans) getSherlockActivity()).plansPopulate();
+							//plansPopulate();
+						} 
+
+						else {
+							Toast.makeText(getSherlockActivity(), "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
+						}
+					}
+					catch(Exception e){
+						Log.e("Plans-Edit", "e = " + e);
+						Toast.makeText(getSherlockActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+					}
+
+				}//end onClick "OK"
+			})
+			.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					// CODE FOR "Cancel"
+					dialog.cancel();
+				}
+			});
+
+			return alertDialogBuilder.create();			
 		}
 	}
 

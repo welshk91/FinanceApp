@@ -87,6 +87,8 @@ public class MyContentProvider extends ContentProvider{
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
 
+		Log.d("MyContentProvider-query", "URI="+uri);
+		
 		Cursor cursor;
 		int uriType = sURIMatcher.match(uri);
 
@@ -133,10 +135,11 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case PLANNED_TRANSACTIONS_ID:
-			cursor = dh.getPlannedTransactionsAll();
+			cursor = dh.getPlannedTransactions(projection, selection, selectionArgs, sortOrder);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case PLANNED_TRANSACTION_ID:
+			Log.d("MyContentProvider-query", "URI="+uri);
 			cursor = dh.getPlannedTransaction(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;

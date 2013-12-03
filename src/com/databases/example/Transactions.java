@@ -927,7 +927,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			int id = getArguments().getInt("id");
-
 			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+id), null, null, null, null);
 
 			int entry_id = 0;

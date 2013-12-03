@@ -161,7 +161,7 @@ public class PlanReceiver extends BroadcastReceiver{
 
 	//Method that remakes the planned transaction
 	public void reschedulePlans(Context context){
-		Cursor cursorPlans = dh.getPlannedTransactionsAll();
+		Cursor cursorPlans = dh.getPlannedTransactions(null,null,null,null);
 
 		//startManagingCursor(cursorPlans);
 		int IDColumn = cursorPlans.getColumnIndex("PlanID");

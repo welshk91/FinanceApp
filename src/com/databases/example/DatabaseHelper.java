@@ -402,13 +402,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		rowsDeleted = db.delete(TABLE_SUBCATEGORIES, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
-
+	
 	//Get all planned transactions for all accounts
-	public Cursor getPlannedTransactionsAll(){
+	public Cursor getPlannedTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_PLANNED_TRANSACTIONS, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, null,
-				null, null, null, null);
+		cursor = db.query(TABLE_PLANNED_TRANSACTIONS, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, selection,
+				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}
 

@@ -647,7 +647,6 @@ public class Categories extends SherlockFragmentActivity{
 
 		@Override
 		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
 			return true;
 		}
 
@@ -682,13 +681,11 @@ public class Categories extends SherlockFragmentActivity{
 		}
 	}
 
-	//Close dialogs to prevent window leaks
 	@Override
 	public void onDestroy() {
 		if(dh!=null){
 			dh.close();
-		}		
-
+		}
 		super.onDestroy();
 	}
 
@@ -744,6 +741,7 @@ public class Categories extends SherlockFragmentActivity{
 
 			return alertDialogBuilder.create();
 		}
+
 	}
 
 	//Class that handles edit fragment
@@ -843,6 +841,7 @@ public class Categories extends SherlockFragmentActivity{
 
 			return alertDialogBuilder.create();
 		}
+
 	}
 
 	//Class that handles add fragment
@@ -942,6 +941,7 @@ public class Categories extends SherlockFragmentActivity{
 
 			return alertDialogBuilder.create();
 		}
+
 	}
 
 }//end Categories

@@ -12,9 +12,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.Categories.CategoryRecord;
+import com.databases.example.Categories.SubCategoryRecord;
+import com.databases.example.Categories.ViewDialogFragment;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -53,6 +57,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -72,7 +77,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	private Spinner categorySpinner;
 
 	//Alert Dialogs (Need to be closed properly)
-	private AlertDialog alertDialogView;
+	//private AlertDialog alertDialogView;
 	private AlertDialog alertDialogAdd;
 	private AlertDialog alertDialogEdit;
 
@@ -564,50 +569,10 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	//View Plan
 	public void planView(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
+		String id = adapterPlans.getPlan(itemInfo.position).id;
 
-		LayoutInflater li = LayoutInflater.from(this);
-		final View planStatsView = li.inflate(R.layout.plan_stats, null);
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				this);
-
-		// set xml to AlertDialog builder
-		alertDialogBuilder.setView(planStatsView);
-
-		//set Title
-		alertDialogBuilder.setTitle("View Plan");
-
-		// set dialog message
-		alertDialogBuilder
-		.setCancelable(true);
-
-		// create alert dialog
-		alertDialogView = alertDialogBuilder.create();
-
-		//Set Statistics
-		TextView statsName = (TextView)planStatsView.findViewById(R.id.TextTransactionName);
-		statsName.setText(record.name);
-		TextView statsAccount = (TextView)planStatsView.findViewById(R.id.TextTransactionAccount);
-		statsAccount.setText(record.acctId);
-		TextView statsValue = (TextView)planStatsView.findViewById(R.id.TextTransactionValue);
-		statsValue.setText(record.value);
-		TextView statsType = (TextView)planStatsView.findViewById(R.id.TextTransactionType);
-		statsType.setText(record.type);
-		TextView statsCategory = (TextView)planStatsView.findViewById(R.id.TextTransactionCategory);
-		statsCategory.setText(record.category);
-		TextView statsMemo = (TextView)planStatsView.findViewById(R.id.TextTransactionMemo);
-		statsMemo.setText(record.memo);
-		TextView statsOffset = (TextView)planStatsView.findViewById(R.id.TextTransactionOffset);
-		statsOffset.setText(record.offset);
-		TextView statsRate = (TextView)planStatsView.findViewById(R.id.TextTransactionRate);
-		statsRate.setText(record.rate);
-		TextView statsCleared = (TextView)planStatsView.findViewById(R.id.TextTransactionCleared);
-		statsCleared.setText(record.cleared);
-
-		// show it
-		alertDialogView.show();
-
+		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
+		newFragment.show(getSupportFragmentManager(), "dialogView");
 	}
 
 	//Method to get the list of categories for spinner
@@ -849,9 +814,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	//Close dialogs to prevent window leaks
 	@Override
 	public void onPause() {
-		if(alertDialogView!=null){
-			alertDialogView.dismiss();
-		}
 		if(alertDialogEdit!=null){
 			alertDialogEdit.dismiss();
 		}
@@ -1265,6 +1227,80 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		loader = null; //Possible Solution????	
+	}
+
+	//Class that handles view fragment
+	public static class ViewDialogFragment extends SherlockDialogFragment {
+
+		public static ViewDialogFragment newInstance(String id) {
+			ViewDialogFragment frag = new ViewDialogFragment();
+			Bundle args = new Bundle();
+			args.putString("id", id);
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final String ID = getArguments().getString("id");
+			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI+"/"+(ID)), null, null, null, null);
+			
+			int entry_id = 0;
+			String entry_acctId = null;
+			String entry_name = null;
+			String entry_value = null;
+			String entry_type = null;
+			String entry_category = null;
+			String entry_memo = null;
+			String entry_offset = null;
+			String entry_rate = null;
+			String entry_cleared = null;
+
+			c.moveToFirst();
+			do{
+				entry_id = c.getInt(c.getColumnIndex("PlanID"));
+				entry_acctId = c.getString(c.getColumnIndex("ToAcctID"));
+				entry_name = c.getString(c.getColumnIndex("PlanName"));
+				entry_value = c.getString(c.getColumnIndex("PlanValue"));
+				entry_type = c.getString(c.getColumnIndex("PlanType"));
+				entry_category = c.getString(c.getColumnIndex("PlanCategory"));
+				entry_memo = c.getString(c.getColumnIndex("PlanMemo"));
+				entry_offset = c.getString(c.getColumnIndex("PlanOffset"));
+				entry_rate = c.getString(c.getColumnIndex("PlanRate"));
+				entry_cleared = c.getString(c.getColumnIndex("PlanCleared"));
+			}while(c.moveToNext());
+
+			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			final View planStatsView = li.inflate(R.layout.plan_stats, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+			alertDialogBuilder.setView(planStatsView);
+			alertDialogBuilder.setTitle("View Plan");
+			alertDialogBuilder.setCancelable(true);
+
+			//Set Statistics
+			TextView statsName = (TextView)planStatsView.findViewById(R.id.TextTransactionName);
+			statsName.setText(entry_name);
+			TextView statsAccount = (TextView)planStatsView.findViewById(R.id.TextTransactionAccount);
+			statsAccount.setText(entry_acctId);
+			TextView statsValue = (TextView)planStatsView.findViewById(R.id.TextTransactionValue);
+			statsValue.setText(entry_value);
+			TextView statsType = (TextView)planStatsView.findViewById(R.id.TextTransactionType);
+			statsType.setText(entry_type);
+			TextView statsCategory = (TextView)planStatsView.findViewById(R.id.TextTransactionCategory);
+			statsCategory.setText(entry_category);
+			TextView statsMemo = (TextView)planStatsView.findViewById(R.id.TextTransactionMemo);
+			statsMemo.setText(entry_memo);
+			TextView statsOffset = (TextView)planStatsView.findViewById(R.id.TextTransactionOffset);
+			statsOffset.setText(entry_offset);
+			TextView statsRate = (TextView)planStatsView.findViewById(R.id.TextTransactionRate);
+			statsRate.setText(entry_rate);
+			TextView statsCleared = (TextView)planStatsView.findViewById(R.id.TextTransactionCleared);
+			statsCleared.setText(entry_cleared);
+
+			return alertDialogBuilder.create();
+
+		}
 	}
 
 }//end of Plans

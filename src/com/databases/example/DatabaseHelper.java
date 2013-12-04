@@ -159,11 +159,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Get all accounts
-	public Cursor getAccounts(){
+	public Cursor getAccounts(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_ACCOUNTS, new String[] { "AcctID as _id", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, null,
-				null, null, null, null);
+		cursor = db.query(TABLE_ACCOUNTS, new String[] { "AcctID as _id", "AcctName", "AcctBalance", "AcctTime", "AcctDate" }, selection,
+				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}
 
@@ -402,7 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		rowsDeleted = db.delete(TABLE_SUBCATEGORIES, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
-	
+
 	//Get all planned transactions for all accounts
 	public Cursor getPlannedTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;

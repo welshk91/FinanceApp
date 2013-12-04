@@ -92,7 +92,7 @@ public class MyContentProvider extends ContentProvider{
 
 		switch (uriType) {
 		case ACCOUNTS_ID:
-			cursor = dh.getAccounts();
+			cursor = dh.getAccounts(projection, selection, selectionArgs, sortOrder);
 			//Log.d("MyContentProvider-query", "URI="+uri);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
@@ -141,13 +141,9 @@ public class MyContentProvider extends ContentProvider{
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case LINKS_ID:
-			cursor = dh.getAccounts();
-			cursor.setNotificationUri(getContext().getContentResolver(), uri);
-			return cursor;
+			// TODO Need to handle Links eventually
 		case LINK_ID:
-			cursor = dh.getAccount(uri.getLastPathSegment());
-			cursor.setNotificationUri(getContext().getContentResolver(), uri);
-			return cursor;
+			// TODO Need to handle Links eventually
 		default:
 			throw new IllegalArgumentException("MyContentProvider-query: Unknown URI");
 		}
@@ -191,8 +187,7 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case LINK_ID:
-			dh.getAccount(uri.getLastPathSegment());
-			getContext().getContentResolver().notifyChange(uri, null);
+			// TODO Need to handle Links eventually
 			break;
 		default:
 			throw new IllegalArgumentException("MyContentProvider-delete: Unknown URI");
@@ -227,9 +222,7 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_PLANNED_TRANSACTIONS + "/" + id);
 		case LINK_ID:
-			dh.getAccount(uri.getLastPathSegment());
-			getContext().getContentResolver().notifyChange(uri, null);
-			return Uri.parse(PATH_LINKS + "/" + id);
+			// TODO Need to handle Links eventually
 		default:
 			throw new IllegalArgumentException("MyContentProvider-insert: Unknown URI");
 		}

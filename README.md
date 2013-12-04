@@ -21,7 +21,7 @@ There is currently no license I'm releasing this code under (subject to change).
 
 Known Issues
 --------------------------------------
-* Dialogs close on rotate.
+* Options does not have the navigationDrawer yet
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (possibly tell options not to recreate after orientation change)
 
 Things To Do

@@ -99,7 +99,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Adapter for category spinner
 	private static SimpleCursorAdapter categorySpinnerAdapter = null;
-	private Cursor categoryCursor;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -114,11 +113,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(bundle!=null || savedInstanceState!=null){
 			setHasOptionsMenu(true);
 		}
-
-		/*
-		 * Set to true if you want to keep instance during rotation change
-		 * can't do it because containers are named differently for the xmls
-		 */
 
 		setRetainInstance(false);
 
@@ -357,43 +351,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Calculates the balance
 	public void calculateBalance(){
-		//		float totalBalance = 0;
-		//
-		//		Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, "ToAcctID="+account_id, null, null);
-		//
-		//		cursor.moveToFirst();
-		//		if (cursor != null) {
-		//			if (cursor.isFirst()) {
-		//				do {
-		//					String value = cursor.getString(cursor.getColumnIndex("TransValue"));
-		//					String type = cursor.getString(cursor.getColumnIndex("TransType"));
-		//
-		//					//Add account balance to total balance
-		//					try{
-		//
-		//						//Withdraws should subtract totalBalance
-		//						if(type.contains("Withdraw")){
-		//							totalBalance = totalBalance - (Float.parseFloat(value));
-		//						}
-		//						//Deposit should add to totalBalance
-		//						else{
-		//							totalBalance = totalBalance + Float.parseFloat(value);
-		//						}
-		//
-		//					}
-		//					catch(Exception e){
-		//						Log.e("Transactions-calculateBalance", "Could not calculate total balance. Error e=" + e);
-		//					}
-		//
-		//				} while (cursor.moveToNext());
-		//			}
-		//
-		//			else {
-		//				Log.e("Transactions-calculateBalance", "No results found/Cursor empty");
-		//			}
-		//		}
-		//
-
 		DatabaseHelper dh = new DatabaseHelper(getActivity());
 		Locale locale = getResources().getConfiguration().locale;
 

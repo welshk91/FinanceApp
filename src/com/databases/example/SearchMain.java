@@ -66,7 +66,7 @@ public class SearchMain extends SherlockFragmentActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
-		mViewPager.setOffscreenPageLimit(1);
+		mViewPager.setOffscreenPageLimit(2);
 
 		MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
@@ -178,12 +178,18 @@ public class SearchMain extends SherlockFragmentActivity {
 			return Fragment.instantiate(mContext, info.clss.getName(), info.args);
 		}
 
+		//Allows for multiple pages
+		@Override
+		public float getPageWidth(int position){
+			//To have two pages, return .5
+			return(1f);
+		}
+
 	}//end mypageadapter
 
 	@Override
 	public void onDestroy(){
 		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
-
 		super.onDestroy();
 	}
 

@@ -36,11 +36,15 @@ public class Checkbook extends SherlockFragmentActivity {
 		 * Hack fix for when in transactions (single pane), rotating keeps the account back stack
 		 * so dual pane users have to hit back twice to leave checkbook
 		 */
+		//		if(savedInstanceState!=null){
+		//			//Clear BackStack
+		//			while(getSupportFragmentManager().getBackStackEntryCount()>0){
+		//				getSupportFragmentManager().popBackStackImmediate();
+		//			}
+		//		}
+
 		if(savedInstanceState!=null){
-			//Clear BackStack
-			while(getSupportFragmentManager().getBackStackEntryCount()>0){
-				getSupportFragmentManager().popBackStackImmediate();
-			}
+			return;
 		}
 
 		//NavigationDrawer
@@ -48,14 +52,6 @@ public class Checkbook extends SherlockFragmentActivity {
 		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
-		/*NOTE To Self
-		 * took out the if because changing orientation resulted
-		 * in transaction fragment staying in accountsFrame
-		 * if you went to transactions in a single pane and then rotated
-		 * Removing if forces the frags to be replaced every time so not very efficient
-		 */
-
-		//if (savedInstanceState==null){
 		Accounts account_frag = new Accounts();
 		Transactions transaction_frag = new Transactions();
 
@@ -72,50 +68,23 @@ public class Checkbook extends SherlockFragmentActivity {
 		account_frag.setArguments(argsAccount);
 
 		if(checkbook_frame==null){
-			Log.d("Checkbook-onCreate","checkbook_frame=null");
+			Log.d("Checkbook-onCreate","Mode:dualpane");
 			getSupportFragmentManager().beginTransaction()
 			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
 		}
 		else{
-			Log.d("Checkbook-onCreate","checkbook_frame!=null");
+			Log.d("Checkbook-onCreate","Mode:singlepane");
 			getSupportFragmentManager().beginTransaction().
 			replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
 		}
 
 		getSupportFragmentManager().executePendingTransactions();
 
-		//}
-		//
-		//		else{
-		//
-		//			if(checkbook_frame==null){
-		//				getSupportFragmentManager().beginTransaction()
-		//				.addToBackStack("account_frag_tag")
-		//				.addToBackStack("transaction_frag_tag")
-		//				.remove(getSupportFragmentManager().findFragmentByTag("account_frag_tag"))
-		//				.remove(getSupportFragmentManager().findFragmentByTag("transaction_frag_tag"))
-		//				.replace(R.id.account_frag_frame, getSupportFragmentManager().findFragmentByTag("account_frag_tag"),"account_frag_tag").replace(R.id.transaction_frag_frame, getSupportFragmentManager().findFragmentByTag("transaction_frag_tag"), "transaction_frag_tag")
-		//				.commit();
-		//			}
-		//			else{
-		//				getSupportFragmentManager().beginTransaction()
-		//				.addToBackStack("account_frag_tag")
-		//				.addToBackStack("transaction_frag_tag")
-		//				.remove(getSupportFragmentManager().findFragmentByTag("account_frag_tag"))
-		//				.remove(getSupportFragmentManager().findFragmentByTag("transaction_frag_tag"))
-		//				.replace(R.id.checkbook_frag_frame, getSupportFragmentManager().findFragmentByTag("account_frag_tag"),"account_frag_tag")
-		//				.commit();
-		//			}
-		//
-		//			getSupportFragmentManager().executePendingTransactions();
-		//
-		//		}
-
 	}//end onCreate
 
 	@Override
 	protected void onSaveInstanceState(Bundle bundle1){
-		Log.d("Checkbook-saveInstanceState", "Save anything important...");
+		super.onSaveInstanceState(bundle1);
 	}
 
 	//For Menu Items

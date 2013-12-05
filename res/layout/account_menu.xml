@@ -20,6 +20,12 @@
         android:title="Transfer"/>
 
     <item
+        android:id="@+id/account_menu_sort"
+        android:icon="@drawable/ic_menu_sort_by_size"
+        android:showAsAction="ifRoom"
+        android:title="Sort"/>
+
+    <item
         android:id="@+id/account_menu_unknown"
         android:icon="@android:drawable/ic_menu_more"
         android:showAsAction="ifRoom"

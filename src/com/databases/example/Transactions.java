@@ -61,6 +61,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Accounts.SortDialogFragment;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
@@ -85,6 +86,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//Variables of the Account Used
 	private static int account_id;
 
+	private static String sortOrder = "null";
+	
 	//Constants for ContextMenu
 	private int CONTEXT_MENU_OPEN=5;
 	private int CONTEXT_MENU_EDIT=6;
@@ -190,7 +193,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		if(showAllTransactions){
 			Bundle b = new Bundle();
 			b.putBoolean("boolShowAll", true);
-			getLoaderManager().initLoader(TRANS_LOADER, b, this);
+			getLoaderManager().restartLoader(TRANS_LOADER, b, this);
 		}
 		else if(searchFragment){
 			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
@@ -199,7 +202,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				getLoaderManager().initLoader(TRANS_LOADER, b, this);
+				getLoaderManager().restartLoader(TRANS_LOADER, b, this);
 			}
 			catch(Exception e){
 				Log.e("Transactions-populate", "Search Failed. Error e=" + e);
@@ -211,7 +214,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		else{
 			Bundle b = new Bundle();
 			b.putInt("aID", account_id);
-			getLoaderManager().initLoader(TRANS_LOADER, b, this);
+			getLoaderManager().restartLoader(TRANS_LOADER, b, this);
 		}
 
 		calculateBalance();
@@ -292,6 +295,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
 	}//end of transactionDelete
 
+	//For Sorting Transactions
+	public void transactionSort(){
+		DialogFragment newFragment = SortDialogFragment.newInstance();
+		newFragment.show(getChildFragmentManager(), "dialogSort");		
+	}
 	//For Menu
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -303,6 +311,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			SubMenu subMMenuTransaction = menu.addSubMenu("Transaction");
 			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
 			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_schedule, com.actionbarsherlock.view.Menu.NONE, "Schedule");
+			subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_sort, com.actionbarsherlock.view.Menu.NONE, "Sort");
 
 			MenuItem subMenu1Item = subMMenuTransaction.getItem();
 			subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -337,8 +346,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Intent intentPlans = new Intent(getActivity(), Plans.class);
 			getActivity().startActivity(intentPlans);
 			return true;
-		}
 
+		case R.id.transaction_menu_sort:    
+			transactionSort();
+			return true;
+
+		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -1298,6 +1312,93 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 	}
 
+	//Class that handles sort dialog
+	public static class SortDialogFragment extends SherlockDialogFragment {
+
+		public static SortDialogFragment newInstance() {
+			SortDialogFragment frag = new SortDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			View transactionSortView = li.inflate(R.layout.sort_transactions, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+
+			alertDialogBuilder.setView(transactionSortView);
+			alertDialogBuilder.setTitle("Sort");
+			alertDialogBuilder.setCancelable(true);
+
+			ListView sortOptions = (ListView)transactionSortView.findViewById(R.id.sort_options);
+			sortOptions.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					
+					switch (position) {
+					//Newest
+					case 0:
+						//TODO Fix date so it can be sorted
+						sortOrder = "TransDate" + " ASC";
+						((Transactions) getParentFragment()).populate();
+						break;
+
+						//Oldest
+					case 1:
+						//TODO Fix date so it can be sorted
+						sortOrder = "TransDate" + " DESC";
+						((Transactions) getParentFragment()).populate();
+						break;
+
+						//Largest
+					case 2:
+						sortOrder = "TransType ASC, CAST (TransValue AS INTEGER)" + " DESC";
+						((Transactions) getParentFragment()).populate();
+						break;
+
+						//Smallest
+					case 3:
+						sortOrder = "TransType ASC, CAST (TransValue AS INTEGER)" + " ASC";
+						((Transactions) getParentFragment()).populate();
+						break;
+
+						//Category	
+					case 4:
+						sortOrder = "TransCategory" + " ASC";
+						((Transactions) getParentFragment()).populate();
+						break;
+						
+						//Type
+					case 5:
+						sortOrder = "TransType" + " ASC";
+						((Transactions) getParentFragment()).populate();
+						break;
+
+						//Alphabetical
+					case 6:
+						sortOrder = "TransName" + " ASC";
+						((Transactions) getParentFragment()).populate();
+						break;
+						
+					default:
+						Log.e("Transactions-SortFragment","Unknown Sorting Option!");
+						break;
+
+					}//end switch
+
+					getDialog().cancel();
+
+				}
+			});			
+
+			return alertDialogBuilder.create();
+		}
+	}
+	
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		Log.d("Transactions-onCreateLoader", "calling create loader...");
@@ -1311,7 +1412,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						null,     			// Projection to return
 						null,            	// No selection clause
 						null,            	// No selection arguments
-						null             	// Default sort order
+						sortOrder           // Default sort order
 						);
 			}
 			else if(bundle!=null && bundle.getBoolean("boolShowAll")){
@@ -1321,7 +1422,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						null,     			// Projection to return
 						null,            	// No selection clause
 						null,            	// No selection arguments
-						null             	// Default sort order
+						sortOrder          	// Default sort order
 						);
 			}
 			else{
@@ -1334,7 +1435,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						projection,     			// Projection to return
 						selection,					// No selection clause
 						null,						// No selection arguments
-						null             			// Default sort order
+						sortOrder             		// Default sort order
 						);				
 			}
 		default:

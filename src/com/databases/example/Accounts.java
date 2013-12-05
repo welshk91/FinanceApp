@@ -13,6 +13,7 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,8 +26,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -72,6 +75,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
 	private View myFragmentView;
+	
+	private static String sortOrder= "null";
 
 	//Date Format to use for time (01:42 PM)
 	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
@@ -200,7 +205,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				getLoaderManager().initLoader(ACCOUNTS_LOADER, b, this);
+				getLoaderManager().restartLoader(ACCOUNTS_LOADER, b, this);
 			}
 			catch(Exception e){
 				Log.e("Accounts-populate","Search Failed. Error e="+e);
@@ -211,7 +216,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
+			getLoaderManager().restartLoader(ACCOUNTS_LOADER, bundle, this);
 		}
 
 		calculateBalance();
@@ -317,6 +322,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		newFragment.show(getChildFragmentManager(), "dialogTransfer");		
 	}
 
+	//For Sorting Accounts
+	public void accountSort(){
+		DialogFragment newFragment = SortDialogFragment.newInstance();
+		newFragment.show(getChildFragmentManager(), "dialogSort");		
+	}
+
 	//Method to get the list of accounts for transfer spinner
 	public void accountPopulate(){
 		Cursor accountCursor1 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
@@ -364,6 +375,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			SubMenu subMenu1 = menu.addSubMenu("Account");
 			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
 			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_transfer, com.actionbarsherlock.view.Menu.NONE, "Transfer");
+			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_sort, com.actionbarsherlock.view.Menu.NONE, "Sort");
 			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_unknown, com.actionbarsherlock.view.Menu.NONE, "Unknown");
 
 			MenuItem subMenu1Item = subMenu1.getItem();
@@ -396,6 +408,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		case R.id.account_menu_transfer:    
 			accountTransfer();
+			return true;
+
+		case R.id.account_menu_sort:    
+			accountSort();
 			return true;
 
 		case R.id.account_menu_unknown:    
@@ -1197,6 +1213,81 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 	}
 
+	//Class that handles sort dialog
+	public static class SortDialogFragment extends SherlockDialogFragment {
+
+		public static SortDialogFragment newInstance() {
+			SortDialogFragment frag = new SortDialogFragment();
+			Bundle args = new Bundle();
+			frag.setArguments(args);
+			return frag;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			View accountSortView = li.inflate(R.layout.sort_accounts, null);
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+
+			alertDialogBuilder.setView(accountSortView);
+			alertDialogBuilder.setTitle("Sort");
+			alertDialogBuilder.setCancelable(true);
+
+			ListView sortOptions = (ListView)accountSortView.findViewById(R.id.sort_options);
+			sortOptions.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					
+					switch (position) {
+					//Newest
+					case 0:
+						//TODO Fix date so it can be sorted
+						sortOrder = "AcctDate" + " ASC";
+						((Accounts) getParentFragment()).populate();
+						break;
+
+						//Oldest
+					case 1:
+						//TODO Fix date so it can be sorted
+						sortOrder = "AcctDate" + " DESC";
+						((Accounts) getParentFragment()).populate();
+						break;
+
+						//Largest
+					case 2:
+						sortOrder = "CAST (AcctBalance AS INTEGER)" + " DESC";
+						((Accounts) getParentFragment()).populate();
+						break;
+
+						//Smallest	
+					case 3:
+						sortOrder = "CAST (AcctBalance AS INTEGER)" + " ASC";
+						((Accounts) getParentFragment()).populate();
+						break;
+
+						//Alphabetical	
+					case 4:
+						sortOrder = "AcctName" + " ASC";
+						((Accounts) getParentFragment()).populate();
+						break;
+						
+					default:
+						Log.e("Accounts-SortFragment","Unknown Sorting Option!");
+						break;
+
+					}//end switch
+
+					getDialog().cancel();
+
+				}
+			});			
+
+			return alertDialogBuilder.create();
+		}
+	}
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
 		Log.d("Accounts-onCreateLoader", "calling create loader...");
@@ -1220,7 +1311,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						null,     			// Projection to return
 						null,            	// No selection clause
 						null,            	// No selection arguments
-						null             	// Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
+						sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
 						);				
 			}
 		default:

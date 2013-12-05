@@ -54,7 +54,6 @@ public class Links extends SherlockFragmentActivity{
 	private Uri contactPhoto = null;
 
 	private static Intent intent = null;
-	private AlertDialog alertDialogAttachment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -232,15 +231,6 @@ public class Links extends SherlockFragmentActivity{
 		contactPhoto = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
 	}//end getContactInfo
-
-	//Close dialogs to prevent window leaks
-	@Override
-	public void onPause() {
-		//		if(alertDialogAttachment!=null){
-		//			alertDialogAttachment.dismiss();
-		//		}
-		super.onPause();
-	}
 
 	public static class AttachDialogFragment extends SherlockDialogFragment {
 

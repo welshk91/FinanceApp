@@ -47,6 +47,22 @@
         <item>Contact</item>
         <item>Any</item>
     </string-array>
+    <string-array name="sort_options_account">
+        <item>Newest</item>
+        <item>Oldest</item>
+        <item>Largest</item>
+        <item>Smallest</item>
+        <item>Alphabetical</item>
+    </string-array>
+    <string-array name="sort_options_transaction">
+        <item>Newest</item>
+        <item>Oldest</item>
+        <item>Largest</item>
+        <item>Smallest</item>
+        <item>Category</item>
+        <item>Type</item>
+        <item>Alphabetical</item>
+    </string-array>
     <string-array name="transaction_category">
         <item>ALLOWANCE</item>
         <item>ATM</item>

@@ -18,4 +18,10 @@
         android:icon="@android:drawable/ic_menu_search"
         android:title="Schedule"/>
 
+    <item
+        android:id="@+id/transaction_menu_sort"
+        android:icon="@drawable/ic_menu_sort_by_size"
+        android:showAsAction="ifRoom"
+        android:title="Sort"/>
+
 </menu>

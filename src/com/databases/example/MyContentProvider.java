@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.util.Log;
 
 public class MyContentProvider extends ContentProvider{
-	// Contacts table name
 	private static DatabaseHelper dh = null;
 
 	//IDs

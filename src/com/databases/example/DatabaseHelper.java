@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		Log.e("DatabaseHelper-onCreate", "Creating database...");
+		Log.d("DatabaseHelper-onCreate", "Creating database...");
 
 		String sqlCommandAccounts = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_ACCOUNTS
@@ -48,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 		String sqlCommandTransactions = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_TRANSACTIONS
-				+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, ToPlanID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared);";
+				+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, ToPlanID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared VARCHAR);";
 
 		String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_PLANNED_TRANSACTIONS
@@ -104,36 +104,222 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 	//Adds some basic default categories
 	public void addDefaultCategories(SQLiteDatabase db){
-		Log.e("DatabaseHelper-onCreate", "Adding Default Categories...");
+		Log.d("DatabaseHelper-onCreate", "Adding Default Categories...");
 
-		final String sqlDefaultCategories = "INSERT INTO " + TABLE_CATEGORIES
+		//Default
+		final String sqlDefaultCategory = "INSERT INTO " + TABLE_CATEGORIES
 				+ " (CatName) " + "VALUES ('Default');";
-		final String sqlDefaultCategories2 = "INSERT INTO " + TABLE_CATEGORIES
-				+ " (CatName) " + "VALUES ('Utils');";
 		final String sqlDefaultSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
-				+ " (SubCatName, ToCatID) " + "VALUES ('Gas',2);";
-		final String sqlDefaultSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
-				+ " (SubCatName, ToCatID) " + "VALUES ('Electricty',2);";
-		final String sqlDefaultSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
-				+ " (SubCatName, ToCatID) " + "VALUES ('Heat',2);";
-		final String sqlDefaultSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
-				+ " (SubCatName, ToCatID) " + "VALUES ('Water',2);";
-		final String sqlDefaultSubCategories5 = "INSERT INTO " + TABLE_SUBCATEGORIES
-				+ " (SubCatName, ToCatID) " + "VALUES ('AC',2);";
-		final String sqlDefaultSubCategories6 = "INSERT INTO " + TABLE_SUBCATEGORIES
 				+ " (SubCatName, ToCatID) " + "VALUES ('STARTING BALANCE',1);";
-		final String sqlDefaultSubCategories7 = "INSERT INTO " + TABLE_SUBCATEGORIES
+		final String sqlDefaultSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
 				+ " (SubCatName, ToCatID) " + "VALUES ('TRANSFER',1);";
+		 
+		//ATM
+		final String sqlATMCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('ATM');";
+		final String sqlATMSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Deposit',2);";
+		final String sqlATMSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Withdraw',2);";
+		
+		//Car
+		final String sqlCarCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Car');";
+		final String sqlCarSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Road Services',3);";
+		final String sqlCarSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Fuel',3);";
+		final String sqlCarSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Lease',3);";
+		final String sqlCarSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Maitenance',3);";
+		
+		//Food
+		final String sqlFoodCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Food');";
+		final String sqlFoodSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Groceries',4);";
+		final String sqlFoodSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Restaurant',4);";
+		final String sqlFoodSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Snacks',4);";
+		
+		//Fun
+		final String sqlFunCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Fun');";
+		final String sqlFunSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Entertainment',5);";
+		final String sqlFunSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Electronics',5);";
+		final String sqlFunSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Shopping',5);";
+		
+		//Housing
+		final String sqlHouseCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('House');";
+		final String sqlHouseSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Rent',6);";
+		final String sqlHouseSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Maintenance',6);";
+		final String sqlHouseSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Decorating',6);";				
+		
+		//Insurance
+		final String sqlInsuranceCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Insurance');";
+		final String sqlInsuranceSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Auto',7);";
+		final String sqlInsuranceSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Health',7);";
+		final String sqlInsuranceSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Home',7);";
+		final String sqlInsuranceSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Life',7);";
+		
+		//Job
+		final String sqlJobCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Job');";
+		final String sqlJobSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Paycheck',8);";
+		final String sqlJobSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Tax',8);";
+		final String sqlJobSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Income',8);";
+		
+		//Loans 
+		final String sqlLoansCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Loans');";
+		final String sqlLoansSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Auto',9);";
+		final String sqlLoansSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Home Equity',9);";
+		final String sqlLoansSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Mortgage',9);";
+		final String sqlLoansSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Student',9);";
+		
+		//Personal
+		final String sqlPersonalCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Personal');";
+		final String sqlPersonalSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Gift',10);";
+		final String sqlPersonalSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Donation',10);";
+		
+		//Random
+		final String sqlRandomCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Random');";
+		final String sqlRandomSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Interest',11);";
+		final String sqlRandomSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Tip',11);";
+		
+		//Travel
+		final String sqlTravelCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Travel');";
+		final String sqlTravelSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Airplane',12);";
+		final String sqlTravelSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Car Rental',12);";
+		final String sqlTravelSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Dining',12);";
+		final String sqlTravelSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Hotel',12);";
+		final String sqlTravelSubCategories5 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Misc Expenses',12);";
+		final String sqlTravelSubCategories6 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Taxi',12);";
 
-		db.execSQL(sqlDefaultCategories);
-		db.execSQL(sqlDefaultCategories2);
+		//Utilities
+		final String sqlUtilitiesCategory = "INSERT INTO " + TABLE_CATEGORIES
+				+ " (CatName) " + "VALUES ('Utils');";
+		final String sqlUtilitiesSubCategories = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Gas',13);";
+		final String sqlUtilitiesSubCategories2 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Electricty',13);";
+		final String sqlUtilitiesSubCategories3 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Heat',13);";
+		final String sqlUtilitiesSubCategories4 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Water',13);";
+		final String sqlUtilitiesSubCategories5 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('AC',13);";
+		final String sqlUtilitiesSubCategories6 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Cable',13);";
+		final String sqlUtilitiesSubCategories7 = "INSERT INTO " + TABLE_SUBCATEGORIES
+				+ " (SubCatName, ToCatID) " + "VALUES ('Internet',13);";
+
+		
+		db.execSQL(sqlDefaultCategory);
 		db.execSQL(sqlDefaultSubCategories);
 		db.execSQL(sqlDefaultSubCategories2);
-		db.execSQL(sqlDefaultSubCategories3);
-		db.execSQL(sqlDefaultSubCategories4);
-		db.execSQL(sqlDefaultSubCategories5);
-		db.execSQL(sqlDefaultSubCategories6);
-		db.execSQL(sqlDefaultSubCategories7);
+			
+		db.execSQL(sqlATMCategory);
+		db.execSQL(sqlATMSubCategories);
+		db.execSQL(sqlATMSubCategories2);
+
+		db.execSQL(sqlCarCategory);
+		db.execSQL(sqlCarSubCategories);
+		db.execSQL(sqlCarSubCategories2);
+		db.execSQL(sqlCarSubCategories3);
+		db.execSQL(sqlCarSubCategories4);
+
+		db.execSQL(sqlFoodCategory);
+		db.execSQL(sqlFoodSubCategories);
+		db.execSQL(sqlFoodSubCategories2);
+		db.execSQL(sqlFoodSubCategories3);
+
+		db.execSQL(sqlFunCategory);
+		db.execSQL(sqlFunSubCategories);
+		db.execSQL(sqlFunSubCategories2);
+		db.execSQL(sqlFunSubCategories3);
+
+		db.execSQL(sqlHouseCategory);
+		db.execSQL(sqlHouseSubCategories);
+		db.execSQL(sqlHouseSubCategories2);
+		db.execSQL(sqlHouseSubCategories3);
+
+		db.execSQL(sqlInsuranceCategory);
+		db.execSQL(sqlInsuranceSubCategories);
+		db.execSQL(sqlInsuranceSubCategories2);
+		db.execSQL(sqlInsuranceSubCategories3);
+		db.execSQL(sqlInsuranceSubCategories4);
+
+		db.execSQL(sqlJobCategory);
+		db.execSQL(sqlJobSubCategories);
+		db.execSQL(sqlJobSubCategories2);
+		db.execSQL(sqlJobSubCategories3);
+
+		db.execSQL(sqlLoansCategory);
+		db.execSQL(sqlLoansSubCategories);
+		db.execSQL(sqlLoansSubCategories2);
+		db.execSQL(sqlLoansSubCategories3);
+		db.execSQL(sqlLoansSubCategories4);
+
+		db.execSQL(sqlPersonalCategory);
+		db.execSQL(sqlPersonalSubCategories);
+		db.execSQL(sqlPersonalSubCategories2);
+
+		db.execSQL(sqlRandomCategory);
+		db.execSQL(sqlRandomSubCategories);
+		db.execSQL(sqlRandomSubCategories2);
+
+		db.execSQL(sqlTravelCategory);
+		db.execSQL(sqlTravelSubCategories);
+		db.execSQL(sqlTravelSubCategories2);
+		db.execSQL(sqlTravelSubCategories3);
+		db.execSQL(sqlTravelSubCategories4);
+		db.execSQL(sqlTravelSubCategories5);
+		db.execSQL(sqlTravelSubCategories6);
+	
+		db.execSQL(sqlUtilitiesCategory);
+		db.execSQL(sqlUtilitiesSubCategories);
+		db.execSQL(sqlUtilitiesSubCategories2);
+		db.execSQL(sqlUtilitiesSubCategories3);
+		db.execSQL(sqlUtilitiesSubCategories4);
+		db.execSQL(sqlUtilitiesSubCategories5);
+		db.execSQL(sqlUtilitiesSubCategories6);
+		db.execSQL(sqlUtilitiesSubCategories7);
+		
 	}
 
 	//Updates balance of an account

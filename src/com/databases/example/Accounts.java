@@ -117,9 +117,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				int selectionRowID = (int) adapterAccounts.getItemId(position);
 				Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
 
+				//Just get the Account ID
 				c.moveToFirst();
 				int	entry_id = c.getInt(0);
-
 				c.close();
 
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
@@ -317,7 +317,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		newFragment.show(getChildFragmentManager(), "dialogTransfer");		
 	}
 
-	//Method to get the list of accounts for spinner
+	//Method to get the list of accounts for transfer spinner
 	public void accountPopulate(){
 		Cursor accountCursor1 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
 		Cursor accountCursor2 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
@@ -1197,7 +1197,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 	}
 
-
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
 		Log.d("Accounts-onCreateLoader", "calling create loader...");
@@ -1221,7 +1220,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						null,     			// Projection to return
 						null,            	// No selection clause
 						null,            	// No selection arguments
-						null             	// Default sort order
+						null             	// Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
 						);				
 			}
 		default:

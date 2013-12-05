@@ -21,12 +21,12 @@ There is currently no license I'm releasing this code under (subject to change).
 
 Known Issues
 --------------------------------------
+* Need to convert Time/Date so it's sortable
 * Options does not have the navigationDrawer yet
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (change to dialog fragment)
 
 Things To Do
 --------------------------------------
-* Add sorting options (ORDER BY parameter in the database get methods)
 * Add custom search suggestions
 * PDF Reports
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, wizard in the beginning for database syncing, ...)

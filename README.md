@@ -10,9 +10,9 @@ Screen Shots
 ![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts.png)
 ![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Transfer.png)
 ![Categories](Screenshots/Phone/Screenshots/Categories/Categories.png)
-![Plans](Screenshots/Phone/Screenshots/Home/Plans-AddingPlan.png)
+![Plans](Screenshots/Phone/Screenshots/Plans/Plans-AddingPlan.png)
 ![Searching](Screenshots/Phone/Screenshots/Searching/Searching.png)
-![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance.png)
+![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance-Accounts.png)
 ![Lockscreen](Screenshots/Phone/Screenshots/Options/Options-Lockscreen-SetPattern.png)
 
 Usage

@@ -5,15 +5,15 @@ A simple app to handle transactions on the go. Originally designed as a knockoff
 
 Screen Shots
 -------------
-![Home](Screenshots/Tablet/Screenshots/Home/Main.png)
-![NavDrawer](Screenshots/Tablet/Screenshots/Home/NavigationDrawer.png)
-![Checkbook](Screenshots/Tablet/Screenshots/Checkbook/Checkbook.png)
-![Checkbook](Screenshots/Tablet/Screenshots/Checkbook/Checkbook-Transfer.png)
-![Categories](Screenshots/Tablet/Screenshots/Categories/Categories.png)
-![Plans](Screenshots/Tablet/Screenshots/Home/Plans-AddingPlan.png)
-![Searching](Screenshots/Tablet/Screenshots/Searching/Searching.png)
-![Options](Screenshots/Tablet/Screenshots/Options/Options-Appearance.png)
-![Lockscreen](Screenshots/Tablet/Screenshots/Options/Options-Lockscreen-SetPattern.png)
+![Home](Screenshots/Phone/Screenshots/Home/Main.png)
+![NavDrawer](Screenshots/Phone/Screenshots/Home/NavigationDrawer.png)
+![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts.png)
+![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Transfer.png)
+![Categories](Screenshots/Phone/Screenshots/Categories/Categories.png)
+![Plans](Screenshots/Phone/Screenshots/Home/Plans-AddingPlan.png)
+![Searching](Screenshots/Phone/Screenshots/Searching/Searching.png)
+![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance.png)
+![Lockscreen](Screenshots/Phone/Screenshots/Options/Options-Lockscreen-SetPattern.png)
 
 Usage
 -----

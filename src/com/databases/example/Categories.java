@@ -266,6 +266,10 @@ public class Categories extends SherlockFragmentActivity{
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
 		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+		MenuItem menuAdd = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+		menuAdd.setIcon(android.R.drawable.ic_menu_add);
+		menuAdd.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
 		SubMenu subMenu1 = menu.addSubMenu("Categories");
 		subMenu1.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_CATEGORY_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
 

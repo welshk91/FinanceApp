@@ -5,17 +5,22 @@ A simple app to handle transactions on the go. Originally designed as a knockoff
 
 Screen Shots
 -------------
-
-<img src="Screenshots/Phone/Screenshots/Home/Main.png" alt="Home" style="width: 200px;"/>
-
 ![Home](Screenshots/Phone/Screenshots/Home/Main.png)
+
 ![NavDrawer](Screenshots/Phone/Screenshots/Home/NavigationDrawer.png)
+
 ![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts.png)
+
 ![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Transfer.png)
+
 ![Categories](Screenshots/Phone/Screenshots/Categories/Categories.png)
+
 ![Plans](Screenshots/Phone/Screenshots/Plans/Plans-AddingPlan.png)
+
 ![Searching](Screenshots/Phone/Screenshots/Searching/Searching.png)
+
 ![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance-Accounts.png)
+
 ![Lockscreen](Screenshots/Phone/Screenshots/Options/Options-Lockscreen-SetPattern.png)
 
 Usage

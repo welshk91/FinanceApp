@@ -32,7 +32,6 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -267,7 +266,7 @@ public class Categories extends SherlockFragmentActivity{
 		MenuItem menuAdd = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
 		menuAdd.setIcon(android.R.drawable.ic_menu_add);
 		menuAdd.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		
+
 		return true;
 	}
 

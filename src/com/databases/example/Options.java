@@ -8,11 +8,15 @@ import java.util.List;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.Accounts.AddDialogFragment;
+import com.databases.example.Accounts.SortDialogFragment;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,12 +29,18 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 	private static final int REQUEST_CREATE_PATTERN = 0;
@@ -269,6 +279,11 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 						}
 					}).show();
 
+			//DialogFragment newFragment = DeleteDialogFragment.newInstance();
+			//newFragment.show(this.getActivity().getFragmentManager(), "dialogDelete");
+			//newFragment.show(this.getActivity().getSupportFragmentManager(), "dialogDelete");
+
+
 		}//end of clearDB
 
 		@Override
@@ -297,15 +312,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		return super.onOptionsItemSelected(item);
 	}
 
-	//Close dialogs to prevent window leaks
-	@Override
-	public void onPause() {
-		//		if(alertDialogReset!=null){
-		//			alertDialogReset.dismiss();
-		//		}
-		super.onPause();
-	}
-
 	//Fixes theme problems on devices lower than Honeycomb
 	@SuppressWarnings("deprecation")
 	@Override
@@ -323,8 +329,8 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	@Override
 	protected boolean isValidFragment (String fragmentName){
 		return true;
-	 }
-	
+	}
+
 	//	@Override
 	//	public void setContentView(int layoutResID) {
 	//		setContentView(getLayoutInflater().inflate(layoutResID, null));
@@ -351,6 +357,55 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	//		// Call onContentsChanged() to let the Activity know it needs to refresh itself.
 	//		onContentChanged();
 	//		Log.d("Options-setContentView", "After onCntentChanged");
+	//	}
+
+	//Class that handles sort dialog
+	//	public static class DeleteDialogFragment extends SherlockDialogFragment {
+	//
+	//		public static DeleteDialogFragment newInstance() {
+	//			DeleteDialogFragment frag = new DeleteDialogFragment();
+	//			Bundle args = new Bundle();
+	//			frag.setArguments(args);
+	//			return frag;
+	//		}
+	//
+	//		@Override
+	//		public Dialog onCreateDialog(Bundle savedInstanceState) {
+	//			//LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+	//			//View optionsDeleteView = li.inflate(R.layout.d, null);
+	//
+	//			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+	//
+	//			//alertDialogBuilder.setView(optionsDeleteView);
+	//			alertDialogBuilder.setTitle("Delete Your Checkbook?");
+	//			alertDialogBuilder.setCancelable(true);
+	//
+	//			alertDialogBuilder.setMessage(
+	//					"Do you want to completely delete the database?\n\nTHIS IS PERMANENT.")
+	//					.setCancelable(false)
+	//					.setPositiveButton("Yes",
+	//							new DialogInterface.OnClickListener() {
+	//						public void onClick(DialogInterface arg0,
+	//								int arg1) {
+	//
+	//							Uri uri = Uri.parse(MyContentProvider.DATABASE_URI+"");
+	//							getActivity().getContentResolver().delete(uri, null, null);
+	//
+	//							//Navigate User back home
+	//							Intent intentDashboard = new Intent(getActivity(), Main.class);
+	//							intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	//							startActivity(intentDashboard);
+	//						}
+	//					})
+	//					.setNegativeButton("No",
+	//							new DialogInterface.OnClickListener() {
+	//						public void onClick(DialogInterface arg0, int arg1) {
+	//							// no action taken
+	//						}
+	//					});
+	//
+	//			return alertDialogBuilder.create();
+	//		}
 	//	}
 
 }//end of Options

@@ -76,14 +76,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static Spinner tCategory;
 	private static Button tTime;
 	private static Button tDate;
-
-	//Date Format to use for time (01:42 PM)
-	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
-
-	//Date Format to use for date (03-26-2013)
-	private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
-
-	//Variables of the Account Used
+	
+	//ID of account transaction belongs to
 	private static int account_id;
 
 	private static String sortOrder = "null";
@@ -1201,12 +1195,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tMemo.setKeyListener(input);
 
 			final Calendar c = Calendar.getInstance();
+			DateTime transactionDate = new DateTime(c.getTime());
 
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			tDate.setText(dateFormat.format(c.getTime()));
+			tDate.setText(transactionDate.getReadableDate());
 
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			tTime.setText(timeFormat.format(c.getTime()));
+			tTime.setText(transactionDate.getReadableTime());
 
 			//Populate Category Drop-down List
 			((Transactions) getParentFragment()).categoryPopulate();					
@@ -1252,6 +1247,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionTime = tTime.getText().toString().trim();
 					String transactionDate = tDate.getText().toString().trim();
 
+					//DateTime date = new DateTime(tTime.getText().toString().trim());					
+					
 					//Check to see if value is a number
 					boolean validValue=false;
 					try{
@@ -1343,14 +1340,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					//Newest
 					case 0:
 						//TODO Fix date so it can be sorted
-						sortOrder = "TransDate" + " ASC";
+						sortOrder = "TransDate" + " DESC" + ", TransTime" + " DESC";
 						((Transactions) getParentFragment()).populate();
 						break;
 
 						//Oldest
 					case 1:
 						//TODO Fix date so it can be sorted
-						sortOrder = "TransDate" + " DESC";
+						sortOrder = "TransDate" + " ASC" + ", TransTime" + " ASC";
 						((Transactions) getParentFragment()).populate();
 						break;
 

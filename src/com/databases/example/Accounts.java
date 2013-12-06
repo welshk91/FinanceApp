@@ -13,7 +13,6 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
-import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,10 +25,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -75,14 +72,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
 	private View myFragmentView;
-	
+
 	private static String sortOrder= "null";
-
-	//Date Format to use for time (01:42 PM)
-	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
-
-	//Date Format to use for date (03-26-2013)
-	private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
 
 	private ListView lv = null;
 	private static UserItemAdapter adapterAccounts = null;
@@ -571,11 +562,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 				if(date != null) {
-					TVdate.setText("Date: " + date );
+					DateTime d = new DateTime(date);
+					TVdate.setText("Date: " + d.getReadableDate());
 				}
 
 				if(time != null) {
-					TVtime.setText("Time: " + time );
+					DateTime t = new DateTime(time);
+					TVtime.setText("Time: " + t.getReadableTime());
 				}
 
 			}
@@ -784,10 +777,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			statsName.setText(entry_name);
 			TextView statsValue = (TextView)accountStatsView.findViewById(R.id.TextAccountValue);
 			statsValue.setText(entry_balance);
+			DateTime d = new DateTime(entry_date);
 			TextView statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
-			statsDate.setText(entry_date);
+			statsDate.setText(d.getReadableDate());
+			DateTime t = new DateTime(entry_time);
 			TextView statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
-			statsTime.setText(entry_time);
+			statsTime.setText(t.getReadableTime());
 
 			c.close();
 			return alertDialogBuilder.create();
@@ -836,17 +831,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			.setPositiveButton("Save",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "OK"
 					String accountName = null;
-					String accountTime = null;
 					String accountBalance = null;
-					String accountDate = null;
+					final Calendar c = Calendar.getInstance();
+					Locale locale=getResources().getConfiguration().locale;
+					DateTime accountDate = new DateTime(c.getTime());
 
 					accountName = aName.getText().toString().trim();
 					accountBalance = balance.trim();
-					final Calendar c = Calendar.getInstance();
-					accountTime = timeFormat.format(c.getTime());
-					accountDate = dateFormat.format(c.getTime());
 
 					try{
 						//Delete Old Record
@@ -857,8 +849,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						accountValues.put("AcctID",ID);
 						accountValues.put("AcctName",accountName);
 						accountValues.put("AcctBalance",accountBalance);
-						accountValues.put("AcctTime",accountTime);
-						accountValues.put("AcctDate",accountDate);
+						accountValues.put("AcctTime",accountDate.getSQLTime(locale));
+						accountValues.put("AcctDate",accountDate.getSQLDate(locale));
 
 						//Make new record with same ID
 						getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
@@ -906,19 +898,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			.setPositiveButton("Save",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
+					final Calendar cal = Calendar.getInstance();
+
 					String accountName = null;
-					String accountTime = null;
-					String accountDate = null;
+					Locale locale=getResources().getConfiguration().locale;
+					DateTime accountDate = new DateTime(cal.getTime());
 
 					//Variables for adding the account
 					EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
 					EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
 					accountName = aName.getText().toString().trim();
 					Money accountBalance = new Money(aBalance.getText().toString().trim());
-
-					final Calendar cal = Calendar.getInstance();
-					accountTime = timeFormat.format(cal.getTime());
-					accountDate = dateFormat.format(cal.getTime());
 
 					//Variables for adding Starting Balance transaction
 					final String transactionName = "STARTING BALANCE";
@@ -927,12 +917,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					final String transactionCategory = "STARTING BALANCE";
 					final String transactionCheckNum = "None";
 					final String transactionMemo = "This is an automatically generated transaction created when you add an account";
-					final String transactionTime = accountTime;
-					final String transactionDate = accountDate;
+					final String transactionTime = accountDate.getSQLTime(locale);
+					final String transactionDate = accountDate.getSQLDate(locale);
 					final String transactionCleared = "true";
 					String transactionType = "Unknown";
-
-					Locale locale=getResources().getConfiguration().locale;
 
 					//Check Value to see if it's valid
 					try{
@@ -962,8 +950,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 							ContentValues accountValues=new ContentValues();
 							accountValues.put("AcctName",accountName);
 							accountValues.put("AcctBalance",accountBalance.getBigDecimal(locale)+"");
-							accountValues.put("AcctTime",accountTime);
-							accountValues.put("AcctDate",accountDate);
+							accountValues.put("AcctTime",accountDate.getSQLTime(locale));
+							accountValues.put("AcctDate",accountDate.getSQLDate(locale));
 
 							//Insert values into accounts table
 							Uri u = getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
@@ -1071,8 +1059,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					//Transfer From
 					final Calendar cal = Calendar.getInstance();
-					String transferTime = timeFormat.format(cal.getTime());
-					String transferDate = dateFormat.format(cal.getTime());
+					Locale locale=getResources().getConfiguration().locale;
+					DateTime transferDate = new DateTime(cal.getTime());
 
 					float tAmount;
 					final String transferName = "TRANSFER";
@@ -1102,8 +1090,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						transferFromValues.put("TransCategory", transferCategory);
 						transferFromValues.put("TransCheckNum", transferCheckNum);
 						transferFromValues.put("TransMemo", transferMemo);
-						transferFromValues.put("TransTime", transferTime);
-						transferFromValues.put("TransDate", transferDate);
+						transferFromValues.put("TransTime", transferDate.getSQLTime(locale));
+						transferFromValues.put("TransDate", transferDate.getSQLDate(locale));
 						transferFromValues.put("TransCleared", transferCleared);
 
 						//Insert values into transaction table
@@ -1157,8 +1145,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						transferToValues.put("TransCategory", transferCategory);
 						transferToValues.put("TransCheckNum", transferCheckNum);
 						transferToValues.put("TransMemo", transferMemo);
-						transferToValues.put("TransTime", transferTime);
-						transferToValues.put("TransDate", transferDate);
+						transferToValues.put("TransTime", transferDate.getSQLTime(locale));
+						transferToValues.put("TransDate", transferDate.getSQLDate(locale));
 						transferToValues.put("TransCleared", transferCleared);
 
 						//Insert values into transaction table
@@ -1239,19 +1227,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					
+
 					switch (position) {
 					//Newest
 					case 0:
 						//TODO Fix date so it can be sorted
-						sortOrder = "AcctDate" + " ASC";
+						sortOrder = "AcctDate" + " DESC" + ", AcctTime" + " DESC";
 						((Accounts) getParentFragment()).populate();
 						break;
 
 						//Oldest
 					case 1:
 						//TODO Fix date so it can be sorted
-						sortOrder = "AcctDate" + " DESC";
+						sortOrder = "AcctDate" + " ASC" + ", AcctTime" + " ASC";
 						((Accounts) getParentFragment()).populate();
 						break;
 
@@ -1272,7 +1260,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						sortOrder = "AcctName" + " ASC";
 						((Accounts) getParentFragment()).populate();
 						break;
-						
+
 					default:
 						Log.e("Accounts-SortFragment","Unknown Sorting Option!");
 						break;

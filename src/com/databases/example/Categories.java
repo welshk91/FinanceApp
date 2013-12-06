@@ -51,9 +51,6 @@ public class Categories extends SherlockFragmentActivity{
 	private ExpandableListView lvCategory = null;
 	private static UserItemAdapter adapterCategory = null;
 
-	//Constant for ActionbarId
-	private final int ACTIONBAR_MENU_ADD_CATEGORY_ID = 8675309;
-
 	//Constants for ContextMenu (Category)
 	private final int CONTEXT_MENU_CATEGORY_ADD=1;
 	private final int CONTEXT_MENU_CATEGORY_VIEW=2;
@@ -266,16 +263,11 @@ public class Categories extends SherlockFragmentActivity{
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
 		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-		MenuItem menuAdd = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+		//Show Add Icon
+		MenuItem menuAdd = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
 		menuAdd.setIcon(android.R.drawable.ic_menu_add);
 		menuAdd.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
-		SubMenu subMenu1 = menu.addSubMenu("Categories");
-		subMenu1.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_CATEGORY_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
-
-		MenuItem subMenu1Item = subMenu1.getItem();
-		subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
 		return true;
 	}
 
@@ -287,12 +279,12 @@ public class Categories extends SherlockFragmentActivity{
 			mDrawerLayout.toggle();
 			break;
 
-		case ACTIONBAR_MENU_ADD_CATEGORY_ID:
-			categoryAdd(null);
-			break;
-
 		case R.id.account_menu_search:    
 			onSearchRequested();
+			return true;
+
+		case R.id.account_menu_add:    
+			categoryAdd(null);
 			return true;
 		}
 

@@ -4,6 +4,7 @@
 
 package com.databases.example;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -34,6 +35,7 @@ public class DateTime{
 		this.stringDate=stringDate;
 	}
 
+	//Only Available if you TimeDate(String)
 	public String getReadableDate(){
 		String newDate = null;
 		try {
@@ -60,14 +62,44 @@ public class DateTime{
 		return newTime;
 	}
 
+	//Only Available if you TimeDate(Date)
 	public String getSQLDate(Locale l){
-		String d = dateSQLFormat.format(date);
-		return d;
+		if(date!=null){
+			String d = dateSQLFormat.format(date);
+			return d;	
+		}
+		else{
+			String newDate = null;
+			try {
+				Date oldDate = dateFormat.parse(stringDate);
+				newDate = dateSQLFormat.format(oldDate);
+			} catch (ParseException e) {
+				Log.e("DateTime-getSQLDate","Error parsing date("+stringDate+")!");
+				e.printStackTrace();
+			}
+
+			return newDate;
+
+		}
 	}
 
 	public String getSQLTime(Locale l){
-		String t = timeSQLFormat.format(date);
-		return t;
+		if(date!=null){
+			String t = timeSQLFormat.format(date);
+			return t;			
+		}
+		else{
+			String newTime = null;
+			try {
+				Date oldTime = timeFormat.parse(stringDate);
+				newTime = timeSQLFormat.format(oldTime);
+			} catch (ParseException e) {
+				Log.e("DateTime-getSQLTime","Error parsing date("+stringDate+")!");
+				e.printStackTrace();
+			}
+
+			return newTime;			
+		}
 	}
 
 }//End DateTime

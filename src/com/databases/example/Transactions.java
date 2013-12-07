@@ -61,7 +61,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Accounts.SortDialogFragment;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
@@ -76,12 +75,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static Spinner tCategory;
 	private static Button tTime;
 	private static Button tDate;
-	
+
 	//ID of account transaction belongs to
 	private static int account_id;
 
 	private static String sortOrder = "null";
-	
+
 	//Constants for ContextMenu
 	private int CONTEXT_MENU_OPEN=5;
 	private int CONTEXT_MENU_EDIT=6;
@@ -346,7 +345,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			return true;
 
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -418,24 +417,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			String ampm = "";
-			if(hourOfDay >=12){
-				ampm = "PM";
-			}
-			else{
-				ampm = "AM";
-			}
-
-			if(hourOfDay==0){
-				hourOfDay=12;
-			}
-			else if (hourOfDay>12){
-				hourOfDay=hourOfDay-12;
-			}
-
-			String transactionTime = hourOfDay + ":" + minute + " " + ampm;
+			DateTime time = new DateTime(hourOfDay + ":" + minute);
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			tTime.setText(transactionTime);
+			tTime.setText(time.getReadableTime());
 		}
 	}
 
@@ -461,17 +445,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			// Do something with the date chosen by the user
-			String transactionDate = null;
-			if(month<10){
-				transactionDate = "0"+(month+1) + "-" + day + "-" + year;
-			}
-			else{
-				transactionDate = (month+1) + "-" + day + "-" + year;
-			}
-
+			DateTime date = new DateTime(year + "-" + (month+1) + "-" + day);
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			tDate.setText(transactionDate);
+			tDate.setText(date.getReadableDate());
 		}
 	}
 
@@ -633,11 +609,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				}
 
 				if(date != null) {
-					TVdate.setText("Date: " + date );
+					DateTime d = new DateTime(date);
+					TVdate.setText("Date: " + d.getReadableDate());
 				}
 
 				if(time != null) {
-					TVtime.setText("Time: " + time );
+					DateTime t = new DateTime(time);
+					TVtime.setText("Time: " + t.getReadableTime());
 				}
 
 				if(cleared != null) {
@@ -952,10 +930,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			statsCheckNum.setText(entry_checknum);
 			TextView statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
 			statsMemo.setText(entry_memo);
+			DateTime d = new DateTime(entry_date);
 			TextView statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
-			statsDate.setText(entry_date);
+			statsDate.setText(d.getReadableDate());
+			DateTime t = new DateTime(entry_time);
 			TextView statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
-			statsTime.setText(entry_time);
+			statsTime.setText(t.getReadableTime());
 			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
 			statsCleared.setText(entry_cleared);
 
@@ -1064,8 +1044,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			.setPositiveButton("Save",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "OK"
-
 					//Needed to get category's name from DB-populated spinner
 					int categoryPosition = tCategory.getSelectedItemPosition();
 					Cursor cursorCategory = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
@@ -1077,9 +1055,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionCheckNum = tCheckNum.getText().toString().trim();
 					String transactionMemo = tMemo.getText().toString().trim();
 					String transactionCleared = tCleared.isChecked()+"";
-					String transactionTime = tTime.getText().toString().trim();
-					String transactionDate = tDate.getText().toString().trim();
+					DateTime transactionDate = new DateTime(tDate.getText().toString().trim());
+					DateTime transactionTime = new DateTime(tTime.getText().toString().trim());
 					Locale locale=getResources().getConfiguration().locale;
+
+
 
 					//Check to see if value is a number
 					boolean validValue=false;
@@ -1111,8 +1091,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							transactionValues.put("TransCategory", transactionCategory);
 							transactionValues.put("TransCheckNum", transactionCheckNum);
 							transactionValues.put("TransMemo", transactionMemo);
-							transactionValues.put("TransTime", transactionTime);
-							transactionValues.put("TransDate", transactionDate);
+							transactionValues.put("TransTime", transactionTime.getSQLTime(locale));
+							transactionValues.put("TransDate", transactionDate.getSQLDate(locale));
 							transactionValues.put("TransCleared", transactionCleared);
 
 							//Make new record with same ID
@@ -1195,13 +1175,20 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tMemo.setKeyListener(input);
 
 			final Calendar c = Calendar.getInstance();
-			DateTime transactionDate = new DateTime(c.getTime());
+			//DateTime transactionDate = new DateTime();
+
+			//Date Format to use for time (01:42 PM)
+			SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+			//Date Format to use for date (03-26-2013)
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy"); 
 
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			tDate.setText(transactionDate.getReadableDate());
+			//tDate.setText(transactionDate.getReadableDate());
+			tDate.setText(dateFormat.format(c.getTime()));
 
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			tTime.setText(transactionDate.getReadableTime());
+			//tTime.setText(transactionDate.getReadableTime());
+			tTime.setText(timeFormat.format(c.getTime()));
 
 			//Populate Category Drop-down List
 			((Transactions) getParentFragment()).categoryPopulate();					
@@ -1244,11 +1231,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionCleared = tCleared.isChecked()+"";
 
 					//Set Time
-					String transactionTime = tTime.getText().toString().trim();
-					String transactionDate = tDate.getText().toString().trim();
-
-					//DateTime date = new DateTime(tTime.getText().toString().trim());					
-					
+					DateTime transactionDate = new DateTime(tDate.getText().toString().trim());
+					DateTime transactionTime = new DateTime(tTime.getText().toString().trim());
+														
 					//Check to see if value is a number
 					boolean validValue=false;
 					try{
@@ -1275,8 +1260,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							transactionValues.put("TransCategory", transactionCategory);
 							transactionValues.put("TransCheckNum", transactionCheckNum);
 							transactionValues.put("TransMemo", transactionMemo);
-							transactionValues.put("TransTime", transactionTime);
-							transactionValues.put("TransDate", transactionDate);
+							transactionValues.put("TransTime", transactionTime.getSQLTime(locale));
+							transactionValues.put("TransDate", transactionDate.getSQLDate(locale));
 							transactionValues.put("TransCleared", transactionCleared);
 
 							Uri u = getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
@@ -1292,8 +1277,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						Log.e("Transactions-AddDialog", "Couldn't add transaction. Error e="+e);
 						Toast.makeText(getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
-
-					//cursor.close();
 
 				}//end onClick "OK"
 			})
@@ -1335,7 +1318,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
-					
+
 					switch (position) {
 					//Newest
 					case 0:
@@ -1368,7 +1351,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						sortOrder = "TransCategory" + " ASC";
 						((Transactions) getParentFragment()).populate();
 						break;
-						
+
 						//Type
 					case 5:
 						sortOrder = "TransType" + " ASC";
@@ -1380,7 +1363,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						sortOrder = "TransName" + " ASC";
 						((Transactions) getParentFragment()).populate();
 						break;
-						
+
 					default:
 						Log.e("Transactions-SortFragment","Unknown Sorting Option!");
 						break;
@@ -1395,7 +1378,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			return alertDialogBuilder.create();
 		}
 	}
-	
+
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		Log.d("Transactions-onCreateLoader", "calling create loader...");

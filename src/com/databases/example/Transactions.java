@@ -1371,6 +1371,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						((Transactions) getParentFragment()).populate();
 						break;
 
+						//None
+					case 7:
+						sortOrder = null;
+						((Transactions) getParentFragment()).populate();
+						break;
+
 					default:
 						Log.e("Transactions-SortFragment","Unknown Sorting Option!");
 						break;

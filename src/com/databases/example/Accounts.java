@@ -1268,6 +1268,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						((Accounts) getParentFragment()).populate();
 						break;
 
+						//None	
+					case 5:
+						sortOrder = null;
+						((Accounts) getParentFragment()).populate();
+						break;
+						
 					default:
 						Log.e("Accounts-SortFragment","Unknown Sorting Option!");
 						break;
@@ -1275,7 +1281,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					}//end switch
 
 					getDialog().cancel();
-
 				}
 			});			
 

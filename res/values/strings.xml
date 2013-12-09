@@ -53,6 +53,7 @@
         <item>Largest</item>
         <item>Smallest</item>
         <item>Alphabetical</item>
+        <item>None</item>
     </string-array>
     <string-array name="sort_options_transaction">
         <item>Newest</item>
@@ -62,6 +63,7 @@
         <item>Category</item>
         <item>Type</item>
         <item>Alphabetical</item>
+        <item>None</item>
     </string-array>
     <string-array name="transaction_category">
         <item>ALLOWANCE</item>

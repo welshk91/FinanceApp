@@ -6,14 +6,21 @@ package com.databases.example;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import android.util.Log;
 
 public class DateTime{
+	protected Date dateSQL;
+	protected Date dateReadable;
+
+	protected String stringSQL;
+	protected String stringReadable;
+
 	protected Date date;
-	protected String stringDate;
+	protected Calendar cal;
 
 	//Time Format to use for user (01:42 PM)
 	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
@@ -27,79 +34,128 @@ public class DateTime{
 	//Date Format to use for sql
 	private final static SimpleDateFormat dateSQLFormat = new SimpleDateFormat("yyyy-MM-dd");		
 
-	public DateTime(Date date){
+	public DateTime(){
+	}
+
+	public void setDateSQL(Date dateSQL){
+		this.dateSQL=dateSQL;
+	}
+
+	public void setDateReadable(Date dateReadable){
+		this.dateReadable=dateReadable;
+	}
+
+	public void setStringSQL(String stringSQL){
+		this.stringSQL=stringSQL;
+	}
+
+	public void setStringReadable(String stringReadable){
+		this.stringReadable=stringReadable;
+	}
+
+	public void setDate(Date date){
 		this.date=date;
 	}
 
-	public DateTime(String stringDate){
-		this.stringDate=stringDate;
+	public void setCalendar(Calendar cal){
+		this.cal=cal;
 	}
 
-	//Only Available if you TimeDate(String)
 	public String getReadableDate(){
 		String newDate = null;
-		try {
-			Date oldDate = dateSQLFormat.parse(stringDate);
-			newDate = dateFormat.format(oldDate);
-		} catch (Exception e) {
-			Log.e("DateTime-getReadableDate","Error parsing readable date("+stringDate+")!");
-			e.printStackTrace();
+
+		if(stringReadable!=null){
+			return stringReadable;
 		}
 
-		return newDate;
+		else if(cal!=null){
+			return dateFormat.format(cal.getTime());
+		}
+
+		else{
+			try {
+				Date oldDate = dateSQLFormat.parse(stringSQL);
+				newDate = dateFormat.format(oldDate);
+			} catch (Exception e) {
+				Log.e("DateTime-getReadableDate","Error parsing readable date("+stringSQL+")!");
+				e.printStackTrace();
+			}
+			return newDate;
+		}
 	}
 
 	public String getReadableTime(){
-		String newTime = null;
-		try {
-			Date oldTime = timeSQLFormat.parse(stringDate);
-			newTime = timeFormat.format(oldTime);
-		} catch (Exception e) {
-			Log.e("DateTime-getReadableTime","Error parsing readable time("+stringDate+")!");
-			e.printStackTrace();
-		}
+		String newTime = null;		
 
-		return newTime;
+		if(stringReadable!=null){
+			return stringReadable;
+		}
+		
+		else if(cal!=null){
+			return timeFormat.format(cal.getTime());
+		}
+		
+		else{
+			try {
+				Date oldTime = timeSQLFormat.parse(stringSQL);
+				newTime = timeFormat.format(oldTime);
+			} catch (Exception e) {
+				Log.e("DateTime-getReadableTime","Error parsing readable time("+stringSQL+")!");
+				e.printStackTrace();
+			}
+
+			return newTime;
+		}
 	}
 
-	//Only Available if you TimeDate(Date)
 	public String getSQLDate(Locale l){
-		if(date!=null){
+		if(stringSQL!=null){
+			return stringSQL;
+		}
+
+		else if(date!=null){
 			String d = dateSQLFormat.format(date);
 			return d;	
 		}
 		else{
 			String newDate = null;
 			try {
-				Date oldDate = dateFormat.parse(stringDate);
+				Date oldDate = dateFormat.parse(stringReadable);
 				newDate = dateSQLFormat.format(oldDate);
 			} catch (ParseException e) {
-				Log.e("DateTime-getSQLDate","Error parsing date("+stringDate+")!");
+				Log.e("DateTime-getSQLDate","Error parsing date("+stringReadable+")!");
 				e.printStackTrace();
 			}
 
 			return newDate;
-
 		}
 	}
 
 	public String getSQLTime(Locale l){
-		if(date!=null){
+		if(stringSQL!=null){
+			return stringSQL;
+		}
+
+		else if(date!=null){
 			String t = timeSQLFormat.format(date);
 			return t;			
 		}
 		else{
 			String newTime = null;
 			try {
-				Date oldTime = timeFormat.parse(stringDate);
+				Date oldTime = timeFormat.parse(stringReadable);
 				newTime = timeSQLFormat.format(oldTime);
 			} catch (ParseException e) {
-				Log.e("DateTime-getSQLTime","Error parsing date("+stringDate+")!");
+				Log.e("DateTime-getSQLTime","Error parsing date("+stringReadable+")!");
 				e.printStackTrace();
 			}
 
 			return newTime;			
 		}
+	}
+
+	public Date getYearMonthDay() throws ParseException{
+		return dateSQLFormat.parse(stringSQL);
 	}
 
 }//End DateTime

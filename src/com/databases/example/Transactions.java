@@ -417,7 +417,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			DateTime time = new DateTime(hourOfDay + ":" + minute);
+			DateTime time = new DateTime();
+			time.setStringSQL(hourOfDay + ":" + minute);
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
 			tTime.setText(time.getReadableTime());
 		}
@@ -445,7 +446,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			DateTime date = new DateTime(year + "-" + (month+1) + "-" + day);
+			DateTime date = new DateTime();
+			date.setStringSQL(year + "-" + (month+1) + "-" + day);
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
 			tDate.setText(date.getReadableDate());
 		}
@@ -609,12 +611,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				}
 
 				if(date != null) {
-					DateTime d = new DateTime(date);
+					DateTime d = new DateTime();
+					d.setStringSQL(date);
 					TVdate.setText("Date: " + d.getReadableDate());
 				}
 
 				if(time != null) {
-					DateTime t = new DateTime(time);
+					DateTime t = new DateTime();
+					t.setStringSQL(time);
 					TVtime.setText("Time: " + t.getReadableTime());
 				}
 
@@ -930,10 +934,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			statsCheckNum.setText(entry_checknum);
 			TextView statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
 			statsMemo.setText(entry_memo);
-			DateTime d = new DateTime(entry_date);
+			DateTime d = new DateTime();
+			d.setStringSQL(entry_date);
 			TextView statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
 			statsDate.setText(d.getReadableDate());
-			DateTime t = new DateTime(entry_time);
+			DateTime t = new DateTime();
+			t.setStringSQL(entry_time);
 			TextView statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
 			statsTime.setText(t.getReadableTime());
 			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
@@ -1035,8 +1041,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tCheckNum.setText(checknum);
 			tMemo.setText(memo);
 			tCleared.setChecked(Boolean.parseBoolean(cleared));
-			tDate.setText(date);
-			tTime.setText(time);
+			DateTime d = new DateTime();
+			d.setStringSQL(date);
+			tDate.setText(d.getReadableDate());
+			DateTime t = new DateTime();
+			t.setStringSQL(time);
+			tTime.setText(t.getReadableTime());
 
 			// set dialog message
 			alertDialogBuilder
@@ -1055,8 +1065,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionCheckNum = tCheckNum.getText().toString().trim();
 					String transactionMemo = tMemo.getText().toString().trim();
 					String transactionCleared = tCleared.isChecked()+"";
-					DateTime transactionDate = new DateTime(tDate.getText().toString().trim());
-					DateTime transactionTime = new DateTime(tTime.getText().toString().trim());
+					DateTime transactionDate = new DateTime();
+					transactionDate.setStringReadable(tDate.getText().toString().trim());
+					DateTime transactionTime = new DateTime();
+					transactionTime.setStringReadable(tTime.getText().toString().trim());
 					Locale locale=getResources().getConfiguration().locale;
 
 
@@ -1117,7 +1129,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "Cancel"
 					dialog.cancel();
 				}
 			});
@@ -1175,20 +1186,14 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tMemo.setKeyListener(input);
 
 			final Calendar c = Calendar.getInstance();
-			//DateTime transactionDate = new DateTime();
-
-			//Date Format to use for time (01:42 PM)
-			SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
-			//Date Format to use for date (03-26-2013)
-			SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy"); 
+			DateTime date = new DateTime();
+			date.setCalendar(c);
 
 			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			//tDate.setText(transactionDate.getReadableDate());
-			tDate.setText(dateFormat.format(c.getTime()));
+			tDate.setText(date.getReadableDate());
 
 			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			//tTime.setText(transactionDate.getReadableTime());
-			tTime.setText(timeFormat.format(c.getTime()));
+			tTime.setText(date.getReadableTime());
 
 			//Populate Category Drop-down List
 			((Transactions) getParentFragment()).categoryPopulate();					
@@ -1231,8 +1236,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionCleared = tCleared.isChecked()+"";
 
 					//Set Time
-					DateTime transactionDate = new DateTime(tDate.getText().toString().trim());
-					DateTime transactionTime = new DateTime(tTime.getText().toString().trim());
+					DateTime transactionDate = new DateTime();
+					transactionDate.setStringReadable(tDate.getText().toString().trim());
+					DateTime transactionTime = new DateTime();
+					transactionTime.setStringReadable(tTime.getText().toString().trim());
 														
 					//Check to see if value is a number
 					boolean validValue=false;

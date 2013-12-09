@@ -16,12 +16,6 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.databases.example.Categories.CategoryRecord;
-import com.databases.example.Categories.SubCategoryRecord;
-import com.databases.example.Categories.ViewDialogFragment;
-import com.databases.example.Transactions.AddDialogFragment;
-import com.databases.example.Transactions.EditDialogFragment;
-import com.databases.example.Transactions.TransactionRecord;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -39,7 +33,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
@@ -61,7 +54,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -89,15 +81,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 	private static SimpleCursorAdapter accountSpinnerAdapter = null;
 	private static Spinner accountSpinner;
 
-	//Date Format to use for time (01:42 PM)
-	private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
-
-	//Date Format to use for date (03-26-2013)
-	private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
-
-	//Variables for the transaction Table
-	private static String transactionDate = null;
-
 	//Constants for ContextMenu
 	private final int CONTEXT_MENU_OPEN=1;
 	private final int CONTEXT_MENU_EDIT=2;
@@ -106,6 +89,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 	//Dialog for Adding Transaction
 	private static View promptsView;
+
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	private static Button pDate;
 	private UserItemAdapter adapterPlans;
@@ -223,7 +208,9 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		Date d = null;
 
 		try {
-			d = dateFormat.parse(record.offset);
+			DateTime test = new DateTime();
+			test.setStringSQL(record.offset);
+			d = test.getYearMonthDay();
 		}catch (java.text.ParseException e) {
 			Log.e("Plans-schedule", "Couldn't schedule " + record.name + "\n e:"+e);
 		}
@@ -259,13 +246,17 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		if(tokens[1].contains("Days")){
 			Log.d("Plans-schedule", "Days");
 
-			//If Starting Time is in the past, fire off next month(s)
+			//If Starting Time is in the past, fire off next day(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
 
 			Log.d("Plans-schedule", "firstRun is " + firstRun);
-			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+			DateTime fRun = new DateTime(); 
+			fRun.setCalendar(firstRun);
+
+			//Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
@@ -273,13 +264,17 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		else if(tokens[1].contains("Weeks")){
 			Log.d("Plans-schedule", "Weeks");
 
-			//If Starting Time is in the past, fire off next month(s)
+			//If Starting Time is in the past, fire off next week(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
 
 			Log.d("Plans-schedule", "firstRun is " + firstRun);
-			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+			DateTime fRun = new DateTime(); 
+			fRun.setCalendar(firstRun);
+
+			//Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
@@ -295,7 +290,11 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			}
 
 			Log.d("Plans-schedule", "firstRun is " + firstRun);
-			Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+			DateTime fRun = new DateTime(); 
+			fRun.setCalendar(firstRun);
+
+			//Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
 			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_FIFTEEN_MINUTES), sender);
@@ -430,11 +429,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		newFragment.show(getSupportFragmentManager(), "datePicker");
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-	}
-
 	public static class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 
@@ -454,17 +448,11 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
 
-		public void onDateSet(DatePicker view, int year, int month, int day) {
-			// Do something with the date chosen by the user
-			if(month<10){
-				transactionDate = "0"+(month+1) + "-" + day + "-" + year;
-			}
-			else{
-				transactionDate = (month+1) + "-" + day + "-" + year;
-			}
+		public void onDateSet(DatePicker view, int year, int month, int day) {			
+			DateTime date = new DateTime();
+			date.setStringSQL(year + "-" + (month+1) + "-" + day);
+			pDate.setText(date.getReadableDate());
 
-			pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			pDate.setText(transactionDate);
 		}
 	}
 
@@ -605,7 +593,9 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					TVmemo.setText("Memo: " + memo);
 				}
 				if (offset != null) {
-					TVoffset.setText("Offset: " + offset);
+					DateTime o = new DateTime();
+					o.setStringSQL(offset);
+					TVoffset.setText("Offset: " + o.getReadableDate());
 				}
 				if (rate != null) {
 					TVrate.setText("Rate: " + rate);
@@ -904,14 +894,15 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			TextView statsMemo = (TextView)planStatsView.findViewById(R.id.TextTransactionMemo);
 			statsMemo.setText(entry_memo);
 			TextView statsOffset = (TextView)planStatsView.findViewById(R.id.TextTransactionOffset);
-			statsOffset.setText(entry_offset);
+			DateTime o = new DateTime();
+			o.setStringSQL(entry_offset);
+			statsOffset.setText(o.getReadableDate());
 			TextView statsRate = (TextView)planStatsView.findViewById(R.id.TextTransactionRate);
 			statsRate.setText(entry_rate);
 			TextView statsCleared = (TextView)planStatsView.findViewById(R.id.TextTransactionCleared);
 			statsCleared.setText(entry_cleared);
 
 			return alertDialogBuilder.create();
-
 		}
 	}
 
@@ -940,8 +931,12 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
 
 			final Calendar c = Calendar.getInstance();
+
 			pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			pDate.setText(dateFormat.format(c.getTime()));
+			//pDate.setText(dateFormat.format(c.getTime()));
+			DateTime d = new DateTime();
+			d.setCalendar(c);
+			pDate.setText(d.getReadableDate());
 
 			//Adapter for memo's autocomplete
 			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getSherlockActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
@@ -979,7 +974,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					String transactionType = null;
 					String transactionCategory = null;
 					String transactionMemo = null;
-					String transactionOffset = null;
+					DateTime transactionOffset = new DateTime();
 					String transactionRate = null;
 					String transactionCleared = null;
 					Locale locale=getResources().getConfiguration().locale;
@@ -997,7 +992,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 						transactionValue = new Money(tValue.getText().toString().trim());	
 					}
 					catch(Exception e){
-						Log.e("Plans-schedulingAdd","Invalid Value? Exception e:" + e);
+						Log.e("Plans-Add","Invalid Value? Exception e:" + e);
 						dialog.cancel();
 						Toast.makeText(getSherlockActivity(), "Invalid Value", Toast.LENGTH_LONG).show();
 						return;
@@ -1011,7 +1006,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					}
 					catch(Exception e){
 						//Usually caused if no account exists
-						Log.e("Plans-schedulingAdd","No Account? Exception e:" + e);
+						Log.e("Plans-Add","No Account? Exception e:" + e);
 						dialog.cancel();
 						Toast.makeText(getSherlockActivity(), "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 						return;
@@ -1023,7 +1018,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					}
 					catch(Exception e){
 						//Usually caused if no category exists
-						Log.e("Plans-schedulingAdd","No Category? Exception e:" + e);
+						Log.e("Plans-Add","No Category? Exception e:" + e);
 						dialog.cancel();
 						Toast.makeText(getSherlockActivity(), "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
 						return;
@@ -1032,7 +1027,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					transactionMemo = tMemo.getText().toString().trim();
 
 					//Set Time
-					transactionOffset = pDate.getText().toString().trim();
+					transactionOffset.setStringReadable(pDate.getText().toString().trim());
+
 					transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
 					transactionCleared = tCleared.isChecked()+"";
 
@@ -1043,13 +1039,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 						validRate=true;
 					}
 					catch(Exception e){
-						Log.e("Plans","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
+						Log.e("Plans-Add","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
 						validRate=false;
 					}
 
 					try{
 						if (transactionName.length()>0 && validRate) {
-							Log.d("Plans", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
+							Log.d("Plans-Add", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 							ContentValues transactionValues = new ContentValues();
 							transactionValues.put("ToAcctID", transactionAccountID);
@@ -1058,13 +1054,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 							transactionValues.put("PlanType", transactionType);
 							transactionValues.put("PlanCategory", transactionCategory);
 							transactionValues.put("PlanMemo", transactionMemo);
-							transactionValues.put("PlanOffset", transactionOffset);
+							transactionValues.put("PlanOffset", transactionOffset.getSQLDate(locale));
 							transactionValues.put("PlanRate", transactionRate);
 							transactionValues.put("PlanCleared", transactionCleared);
 
 							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
 
-							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);
 
 							//Refresh the plans list
@@ -1077,7 +1073,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 						}
 					}
 					catch(Exception e){
-						Log.e("Plans-Edit", "e = " + e);
+						Log.e("Plans-Add", "e = " + e);
 						Toast.makeText(getSherlockActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
@@ -1126,8 +1122,8 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			final String offset = getArguments().getString("offset");
 			final String rate = getArguments().getString("rate");
 			final String cleared = getArguments().getString("cleared");
-			final PlanRecord oldRecord = new PlanRecord(ID, aID, name, value, type, category, memo, offset, rate, cleared);		
-			
+			final PlanRecord oldRecord = new PlanRecord(ID, aID, name, value, type, category, memo, offset, rate, cleared);
+
 			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
 			promptsView = li.inflate(R.layout.plan_add, null);
 
@@ -1183,7 +1179,9 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			}
 
 			tMemo.setText(memo);
-			pDate.setText(offset);
+			DateTime d = new DateTime();
+			d.setStringSQL(offset);
+			pDate.setText(d.getReadableDate());
 
 			//Parse Rate (token 0 is amount, token 1 is type)
 			String phrase = rate;
@@ -1220,7 +1218,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					String transactionType = null;
 					String transactionCategory = null;
 					String transactionMemo = null;
-					String transactionOffset = null;
+					DateTime transactionOffset = new DateTime();
 					String transactionRate = null;
 					String transactionCleared = null;
 					Locale locale=getResources().getConfiguration().locale;
@@ -1275,7 +1273,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 					transactionMemo = tMemo.getText().toString().trim();
 
 					//Set Time
-					transactionOffset = pDate.getText().toString().trim();
+					transactionOffset.setStringReadable(pDate.getText().toString().trim());
 					transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
 					transactionCleared = tCleared.isChecked()+"";
 
@@ -1294,11 +1292,10 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 						if (transactionName.length()>0 && validRate) {
 
 							Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
-							
+
 							Uri uri = Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI + "/" + oldRecord.id);
 							getActivity().getContentResolver().delete(uri, "PlanID="+oldRecord.id, null);
 							((Plans) getSherlockActivity()).cancelPlan(oldRecord);
-							//cancelPlan(record);
 
 							ContentValues transactionValues=new ContentValues();
 							transactionValues.put("ToAcctID", transactionAccountID);
@@ -1307,13 +1304,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 							transactionValues.put("PlanType", transactionType);
 							transactionValues.put("PlanCategory", transactionCategory);
 							transactionValues.put("PlanMemo", transactionMemo);
-							transactionValues.put("PlanOffset", transactionOffset);
+							transactionValues.put("PlanOffset", transactionOffset.getSQLDate(locale));
 							transactionValues.put("PlanRate", transactionRate);
 							transactionValues.put("PlanCleared", transactionCleared);
 
 							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
 
-							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset, transactionRate, transactionCleared);
+							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);;
 							((Plans) getSherlockActivity()).plansPopulate();;
 						} 
@@ -1332,7 +1329,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "Cancel"
 					dialog.cancel();
 				}
 			});
@@ -1340,5 +1336,5 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			return alertDialogBuilder.create();			
 		}
 	}
-	
+
 }//end of Plans

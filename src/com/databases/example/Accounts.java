@@ -562,12 +562,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 				if(date != null) {
-					DateTime d = new DateTime(date);
+					DateTime d = new DateTime();
+					d.setStringSQL(date);
 					TVdate.setText("Date: " + d.getReadableDate());
 				}
 
 				if(time != null) {
-					DateTime t = new DateTime(time);
+					DateTime t = new DateTime();
+					t.setStringSQL(time);
 					TVtime.setText("Time: " + t.getReadableTime());
 				}
 
@@ -777,10 +779,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			statsName.setText(entry_name);
 			TextView statsValue = (TextView)accountStatsView.findViewById(R.id.TextAccountValue);
 			statsValue.setText(entry_balance);
-			DateTime d = new DateTime(entry_date);
+			DateTime d = new DateTime();
+			d.setStringSQL(entry_date);
 			TextView statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
 			statsDate.setText(d.getReadableDate());
-			DateTime t = new DateTime(entry_time);
+			DateTime t = new DateTime();
+			t.setStringSQL(entry_time);
 			TextView statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
 			statsTime.setText(t.getReadableTime());
 
@@ -835,8 +839,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					String accountBalance = null;
 					final Calendar c = Calendar.getInstance();
 					Locale locale=getResources().getConfiguration().locale;
-					DateTime accountDate = new DateTime(c.getTime());
-
+					DateTime accountDate = new DateTime();
+					accountDate.setDate(c.getTime());
+					
 					accountName = aName.getText().toString().trim();
 					accountBalance = balance.trim();
 
@@ -902,7 +907,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 					String accountName = null;
 					Locale locale=getResources().getConfiguration().locale;
-					DateTime accountDate = new DateTime(cal.getTime());
+					DateTime accountDate = new DateTime();
+					accountDate.setDate(cal.getTime());
 
 					//Variables for adding the account
 					EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
@@ -1060,7 +1066,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					//Transfer From
 					final Calendar cal = Calendar.getInstance();
 					Locale locale=getResources().getConfiguration().locale;
-					DateTime transferDate = new DateTime(cal.getTime());
+					DateTime transferDate = new DateTime();
+					transferDate.setDate(cal.getTime());
 
 					float tAmount;
 					final String transferName = "TRANSFER";

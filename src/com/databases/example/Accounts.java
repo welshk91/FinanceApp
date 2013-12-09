@@ -841,7 +841,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Locale locale=getResources().getConfiguration().locale;
 					DateTime accountDate = new DateTime();
 					accountDate.setDate(c.getTime());
-					
+
 					accountName = aName.getText().toString().trim();
 					accountBalance = balance.trim();
 
@@ -1273,7 +1273,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						sortOrder = null;
 						((Accounts) getParentFragment()).populate();
 						break;
-						
+
 					default:
 						Log.e("Accounts-SortFragment","Unknown Sorting Option!");
 						break;
@@ -1322,15 +1322,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.d("Accounts", "load done. loader="+loader + " data="+data);
-		adapterAccounts.swapCursor(data);
+		if(adapterAccounts!=null && data!=null){
+			adapterAccounts.swapCursor(data);			
+		}
+		Log.v("Accounts-onLoadFinished", "load done. loader="+loader + " data="+data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.d("Accounts", "loaderReset on " + loader);
-		//Not sure what should go here....
-		adapterAccounts.swapCursor(null);
+		if(adapterAccounts!=null){
+			adapterAccounts.swapCursor(null);
+		}
+		Log.v("Accounts-onLoaderReset", "loaderReset on " + loader);
 	}
 
 }//End Accounts

@@ -822,13 +822,18 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.d("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
-		adapterPlans.swapCursor(data);
+		if(adapterPlans!=null && data!=null){
+			adapterPlans.swapCursor(data);			
+		}
+		Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		loader = null; //Possible Solution????	
+		if(adapterPlans!=null){
+			adapterPlans.swapCursor(null);
+		}
+		Log.v("Plans-onLoaderReset", "loaderReset on " + loader);		
 	}
 
 	//Class that handles view fragment

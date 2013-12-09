@@ -1240,7 +1240,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					transactionDate.setStringReadable(tDate.getText().toString().trim());
 					DateTime transactionTime = new DateTime();
 					transactionTime.setStringReadable(tTime.getText().toString().trim());
-														
+
 					//Check to see if value is a number
 					boolean validValue=false;
 					try{
@@ -1419,7 +1419,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						);
 			}
 			else{
-				//String selection = "stitchlevel='" + args.getString("Level") + "'";
 				String[] projection = new String[]{ "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"};
 				String selection = "ToAcctID=" + account_id;
 				return new CursorLoader(
@@ -1435,26 +1434,22 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Log.e("Transactions-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
 		}
-
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.d("Transaction", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
-		adapterTransaction.swapCursor(data);		
+		if(adapterTransaction!=null && data!=null){
+			adapterTransaction.swapCursor(data);
+		}
+		Log.v("Transaction-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		/***** 
-		 * NOT SURE HOW TO HANDLE THIS CASE
-		 * If single-pane, no problems with swapping adapter. But with dual-pane, 
-		 * swapping cursor makes the cursor retrieve data correctly, but nullifies it almost instantly
-		 *****/
-
-		Log.d("Transaction", "loaderReset on " + loader);
-		//loader = null; //Possible Solution????	
+		if(adapterTransaction!=null){
+			adapterTransaction.swapCursor(null);	
+		}
+		Log.d("Transaction-onLoaderReset", "loaderReset on " + loader);	
 	}
-
 
 }//end Transactions

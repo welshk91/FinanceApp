@@ -608,7 +608,6 @@ public class Categories extends SherlockFragmentActivity{
 
 			//user.close();
 			return v;
-
 		}
 
 		@Override
@@ -936,7 +935,6 @@ public class Categories extends SherlockFragmentActivity{
 
 			return alertDialogBuilder.create();
 		}
-
 	}
 
 }//end Categories

@@ -11,13 +11,13 @@ public final class R {
 		public static final int alp_lockpatternview_max_size = 0x7f0600c4;
 	}
 	public static final class drawable {
-		public static final int alp_btn_code_lock_default_holo = 0x7f020073;
-		public static final int alp_btn_code_lock_touched_holo = 0x7f020074;
-		public static final int alp_indicator_code_lock_drag_direction_green_up = 0x7f020075;
-		public static final int alp_indicator_code_lock_drag_direction_red_up = 0x7f020076;
-		public static final int alp_indicator_code_lock_point_area_default_holo = 0x7f020077;
-		public static final int alp_indicator_code_lock_point_area_green_holo = 0x7f020078;
-		public static final int alp_indicator_code_lock_point_area_red_holo = 0x7f020079;
+		public static final int alp_btn_code_lock_default_holo = 0x7f020070;
+		public static final int alp_btn_code_lock_touched_holo = 0x7f020071;
+		public static final int alp_indicator_code_lock_drag_direction_green_up = 0x7f020072;
+		public static final int alp_indicator_code_lock_drag_direction_red_up = 0x7f020073;
+		public static final int alp_indicator_code_lock_point_area_default_holo = 0x7f020074;
+		public static final int alp_indicator_code_lock_point_area_green_holo = 0x7f020075;
+		public static final int alp_indicator_code_lock_point_area_red_holo = 0x7f020076;
 	}
 	public static final class id {
 		public static final int alp_lpa_button_cancel = 0x7f0a0056;

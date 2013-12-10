@@ -429,21 +429,17 @@ public class Categories extends SherlockFragmentActivity{
 
 				//Change Background Colors
 				try{
-					LinearLayout l;
-					l=(LinearLayout)v.findViewById(R.id.category_layout);
-					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-					GradientDrawable defaultGradient = new GradientDrawable(
-							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {startColor,endColor});
-
-					if(useDefaults){
-						l.setBackgroundResource(R.drawable.account_list_style);
-					}
-					else{
+					if(!useDefaults){
+						LinearLayout l;
+						l=(LinearLayout)v.findViewById(R.id.category_layout);
+						int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+						int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+						GradientDrawable defaultGradient = new GradientDrawable(
+								GradientDrawable.Orientation.BOTTOM_TOP,
+								new int[] {startColor,endColor});
 						l.setBackgroundDrawable(defaultGradient);
-					}
 
+					}
 				}
 				catch(Exception e){
 					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
@@ -536,21 +532,16 @@ public class Categories extends SherlockFragmentActivity{
 
 				//Change Background Colors
 				try{
-					LinearLayout l;
-					l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
-					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-					GradientDrawable defaultGradient = new GradientDrawable(
-							GradientDrawable.Orientation.BOTTOM_TOP,
-							new int[] {startColor,endColor});
-
-					if(useDefaults){
-						l.setBackgroundResource(R.drawable.account_list_style);
-					}
-					else{
+					if(!useDefaults){
+						LinearLayout l;
+						l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
+						int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+						int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+						GradientDrawable defaultGradient = new GradientDrawable(
+								GradientDrawable.Orientation.BOTTOM_TOP,
+								new int[] {startColor,endColor});
 						l.setBackgroundDrawable(defaultGradient);
 					}
-
 				}
 				catch(Exception e){
 					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();

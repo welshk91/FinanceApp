@@ -192,11 +192,11 @@ public final class R {
 		public static final int widget_margin_top_bottom = 0x7f06001a;
 	}
 	public static final class drawable {
-		public static final int card = 0x7f02007b;
-		public static final int card_background = 0x7f02007c;
-		public static final int card_background_shadow = 0x7f02007d;
-		public static final int card_shadow = 0x7f02007e;
-		public static final int top_shadow = 0x7f02009e;
+		public static final int card = 0x7f020078;
+		public static final int card_background = 0x7f020079;
+		public static final int card_background_shadow = 0x7f02007a;
+		public static final int card_shadow = 0x7f02007b;
+		public static final int top_shadow = 0x7f02009b;
 	}
 	public static final class id {
 		public static final int ScrollView1 = 0x7f0a006d;

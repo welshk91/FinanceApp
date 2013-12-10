@@ -619,21 +619,16 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 			//Change Background Colors
 			try{
-				LinearLayout l;
-				l=(LinearLayout)v.findViewById(R.id.plan_layout);
-				int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-				int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-				GradientDrawable defaultGradient = new GradientDrawable(
-						GradientDrawable.Orientation.BOTTOM_TOP,
-						new int[] {startColor,endColor});
-
-				if(useDefaults){
-					l.setBackgroundResource(R.drawable.account_list_style);
-				}
-				else{
+				if(!useDefaults){
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.plan_layout);
+					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {startColor,endColor});
 					l.setBackgroundDrawable(defaultGradient);
 				}
-
 			}
 			catch(Exception e){
 				Toast.makeText(Plans.this, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();

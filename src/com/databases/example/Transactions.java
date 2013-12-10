@@ -654,21 +654,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			//Change Background Colors
 			try{
-				int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#F5F5F5"));
-				int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
+				if(!useDefaults){
+					int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#F5F5F5"));
+					int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
 
-				GradientDrawable defaultGradient = new GradientDrawable(
-						GradientDrawable.Orientation.BOTTOM_TOP,
-						new int[] {startColor,endColor});
-
-				if(useDefaults){
-					l.setBackgroundResource(R.drawable.transaction_list_style);
-				}
-				else{
-
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {startColor,endColor});
 					l.setBackgroundDrawable(defaultGradient);
 				}
-
 			}
 			catch(Exception e){
 				Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();

@@ -12,7 +12,8 @@
         <ListView
             android:id="@+id/plans_list"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:drawSelectorOnTop="true" />
 
         <TextView
             android:id="@+id/plans_noPlans"

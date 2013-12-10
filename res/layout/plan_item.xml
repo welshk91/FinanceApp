@@ -15,7 +15,7 @@
         android:layout_width="10dp"
         android:layout_height="fill_parent"
         android:layout_marginRight="6dip"
-        android:background="@drawable/transaction_id_gradient"
+        android:background="#000000"
         android:orientation="horizontal" />
 
     <LinearLayout

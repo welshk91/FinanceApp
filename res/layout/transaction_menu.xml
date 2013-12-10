@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/transaction_menu_add"
-        android:icon="@android:drawable/ic_menu_add"
-        android:showAsAction="ifRoom"
-        android:title="Add"/>
-
-    <item
         android:id="@+id/transaction_menu_search"
         android:icon="@android:drawable/ic_menu_search"
         android:showAsAction="ifRoom"
         android:title="Search"/>
+
+    <item
+        android:id="@+id/transaction_menu_add"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom"
+        android:title="Add"/>
 
     <item
         android:id="@+id/transaction_menu_schedule"
@@ -21,7 +21,6 @@
     <item
         android:id="@+id/transaction_menu_sort"
         android:icon="@drawable/ic_menu_sort_by_size"
-        android:showAsAction="ifRoom"
         android:title="Sort"/>
 
 </menu>

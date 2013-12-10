@@ -9,7 +9,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/account_total_balance"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:drawSelectorOnTop="true" />
 
     <TextView
         android:id="@+id/account_noTransaction"
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#000000"
-        android:textColor="#ffffff"
-        android:text="Total Balance:" />
+        android:text="Total Balance:"
+        android:textColor="#ffffff" />
 
 </RelativeLayout>

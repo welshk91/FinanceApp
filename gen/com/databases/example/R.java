@@ -1454,8 +1454,8 @@ containing a value of this type.
         public static final int account_gradient=0x7f0a003a;
         public static final int account_layout=0x7f0a0039;
         public static final int account_list=0x7f0a0050;
-        public static final int account_menu_add=0x7f0a003f;
-        public static final int account_menu_search=0x7f0a0040;
+        public static final int account_menu_add=0x7f0a0040;
+        public static final int account_menu_search=0x7f0a003f;
         public static final int account_menu_sort=0x7f0a0042;
         public static final int account_menu_transfer=0x7f0a0041;
         public static final int account_menu_unknown=0x7f0a0043;
@@ -1569,9 +1569,9 @@ containing a value of this type.
         public static final int transaction_layout=0x7f0a00d4;
         public static final int transaction_list=0x7f0a00e6;
         public static final int transaction_memo=0x7f0a00db;
-        public static final int transaction_menu_add=0x7f0a00df;
+        public static final int transaction_menu_add=0x7f0a00e0;
         public static final int transaction_menu_schedule=0x7f0a00e1;
-        public static final int transaction_menu_search=0x7f0a00e0;
+        public static final int transaction_menu_search=0x7f0a00df;
         public static final int transaction_menu_sort=0x7f0a00e2;
         public static final int transaction_name=0x7f0a00d6;
         public static final int transaction_noTransaction=0x7f0a00e8;

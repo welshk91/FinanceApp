@@ -694,8 +694,8 @@ int id account_frag_frame 0x7f0a0080
 int id account_gradient 0x7f0a003a
 int id account_layout 0x7f0a0039
 int id account_list 0x7f0a0050
-int id account_menu_add 0x7f0a003f
-int id account_menu_search 0x7f0a0040
+int id account_menu_add 0x7f0a0040
+int id account_menu_search 0x7f0a003f
 int id account_menu_sort 0x7f0a0042
 int id account_menu_transfer 0x7f0a0041
 int id account_menu_unknown 0x7f0a0043
@@ -809,9 +809,9 @@ int id transaction_gradient 0x7f0a00d5
 int id transaction_layout 0x7f0a00d4
 int id transaction_list 0x7f0a00e6
 int id transaction_memo 0x7f0a00db
-int id transaction_menu_add 0x7f0a00df
+int id transaction_menu_add 0x7f0a00e0
 int id transaction_menu_schedule 0x7f0a00e1
-int id transaction_menu_search 0x7f0a00e0
+int id transaction_menu_search 0x7f0a00df
 int id transaction_menu_sort 0x7f0a00e2
 int id transaction_name 0x7f0a00d6
 int id transaction_noTransaction 0x7f0a00e8

@@ -389,14 +389,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			//menu.toggle();
 			break;
 
-		case R.id.account_menu_add:    
-			accountAdd();
-			return true;
-
-		case R.id.account_menu_search:    
+		case R.id.account_menu_search:
 			getActivity().onSearchRequested();
 			return true;
 
+		case R.id.account_menu_add:    
+			accountAdd();
+			return true;
+			
 		case R.id.account_menu_transfer:    
 			accountTransfer();
 			return true;

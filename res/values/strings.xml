@@ -25,10 +25,12 @@
     <string name="memo:">MEMO:</string>
     <string name="date:">DATE:</string>
     <string name="cleared:">CLEARED:</string>
-    <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
-    <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
     <string name="pref_key_account_nameSize">key_account_nameSize</string>
     <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
+    <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
+    <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
+    <string name="pref_key_plan_nameSize">key_plan_nameSize</string>
+    <string name="pref_key_plan_fieldSize">key_plan_fieldSize</string>
 
     <string-array name="transaction_type">
         <item>Withdraw</item>

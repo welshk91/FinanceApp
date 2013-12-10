@@ -1767,10 +1767,12 @@ containing a value of this type.
         /**  Preferences 
          */
         public static final int pref_category=0x7f09001d;
-        public static final int pref_key_account_fieldSize=0x7f09004f;
-        public static final int pref_key_account_nameSize=0x7f09004e;
-        public static final int pref_key_transaction_fieldSize=0x7f09004d;
-        public static final int pref_key_transaction_nameSize=0x7f09004c;
+        public static final int pref_key_account_fieldSize=0x7f09004d;
+        public static final int pref_key_account_nameSize=0x7f09004c;
+        public static final int pref_key_plan_fieldSize=0x7f090051;
+        public static final int pref_key_plan_nameSize=0x7f090050;
+        public static final int pref_key_transaction_fieldSize=0x7f09004f;
+        public static final int pref_key_transaction_nameSize=0x7f09004e;
         public static final int press_color_to_apply=0x7f09001c;
         public static final int search_hint=0x7f090035;
         public static final int start_on_=0x7f090045;

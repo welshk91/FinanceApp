@@ -965,10 +965,12 @@ int string memo_ 0x7f090049
 int string name_ 0x7f090041
 int string options 0x7f09003c
 int string pref_category 0x7f09001d
-int string pref_key_account_fieldSize 0x7f09004f
-int string pref_key_account_nameSize 0x7f09004e
-int string pref_key_transaction_fieldSize 0x7f09004d
-int string pref_key_transaction_nameSize 0x7f09004c
+int string pref_key_account_fieldSize 0x7f09004d
+int string pref_key_account_nameSize 0x7f09004c
+int string pref_key_plan_fieldSize 0x7f090051
+int string pref_key_plan_nameSize 0x7f090050
+int string pref_key_transaction_fieldSize 0x7f09004f
+int string pref_key_transaction_nameSize 0x7f09004e
 int string press_color_to_apply 0x7f09001c
 int string search_hint 0x7f090035
 int string start_on_ 0x7f090045

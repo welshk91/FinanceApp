@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -62,7 +63,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Plans extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class Plans extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
 	//NavigationDrawer
@@ -89,8 +90,6 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 	//Dialog for Adding Transaction
 	private static View promptsView;
-
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	private static Button pDate;
 	private UserItemAdapter adapterPlans;
@@ -121,6 +120,10 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lvPlans);
+
+		//Set up a listener for changes in settings menu
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		TextView noResult = (TextView)findViewById(R.id.plans_noPlans);
 		lvPlans.setEmptyView(noResult);
@@ -423,6 +426,14 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 		return super.onContextItemSelected(item);
 	}  
 
+	//Used after a change in settings occurs
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		Log.d("Plans-onSharedPreferenceChanged", "Options changed. Requery");
+		getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
+	}
+
+	
 	//Method for selecting a Date when adding a transaction
 	public void showDatePickerDialog(View v) {
 		DialogFragment newFragment = new DatePickerFragment();
@@ -501,7 +512,7 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Plans.this);
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
 
 			if (user != null) {
 				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
@@ -613,21 +624,31 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			LayoutInflater inflater = LayoutInflater.from(context);
 			View v = inflater.inflate(R.layout.plan_item, parent, false);
 
+			TextView tvName=(TextView)v.findViewById(R.id.plan_name);
+			TextView tvAccount=(TextView)v.findViewById(R.id.plan_account);
+			TextView tvValue=(TextView)v.findViewById(R.id.plan_value);
+			TextView tvType=(TextView)v.findViewById(R.id.plan_type);
+			TextView tvCategory=(TextView)v.findViewById(R.id.plan_category);
+			TextView tvMemo=(TextView)v.findViewById(R.id.plan_memo);
+			TextView tvOffset=(TextView)v.findViewById(R.id.plan_offset);
+			TextView tvRate=(TextView)v.findViewById(R.id.plan_rate);
+			TextView tvCleared=(TextView)v.findViewById(R.id.plan_cleared);
+
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Plans.this);
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
 
 			//Change Background Colors
 			try{
 				if(!useDefaults){
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.plan_layout);
-					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-					GradientDrawable defaultGradient = new GradientDrawable(
+					int startColor = prefs.getInt("key_plan_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_plan_endBackgroundColor", Color.parseColor("#FFFFFF"));
+					GradientDrawable customGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {startColor,endColor});
-					l.setBackgroundDrawable(defaultGradient);
+					l.setBackgroundDrawable(customGradient);
 				}
 			}
 			catch(Exception e){
@@ -636,15 +657,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 
 			//Change Size of main field
 			try{
-				String DefaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_account_nameSize), "16");
-				TextView t;
-				t=(TextView)v.findViewById(R.id.plan_name);
+				String customSize = prefs.getString(Plans.this.getString(R.string.pref_key_plan_nameSize), "16");
 
 				if(useDefaults){
-					t.setTextSize(16);
+					tvName.setTextSize(16);
 				}
 				else{
-					t.setTextSize(Integer.parseInt(DefaultSize));
+					tvName.setTextSize(Integer.parseInt(customSize));
 				}
 
 			}
@@ -653,15 +672,13 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
-				TextView t;
-				t=(TextView)v.findViewById(R.id.plan_name);
+				int customColor = prefs.getInt("key_plan_nameColor", Color.parseColor("#000000"));
 
 				if(useDefaults){
-					t.setTextColor(Color.parseColor("#000000"));
+					tvName.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
-					t.setTextColor(DefaultColor);
+					tvName.setTextColor(customColor);
 				}
 
 			}
@@ -670,40 +687,28 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			}
 
 			try{
-				String DefaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_account_fieldSize), "10");
-				TextView tmp;
+				String defaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_plan_fieldSize), "10");
+				int customSize = Integer.parseInt(defaultSize);
 
 				if(useDefaults){
-					tmp=(TextView)v.findViewById(R.id.plan_value);
-					tmp.setTextSize(10);
-					tmp=(TextView)v.findViewById(R.id.plan_type);
-					tmp.setTextSize(10);
-					tmp=(TextView)v.findViewById(R.id.plan_category);
-					tmp.setTextSize(10);
-					tmp=(TextView)v.findViewById(R.id.plan_memo);
-					tmp.setTextSize(10);
-					tmp=(TextView)v.findViewById(R.id.plan_offset);
-					tmp.setTextSize(10);
-					tmp=(TextView)v.findViewById(R.id.plan_rate);
-					tmp.setTextSize(10);
-					tmp=(TextView)v.findViewById(R.id.plan_cleared);
-					tmp.setTextSize(10);
+					tvAccount.setTextSize(10);
+					tvValue.setTextSize(10);
+					tvType.setTextSize(10);
+					tvCategory.setTextSize(10);
+					tvMemo.setTextSize(10);
+					tvOffset.setTextSize(10);
+					tvRate.setTextSize(10);
+					tvCleared.setTextSize(10);
 				}
 				else{
-					tmp=(TextView)v.findViewById(R.id.plan_value);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
-					tmp=(TextView)v.findViewById(R.id.plan_type);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
-					tmp=(TextView)v.findViewById(R.id.plan_category);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
-					tmp=(TextView)v.findViewById(R.id.plan_memo);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
-					tmp=(TextView)v.findViewById(R.id.plan_offset);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
-					tmp=(TextView)v.findViewById(R.id.plan_rate);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
-					tmp=(TextView)v.findViewById(R.id.plan_cleared);
-					tmp.setTextSize(Integer.parseInt(DefaultSize));
+					tvAccount.setTextSize(customSize);
+					tvValue.setTextSize(customSize);
+					tvType.setTextSize(customSize);
+					tvCategory.setTextSize(customSize);
+					tvMemo.setTextSize(customSize);
+					tvOffset.setTextSize(customSize);
+					tvRate.setTextSize(customSize);
+					tvCleared.setTextSize(customSize);
 				}
 
 			}
@@ -712,45 +717,96 @@ public class Plans extends SherlockFragmentActivity implements LoaderManager.Loa
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
-				TextView tmp;
+				int DefaultColor = prefs.getInt("key_plan_fieldColor", Color.parseColor("#0099CC"));
 
 				if(useDefaults){
-					tmp=(TextView)v.findViewById(R.id.plan_value);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
-					tmp=(TextView)v.findViewById(R.id.plan_type);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
-					tmp=(TextView)v.findViewById(R.id.plan_category);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
-					tmp=(TextView)v.findViewById(R.id.plan_memo);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
-					tmp=(TextView)v.findViewById(R.id.plan_offset);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
-					tmp=(TextView)v.findViewById(R.id.plan_rate);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
-					tmp=(TextView)v.findViewById(R.id.plan_cleared);
-					tmp.setTextColor(Color.parseColor("#0099CC"));
+					tvAccount.setTextColor(Color.parseColor("#0099CC"));
+					tvValue.setTextColor(Color.parseColor("#0099CC"));
+					tvType.setTextColor(Color.parseColor("#0099CC"));
+					tvCategory.setTextColor(Color.parseColor("#0099CC"));
+					tvMemo.setTextColor(Color.parseColor("#0099CC"));
+					tvOffset.setTextColor(Color.parseColor("#0099CC"));
+					tvRate.setTextColor(Color.parseColor("#0099CC"));
+					tvCleared.setTextColor(Color.parseColor("#0099CC"));
 				}
 				else{
-					tmp=(TextView)v.findViewById(R.id.plan_value);
-					tmp.setTextColor(DefaultColor);
-					tmp=(TextView)v.findViewById(R.id.plan_type);
-					tmp.setTextColor(DefaultColor);
-					tmp=(TextView)v.findViewById(R.id.plan_category);
-					tmp.setTextColor(DefaultColor);
-					tmp=(TextView)v.findViewById(R.id.plan_memo);
-					tmp.setTextColor(DefaultColor);
-					tmp=(TextView)v.findViewById(R.id.plan_offset);
-					tmp.setTextColor(DefaultColor);
-					tmp=(TextView)v.findViewById(R.id.plan_rate);
-					tmp.setTextColor(DefaultColor);
-					tmp=(TextView)v.findViewById(R.id.plan_cleared);
-					tmp.setTextColor(DefaultColor);
+					tvAccount.setTextColor(DefaultColor);
+					tvValue.setTextColor(DefaultColor);
+					tvType.setTextColor(DefaultColor);
+					tvCategory.setTextColor(DefaultColor);
+					tvMemo.setTextColor(DefaultColor);
+					tvOffset.setTextColor(DefaultColor);
+					tvRate.setTextColor(DefaultColor);
+					tvCleared.setTextColor(DefaultColor);
 				}
 
 			}
 			catch(Exception e){
 				Toast.makeText(Plans.this, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
+			}
+
+			//For User-Defined Field Visibility
+			if(useDefaults||prefs.getBoolean("checkbox_plan_nameField", true)){
+				tvName.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvName.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_plan_accountField", true)){
+				tvAccount.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvAccount.setVisibility(View.GONE);
+			}
+			
+			if(useDefaults||prefs.getBoolean("checkbox_plan_valueField", true)){
+				tvValue.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvValue.setVisibility(View.GONE);
+			}
+
+			if(prefs.getBoolean("checkbox_plan_typeField", false)){
+				tvType.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvType.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_plan_categoryField", true)){
+				tvCategory.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvCategory.setVisibility(View.GONE);
+			}
+
+			if(prefs.getBoolean("checkbox_plan_memoField", false)){
+				tvMemo.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvMemo.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_plan_offsetField", true)){
+				tvOffset.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvOffset.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_plan_rateField", true)){
+				tvRate.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvRate.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_plan_clearedField", true)){
+				tvCleared.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvCleared.setVisibility(View.GONE);
 			}
 
 			return v;

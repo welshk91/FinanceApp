@@ -8,15 +8,11 @@ import java.util.List;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.databases.example.Accounts.AddDialogFragment;
-import com.databases.example.Accounts.SortDialogFragment;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,14 +29,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 	private static final int REQUEST_CREATE_PATTERN = 0;
@@ -60,7 +49,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			PreferenceManager.setDefaultValues(this, R.xml.preference_behavior, false);
 			PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
 		}//End if Build<Honeycomb
-
 
 		//NavigationDrawer
 		//DrawerLayout view = (DrawerLayout) this.findViewById(R.id.drawer_layout);
@@ -113,7 +101,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 					drawPattern();
 					return true;
 				}
-
 			});
 
 			//Local Backup Options
@@ -220,7 +207,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 					clearDB();
 					return true;
 				}
-
 			});
 
 		}

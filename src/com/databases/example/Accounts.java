@@ -6,7 +6,6 @@ package com.databases.example;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -418,7 +417,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		Log.d("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
-		getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
+		//getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
+		//getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
 	}
 
 	//Calculates the balance

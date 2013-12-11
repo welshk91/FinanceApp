@@ -12,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -41,7 +42,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 
-public class Categories extends SherlockFragmentActivity{
+public class Categories extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener{
 	private static DatabaseHelper dh = null;
 
 	//NavigationDrawer
@@ -90,6 +91,10 @@ public class Categories extends SherlockFragmentActivity{
 
 		//Allows Context Menus for each item of the list view
 		registerForContextMenu(lvCategory);
+
+		//Set up a listener for changes in settings menu
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		categoryPopulate();
 	}
@@ -366,6 +371,13 @@ public class Categories extends SherlockFragmentActivity{
 		return super.onContextItemSelected(item);
 	}  
 
+	//Used after a change in settings occurs
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		Toast.makeText(this, "Options Just Changed: Categories.Java", Toast.LENGTH_SHORT).show();
+		categoryPopulate();
+	}
+
 	public class UserItemAdapter extends BaseExpandableListAdapter{
 		private Cursor category;
 		private ArrayList<Cursor> subcategory;
@@ -419,67 +431,76 @@ public class Categories extends SherlockFragmentActivity{
 			View v = convertView;
 			Cursor user = category;
 
+			CategoryViewHolder viewHolder;
+
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_category", true);
 
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.category_item, null);
 
-				//Change Background Colors
-				try{
-					if(!useDefaults){
-						LinearLayout l;
-						l=(LinearLayout)v.findViewById(R.id.category_layout);
-						int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-						int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-						GradientDrawable defaultGradient = new GradientDrawable(
-								GradientDrawable.Orientation.BOTTOM_TOP,
-								new int[] {startColor,endColor});
-						l.setBackgroundDrawable(defaultGradient);
+				viewHolder = new CategoryViewHolder();
+				viewHolder.tvName = (TextView) v.findViewById(R.id.category_name);				
+				viewHolder.tvNote = (TextView) v.findViewById(R.id.category_note);
 
-					}
-				}
-				catch(Exception e){
-					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
-				}
-
-				//Change Size/Color of main field
-				TextView catName=(TextView)v.findViewById(R.id.category_name);
-				try{
-					String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "16");
-
-					if(useDefaults){
-						catName.setTextSize(16);
-					}
-					else{
-						catName.setTextSize(Integer.parseInt(DefaultSize));
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
-
-					if(useDefaults){
-						catName.setTextColor(Color.parseColor("#000000"));
-					}
-					else{
-						catName.setTextColor(DefaultColor);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}				
-
+				v.setTag(viewHolder);
+			}
+			else {
+				viewHolder = (CategoryViewHolder) v.getTag();
 			}
 
-			TextView name = (TextView) v.findViewById(R.id.category_name);
+			//Change Background Colors
+			try{
+				if(!useDefaults){
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.category_layout);
+					int startColor = prefs.getInt("key_category_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_category_endBackgroundColor", Color.parseColor("#FFFFFF"));
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {startColor,endColor});
+					l.setBackgroundDrawable(defaultGradient);
+				}
+
+
+			}
+			catch(Exception e){
+				Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+			}
+
+			//Change Size/Color of main field
+			try{
+				String DefaultSize = prefs.getString(context.getString(R.string.pref_key_category_nameSize), "16");
+
+				if(useDefaults){
+					viewHolder.tvName.setTextSize(16);
+				}
+				else{
+					viewHolder.tvName.setTextSize(Integer.parseInt(DefaultSize));
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
+			try{
+				int DefaultColor = prefs.getInt("key_category_nameColor", Color.parseColor("#000000"));
+
+				if(useDefaults){
+					viewHolder.tvName.setTextColor(Color.parseColor("#000000"));
+				}
+				else{
+					viewHolder.tvName.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
 			int NameColumn = user.getColumnIndex("CatName");
 			int NoteColumn = user.getColumnIndex("CatNote");
 
@@ -489,8 +510,21 @@ public class Categories extends SherlockFragmentActivity{
 			String itemNote = user.getString(NoteColumn);
 			//Log.d("getGroupView", "Found Category: " + itemName);
 
-			if (itemName != null) {
-				name.setText(itemName);
+			//For User-Defined Field Visibility
+			if(useDefaults||prefs.getBoolean("checkbox_category_nameField", true)){
+				viewHolder.tvName.setVisibility(View.VISIBLE);
+				viewHolder.tvName.setText(itemName);
+			}
+			else{
+				viewHolder.tvName.setVisibility(View.GONE);
+			}
+
+			if(prefs.getBoolean("checkbox_category_noteField", false) && !useDefaults){
+				viewHolder.tvNote.setVisibility(View.VISIBLE);
+				viewHolder.tvNote.setText(itemNote);
+			}
+			else{
+				viewHolder.tvNote.setVisibility(View.GONE);
 			}
 
 			return v;
@@ -521,67 +555,75 @@ public class Categories extends SherlockFragmentActivity{
 
 			View v = convertView;
 			Cursor user = subcategory.get(groupPosition);
+			SubCategoryViewHolder viewHolder;
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			boolean useDefaults = prefs.getBoolean("checkbox_default", true);
+			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_subcategory", true);
 
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.subcategory_item, null);
 
-				//Change Background Colors
-				try{
-					if(!useDefaults){
-						LinearLayout l;
-						l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
-						int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#E8E8E8"));
-						int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
-						GradientDrawable defaultGradient = new GradientDrawable(
-								GradientDrawable.Orientation.BOTTOM_TOP,
-								new int[] {startColor,endColor});
-						l.setBackgroundDrawable(defaultGradient);
-					}
+				viewHolder = new SubCategoryViewHolder();
+				viewHolder.tvName = (TextView) v.findViewById(R.id.subcategory_name);
+				viewHolder.tvNote = (TextView) v.findViewById(R.id.subcategory_note);
+
+				v.setTag(viewHolder);
+			}
+
+			else {
+				viewHolder = (SubCategoryViewHolder) v.getTag();
+			}
+
+			//Change Background Colors
+			try{
+				if(!useDefaults){
+					LinearLayout l;
+					l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
+					int startColor = prefs.getInt("key_subcategory_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int endColor = prefs.getInt("key_subcategory_endBackgroundColor", Color.parseColor("#FFFFFF"));
+					GradientDrawable defaultGradient = new GradientDrawable(
+							GradientDrawable.Orientation.BOTTOM_TOP,
+							new int[] {startColor,endColor});
+					l.setBackgroundDrawable(defaultGradient);
 				}
-				catch(Exception e){
-					Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+			}
+			catch(Exception e){
+				Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
+			}
+
+			//Change Size/color of main field
+			try{
+				String DefaultSize = prefs.getString(context.getString(R.string.pref_key_subcategory_nameSize), "16");
+
+				if(useDefaults){
+					viewHolder.tvName.setTextSize(16);
 				}
-
-				//Change Size/color of main field
-				TextView subName=(TextView)v.findViewById(R.id.subcategory_name);
-				try{
-					String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "16");
-
-					if(useDefaults){
-						subName.setTextSize(16);
-					}
-					else{
-						subName.setTextSize(Integer.parseInt(DefaultSize));
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-				}
-
-				try{
-					int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
-
-					if(useDefaults){
-						subName.setTextColor(Color.parseColor("#000000"));
-					}
-					else{
-						subName.setTextColor(DefaultColor);
-					}
-
-				}
-				catch(Exception e){
-					Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+				else{
+					viewHolder.tvName.setTextSize(Integer.parseInt(DefaultSize));
 				}
 
 			}
+			catch(Exception e){
+				Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
 
-			TextView name = (TextView) v.findViewById(R.id.subcategory_name);			
+			try{
+				int DefaultColor = prefs.getInt("key_subcategory_nameColor", Color.parseColor("#000000"));
+
+				if(useDefaults){
+					viewHolder.tvName.setTextColor(Color.parseColor("#000000"));
+				}
+				else{
+					viewHolder.tvName.setTextColor(DefaultColor);
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
+			}
+
 			int ToIDColumn = user.getColumnIndex("ToCatID");
 			int NameColumn = user.getColumnIndex("SubCatName");
 			int NoteColumn = user.getColumnIndex("SubCatNote");
@@ -593,11 +635,21 @@ public class Categories extends SherlockFragmentActivity{
 			String itemNote = user.getString(NoteColumn);
 			//Log.d("getChildView", "Found SubCategory: " + itemSubname);
 
-			if (itemSubname != null) {
-				name.setText(itemSubname);
+			if(useDefaults||prefs.getBoolean("checkbox_subcategory_nameField", true)){
+				viewHolder.tvName.setVisibility(View.VISIBLE);
+				viewHolder.tvName.setText(itemSubname);
+			}
+			else{
+				viewHolder.tvName.setVisibility(View.GONE);
+			}
+			if(prefs.getBoolean("checkbox_subcategory_noteField", false) && !useDefaults){
+				viewHolder.tvNote.setVisibility(View.VISIBLE);
+				viewHolder.tvNote.setText(itemNote);
+			}
+			else{
+				viewHolder.tvNote.setVisibility(View.GONE);
 			}
 
-			//user.close();
 			return v;
 		}
 
@@ -636,6 +688,19 @@ public class Categories extends SherlockFragmentActivity{
 		}
 
 	} //end of UserItemAdapter
+
+	//ViewHolder for Categories
+	static class CategoryViewHolder{
+		TextView tvName;
+		TextView tvNote;
+	}
+
+	//ViewHolder for SubCategories
+	static class SubCategoryViewHolder{
+		TextView tvName;
+		TextView tvCategory;
+		TextView tvNote;
+	}
 
 	//An Object Class used to hold the data of each category record
 	public class CategoryRecord {

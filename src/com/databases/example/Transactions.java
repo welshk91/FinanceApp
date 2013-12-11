@@ -353,7 +353,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		//Toast.makeText(this, "Options Just Changed: Transactions.Java", Toast.LENGTH_SHORT).show();
-		populate();
+		//populate();
 	}
 
 	//Calculates the balance

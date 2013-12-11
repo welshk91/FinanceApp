@@ -430,7 +430,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		Log.d("Plans-onSharedPreferenceChanged", "Options changed. Requery");
-		getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
+		//getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
+        //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
 	}
 
 	

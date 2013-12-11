@@ -23,7 +23,6 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -93,9 +92,6 @@ public class Dropbox extends SherlockFragmentActivity{
 
 	//Fires Up Dropbox Chooser
 	public void dropboxChooser(View v){
-		DbxFileSystem dbFileSystem = null;
-
-		//Create Dropbox Chooser
 		DbxChooser mChooser = new DbxChooser(appKey);
 		mChooser.forResultType(DbxChooser.ResultType.FILE_CONTENT).launch(this, DBX_CHOOSER_REQUEST);
 	}
@@ -107,19 +103,19 @@ public class Dropbox extends SherlockFragmentActivity{
 		File currentDB = dh.getDatabase();
 		File restoreDB = new File(restoreDBPath);
 
-		//write restore file into current database file
+		//Write restore file into current database file
 		try{
 			FileChannel src = new FileInputStream(restoreDB).getChannel();
 			FileChannel dst = new FileOutputStream(currentDB).getChannel();
 			dst.transferFrom(src, 0, src.size());
 			src.close();
 			dst.close();
-			Log.e("Dropbox-DropboxRestore", "Successfully restored database to " + restoreDB.getAbsolutePath());
+			Log.d("Dropbox-DropboxRestore", "Successfully restored database to " + restoreDB.getAbsolutePath());
 			Toast.makeText(this, "You restored from \n" + restoreDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 		} catch(Exception e){
 			Log.e("Dropbox-DropboxRestore", "Restore failed \n" + e);
 			Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
-		}		
+		}
 	}
 
 	//Dropbox Drop-In "Saver"

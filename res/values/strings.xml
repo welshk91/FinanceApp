@@ -31,6 +31,10 @@
     <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
     <string name="pref_key_plan_nameSize">key_plan_nameSize</string>
     <string name="pref_key_plan_fieldSize">key_plan_fieldSize</string>
+    <string name="pref_key_category_nameSize">key_category_nameSize</string>
+    <string name="pref_key_category_fieldSize">key_category_fieldSize</string>
+    <string name="pref_key_subcategory_nameSize">key_subcategory_nameSize</string>
+    <string name="pref_key_subcategory_fieldSize">key_subcategory_fieldSize</string>
 
     <string-array name="transaction_type">
         <item>Withdraw</item>

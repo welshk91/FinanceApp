@@ -768,7 +768,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				tvValue.setVisibility(View.GONE);
 			}
 
-			if(prefs.getBoolean("checkbox_plan_typeField", false)){
+			if(prefs.getBoolean("checkbox_plan_typeField", false) && !useDefaults){
 				tvType.setVisibility(View.VISIBLE);
 			}
 			else{
@@ -782,7 +782,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				tvCategory.setVisibility(View.GONE);
 			}
 
-			if(prefs.getBoolean("checkbox_plan_memoField", false)){
+			if(prefs.getBoolean("checkbox_plan_memoField", false) && !useDefaults){
 				tvMemo.setVisibility(View.VISIBLE);
 			}
 			else{

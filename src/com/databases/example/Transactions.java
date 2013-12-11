@@ -770,7 +770,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				TVvalue.setVisibility(View.GONE);
 			}
 
-			if(prefs.getBoolean("checkbox_transaction_typeField", false)){
+			if(prefs.getBoolean("checkbox_transaction_typeField", false) && !useDefaults){
 				TVtype.setVisibility(View.VISIBLE);
 			}
 			else{
@@ -791,7 +791,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				TVchecknum.setVisibility(View.GONE);
 			}
 
-			if(prefs.getBoolean("checkbox_transaction_memoField", false)){
+			if(prefs.getBoolean("checkbox_transaction_memoField", false) && !useDefaults){
 				TVmemo.setVisibility(View.VISIBLE);
 			}
 			else{
@@ -812,7 +812,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				TVtime.setVisibility(View.GONE);
 			}
 
-			if(prefs.getBoolean("checkbox_transaction_clearedField", false)){
+			if(prefs.getBoolean("checkbox_transaction_clearedField", false) && !useDefaults){
 				TVcleared.setVisibility(View.VISIBLE);
 			}
 			else{

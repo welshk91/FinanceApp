@@ -11,8 +11,6 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
-import android.util.Log;
-
 public class Money{
 	protected String value;
 	  private static int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;

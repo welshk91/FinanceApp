@@ -352,10 +352,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		//Toast.makeText(this, "Options Just Changed: Transactions.Java", Toast.LENGTH_SHORT).show();
-		//populate();
-		if(isVisible()||isResumed()){
+		Log.e("Transactions-onSharedPreferenceChanged","Options Changed");
+		if(!isDetached()){
+			Log.e("Transactions-onSharedPreferenceChanged","Transaction is attached");
+			Toast.makeText(this.getActivity(), "Transaction is attached", Toast.LENGTH_SHORT).show();
 			populate();
+		}
+		else{
+			Log.e("Transactions-onSharedPreferenceChanged","Transaction is detached");
+			Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();			
 		}
 	}
 

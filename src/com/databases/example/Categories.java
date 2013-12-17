@@ -375,6 +375,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		Toast.makeText(this, "Options Just Changed: Categories.Java", Toast.LENGTH_SHORT).show();
+		
+		
 		//categoryPopulate();
 	}
 

@@ -112,6 +112,10 @@ public class DateTime{
 		if(stringSQL!=null){
 			return stringSQL;
 		}
+		
+		else if(cal!=null){
+			return dateSQLFormat.format(cal.getTime());
+		}
 
 		else if(date!=null){
 			String d = dateSQLFormat.format(date);
@@ -136,6 +140,10 @@ public class DateTime{
 			return stringSQL;
 		}
 
+		else if(cal!=null){
+			return timeSQLFormat.format(cal.getTime());
+		}
+		
 		else if(date!=null){
 			String t = timeSQLFormat.format(date);
 			return t;			

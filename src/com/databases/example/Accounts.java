@@ -52,6 +52,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Categories.CategoryViewHolder;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private final int PICKFILE_RESULT_CODE = 1;
@@ -495,16 +496,16 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
 			Cursor user = getCursor();
-
+			
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-
+			
 			if (user != null) {
-				TextView TVname = (TextView) v.findViewById(R.id.account_name);
-				TextView TVbalance = (TextView) v.findViewById(R.id.account_balance);
-				TextView TVdate = (TextView) v.findViewById(R.id.account_date);
-				TextView TVtime = (TextView) v.findViewById(R.id.account_time);
+				TextView tvName = (TextView) v.findViewById(R.id.account_name);
+				TextView tvBalance = (TextView) v.findViewById(R.id.account_balance);
+				TextView tvDate = (TextView) v.findViewById(R.id.account_date);
+				TextView tvTime = (TextView) v.findViewById(R.id.account_time);
 
 				int NameColumn = user.getColumnIndex("AcctName");
 				int BalanceColumn = user.getColumnIndex("AcctBalance");
@@ -554,23 +555,23 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				}
 
 				if (name != null) {
-					TVname.setText(name);
+					tvName.setText(name);
 				}
 
 				if(balance != null) {
-					TVbalance.setText("Balance: " + balance.getNumberFormat(locale));
+					tvBalance.setText("Balance: " + balance.getNumberFormat(locale));
 				}
 
 				if(date != null) {
 					DateTime d = new DateTime();
 					d.setStringSQL(date);
-					TVdate.setText("Date: " + d.getReadableDate());
+					tvDate.setText("Date: " + d.getReadableDate());
 				}
 
 				if(time != null) {
 					DateTime t = new DateTime();
 					t.setStringSQL(time);
-					TVtime.setText("Time: " + t.getReadableTime());
+					tvTime.setText("Time: " + t.getReadableTime());
 				}
 
 			}
@@ -581,16 +582,16 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 			LayoutInflater inflater = LayoutInflater.from(context);
 			View v = inflater.inflate(R.layout.account_item, parent, false);
-
-			TextView TVname = (TextView)v.findViewById(R.id.account_name);
-			TextView TVbalance = (TextView)v.findViewById(R.id.account_balance);
-			TextView TVtime = (TextView)v.findViewById(R.id.account_time);
-			TextView TVdate = (TextView)v.findViewById(R.id.account_date);
+			
+			TextView tvName = (TextView)v.findViewById(R.id.account_name);
+			TextView tvBalance = (TextView)v.findViewById(R.id.account_balance);
+			TextView tvTime = (TextView)v.findViewById(R.id.account_time);
+			TextView tvDate = (TextView)v.findViewById(R.id.account_date);
 
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-
+			
 			//Change Background Colors
 			try{
 				if(!useDefaults){
@@ -613,10 +614,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameSize), "16");
 
 				if(useDefaults){
-					TVname.setTextSize(16);
+					tvName.setTextSize(16);
 				}
 				else{
-					TVname.setTextSize(Integer.parseInt(DefaultSize));
+					tvName.setTextSize(Integer.parseInt(DefaultSize));
 				}
 
 			}
@@ -628,10 +629,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
 
 				if(useDefaults){
-					TVname.setTextColor(Color.parseColor("#000000"));
+					tvName.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
-					TVname.setTextColor(DefaultColor);
+					tvName.setTextColor(DefaultColor);
 				}
 
 			}
@@ -643,14 +644,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldSize), "10");
 
 				if(useDefaults){
-					TVbalance.setTextSize(10);
-					TVdate.setTextSize(10);
-					TVtime.setTextSize(10);
+					tvBalance.setTextSize(10);
+					tvDate.setTextSize(10);
+					tvTime.setTextSize(10);
 				}
 				else{
-					TVbalance.setTextSize(Integer.parseInt(DefaultSize));
-					TVdate.setTextSize(Integer.parseInt(DefaultSize));
-					TVtime.setTextSize(Integer.parseInt(DefaultSize));
+					tvBalance.setTextSize(Integer.parseInt(DefaultSize));
+					tvDate.setTextSize(Integer.parseInt(DefaultSize));
+					tvTime.setTextSize(Integer.parseInt(DefaultSize));
 				}
 
 			}
@@ -662,14 +663,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
 
 				if(useDefaults){
-					TVbalance.setTextColor(Color.parseColor("#0099CC"));
-					TVdate.setTextColor(Color.parseColor("#0099CC"));
-					TVtime.setTextColor(Color.parseColor("#0099CC"));
+					tvBalance.setTextColor(Color.parseColor("#0099CC"));
+					tvDate.setTextColor(Color.parseColor("#0099CC"));
+					tvTime.setTextColor(Color.parseColor("#0099CC"));
 				}
 				else{
-					TVbalance.setTextColor(DefaultColor);
-					TVdate.setTextColor(DefaultColor);
-					TVtime.setTextColor(DefaultColor);
+					tvBalance.setTextColor(DefaultColor);
+					tvDate.setTextColor(DefaultColor);
+					tvTime.setTextColor(DefaultColor);
 				}
 
 			}
@@ -679,35 +680,34 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			//For User-Defined Field Visibility
 			if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
-				TVname.setVisibility(View.VISIBLE);
+				tvName.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVname.setVisibility(View.GONE);
+				tvName.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
-				TVbalance.setVisibility(View.VISIBLE);
+				tvBalance.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVbalance.setVisibility(View.GONE);
+				tvBalance.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
-				TVdate.setVisibility(View.VISIBLE);
+				tvDate.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVdate.setVisibility(View.GONE);
+				tvDate.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
-				TVtime.setVisibility(View.VISIBLE);
+				tvTime.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVtime.setVisibility(View.GONE);
+				tvTime.setVisibility(View.GONE);
 			}
 
 			return v;
-
 		}
 	}
 

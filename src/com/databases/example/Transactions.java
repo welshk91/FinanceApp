@@ -354,6 +354,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		//Toast.makeText(this, "Options Just Changed: Transactions.Java", Toast.LENGTH_SHORT).show();
 		//populate();
+		if(isVisible()||isResumed()){
+			populate();
+		}
 	}
 
 	//Calculates the balance
@@ -505,15 +508,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
 
 			if (user != null) {
-				TextView TVname = (TextView) v.findViewById(R.id.transaction_name);
-				TextView TVvalue = (TextView) v.findViewById(R.id.transaction_value);
-				TextView TVtype = (TextView) v.findViewById(R.id.transaction_type);
-				TextView TVcategory = (TextView) v.findViewById(R.id.transaction_category);
-				TextView TVchecknum = (TextView) v.findViewById(R.id.transaction_checknum);
-				TextView TVmemo = (TextView) v.findViewById(R.id.transaction_memo);
-				TextView TVdate = (TextView) v.findViewById(R.id.transaction_date);
-				TextView TVtime = (TextView) v.findViewById(R.id.transaction_time);
-				TextView TVcleared = (TextView) v.findViewById(R.id.transaction_cleared);
+				TextView tvName = (TextView) v.findViewById(R.id.transaction_name);
+				TextView tvValue = (TextView) v.findViewById(R.id.transaction_value);
+				TextView tvType = (TextView) v.findViewById(R.id.transaction_type);
+				TextView tvCategory = (TextView) v.findViewById(R.id.transaction_category);
+				TextView tvChecknum = (TextView) v.findViewById(R.id.transaction_checknum);
+				TextView tvMemo = (TextView) v.findViewById(R.id.transaction_memo);
+				TextView tvDate = (TextView) v.findViewById(R.id.transaction_date);
+				TextView tvTime = (TextView) v.findViewById(R.id.transaction_time);
+				TextView tvCleared = (TextView) v.findViewById(R.id.transaction_cleared);
 
 				int idColumn = user.getColumnIndex("TransID");
 				int acctIDColumn = user.getColumnIndex("ToAcctID");
@@ -579,51 +582,51 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				}
 
 				if (name != null) {
-					TVname.setText(name);
+					tvName.setText(name);
 
 					if(planId!=0){
-						TVname.setTextColor(Color.parseColor("#FF9933"));
+						tvName.setTextColor(Color.parseColor("#FF9933"));
 					}
 					else{
-						TVname.setTextColor(Color.parseColor("#000000"));
+						tvName.setTextColor(Color.parseColor("#000000"));
 					}
 
 				}
 
 				if(value != null) {
-					TVvalue.setText("Value: " + value.getNumberFormat(locale));
+					tvValue.setText("Value: " + value.getNumberFormat(locale));
 				}
 
 				if(type != null) {
-					TVtype.setText("Type: " + type );
+					tvType.setText("Type: " + type );
 				}
 
 				if(category != null) {
-					TVcategory.setText("Category: " + category );
+					tvCategory.setText("Category: " + category );
 				}
 
 				if(checknum != null) {
-					TVchecknum.setText("Check Num: " + checknum );
+					tvChecknum.setText("Check Num: " + checknum );
 				}
 
 				if(memo != null) {
-					TVmemo.setText("Memo: " + memo );
+					tvMemo.setText("Memo: " + memo );
 				}
 
 				if(date != null) {
 					DateTime d = new DateTime();
 					d.setStringSQL(date);
-					TVdate.setText("Date: " + d.getReadableDate());
+					tvDate.setText("Date: " + d.getReadableDate());
 				}
 
 				if(time != null) {
 					DateTime t = new DateTime();
 					t.setStringSQL(time);
-					TVtime.setText("Time: " + t.getReadableTime());
+					tvTime.setText("Time: " + t.getReadableTime());
 				}
 
 				if(cleared != null) {
-					TVcleared.setText("Cleared: " + cleared );
+					tvCleared.setText("Cleared: " + cleared );
 				}
 
 			}			
@@ -639,15 +642,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			View v = vi.inflate(R.layout.transaction_item, null);
 
 			LinearLayout l=(LinearLayout)v.findViewById(R.id.transaction_layout);
-			TextView TVname = (TextView)v.findViewById(R.id.transaction_name);
-			TextView TVvalue = (TextView)v.findViewById(R.id.transaction_value);
-			TextView TVtype = (TextView)v.findViewById(R.id.transaction_type);
-			TextView TVcategory = (TextView)v.findViewById(R.id.transaction_category);
-			TextView TVchecknum = (TextView)v.findViewById(R.id.transaction_checknum);
-			TextView TVmemo = (TextView)v.findViewById(R.id.transaction_memo);
-			TextView TVtime = (TextView)v.findViewById(R.id.transaction_time);
-			TextView TVdate = (TextView)v.findViewById(R.id.transaction_date);
-			TextView TVcleared = (TextView)v.findViewById(R.id.transaction_cleared);
+			TextView tvName = (TextView)v.findViewById(R.id.transaction_name);
+			TextView tvValue = (TextView)v.findViewById(R.id.transaction_value);
+			TextView tvType = (TextView)v.findViewById(R.id.transaction_type);
+			TextView tvCategory = (TextView)v.findViewById(R.id.transaction_category);
+			TextView tvChecknum = (TextView)v.findViewById(R.id.transaction_checknum);
+			TextView tvMemo = (TextView)v.findViewById(R.id.transaction_memo);
+			TextView tvTime = (TextView)v.findViewById(R.id.transaction_time);
+			TextView tvDate = (TextView)v.findViewById(R.id.transaction_date);
+			TextView tvCleared = (TextView)v.findViewById(R.id.transaction_cleared);
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
@@ -672,10 +675,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "18");
 
 				if(useDefaults){
-					TVname.setTextSize(18);
+					tvName.setTextSize(18);
 				}
 				else{
-					TVname.setTextSize(Integer.parseInt(DefaultSize));
+					tvName.setTextSize(Integer.parseInt(DefaultSize));
 				}
 
 			}
@@ -687,10 +690,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#000000"));
 
 				if(useDefaults){
-					TVname.setTextColor(Color.parseColor("#000000"));
+					tvName.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
-					TVname.setTextColor(DefaultColor);
+					tvName.setTextColor(DefaultColor);
 				}
 
 			}
@@ -702,24 +705,24 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "10");
 
 				if(useDefaults){
-					TVvalue.setTextSize(10);
-					TVdate.setTextSize(10);
-					TVtime.setTextSize(10);
-					TVcategory.setTextSize(10);
-					TVmemo.setTextSize(10);
-					TVchecknum.setTextSize(10);
-					TVcleared.setTextSize(10);
-					TVtype.setTextSize(10);
+					tvValue.setTextSize(10);
+					tvDate.setTextSize(10);
+					tvTime.setTextSize(10);
+					tvCategory.setTextSize(10);
+					tvMemo.setTextSize(10);
+					tvChecknum.setTextSize(10);
+					tvCleared.setTextSize(10);
+					tvType.setTextSize(10);
 				}
 				else{
-					TVvalue.setTextSize(Integer.parseInt(DefaultSize));
-					TVtype.setTextSize(Integer.parseInt(DefaultSize));
-					TVcategory.setTextSize(Integer.parseInt(DefaultSize));
-					TVchecknum.setTextSize(Integer.parseInt(DefaultSize));
-					TVmemo.setTextSize(Integer.parseInt(DefaultSize));
-					TVtime.setTextSize(Integer.parseInt(DefaultSize));
-					TVdate.setTextSize(Integer.parseInt(DefaultSize));
-					TVcleared.setTextSize(Integer.parseInt(DefaultSize));
+					tvValue.setTextSize(Integer.parseInt(DefaultSize));
+					tvType.setTextSize(Integer.parseInt(DefaultSize));
+					tvCategory.setTextSize(Integer.parseInt(DefaultSize));
+					tvChecknum.setTextSize(Integer.parseInt(DefaultSize));
+					tvMemo.setTextSize(Integer.parseInt(DefaultSize));
+					tvTime.setTextSize(Integer.parseInt(DefaultSize));
+					tvDate.setTextSize(Integer.parseInt(DefaultSize));
+					tvCleared.setTextSize(Integer.parseInt(DefaultSize));
 				}
 
 			}
@@ -731,24 +734,24 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#0099CC"));
 
 				if(useDefaults){
-					TVvalue.setTextColor(Color.parseColor("#0099CC"));
-					TVtype.setTextColor(Color.parseColor("#0099CC"));
-					TVcategory.setTextColor(Color.parseColor("#0099CC"));
-					TVchecknum.setTextColor(Color.parseColor("#0099CC"));
-					TVmemo.setTextColor(Color.parseColor("#0099CC"));
-					TVtime.setTextColor(Color.parseColor("#0099CC"));
-					TVdate.setTextColor(Color.parseColor("#0099CC"));
-					TVcleared.setTextColor(Color.parseColor("#0099CC"));
+					tvValue.setTextColor(Color.parseColor("#0099CC"));
+					tvType.setTextColor(Color.parseColor("#0099CC"));
+					tvCategory.setTextColor(Color.parseColor("#0099CC"));
+					tvChecknum.setTextColor(Color.parseColor("#0099CC"));
+					tvMemo.setTextColor(Color.parseColor("#0099CC"));
+					tvTime.setTextColor(Color.parseColor("#0099CC"));
+					tvDate.setTextColor(Color.parseColor("#0099CC"));
+					tvCleared.setTextColor(Color.parseColor("#0099CC"));
 				}
 				else{
-					TVvalue.setTextColor(DefaultColor);
-					TVtype.setTextColor(DefaultColor);
-					TVcategory.setTextColor(DefaultColor);
-					TVchecknum.setTextColor(DefaultColor);
-					TVmemo.setTextColor(DefaultColor);
-					TVtime.setTextColor(DefaultColor);
-					TVdate.setTextColor(DefaultColor);
-					TVcleared.setTextColor(DefaultColor);
+					tvValue.setTextColor(DefaultColor);
+					tvType.setTextColor(DefaultColor);
+					tvCategory.setTextColor(DefaultColor);
+					tvChecknum.setTextColor(DefaultColor);
+					tvMemo.setTextColor(DefaultColor);
+					tvTime.setTextColor(DefaultColor);
+					tvDate.setTextColor(DefaultColor);
+					tvCleared.setTextColor(DefaultColor);
 				}
 
 			}
@@ -757,66 +760,66 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_transaction_nameField", true)){
-				TVname.setVisibility(View.VISIBLE);
+				tvName.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVname.setVisibility(View.GONE);
+				tvName.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
-				TVvalue.setVisibility(View.VISIBLE);
+				tvValue.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVvalue.setVisibility(View.GONE);
+				tvValue.setVisibility(View.GONE);
 			}
 
 			if(prefs.getBoolean("checkbox_transaction_typeField", false) && !useDefaults){
-				TVtype.setVisibility(View.VISIBLE);
+				tvType.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVtype.setVisibility(View.GONE);
+				tvType.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_transaction_categoryField", true)){
-				TVcategory.setVisibility(View.VISIBLE);
+				tvCategory.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVcategory.setVisibility(View.GONE);
+				tvCategory.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_transaction_checknumField", true)){
-				TVchecknum.setVisibility(View.VISIBLE);
+				tvChecknum.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVchecknum.setVisibility(View.GONE);
+				tvChecknum.setVisibility(View.GONE);
 			}
 
 			if(prefs.getBoolean("checkbox_transaction_memoField", false) && !useDefaults){
-				TVmemo.setVisibility(View.VISIBLE);
+				tvMemo.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVmemo.setVisibility(View.GONE);
+				tvMemo.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_transaction_dateField", true)){
-				TVdate.setVisibility(View.VISIBLE);
+				tvDate.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVdate.setVisibility(View.GONE);
+				tvDate.setVisibility(View.GONE);
 			}
 
 			if(useDefaults||prefs.getBoolean("checkbox_transaction_timeField", true)){
-				TVtime.setVisibility(View.VISIBLE);
+				tvTime.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVtime.setVisibility(View.GONE);
+				tvTime.setVisibility(View.GONE);
 			}
 
 			if(prefs.getBoolean("checkbox_transaction_clearedField", false) && !useDefaults){
-				TVcleared.setVisibility(View.VISIBLE);
+				tvCleared.setVisibility(View.VISIBLE);
 			}
 			else{
-				TVcleared.setVisibility(View.GONE);
+				tvCleared.setVisibility(View.GONE);
 			}
 
 			return v;

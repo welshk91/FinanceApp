@@ -516,15 +516,15 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
 
 			if (user != null) {
-				TextView TVname = (TextView) v.findViewById(R.id.plan_name);
-				TextView TVaccount = (TextView) v.findViewById(R.id.plan_account);
-				TextView TVvalue = (TextView) v.findViewById(R.id.plan_value);
-				TextView TVtype = (TextView) v.findViewById(R.id.plan_type);
-				TextView TVcategory = (TextView) v.findViewById(R.id.plan_category);
-				TextView TVmemo = (TextView) v.findViewById(R.id.plan_memo);
-				TextView TVoffset = (TextView) v.findViewById(R.id.plan_offset);
-				TextView TVrate = (TextView) v.findViewById(R.id.plan_rate);
-				TextView TVcleared = (TextView) v.findViewById(R.id.plan_cleared);
+				TextView tvName = (TextView) v.findViewById(R.id.plan_name);
+				TextView tvAccount = (TextView) v.findViewById(R.id.plan_account);
+				TextView tvValue = (TextView) v.findViewById(R.id.plan_value);
+				TextView tvType = (TextView) v.findViewById(R.id.plan_type);
+				TextView tvCategory = (TextView) v.findViewById(R.id.plan_category);
+				TextView tvMemo = (TextView) v.findViewById(R.id.plan_memo);
+				TextView tvOffset = (TextView) v.findViewById(R.id.plan_offset);
+				TextView tvRate = (TextView) v.findViewById(R.id.plan_rate);
+				TextView tvCleared = (TextView) v.findViewById(R.id.plan_cleared);
 
 				int IDColumn = user.getColumnIndex("PlanID");
 				int ToIDColumn = user.getColumnIndex("ToAcctID");
@@ -587,33 +587,33 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				}
 
 				if (name != null) {
-					TVname.setText(name);
+					tvName.setText(name);
 				}
 				if (to_id != null) {
-					TVaccount.setText("Account ID: " + to_id);
+					tvAccount.setText("Account ID: " + to_id);
 				}
 				if (value != null) {
-					TVvalue.setText("Value: " + value.getNumberFormat(locale));
+					tvValue.setText("Value: " + value.getNumberFormat(locale));
 				}
 				if (type != null) {
-					TVtype.setText("Type: " + type);
+					tvType.setText("Type: " + type);
 				}
 				if (category != null) {
-					TVcategory.setText("Category: " + category);
+					tvCategory.setText("Category: " + category);
 				}
 				if (memo != null) {
-					TVmemo.setText("Memo: " + memo);
+					tvMemo.setText("Memo: " + memo);
 				}
 				if (offset != null) {
 					DateTime o = new DateTime();
 					o.setStringSQL(offset);
-					TVoffset.setText("Offset: " + o.getReadableDate());
+					tvOffset.setText("Offset: " + o.getReadableDate());
 				}
 				if (rate != null) {
-					TVrate.setText("Rate: " + rate);
+					tvRate.setText("Rate: " + rate);
 				}
 				if (cleared != null) {
-					TVcleared.setText("Cleared: " + cleared);
+					tvCleared.setText("Cleared: " + cleared);
 				}
 
 			}

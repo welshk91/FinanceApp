@@ -777,7 +777,7 @@ int id slidingmenu_home 0x7f0a0089
 int id slidingmenu_layout 0x7f0a0088
 int id slidingmenu_line1 0x7f0a0082
 int id slidingmenu_options 0x7f0a008e
-int id slidingmenu_schedules 0x7f0a008c
+int id slidingmenu_plans 0x7f0a008c
 int id slidingmenu_statistics 0x7f0a008d
 int id sort_options 0x7f0a00d0
 int id spinner_rate_type 0x7f0a00b1

@@ -14,10 +14,11 @@
 
         <Button
             android:id="@+id/slidingmenu_home"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_home"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Home"
             android:textColor="#ff707070" >
@@ -25,11 +26,12 @@
 
         <Button
             android:id="@+id/slidingmenu_checkbook"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_home"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_archive"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Checkbook"
             android:textColor="#ff707070" >
@@ -37,23 +39,25 @@
 
         <Button
             android:id="@+id/slidingmenu_categories"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_checkbook"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_sort_by_size"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Categories"
             android:textColor="#ff707070" >
         </Button>
 
         <Button
-            android:id="@+id/slidingmenu_schedules"
-            android:layout_width="wrap_content"
+            android:id="@+id/slidingmenu_plans"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_categories"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_today"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Plans"
             android:textColor="#ff707070" >
@@ -61,11 +65,12 @@
 
         <Button
             android:id="@+id/slidingmenu_statistics"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/slidingmenu_schedules"
+            android:layout_below="@+id/slidingmenu_plans"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_agenda"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Statistics"
             android:textColor="#ff707070" >
@@ -80,11 +85,12 @@
 
         <Button
             android:id="@+id/slidingmenu_options"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_statistics"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_preferences"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Options"
             android:textColor="#ff707070" >
@@ -92,11 +98,12 @@
 
         <Button
             android:id="@+id/slidingmenu_help"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_options"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_help"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="Help"
             android:textColor="#ff707070" >
@@ -104,11 +111,12 @@
 
         <Button
             android:id="@+id/slidingmenu_exit"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slidingmenu_help"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/ic_menu_close_clear_cancel"
+            android:gravity="left|center"
             android:padding="5dp"
             android:text="@string/exit"
             android:textColor="#ff707070" >

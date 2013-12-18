@@ -40,7 +40,7 @@ public class Drawer extends Activity{
 		drawerCheckbook.setOnClickListener(myListener);
 		drawerCategories = (Button)drawer.findViewById(R.id.slidingmenu_categories);
 		drawerCategories.setOnClickListener(myListener);
-		drawerSchedule = (Button)drawer.findViewById(R.id.slidingmenu_schedules);
+		drawerSchedule = (Button)drawer.findViewById(R.id.slidingmenu_plans);
 		drawerSchedule.setOnClickListener(myListener);
 		drawerStats = (Button)drawer.findViewById(R.id.slidingmenu_statistics);
 		drawerStats.setOnClickListener(myListener);
@@ -80,8 +80,8 @@ public class Drawer extends Activity{
 				context.startActivity(intentCategories);				
 				break;
 
-			case R.id.slidingmenu_schedules:
-				Log.d("SliderMenu", "Schedules Listener Fired");
+			case R.id.slidingmenu_plans:
+				Log.d("SliderMenu", "Plans Listener Fired");
 				Drawer.this.toggle();
 				Intent intentPlans = new Intent(context, Plans.class);
 				intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);

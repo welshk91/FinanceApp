@@ -1537,7 +1537,7 @@ containing a value of this type.
         public static final int slidingmenu_layout=0x7f0a0088;
         public static final int slidingmenu_line1=0x7f0a0082;
         public static final int slidingmenu_options=0x7f0a008e;
-        public static final int slidingmenu_schedules=0x7f0a008c;
+        public static final int slidingmenu_plans=0x7f0a008c;
         public static final int slidingmenu_statistics=0x7f0a008d;
         public static final int sort_options=0x7f0a00d0;
         public static final int spinner_rate_type=0x7f0a00b1;

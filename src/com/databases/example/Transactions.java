@@ -677,10 +677,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 			try{
-				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "18");
+				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "24");
 
 				if(useDefaults){
-					tvName.setTextSize(18);
+					tvName.setTextSize(24);
 				}
 				else{
 					tvName.setTextSize(Integer.parseInt(DefaultSize));
@@ -692,10 +692,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#000000"));
+				int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#222222"));
 
 				if(useDefaults){
-					tvName.setTextColor(Color.parseColor("#000000"));
+					tvName.setTextColor(Color.parseColor("#222222"));
 				}
 				else{
 					tvName.setTextColor(DefaultColor);
@@ -707,17 +707,17 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 			try{
-				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "10");
+				String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "14");
 
 				if(useDefaults){
-					tvValue.setTextSize(10);
-					tvDate.setTextSize(10);
-					tvTime.setTextSize(10);
-					tvCategory.setTextSize(10);
-					tvMemo.setTextSize(10);
-					tvChecknum.setTextSize(10);
-					tvCleared.setTextSize(10);
-					tvType.setTextSize(10);
+					tvValue.setTextSize(14);
+					tvDate.setTextSize(14);
+					tvTime.setTextSize(14);
+					tvCategory.setTextSize(14);
+					tvMemo.setTextSize(14);
+					tvChecknum.setTextSize(14);
+					tvCleared.setTextSize(14);
+					tvType.setTextSize(14);
 				}
 				else{
 					tvValue.setTextSize(Integer.parseInt(DefaultSize));
@@ -736,17 +736,17 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#0099CC"));
+				int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#000000"));
 
 				if(useDefaults){
-					tvValue.setTextColor(Color.parseColor("#0099CC"));
-					tvType.setTextColor(Color.parseColor("#0099CC"));
-					tvCategory.setTextColor(Color.parseColor("#0099CC"));
-					tvChecknum.setTextColor(Color.parseColor("#0099CC"));
-					tvMemo.setTextColor(Color.parseColor("#0099CC"));
-					tvTime.setTextColor(Color.parseColor("#0099CC"));
-					tvDate.setTextColor(Color.parseColor("#0099CC"));
-					tvCleared.setTextColor(Color.parseColor("#0099CC"));
+					tvValue.setTextColor(Color.parseColor("#000000"));
+					tvType.setTextColor(Color.parseColor("#000000"));
+					tvCategory.setTextColor(Color.parseColor("#000000"));
+					tvChecknum.setTextColor(Color.parseColor("#000000"));
+					tvMemo.setTextColor(Color.parseColor("#000000"));
+					tvTime.setTextColor(Color.parseColor("#000000"));
+					tvDate.setTextColor(Color.parseColor("#000000"));
+					tvCleared.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
 					tvValue.setTextColor(DefaultColor);
@@ -792,7 +792,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				tvCategory.setVisibility(View.GONE);
 			}
 
-			if(useDefaults||prefs.getBoolean("checkbox_transaction_checknumField", true)){
+			if(prefs.getBoolean("checkbox_transaction_checknumField", false) && !useDefaults){
 				tvChecknum.setVisibility(View.VISIBLE);
 			}
 			else{

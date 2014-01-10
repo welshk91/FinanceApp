@@ -21,12 +21,13 @@ There is currently no license I'm releasing this code under (subject to change).
 
 Known Issues
 --------------------------------------
-* Need to convert Time/Date so it's sortable
 * Options does not have the navigationDrawer yet
 * Have a minor window leak in Options from delete dialog not being dismissed on rotation change (change to dialog fragment)
 
 Things To Do
 --------------------------------------
+* Change navigationDrawer to a list (allows for your selection to be highlighted, might help in Options implementation)
+* Make Account & Transaction rows look more like the cards for a smoother interface
 * Add custom search suggestions
 * PDF Reports
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, wizard in the beginning for database syncing, ...)
@@ -35,7 +36,6 @@ Things To Do
 * Dropbox support -> archieve support (Keep Balance)
 * CardsUI to display important information on homesceen
 * Improve look (icons, default colors, slide menu, big notifications)
-* Add preference options for Categories/Scheduling
 * Encrypt entire database (SQLCipher)
 
 

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/transaction_layout"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#F5F5F5"
+    android:baselineAligned="false"
     android:gravity="left|center"
-    android:paddingBottom="2dp"
-    android:paddingLeft="4dp"
-    android:paddingTop="2dp" >
+    android:paddingBottom="6dp" >
 
     <LinearLayout
         android:id="@+id/transaction_gradient"
@@ -27,18 +25,18 @@
             android:id="@+id/transaction_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-thin"
             android:gravity="center"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="#222222"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/transaction_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
             android:textSize="10sp"
             android:typeface="monospace" />
 
@@ -47,63 +45,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/transaction_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/transaction_checknum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/transaction_memo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/transaction_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/transaction_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/transaction_cleared"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>

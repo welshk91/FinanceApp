@@ -525,7 +525,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				try{
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.account_gradient);
-					//Old color to black gradient (0xFF00FF33,0xFF000000)
+					//Older color to black gradient (0xFF00FF33,0xFF000000)
 					GradientDrawable defaultGradientPos = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
 							new int[] {0xFF4ac925,0xFF4ac925});
@@ -613,10 +613,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			//Change Size of main field
 			try{
-				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameSize), "16");
+				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_nameSize), "24");
 
 				if(useDefaults){
-					tvName.setTextSize(16);
+					tvName.setTextSize(24);
 				}
 				else{
 					tvName.setTextSize(Integer.parseInt(DefaultSize));
@@ -628,10 +628,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#000000"));
+				int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#222222"));
 
 				if(useDefaults){
-					tvName.setTextColor(Color.parseColor("#000000"));
+					tvName.setTextColor(Color.parseColor("#222222"));
 				}
 				else{
 					tvName.setTextColor(DefaultColor);
@@ -643,12 +643,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			}
 
 			try{
-				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldSize), "10");
+				String DefaultSize = prefs.getString(Accounts.this.getString(R.string.pref_key_account_fieldSize), "14");
 
 				if(useDefaults){
-					tvBalance.setTextSize(10);
-					tvDate.setTextSize(10);
-					tvTime.setTextSize(10);
+					tvBalance.setTextSize(14);
+					tvDate.setTextSize(14);
+					tvTime.setTextSize(14);
 				}
 				else{
 					tvBalance.setTextSize(Integer.parseInt(DefaultSize));
@@ -662,12 +662,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#0099CC"));
+				int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#000000"));
 
 				if(useDefaults){
-					tvBalance.setTextColor(Color.parseColor("#0099CC"));
-					tvDate.setTextColor(Color.parseColor("#0099CC"));
-					tvTime.setTextColor(Color.parseColor("#0099CC"));
+					tvBalance.setTextColor(Color.parseColor("#000000"));
+					tvDate.setTextColor(Color.parseColor("#000000"));
+					tvTime.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
 					tvBalance.setTextColor(DefaultColor);
@@ -702,7 +702,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				tvDate.setVisibility(View.GONE);
 			}
 
-			if(useDefaults||prefs.getBoolean("checkbox_account_timeField", true)){
+			if(prefs.getBoolean("checkbox_account_timeField", false) && !useDefaults){
 				tvTime.setVisibility(View.VISIBLE);
 			}
 			else{

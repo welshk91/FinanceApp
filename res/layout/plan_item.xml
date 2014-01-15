@@ -3,12 +3,9 @@
     android:id="@+id/plan_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#E8E8E8"
     android:baselineAligned="false"
     android:gravity="left|center"
-    android:paddingBottom="2dp"
-    android:paddingLeft="4dp"
-    android:paddingTop="2dp" >
+    android:paddingBottom="6dp" >
 
     <LinearLayout
         android:id="@+id/plan_gradient"
@@ -28,83 +25,82 @@
             android:id="@+id/plan_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-thin"
             android:gravity="center"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="#222222"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/plan_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_memo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_offset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_rate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/plan_cleared"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="#0099CC"
-            android:textSize="10sp"
-            android:typeface="monospace" />
+            android:fontFamily="sans-serif-light"
+            android:textColor="#000000"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -355,12 +355,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		Log.e("Transactions-onSharedPreferenceChanged","Options Changed");
 		if(!isDetached()){
 			Log.e("Transactions-onSharedPreferenceChanged","Transaction is attached");
-			Toast.makeText(this.getActivity(), "Transaction is attached", Toast.LENGTH_SHORT).show();
-			populate();
+			//Toast.makeText(this.getActivity(), "Transaction is attached", Toast.LENGTH_SHORT).show();
+			//populate();
 		}
 		else{
 			Log.e("Transactions-onSharedPreferenceChanged","Transaction is detached");
-			Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();			
+			//Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();			
 		}
 	}
 
@@ -663,7 +663,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			//Change Background Colors
 			try{
 				if(!useDefaults){
-					int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#F5F5F5"));
+					int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#FFFFFF"));
 					int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
 
 					GradientDrawable defaultGradient = new GradientDrawable(

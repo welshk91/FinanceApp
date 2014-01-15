@@ -644,7 +644,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				if(!useDefaults){
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.plan_layout);
-					int startColor = prefs.getInt("key_plan_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int startColor = prefs.getInt("key_plan_startBackgroundColor", Color.parseColor("#FFFFFF"));
 					int endColor = prefs.getInt("key_plan_endBackgroundColor", Color.parseColor("#FFFFFF"));
 					GradientDrawable customGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
@@ -658,10 +658,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 			//Change Size of main field
 			try{
-				String customSize = prefs.getString(Plans.this.getString(R.string.pref_key_plan_nameSize), "16");
+				String customSize = prefs.getString(Plans.this.getString(R.string.pref_key_plan_nameSize), "24");
 
 				if(useDefaults){
-					tvName.setTextSize(16);
+					tvName.setTextSize(24);
 				}
 				else{
 					tvName.setTextSize(Integer.parseInt(customSize));
@@ -673,10 +673,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 
 			try{
-				int customColor = prefs.getInt("key_plan_nameColor", Color.parseColor("#000000"));
+				int customColor = prefs.getInt("key_plan_nameColor", Color.parseColor("#222222"));
 
 				if(useDefaults){
-					tvName.setTextColor(Color.parseColor("#000000"));
+					tvName.setTextColor(Color.parseColor("#222222"));
 				}
 				else{
 					tvName.setTextColor(customColor);
@@ -688,18 +688,18 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 
 			try{
-				String defaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_plan_fieldSize), "10");
+				String defaultSize = prefs.getString(Plans.this.getString(R.string.pref_key_plan_fieldSize), "14");
 				int customSize = Integer.parseInt(defaultSize);
 
 				if(useDefaults){
-					tvAccount.setTextSize(10);
-					tvValue.setTextSize(10);
-					tvType.setTextSize(10);
-					tvCategory.setTextSize(10);
-					tvMemo.setTextSize(10);
-					tvOffset.setTextSize(10);
-					tvRate.setTextSize(10);
-					tvCleared.setTextSize(10);
+					tvAccount.setTextSize(14);
+					tvValue.setTextSize(14);
+					tvType.setTextSize(14);
+					tvCategory.setTextSize(14);
+					tvMemo.setTextSize(14);
+					tvOffset.setTextSize(14);
+					tvRate.setTextSize(14);
+					tvCleared.setTextSize(14);
 				}
 				else{
 					tvAccount.setTextSize(customSize);
@@ -718,17 +718,17 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_plan_fieldColor", Color.parseColor("#0099CC"));
+				int DefaultColor = prefs.getInt("key_plan_fieldColor", Color.parseColor("#000000"));
 
 				if(useDefaults){
-					tvAccount.setTextColor(Color.parseColor("#0099CC"));
-					tvValue.setTextColor(Color.parseColor("#0099CC"));
-					tvType.setTextColor(Color.parseColor("#0099CC"));
-					tvCategory.setTextColor(Color.parseColor("#0099CC"));
-					tvMemo.setTextColor(Color.parseColor("#0099CC"));
-					tvOffset.setTextColor(Color.parseColor("#0099CC"));
-					tvRate.setTextColor(Color.parseColor("#0099CC"));
-					tvCleared.setTextColor(Color.parseColor("#0099CC"));
+					tvAccount.setTextColor(Color.parseColor("#000000"));
+					tvValue.setTextColor(Color.parseColor("#000000"));
+					tvType.setTextColor(Color.parseColor("#000000"));
+					tvCategory.setTextColor(Color.parseColor("#000000"));
+					tvMemo.setTextColor(Color.parseColor("#000000"));
+					tvOffset.setTextColor(Color.parseColor("#000000"));
+					tvRate.setTextColor(Color.parseColor("#000000"));
+					tvCleared.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
 					tvAccount.setTextColor(DefaultColor);
@@ -803,7 +803,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				tvRate.setVisibility(View.GONE);
 			}
 
-			if(useDefaults||prefs.getBoolean("checkbox_plan_clearedField", true)){
+			if(prefs.getBoolean("checkbox_plan_clearedField", false) && !useDefaults){
 				tvCleared.setVisibility(View.VISIBLE);
 			}
 			else{

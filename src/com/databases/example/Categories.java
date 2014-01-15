@@ -374,9 +374,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		Toast.makeText(this, "Options Just Changed: Categories.Java", Toast.LENGTH_SHORT).show();
-		
-		
+		//Toast.makeText(this, "Options Just Changed: Categories.Java", Toast.LENGTH_SHORT).show();
 		//categoryPopulate();
 	}
 
@@ -458,7 +456,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				if(!useDefaults){
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.category_layout);
-					int startColor = prefs.getInt("key_category_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int startColor = prefs.getInt("key_category_startBackgroundColor", Color.parseColor("#FFFFFF"));
 					int endColor = prefs.getInt("key_category_endBackgroundColor", Color.parseColor("#FFFFFF"));
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
@@ -474,10 +472,10 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 			//Change Size/Color of main field
 			try{
-				String DefaultSize = prefs.getString(context.getString(R.string.pref_key_category_nameSize), "16");
+				String DefaultSize = prefs.getString(context.getString(R.string.pref_key_category_nameSize), "24");
 
 				if(useDefaults){
-					viewHolder.tvName.setTextSize(16);
+					viewHolder.tvName.setTextSize(24);
 				}
 				else{
 					viewHolder.tvName.setTextSize(Integer.parseInt(DefaultSize));
@@ -489,10 +487,10 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			}
 
 			try{
-				int DefaultColor = prefs.getInt("key_category_nameColor", Color.parseColor("#000000"));
+				int DefaultColor = prefs.getInt("key_category_nameColor", Color.parseColor("#222222"));
 
 				if(useDefaults){
-					viewHolder.tvName.setTextColor(Color.parseColor("#000000"));
+					viewHolder.tvName.setTextColor(Color.parseColor("#222222"));
 				}
 				else{
 					viewHolder.tvName.setTextColor(DefaultColor);
@@ -583,7 +581,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				if(!useDefaults){
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
-					int startColor = prefs.getInt("key_subcategory_startBackgroundColor", Color.parseColor("#E8E8E8"));
+					int startColor = prefs.getInt("key_subcategory_startBackgroundColor", Color.parseColor("#FFFFFF"));
 					int endColor = prefs.getInt("key_subcategory_endBackgroundColor", Color.parseColor("#FFFFFF"));
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,
@@ -597,10 +595,10 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 			//Change Size/color of main field
 			try{
-				String DefaultSize = prefs.getString(context.getString(R.string.pref_key_subcategory_nameSize), "16");
+				String DefaultSize = prefs.getString(context.getString(R.string.pref_key_subcategory_nameSize), "24");
 
 				if(useDefaults){
-					viewHolder.tvName.setTextSize(16);
+					viewHolder.tvName.setTextSize(24);
 				}
 				else{
 					viewHolder.tvName.setTextSize(Integer.parseInt(DefaultSize));

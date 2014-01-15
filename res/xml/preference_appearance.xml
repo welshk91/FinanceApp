@@ -23,7 +23,7 @@
             android:title="Background" >
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-1513240"
+                android:defaultValue="-1"
                 android:dependency="checkbox_default_appearance_account"
                 android:key="key_account_startBackgroundColor"
                 android:summary="Starting background color of each account row."
@@ -53,7 +53,7 @@
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16777216"
+                android:defaultValue="-14540254"
                 android:dependency="checkbox_default_appearance_account"
                 android:key="key_account_nameColor"
                 android:summary="Change the color of Name field."
@@ -138,7 +138,7 @@
             android:title="Background" >
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-1513240"
+                android:defaultValue="-1"
                 android:dependency="checkbox_default_appearance_transaction"
                 android:key="key_transaction_startBackgroundColor"
                 android:summary="Starting background color of each transaction row."
@@ -167,7 +167,7 @@
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16777216"
+                android:defaultValue="-14540254"
                 android:dependency="checkbox_default_appearance_transaction"
                 android:key="key_transaction_nameColor"
                 android:summary="Change the color of Name field."
@@ -282,7 +282,7 @@
             android:title="Background" >
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-1513240"
+                android:defaultValue="-1"
                 android:dependency="checkbox_default_appearance_plan"
                 android:key="key_plan_startBackgroundColor"
                 android:summary="Starting background color of each plan row."
@@ -301,18 +301,18 @@
             android:summary="Change fonts"
             android:title="Fonts" >
             <EditTextPreference
-                android:defaultValue="16"
+                android:defaultValue="24"
                 android:dependency="checkbox_default_appearance_plan"
                 android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_plan_nameSize"
-                android:summary="Change the size of Name field. Default is &apos;16&apos;"
+                android:summary="Change the size of Name field. Default is &apos;24&apos;"
                 android:title="Size of main field" >
             </EditTextPreference>
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16777216"
+                android:defaultValue="-14540254"
                 android:dependency="checkbox_default_appearance_plan"
                 android:key="key_plan_nameColor"
                 android:summary="Change the color of Name field."
@@ -320,18 +320,18 @@
             </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
             <EditTextPreference
-                android:defaultValue="10"
+                android:defaultValue="14"
                 android:dependency="checkbox_default_appearance_plan"
                 android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_plan_fieldSize"
-                android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
+                android:summary="Change the size of secondary fields. Default is &apos;14&apos;"
                 android:title="Size of secondary fields" >
             </EditTextPreference>
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16737844"
+                android:defaultValue="-16777216"
                 android:dependency="checkbox_default_appearance_plan"
                 android:key="key_plan_fieldColor"
                 android:summary="Change the color of secondary fields."
@@ -397,7 +397,7 @@
                     android:title="Rate" >
                 </CheckBoxPreference>
                 <CheckBoxPreference
-                    android:defaultValue="true"
+                    android:defaultValue="false"
                     android:key="checkbox_plan_clearedField"
                     android:summary="Cleared Field"
                     android:title="Cleared" >
@@ -427,7 +427,7 @@
             android:title="Background" >
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-1513240"
+                android:defaultValue="-1"
                 android:dependency="checkbox_default_appearance_category"
                 android:key="key_category_startBackgroundColor"
                 android:summary="Starting background color of each category row."
@@ -446,18 +446,18 @@
             android:summary="Change fonts"
             android:title="Fonts" >
             <EditTextPreference
-                android:defaultValue="16"
+                android:defaultValue="24"
                 android:dependency="checkbox_default_appearance_category"
                 android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_category_nameSize"
-                android:summary="Change the size of Name field. Default is &apos;16&apos;"
+                android:summary="Change the size of Name field. Default is &apos;24&apos;"
                 android:title="Size of main field" >
             </EditTextPreference>
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16777216"
+                android:defaultValue="-14540254"
                 android:dependency="checkbox_default_appearance_category"
                 android:key="key_category_nameColor"
                 android:summary="Change the color of Name field."
@@ -465,18 +465,18 @@
             </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
             <EditTextPreference
-                android:defaultValue="10"
+                android:defaultValue="14"
                 android:dependency="checkbox_default_appearance_category"
                 android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_category_fieldSize"
-                android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
+                android:summary="Change the size of secondary fields. Default is &apos;14&apos;"
                 android:title="Size of secondary fields" >
             </EditTextPreference>
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16737844"
+                android:defaultValue="-16777216"
                 android:dependency="checkbox_default_appearance_category"
                 android:key="key_category_fieldColor"
                 android:summary="Change the color of secondary fields."
@@ -530,7 +530,7 @@
             android:title="Background" >
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-1513240"
+                android:defaultValue="-1"
                 android:dependency="checkbox_default_appearance_subcategory"
                 android:key="key_subcategory_startBackgroundColor"
                 android:summary="Starting background color of each subcategory row."
@@ -549,18 +549,18 @@
             android:summary="Change fonts"
             android:title="Fonts" >
             <EditTextPreference
-                android:defaultValue="16"
+                android:defaultValue="24"
                 android:dependency="checkbox_default_appearance_subcategory"
                 android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_subcategory_nameSize"
-                android:summary="Change the size of Name field. Default is &apos;16&apos;"
+                android:summary="Change the size of Name field. Default is &apos;24&apos;"
                 android:title="Size of main field" >
             </EditTextPreference>
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16777216"
+                android:defaultValue="-14540254"
                 android:dependency="checkbox_default_appearance_subcategory"
                 android:key="key_subcategory_nameColor"
                 android:summary="Change the color of Name field."
@@ -568,18 +568,18 @@
             </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
             <EditTextPreference
-                android:defaultValue="10"
+                android:defaultValue="14"
                 android:dependency="checkbox_default_appearance_subcategory"
                 android:digits="0123456789"
                 android:inputType="number|phone"
                 android:key="@string/pref_key_subcategory_fieldSize"
-                android:summary="Change the size of secondary fields. Default is &apos;10&apos;"
+                android:summary="Change the size of secondary fields. Default is &apos;14&apos;"
                 android:title="Size of secondary fields" >
             </EditTextPreference>
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
-                android:defaultValue="-16737844"
+                android:defaultValue="-16777216"
                 android:dependency="checkbox_default_appearance_subcategory"
                 android:key="key_subcategory_fieldColor"
                 android:summary="Change the color of secondary fields."

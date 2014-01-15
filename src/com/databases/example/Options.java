@@ -79,7 +79,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-			Log.e("AppearanceSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
+			//Log.e("AppearanceSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
 		}
 	}
 
@@ -150,7 +150,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-			Log.e("BehaviorSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
+			//Log.e("BehaviorSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
 		}
 
 		@Override
@@ -274,7 +274,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-			Log.e("MiscSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
+			//Log.e("MiscSettingsPreferenceFragment-onSharedPreferenceChanged","Here...");
 		}
 
 	}

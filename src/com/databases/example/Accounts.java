@@ -498,11 +498,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public void bindView(View view, Context context, Cursor cursor) {
 			View v = view;
 			Cursor user = getCursor();
-			
+
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-			
+
 			if (user != null) {
 				TextView tvName = (TextView) v.findViewById(R.id.account_name);
 				TextView tvBalance = (TextView) v.findViewById(R.id.account_balance);
@@ -584,7 +584,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 			LayoutInflater inflater = LayoutInflater.from(context);
 			View v = inflater.inflate(R.layout.account_item, parent, false);
-			
+
 			TextView tvName = (TextView)v.findViewById(R.id.account_name);
 			TextView tvBalance = (TextView)v.findViewById(R.id.account_balance);
 			TextView tvTime = (TextView)v.findViewById(R.id.account_time);
@@ -593,13 +593,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			//For Custom View Properties
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Accounts.this.getActivity());
 			boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-			
+
 			//Change Background Colors
 			try{
 				if(!useDefaults){
 					LinearLayout l;
 					l=(LinearLayout)v.findViewById(R.id.account_layout);
-					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#F5F5F5"));
+					int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#FFFFFF"));
 					int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
 					GradientDrawable defaultGradient = new GradientDrawable(
 							GradientDrawable.Orientation.BOTTOM_TOP,

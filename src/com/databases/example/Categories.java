@@ -519,7 +519,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				viewHolder.tvName.setVisibility(View.GONE);
 			}
 
-			if(prefs.getBoolean("checkbox_category_noteField", false) && !useDefaults){
+			if(prefs.getBoolean("checkbox_category_noteField", false) && !useDefaults && itemNote!=null){
 				viewHolder.tvNote.setVisibility(View.VISIBLE);
 				viewHolder.tvNote.setText(itemNote);
 			}
@@ -642,7 +642,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			else{
 				viewHolder.tvName.setVisibility(View.GONE);
 			}
-			if(prefs.getBoolean("checkbox_subcategory_noteField", false) && !useDefaults){
+			if(prefs.getBoolean("checkbox_subcategory_noteField", false) && !useDefaults && itemNote!=null){
 				viewHolder.tvNote.setVisibility(View.VISIBLE);
 				viewHolder.tvNote.setText(itemNote);
 			}

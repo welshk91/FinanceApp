@@ -13,6 +13,7 @@ import com.databases.example.Transactions.TimePickerFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
@@ -49,7 +50,7 @@ public class Checkbook extends SherlockFragmentActivity {
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		ListView drawer = (ListView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
 		Accounts account_frag = new Accounts();

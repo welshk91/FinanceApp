@@ -9,54 +9,43 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ScrollView;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 //An Object Class used to handle the NavigationDrawer
 public class Drawer extends Activity{
 	private Context context;
 	private DrawerLayout mDrawerLayout;
-	private ScrollView mDrawerView;
+	private ListView mDrawerList;
 
-	private Button drawerHome;
-	private Button drawerCheckbook;
-	private Button drawerCategories;
-	private Button drawerSchedule;
-	private Button drawerStats;
-	private Button drawerOptions;
-	private Button drawerHelp;
-	private Button drawerExit;
+	private String[] drawerItems;
 
-	public Drawer(Context context, DrawerLayout layout, ScrollView drawer) {
+	private static MyAdapter adapterDrawer = null;
+
+	public Drawer(Context context, DrawerLayout layout, ListView drawer) {
 		this.context=context;
 		this.mDrawerLayout=layout;
-		this.mDrawerView=drawer;		
+		this.mDrawerList=drawer;
 
-		drawerHome = (Button)drawer.findViewById(R.id.slidingmenu_home);
-		drawerHome.setOnClickListener(myListener);
-		drawerCheckbook = (Button)drawer.findViewById(R.id.slidingmenu_checkbook);
-		drawerCheckbook.setOnClickListener(myListener);
-		drawerCategories = (Button)drawer.findViewById(R.id.slidingmenu_categories);
-		drawerCategories.setOnClickListener(myListener);
-		drawerSchedule = (Button)drawer.findViewById(R.id.slidingmenu_plans);
-		drawerSchedule.setOnClickListener(myListener);
-		drawerStats = (Button)drawer.findViewById(R.id.slidingmenu_statistics);
-		drawerStats.setOnClickListener(myListener);
-		drawerOptions = (Button)drawer.findViewById(R.id.slidingmenu_options);
-		drawerOptions.setOnClickListener(myListener);
-		drawerHelp = (Button)drawer.findViewById(R.id.slidingmenu_help);
-		drawerHelp.setOnClickListener(myListener);
-		drawerExit = (Button)drawer.findViewById(R.id.slidingmenu_exit);
-		drawerExit.setOnClickListener(myListener);
+		drawerItems = context.getResources().getStringArray(R.array.drawer_items);
+
+		adapterDrawer = new MyAdapter(context, drawerItems);
+		mDrawerList.setAdapter(adapterDrawer);
+		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
 	}//end constructor
 
-	//Method handling 'mouse-click'
-	public OnClickListener myListener = new OnClickListener() {
-		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.slidingmenu_home:
+	/* The listener for ListView in the navigation drawer */
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			switch (position) {
+			case 0:
 				Log.d("SliderMenu", "Home Listener Fired");
 				Drawer.this.toggle();
 				Intent intentHome = new Intent(context, Main.class);
@@ -64,7 +53,7 @@ public class Drawer extends Activity{
 				context.startActivity(intentHome);
 				break;	
 
-			case R.id.slidingmenu_checkbook:
+			case 1:
 				Log.d("SliderMenu", "Checkbook Listener Fired");
 				Drawer.this.toggle();
 				Intent intentCheckbook = new Intent(context, Checkbook.class);
@@ -72,7 +61,7 @@ public class Drawer extends Activity{
 				context.startActivity(intentCheckbook);
 				break;
 
-			case R.id.slidingmenu_categories:
+			case 2:
 				Log.d("SliderMenu", "Categories Listener Fired");
 				Drawer.this.toggle();
 				Intent intentCategories = new Intent(context, Categories.class);
@@ -80,7 +69,7 @@ public class Drawer extends Activity{
 				context.startActivity(intentCategories);				
 				break;
 
-			case R.id.slidingmenu_plans:
+			case 3:
 				Log.d("SliderMenu", "Plans Listener Fired");
 				Drawer.this.toggle();
 				Intent intentPlans = new Intent(context, Plans.class);
@@ -88,7 +77,7 @@ public class Drawer extends Activity{
 				context.startActivity(intentPlans);
 				break;
 
-			case R.id.slidingmenu_statistics:
+			case 4:
 				Log.d("SliderMenu", "Statistics Listener Fired");
 				Drawer.this.toggle();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
@@ -96,14 +85,14 @@ public class Drawer extends Activity{
 				//drawPattern();
 				break;
 
-			case R.id.slidingmenu_options:
+			case 5:
 				Log.d("SliderMenu", "Options Listener Fired");
 				Drawer.this.toggle();
 				Intent intentOptions = new Intent(context, Options.class);
 				context.startActivity(intentOptions);
 				break;
 
-			case R.id.slidingmenu_help:
+			case 6:
 				Log.d("SliderMenu", "Help Listener Fired");
 				Drawer.this.toggle();
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
@@ -111,21 +100,19 @@ public class Drawer extends Activity{
 				//drawPattern();
 				break;
 
-			case R.id.slidingmenu_exit:
+			case 7:
 				Log.d("SliderMenu", "Exit Listener Fired");
 				Drawer.this.toggle();
 				closeApp();
 				break;
 
 			default:
-				Log.d("SliderMenu", "Default Listener Fired");
+				Log.e("SliderMenu", "Default Listener Fired");
 				break;
-			}
+			}			
 
-		}// end onClick
-
-
-	};// end onClickListener
+		}
+	}
 
 	//Method to exit app
 	private void closeApp() {
@@ -134,11 +121,83 @@ public class Drawer extends Activity{
 
 	//Close/Open drawer
 	protected void toggle() {
-		if (mDrawerLayout.isDrawerOpen(mDrawerView)) {
-			mDrawerLayout.closeDrawer(mDrawerView);
+		if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+			mDrawerLayout.closeDrawer(mDrawerList);
 		} else {
-			mDrawerLayout.openDrawer(mDrawerView);
+			mDrawerLayout.openDrawer(mDrawerList);
 		}
 	}
 
+	//ArrayAdapter with a custom getView
+	public class MyAdapter  extends ArrayAdapter<String> {
+		Context context;
+		private String[] names;
+
+		public MyAdapter(Context context, String[] drawerItems) {
+			super(context, R.layout.drawer_item, drawerItems);
+			this.context = context;
+			this.names = drawerItems;
+		}
+
+		@Override
+		public int getViewTypeCount(){
+			return 2;
+		}
+		
+		@Override
+		public int getItemViewType(int position) {
+		    return position % 2;
+		}
+		
+		@Override
+		public View getView(int position, View coverView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View rowView = inflater.inflate(R.layout.drawer_item, parent, false);
+
+			TextView itemName = (TextView)rowView.findViewById(R.id.drawer_item_name);
+			itemName.setText(names[position]);			
+			
+			switch (position) {
+			case 0:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
+				break;	
+
+			case 1:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_archive, 0, 0, 0);
+				break;
+
+			case 2:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_sort_by_size, 0, 0, 0);
+				break;
+
+			case 3:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_today, 0, 0, 0);
+				break;
+
+			case 4:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_agenda, 0, 0, 0);
+				break;
+
+			case 5:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_preferences, 0, 0, 0);
+				break;
+
+			case 6:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_help, 0, 0, 0);
+				break;
+
+			case 7:
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_close_clear_cancel, 0, 0, 0);
+				break;
+
+			default:
+				Log.e("SliderMenu", "Default Listener Fired");
+				break;
+			}			
+			
+			return rowView;
+		}
+
+	}	
+	
 }//end class

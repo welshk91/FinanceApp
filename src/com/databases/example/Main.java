@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -104,7 +105,7 @@ public class Main extends SherlockActivity {
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		ListView drawer = (ListView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
 	}// end onCreate

@@ -109,7 +109,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		ListView drawer = (ListView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
 		lvPlans = (ListView)this.findViewById(R.id.plans_list);

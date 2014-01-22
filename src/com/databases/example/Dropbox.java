@@ -28,6 +28,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +54,7 @@ public class Dropbox extends SherlockFragmentActivity{
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		ListView drawer = (ListView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
 		//Initialize DropBox Account Manager

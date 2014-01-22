@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.LinearLayout;
@@ -80,7 +81,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		ListView drawer = (ListView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 
 		lvCategory = (ExpandableListView)this.findViewById(R.id.category_list);

@@ -36,6 +36,16 @@
     <string name="pref_key_subcategory_nameSize">key_subcategory_nameSize</string>
     <string name="pref_key_subcategory_fieldSize">key_subcategory_fieldSize</string>
 
+    <string-array name="drawer_items">
+        <item>Home</item>
+        <item>Checkbook</item>
+        <item>Categories</item>
+        <item>Plans</item>
+        <item>Statistics</item>
+        <item>Options</item>
+        <item>Help</item>
+        <item>Exit</item>
+    </string-array>
     <string-array name="transaction_type">
         <item>Withdraw</item>
         <item>Deposit</item>

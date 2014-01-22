@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -76,7 +77,7 @@ public class SearchMain extends SherlockFragmentActivity {
 
 		//NavigationDrawer
 		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
+		ListView drawer = (ListView) findViewById(R.id.drawer);
 		mDrawerLayout = new Drawer(this,view,drawer);
 	}
 

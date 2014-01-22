@@ -1,0 +1,13 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_item_name"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:drawableLeft="@drawable/slidingmenu_exit"
+    android:drawablePadding="12dp"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:textSize="16sp"
+    android:textColor="#ff707070" />

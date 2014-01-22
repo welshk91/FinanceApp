@@ -4,7 +4,7 @@ FinanceApp
 A simple app to handle transactions on the go. Originally designed as a knockoff of ["Checkbook"](https://play.google.com/store/apps/details?id=com.tts.checkbookenhanced#?t=W251bGwsMSwxLDIxMiwiY29tLnR0cy5jaGVja2Jvb2tlbmhhbmNlZCJd) by Digital Life Solutions, it has since evolved to attempt to follow the Google Android Design Guidelines better (Holo Design, ActionBar, Fragments, ...). 
 
 Screen Shots
--------------
+--------------------------------------
 ![Home](Screenshots/Phone/Screenshots/Home/Main_framed.png)
 ![NavDrawer](Screenshots/Phone/Screenshots/Home/NavigationDrawer_framed.png)
 ![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts_framed.png)
@@ -16,7 +16,7 @@ Screen Shots
 ![Lockscreen](Screenshots/Phone/Screenshots/Options/Options-Lockscreen-SetPattern_framed.png)
 
 Usage
------
+--------------------------------------
 There is currently no license I'm releasing this code under (subject to change). Feel free to use it in whatever way you see fit. 
 
 Known Issues
@@ -27,7 +27,6 @@ Known Issues
 Things To Do
 --------------------------------------
 * Change navigationDrawer to a list (allows for your selection to be highlighted, might help in Options implementation)
-* Make Account & Transaction rows look more like the cards for a smoother interface
 * Add custom search suggestions
 * PDF Reports
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, wizard in the beginning for database syncing, ...)
@@ -54,7 +53,6 @@ Optimizations
 * Make ListView only show a few entries, load new entries when needed (Endless listview)
 * Make sure any SQL Joins are small (older sql_lite versions struggle with it)
 
-
 Notes to Self
 --------------------------------------
 * Need more spinners, less typing
@@ -76,9 +74,9 @@ Supported
 - Documents (doc,pptx,xls)
 
 Attachments Not Working
-- .mp4 files (found through the filemanager), can be returned. You can view them by hitting the filemanager in the selected programs which pops up another popup with video player in the list (Bug?). Selecting video player from that list makes it load the file, but the video stutters & audio not synced. Possibly an unsupported format??? NOT JUST MY PROGRAM/VIDEO PLAYER ALSO HAS PROBLEMS WITH IT.
+- .mp4 files (found through the filemanager), can be returned. You can view them by hitting the filemanager in the selected programs which pops up another popup with video player in the list (Bug?). Selecting video player from that list makes it load the file, but the video stutters & audio not synced. This is due to lack of codec support on the platform.
 
-- .avi files (found through the filemanager) can be returned. When you select the video player to view it, it only has audio. NOT JUST MY PROGRAM/VIDEO PLAYER ALSO HAS PROBLEMS WITH IT.
+- .avi files (found through the filemanager) can be returned. When you select the video player to view it, it only has audio. This is due to lack of codec support on the platform.
 
 Third-Party Libraries Used
 ------------------------------------------

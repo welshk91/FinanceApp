@@ -26,14 +26,15 @@ Known Issues
 
 Things To Do
 --------------------------------------
-* Change navigationDrawer to a list (allows for your selection to be highlighted, might help in Options implementation)
+* Complete work on Dropbox sync and add Dropbox 'Saver' Drop-In (when it becomes available)
+* Add Archieve support (ie keep balance when making back ups)
+* Password/Pattern, warning of liability. Add encryption and email for recovery?
+* CardsUI to display important information on homesceen
+* Make the Attachment code available
 * Add custom search suggestions
 * PDF Reports
 * Improve First-Time Run (use third party library to draw attention to objects, add default categories, wizard in the beginning for database syncing, ...)
 * Export/Import oxf (Make sure to support required fields)
-* Password/Pattern, warning of liability. Add encryption and email for recovery?
-* Dropbox support -> archieve support (Keep Balance)
-* CardsUI to display important information on homesceen
 * Improve look (icons, default colors, slide menu, big notifications)
 * Encrypt entire database (SQLCipher)
 
@@ -56,10 +57,10 @@ Optimizations
 Notes to Self
 --------------------------------------
 * Need more spinners, less typing
+* What should happen when a user clicks on a search result?
 * Possibly 'hide' advance options in add dialogs, 'expand' for more options
 * Link a contact (own table?)
 * Possibly a payee field, own table. Can avoid if description is dropdown.
-* What should happen when a user clicks on a search result?
 * GIT Reminders for Myself:
 	- git add -A
 	- git commit -a -m 'Fixed some warnings'

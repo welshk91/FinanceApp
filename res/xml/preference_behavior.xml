@@ -16,10 +16,20 @@
         </CheckBoxPreference>
 
         <Preference
+            android:dependency="checkbox_lock_enabled"
             android:key="pref_setlock"
             android:summary="Define a pattern for your lockscreen"
             android:title="Set a Pattern" >
         </Preference>
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:dependency="checkbox_lock_enabled"
+            android:inputType="textEmailAddress"
+            android:key="pref_emergency_email"
+            android:summary="Email address if you forget your pattern"
+            android:title="Emergency Email Address" >
+        </EditTextPreference>
     </PreferenceScreen>
     <PreferenceScreen
         android:layout_width="fill_parent"

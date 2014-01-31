@@ -7,10 +7,10 @@ package com.databases.example;
 import java.util.List;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
+import group.pals.android.lib.ui.lockpattern.util.Settings;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,15 +25,11 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.widget.Toast;
 
 public class Options extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener{
 	private static final int REQUEST_CREATE_PATTERN = 0;
-	private Drawer mDrawerLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -49,13 +45,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			PreferenceManager.setDefaultValues(this, R.xml.preference_behavior, false);
 			PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
 		}//End if Build<Honeycomb
-
-		//NavigationDrawer
-		//DrawerLayout view = (DrawerLayout) this.findViewById(R.id.drawer_layout);
-		//ScrollView drawer = (ScrollView) this.findViewById(R.id.drawer);
-		//Log.e("Options", "view="+view+" \ndrawer"+drawer);
-
-		//mDrawerLayout = new Drawer(this,view,drawer);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);		
@@ -131,8 +120,12 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 
 		//Draw a lockscreen pattern
 		public void drawPattern(){
-			Intent intent = new Intent(getActivity(), LockPatternActivity.class);
-			intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
+			//			Intent intent = new Intent(getActivity(), LockPatternActivity.class);
+			//			intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
+			//			startActivityForResult(intent, REQUEST_CREATE_PATTERN);
+
+			Settings.Security.setAutoSavePattern(getActivity(), true);
+			Intent intent = new Intent(LockPatternActivity.ACTION_CREATE_PATTERN, null, getActivity(), LockPatternActivity.class);
 			startActivityForResult(intent, REQUEST_CREATE_PATTERN);
 		}
 
@@ -158,9 +151,12 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			switch (requestCode) {
 			case REQUEST_CREATE_PATTERN:
 				if (resultCode == RESULT_OK) {
-					String savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
-					SharedPreferences preferences = getPreferenceManager().getSharedPreferences();
-					preferences.edit().putString("myPattern", savedPattern).commit();
+					//String savedPattern = data.getStringExtra(LockPatternActivity._Pattern);
+					//char[] savedPattern = data.getCharArrayExtra(LockPatternActivity.EXTRA_PATTERN);
+
+					//SharedPreferences preferences = getPreferenceManager().getSharedPreferences();
+					//preferences.edit().putString("myPattern", savedPattern).commit();
+					//preferences.edit().putString("myPattern", String.valueOf(savedPattern)).commit();
 					Toast.makeText(this.getActivity(), "Saved Pattern", Toast.LENGTH_SHORT).show();
 					Log.d("onActivityResult","Saved a lockscreen pattern");
 				}
@@ -222,6 +218,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 				public void onClick(DialogInterface dialog,int id) {
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 					prefs.edit().clear().commit();
+					Settings.Security.setPattern(getActivity(), null);
 				}
 			})
 			.setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -268,7 +265,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 			//DialogFragment newFragment = DeleteDialogFragment.newInstance();
 			//newFragment.show(this.getActivity().getFragmentManager(), "dialogDelete");
 			//newFragment.show(this.getActivity().getSupportFragmentManager(), "dialogDelete");
-
 
 		}//end of clearDB
 
@@ -317,35 +313,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		return true;
 	}
 
-	//	@Override
-	//	public void setContentView(int layoutResID) {
-	//		setContentView(getLayoutInflater().inflate(layoutResID, null));
-	//	}
-	//
-	//	@Override
-	//	public void setContentView(View view) {
-	//		setContentView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-	//	}
-	//
-	//	//Needed for navigation drawer, not sure how to handle this yet...
-	//	@Override
-	//	public void setContentView(View view, LayoutParams params) {
-	//		super.setContentView(R.layout.drawer_options);
-	//
-	//		DrawerLayout v = (DrawerLayout) findViewById(R.id.drawer_layout);
-	//		ScrollView drawer = (ScrollView) findViewById(R.id.drawer);
-	//		Log.d("Options", "v="+v+" \ndrawer="+drawer);
-	//
-	//		mDrawerLayout = new Drawer(this,v,drawer);
-	//
-	//		Log.d("Options-setContentView", "After new Drawer");
-	//
-	//		// Call onContentsChanged() to let the Activity know it needs to refresh itself.
-	//		onContentChanged();
-	//		Log.d("Options-setContentView", "After onCntentChanged");
-	//	}
-
-	//Class that handles sort dialog
+	//Class that handles delete dialog
 	//	public static class DeleteDialogFragment extends SherlockDialogFragment {
 	//
 	//		public static DeleteDialogFragment newInstance() {

@@ -5,6 +5,7 @@
 package com.databases.example;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
+import group.pals.android.lib.ui.lockpattern.util.Settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +47,7 @@ public class Main extends SherlockActivity {
 
 		setContentView(R.layout.main);
 		getSupportActionBar().setHomeButtonEnabled(true);
-		
+
 		//Initialize Card View
 		CardUI mCardView = (CardUI) findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
@@ -145,14 +145,13 @@ public class Main extends SherlockActivity {
 
 	//Confirm Lockscreen
 	public void confirmPattern(){
-		Intent intent = new Intent(Main.this, LockPatternActivity.class);
-		intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.ComparePattern);
+		if(Settings.Security.getPattern(this)!=null){
+			//Log.d("Main", "valueOf getPattern="+String.valueOf(Settings.Security.getPattern(this)));
+			//Log.d("Main", "getPattern="+String.valueOf(Settings.Security.getPattern(this)));
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
-		String savedPattern = prefs.getString("myPattern", null);
-
-		if(savedPattern!=null){
-			intent.putExtra(LockPatternActivity._Pattern, savedPattern);
+			Intent intent = new Intent(LockPatternActivity.ACTION_COMPARE_PATTERN, null, Main.this, LockPatternActivity.class);
+			//Intent intentForget = new Intent(this, LoginHelper.class);
+			//intent.putExtra(LockPatternActivity.EXTRA_INTENT_ACTIVITY_FORGOT_PATTERN, intentForget);
 			startActivityForResult(intent, LOCKSCREEN_SIGNIN);
 		}
 		else{
@@ -164,18 +163,35 @@ public class Main extends SherlockActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case LOCKSCREEN_SIGNIN:
-			if (resultCode == RESULT_OK) {
-				//Lockscreen signing in ok
+			switch (resultCode) {
+			case RESULT_OK:
 				Toast.makeText(Main.this, "Sign In\nAccepted", Toast.LENGTH_SHORT).show();
-			} else {
-				//Lockscreen signing in failed
+				break;
+			case RESULT_CANCELED:
+				Toast.makeText(Main.this, "Sign In\nCanceled", Toast.LENGTH_SHORT).show();
+				this.finish();
+				this.moveTaskToBack(true);
+				super.onDestroy();
+				break;
+			case LockPatternActivity.RESULT_FAILED:
 				Toast.makeText(Main.this, "Sign In\nFailed", Toast.LENGTH_SHORT).show();
 				this.finish();
 				this.moveTaskToBack(true);
 				super.onDestroy();
-			}
-			break;
+				break;
+			case LockPatternActivity.RESULT_FORGOT_PATTERN:
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
+				boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);				
 
+				if(!lockEnabled){
+					Toast.makeText(Main.this, "Sign In\nReset", Toast.LENGTH_SHORT).show();
+				}
+				else{
+					Toast.makeText(Main.this, "Sign In\nForgotten", Toast.LENGTH_SHORT).show();					
+				}
+				
+				break;
+			}
 		}
 	}
 

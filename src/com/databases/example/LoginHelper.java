@@ -153,6 +153,7 @@ public class LoginHelper extends SherlockFragmentActivity{
 			return null;
 		}
 
+		@Override
 		protected void onPostExecute(Long result) {
 			Log.e("AsyncTask", "onPostExecute");
 			//Toast.makeText(getParent(), "Finished emailing", Toast.LENGTH_SHORT).show();

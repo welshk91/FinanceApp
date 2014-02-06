@@ -5,9 +5,10 @@
 package com.databases.example;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,6 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
@@ -51,7 +50,6 @@ public class Cards extends SherlockFragment {
 		dealCardsCheckbook(mCardView);
 		dealCardsPlans(mCardView);
 		dealCardsStatistics(mCardView);
-
 
 		//Draw cards
 		mCardView.refresh();
@@ -94,61 +92,110 @@ public class Cards extends SherlockFragment {
 
 
 	public void dealCardsCheckbook(CardUI view){
-		CardStack stackCheckbook = new CardStack();
-		stackCheckbook.setTitle("CHECKBOOK");
-		view.addStack(stackCheckbook);
 
-		view.addCard(new MyPlayCard("Lake Michigan Credit Union",
-				"This account is overdrawn.\nYou might want to review the total balance", 
-				"#e00707", "#222222", false, false));
+		Cursor accountCursor = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
+		Cursor transactionCursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, null, null, null);
+		
+		CardTask taskAccount = new CardTask();
+		taskAccount.execute("Account",view,accountCursor);
 
-		view.addCardToLastStack(new MyPlayCard("Cash",
-				"This account is doing well.\nPerhaps you should deposit some money into Lake Michigan Credit Union",
-				"#4ac925", "#222222", false, false));
-
-		view.addCard(new MyPlayCard("Rent",
-				"This transaction occured recently",
-				"#f2a400", "#222222", false, false));
-
-		view.addCardToLastStack(new MyPlayCard("IOU",
-				"This transaction occured recently",
-				"#f2a400", "#222222", false, false));
-
+		CardTask taskTransaction = new CardTask();
+		taskTransaction.execute("Transaction",view,transactionCursor);
 	}
 
 	public void dealCardsPlans(CardUI view){
-		CardStack stackPlans = new CardStack();
-		stackPlans.setTitle("PLANS");
-		view.addStack(stackPlans);
 
-		view.addCard(new MyPlayCard("Paycheck",
-				"This planned transaction occured recently",
-				"#33b6ea", "#222222", false, false));
+		Cursor planCursor = getActivity().getContentResolver().query(MyContentProvider.PLANNED_TRANSACTIONS_URI, null, null, null, null);
 
-		view.addCardToLastStack(new MyPlayCard("Gas Bill",
-				"This planned transaction occured recently",
-				"#f2a400", "#222222", false, false));
+		CardTask runner = new CardTask();
+		runner.execute("Plans",view,planCursor);
+
 	}
 
 	public void dealCardsStatistics(CardUI view){
-		CardStack stackStatistics = new CardStack();
-		stackStatistics.setTitle("STATISTICS");
-		view.addStack(stackStatistics);
+		
+		//CardTask runner = new CardTask();
+		//runner.execute("Statistics",view);
 
-		view.addCard(new MyPlayCard("Lake Michigan Credit Union",
-				"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"Car-New Tires\" ",
-				"#e00707", "#222222", false, false));
-
-		view.addCardToLastStack(new MyPlayCard("Lake Michigan Credit Union",
-				"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"House-New Roof\" ",
-				"#e00707", "#222222", false, false));
-
-		view.addCardToLastStack(new MyPlayCard("Cash",
-				"You are making more money than usual for this account",
-				"#4ac925", "#222222", false, false));
 	}
 
+	private class CardTask extends AsyncTask<Object,Void, Void> {
 
+		@Override
+		protected Void doInBackground(Object... params) {
+
+			String type = (String)params[0];
+			CardUI view = (CardUI)params[1];
+			Cursor cursor = (Cursor)params[2];
+
+			if(type.equals("Account")){
+				Log.e("CardTask", "Type is Account");
+
+				CardStack stackCheckbook = new CardStack();
+				stackCheckbook.setTitle("CHECKBOOK");
+				view.addStack(stackCheckbook);
+
+				view.addCard(new MyPlayCard("Lake Michigan Credit Union",
+						"This account is overdrawn.\nYou might want to review the total balance", 
+						"#e00707", "#222222", false, false));
+
+				view.addCardToLastStack(new MyPlayCard("Cash",
+						"This account is doing well.\nPerhaps you should deposit some money into Lake Michigan Credit Union",
+						"#4ac925", "#222222", false, false));
+			}
+
+			else if(type.equals("Transaction")){
+				Log.e("CardTask", "Type is Transaction");
+				
+				view.addCard(new MyPlayCard("Rent",
+						"This transaction occured recently",
+						"#f2a400", "#222222", false, false));
+
+				view.addCardToLastStack(new MyPlayCard("IOU",
+						"This transaction occured recently",
+						"#f2a400", "#222222", false, false));				
+				
+			}
+			
+			else if(type.equals("Plans")){
+				Log.e("CardTask", "Type is plans");
+
+				CardStack stackPlans = new CardStack();
+				stackPlans.setTitle("PLANS");
+				view.addStack(stackPlans);
+
+				view.addCard(new MyPlayCard("Paycheck",
+						"This planned transaction occured recently",
+						"#33b6ea", "#222222", false, false));
+
+				view.addCardToLastStack(new MyPlayCard("Gas Bill",
+						"This planned transaction occured recently",
+						"#f2a400", "#222222", false, false));
+			}
+
+			else if(type.equals("Statistics")){
+				Log.e("CardTask", "Type is statistics");
+
+				CardStack stackStatistics = new CardStack();
+				stackStatistics.setTitle("STATISTICS");
+				view.addStack(stackStatistics);
+
+				view.addCard(new MyPlayCard("Lake Michigan Credit Union",
+						"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"Car-New Tires\" ",
+						"#e00707", "#222222", false, false));
+
+				view.addCardToLastStack(new MyPlayCard("Lake Michigan Credit Union",
+						"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"House-New Roof\" ",
+						"#e00707", "#222222", false, false));
+
+				view.addCardToLastStack(new MyPlayCard("Cash",
+						"You are making more money than usual for this account",
+						"#4ac925", "#222222", false, false));
+			}
+
+			return null;
+		}
+	}
 
 	//MyCard Class
 	public class MyCard extends Card {
@@ -218,5 +265,6 @@ public class Cards extends SherlockFragment {
 			return v;
 		}
 
-	}//End of MyPlayCard Class	
+	}//End of MyPlayCard Class
+
 }// end Cards

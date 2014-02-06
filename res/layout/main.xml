@@ -3,16 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
+        android:id="@+id/card_frame"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <com.fima.cardsui.views.CardUI
-            android:id="@+id/cardsview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
+        android:layout_height="fill_parent"
+        android:layout_margin="2dp" />
 
     <include
         android:id="@+id/drawer"

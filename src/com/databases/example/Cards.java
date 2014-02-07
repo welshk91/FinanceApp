@@ -6,7 +6,9 @@ package com.databases.example;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -19,9 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
@@ -129,18 +129,14 @@ public class Cards extends SherlockFragment {
 			Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
-			int entry_id;
 			String entry_name;
 			String entry_balance;
-			String entry_time;
-			String entry_date;
 
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
 				String description = "";
 				String color = "";
 
-				entry_id = cursor.getInt(0);
 				entry_name = cursor.getString(1);
 				entry_balance = cursor.getString(2);
 
@@ -172,7 +168,7 @@ public class Cards extends SherlockFragment {
 			stackCheckbook.setTitle("CHECKBOOK");
 			mCardView.addStack(stackCheckbook);
 			int count = 0;
-			
+
 			for (Card item : result) {
 				if(count==0){
 					mCardView.addCard(item);
@@ -180,7 +176,7 @@ public class Cards extends SherlockFragment {
 				else{
 					mCardView.addCardToLastStack(item);
 				}
-				
+
 				count++;
 			}
 		}		
@@ -193,14 +189,8 @@ public class Cards extends SherlockFragment {
 			Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
-			int entry_id;
 			String entry_name;
-			String entry_value;
 			String entry_type = null;
-			String entry_category;
-			String entry_checknum;
-			String entry_memo;
-			String entry_time;
 			DateTime entry_date;
 			String entry_cleared;
 
@@ -210,11 +200,8 @@ public class Cards extends SherlockFragment {
 				String color = "";
 				long difference = 0;
 
-				entry_id = cursor.getInt(0);
 				entry_name = cursor.getString(3);
-				entry_value = cursor.getString(4);
 				entry_type = cursor.getString(5);
-				entry_time = cursor.getString(9);
 				entry_date = new DateTime ();
 				entry_date.setStringSQL(cursor.getString(10));
 				entry_cleared = cursor.getString(11);
@@ -260,7 +247,7 @@ public class Cards extends SherlockFragment {
 		@Override
 		protected void onPostExecute(ArrayList<Card> result) {
 			int count = 0;
-			
+
 			for (Card item : result) {
 				if(count==0){
 					mCardView.addCard(item);
@@ -268,7 +255,7 @@ public class Cards extends SherlockFragment {
 				else{
 					mCardView.addCardToLastStack(item);
 				}
-				
+
 				count++;
 			}
 		}		
@@ -279,34 +266,78 @@ public class Cards extends SherlockFragment {
 		@Override
 		protected ArrayList<Card> doInBackground(Object... params) {
 			Cursor cursor = (Cursor)params[0];
-
 			ArrayList<Card> cards = new ArrayList<Card>();
 
 			String title = "";
 			String description = "";
 			String color = "";
+			long difference = 0;
 
-			int entry_id;
 			String entry_name;
-			String entry_balance;
-			String entry_time;
-			String entry_date;
+			String entry_offset;
+			String entry_rate;
+			DateTime entry_date;
 
 			while (cursor.moveToNext() && !isCancelled()) {
-				entry_id = cursor.getInt(0);
 				entry_name = cursor.getString(2);
-				//entry_balance = cursor.getString(cursor.getColumnIndex("AcctBalance"));
-				//entry_time = cursor.getString(cursor.getColumnIndex("AcctTime"));
-				//entry_date = cursor.getString(cursor.getColumnIndex("AcctDate"));
+				entry_offset = cursor.getString(7);
+				entry_rate = cursor.getString(8);
+
+				entry_date = new DateTime ();
+				entry_date.setStringSQL(cursor.getString(7));				
+				Date d = null;
+				DateTime fRun = new DateTime(); 
+
+				try {
+					DateTime test = new DateTime();
+					test.setStringSQL(entry_offset);
+					d = test.getYearMonthDay();
+				}catch (java.text.ParseException e) {
+					Log.e("Cards", "Couldn't grab date for " + entry_name + "\n e:"+e);
+				}
+
+				//Parse Rate (token 0 is amount, token 1 is type)
+				String delims = "[ ]+";
+				String[] tokens = entry_rate.split(delims);
+
+				Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
+
+				if(tokens[1].contains("Days")){
+					//If Starting Time is in the past, fire off next day(s)
+					while (firstRun.before(Calendar.getInstance())) {
+						firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
+					}
+				}
+				else if(tokens[1].contains("Weeks")){
+					//If Starting Time is in the past, fire off next week(s)
+					while (firstRun.before(Calendar.getInstance())) {
+						firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
+					}
+				}
+				else if(tokens[1].contains("Months")){
+					//If Starting Time is in the past, fire off next month(s)
+					while (firstRun.before(Calendar.getInstance())) {
+						firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
+					}
+				}
+				
+				fRun.setCalendar(firstRun);
+				Log.e("Cards","Next Transaction for " + entry_name + ": " + fRun.getReadableDate());
+
+
+				Date today_date = new Date();
+				difference = (today_date.getTime()-firstRun.getTimeInMillis())/86400000;
+				Log.e("Cards", entry_name + " Difference="+difference);
 
 				//Recent plans
-				if(true){
+				if(Math.abs(difference)<5){
 					title=entry_name;
 					description="This planned transaction occured recently";
 					color="#33b6ea";
 				}
 
 				if(title.length()>0){
+					Log.e("Cards", "title length="+title.length());
 					cards.add(new MyPlayCard(title,description,color, "#222222", false, false));
 				}
 
@@ -321,7 +352,7 @@ public class Cards extends SherlockFragment {
 			stackPlans.setTitle("PLANS");
 			mCardView.addStack(stackPlans);
 			int count = 0;
-			
+
 			for (Card item : result) {
 				if(count==0){
 					mCardView.addCard(item);
@@ -329,7 +360,7 @@ public class Cards extends SherlockFragment {
 				else{
 					mCardView.addCardToLastStack(item);
 				}
-				
+
 				count++;
 			}
 		}		

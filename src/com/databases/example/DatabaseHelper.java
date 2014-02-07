@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_PLANNED_TRANSACTIONS
 				+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, PlanOffset VARCHAR, PlanRate VARCHAR, PlanCleared VARCHAR);";
-
+		
 		String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_CATEGORIES
 				+ " (CatID INTEGER PRIMARY KEY, CatName VARCHAR, CatNote VARCHAR);";

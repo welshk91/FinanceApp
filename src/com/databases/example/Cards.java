@@ -129,25 +129,25 @@ public class Cards extends SherlockFragment {
 			Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
-			String entry_name;
-			String entry_balance;
+			String account_name;
+			String account_balance;
 
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
 				String description = "";
 				String color = "";
 
-				entry_name = cursor.getString(1);
-				entry_balance = cursor.getString(2);
+				account_name = cursor.getString(1);
+				account_balance = cursor.getString(2);
 
 				//Determine if Account health is good or not
-				if(Float.parseFloat(entry_balance)>=0){
-					title=entry_name;
+				if(Float.parseFloat(account_balance)>=0){
+					title=account_name;
 					description="This account is doing well.";
 					color="#4ac925";
 				}
-				else if(Float.parseFloat(entry_balance)<0){
-					title=entry_name;
+				else if(Float.parseFloat(account_balance)<0){
+					title=account_name;
 					description="This account is overdrawn.\nYou might want to review the total balance";
 					color = "#e00707";
 				}
@@ -189,10 +189,10 @@ public class Cards extends SherlockFragment {
 			Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
-			String entry_name;
-			String entry_type = null;
-			DateTime entry_date;
-			String entry_cleared;
+			String transaction_name;
+			String transaction_type = null;
+			DateTime transaction_date;
+			String transaction_cleared;
 
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
@@ -200,37 +200,37 @@ public class Cards extends SherlockFragment {
 				String color = "";
 				long difference = 0;
 
-				entry_name = cursor.getString(3);
-				entry_type = cursor.getString(5);
-				entry_date = new DateTime ();
-				entry_date.setStringSQL(cursor.getString(10));
-				entry_cleared = cursor.getString(11);
+				transaction_name = cursor.getString(3);
+				transaction_type = cursor.getString(5);
+				transaction_date = new DateTime ();
+				transaction_date.setStringSQL(cursor.getString(10));
+				transaction_cleared = cursor.getString(11);
 
 				//Calculate difference of dates
 				try {
 					Date today_date = new Date();
-					difference = (today_date.getTime()- entry_date.getYearMonthDay().getTime())/86400000;
-					Log.e("Cards",entry_name + " Difference="+difference);
+					difference = (today_date.getTime()- transaction_date.getYearMonthDay().getTime())/86400000;
+					Log.e("Cards",transaction_name + " Difference="+difference);
 				} catch (ParseException e) {
 					Log.e("Cards", "Error parsing transaction time? e="+e);
 					e.printStackTrace();
 				}
 
 				//Uncleared transactions
-				if(!Boolean.parseBoolean(entry_cleared)){
-					title=entry_name;
+				if(!Boolean.parseBoolean(transaction_cleared)){
+					title=transaction_name;
 					description="This transaction has not been cleared.";
 					color="#f2a400";
 				}
 
 				//Recent transactions within last five days
-				if(difference<5 && entry_type.equals("Withdraw")){
-					title=entry_name;
+				if(difference<5 && transaction_type.equals("Withdraw")){
+					title=transaction_name;
 					description="This transaction occured recently.";
 					color="#f2a400";
 				}
-				else if(difference<5 && entry_type.equals("Deposit")){
-					title=entry_name;
+				else if(difference<5 && transaction_type.equals("Deposit")){
+					title=transaction_name;
 					description="This transaction occured recently.";
 					color="#f2a400";
 				}
@@ -273,32 +273,30 @@ public class Cards extends SherlockFragment {
 			String color = "";
 			long difference = 0;
 
-			String entry_name;
-			String entry_offset;
-			String entry_rate;
-			DateTime entry_date;
+			String plan_name;
+			String plan_offset;
+			String plan_rate;
+			DateTime plan_date;
 
 			while (cursor.moveToNext() && !isCancelled()) {
-				entry_name = cursor.getString(2);
-				entry_offset = cursor.getString(7);
-				entry_rate = cursor.getString(8);
+				plan_name = cursor.getString(2);
+				plan_offset = cursor.getString(7);
+				plan_rate = cursor.getString(8);
 
-				entry_date = new DateTime ();
-				entry_date.setStringSQL(cursor.getString(7));				
 				Date d = null;
 				DateTime fRun = new DateTime(); 
 
 				try {
 					DateTime test = new DateTime();
-					test.setStringSQL(entry_offset);
+					test.setStringSQL(plan_offset);
 					d = test.getYearMonthDay();
 				}catch (java.text.ParseException e) {
-					Log.e("Cards", "Couldn't grab date for " + entry_name + "\n e:"+e);
+					Log.e("Cards", "Couldn't grab date for " + plan_name + "\n e:"+e);
 				}
 
 				//Parse Rate (token 0 is amount, token 1 is type)
 				String delims = "[ ]+";
-				String[] tokens = entry_rate.split(delims);
+				String[] tokens = plan_rate.split(delims);
 
 				Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
 
@@ -322,16 +320,16 @@ public class Cards extends SherlockFragment {
 				}
 				
 				fRun.setCalendar(firstRun);
-				Log.e("Cards","Next Transaction for " + entry_name + ": " + fRun.getReadableDate());
+				Log.e("Cards","Next Transaction for " + plan_name + ": " + fRun.getReadableDate());
 
 
 				Date today_date = new Date();
 				difference = (today_date.getTime()-firstRun.getTimeInMillis())/86400000;
-				Log.e("Cards", entry_name + " Difference="+difference);
+				Log.e("Cards", plan_name + " Difference="+difference);
 
 				//Recent plans
 				if(Math.abs(difference)<5){
-					title=entry_name;
+					title=plan_name;
 					description="This planned transaction occured recently";
 					color="#33b6ea";
 				}

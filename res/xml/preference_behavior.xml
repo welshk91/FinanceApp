@@ -5,6 +5,36 @@
     <PreferenceScreen
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:key="pref_screen_cards"
+        android:summary="Card options"
+        android:title="Cards" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="checkbox_card_accountOnlyOverdrawn"
+            android:summary="If checked, only overdrawn account cards will be shown"
+            android:title="Show Only Overdrawn Accouunts?" >
+        </CheckBoxPreference>
+
+        <EditTextPreference
+            android:defaultValue="5"
+            android:digits="0123456789"
+            android:inputType="number|phone"
+            android:key="pref_key_card_transactionDaysRecent"
+            android:summary="Number of days a Transaction Card is considered recent . Default is &apos;5&apos;"
+            android:title="Days a Transaction Card is New" >
+        </EditTextPreference>
+        <EditTextPreference
+            android:defaultValue="5"
+            android:digits="0123456789"
+            android:inputType="number|phone"
+            android:key="pref_key_card_planLookAhead"
+            android:summary="Number of days to look ahead for Plan Cards . Default is &apos;5&apos;"
+            android:title="Look Ahead for Plan Cards (Days);" >
+        </EditTextPreference>
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:key="pref_screen_lock"
         android:summary="Lockscreen options"
         android:title="Lockscreen" >

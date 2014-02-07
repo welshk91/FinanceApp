@@ -11,10 +11,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,6 +134,9 @@ public class Cards extends SherlockFragment {
 			String account_name;
 			String account_balance;
 
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			boolean onlyOverdrawn = prefs.getBoolean("checkbox_card_accountOnlyOverdrawn", false);
+			
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
 				String description = "";
@@ -141,7 +146,7 @@ public class Cards extends SherlockFragment {
 				account_balance = cursor.getString(2);
 
 				//Determine if Account health is good or not
-				if(Float.parseFloat(account_balance)>=0){
+				if(Float.parseFloat(account_balance)>=0 && !onlyOverdrawn){
 					title=account_name;
 					description="This account is doing well.";
 					color="#4ac925";
@@ -194,6 +199,9 @@ public class Cards extends SherlockFragment {
 			DateTime transaction_date;
 			String transaction_cleared;
 
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			int daysRecent = Integer.parseInt(prefs.getString("pref_key_card_transactionDaysRecent", "5"));
+			
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
 				String description = "";
@@ -224,12 +232,12 @@ public class Cards extends SherlockFragment {
 				}
 
 				//Recent transactions within last five days
-				if(difference<5 && transaction_type.equals("Withdraw")){
+				if(Math.abs(difference)<daysRecent && transaction_type.equals("Withdraw")){
 					title=transaction_name;
 					description="This transaction occured recently.";
 					color="#f2a400";
 				}
-				else if(difference<5 && transaction_type.equals("Deposit")){
+				else if(Math.abs(difference)<daysRecent && transaction_type.equals("Deposit")){
 					title=transaction_name;
 					description="This transaction occured recently.";
 					color="#f2a400";
@@ -277,7 +285,10 @@ public class Cards extends SherlockFragment {
 			String plan_offset;
 			String plan_rate;
 			DateTime plan_date;
-
+			
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
+			
 			while (cursor.moveToNext() && !isCancelled()) {
 				plan_name = cursor.getString(2);
 				plan_offset = cursor.getString(7);
@@ -326,11 +337,11 @@ public class Cards extends SherlockFragment {
 				Date today_date = new Date();
 				difference = (today_date.getTime()-firstRun.getTimeInMillis())/86400000;
 				Log.e("Cards", plan_name + " Difference="+difference);
-
+				
 				//Recent plans
-				if(Math.abs(difference)<5){
+				if(Math.abs(difference)<lookAhead){
 					title=plan_name;
-					description="This planned transaction occured recently";
+					description="This planned transaction is coming up";
 					color="#33b6ea";
 				}
 

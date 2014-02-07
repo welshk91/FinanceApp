@@ -4,6 +4,10 @@
 
 package com.databases.example;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -19,7 +23,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
 import com.fima.cardsui.objects.Card;
@@ -28,6 +31,7 @@ import com.fima.cardsui.views.CardUI;
 
 public class Cards extends SherlockFragment {
 	private Drawer mDrawerLayout;
+	private CardUI mCardView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,12 +48,12 @@ public class Cards extends SherlockFragment {
 		View myFragmentView = inflater.inflate(R.layout.cards, null, false);
 
 		//Initialize Card View
-		CardUI mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
+		mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
 		dealCardsCheckbook(mCardView);
 		dealCardsPlans(mCardView);
-		dealCardsStatistics(mCardView);
+		//dealCardsStatistics(mCardView);
 
 		//Draw cards
 		mCardView.refresh();
@@ -95,107 +99,242 @@ public class Cards extends SherlockFragment {
 
 		Cursor accountCursor = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
 		Cursor transactionCursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, null, null, null);
-		
-		CardTask taskAccount = new CardTask();
-		taskAccount.execute("Account",view,accountCursor);
 
-		CardTask taskTransaction = new CardTask();
-		taskTransaction.execute("Transaction",view,transactionCursor);
+		CardTaskAccounts taskAccount = new CardTaskAccounts();
+		taskAccount.execute(accountCursor);
+
+		CardTaskTransactions taskTransaction = new CardTaskTransactions();
+		taskTransaction.execute(transactionCursor);
 	}
 
 	public void dealCardsPlans(CardUI view){
 
 		Cursor planCursor = getActivity().getContentResolver().query(MyContentProvider.PLANNED_TRANSACTIONS_URI, null, null, null, null);
 
-		CardTask runner = new CardTask();
-		runner.execute("Plans",view,planCursor);
-
+		CardTaskPlans runner = new CardTaskPlans();
+		runner.execute(planCursor);
 	}
 
 	public void dealCardsStatistics(CardUI view){
-		
+
 		//CardTask runner = new CardTask();
 		//runner.execute("Statistics",view);
 
 	}
 
-	private class CardTask extends AsyncTask<Object,Void, Void> {
+	private class CardTaskAccounts extends AsyncTask<Object,Void, ArrayList<Card>> {
 
 		@Override
-		protected Void doInBackground(Object... params) {
+		protected ArrayList<Card> doInBackground(Object... params) {
+			Cursor cursor = (Cursor)params[0];
+			ArrayList<Card> cards = new ArrayList<Card>();
 
-			String type = (String)params[0];
-			CardUI view = (CardUI)params[1];
-			Cursor cursor = (Cursor)params[2];
+			int entry_id;
+			String entry_name;
+			String entry_balance;
+			String entry_time;
+			String entry_date;
 
-			if(type.equals("Account")){
-				Log.e("CardTask", "Type is Account");
+			while (cursor.moveToNext() && !isCancelled()) {
+				String title = "";
+				String description = "";
+				String color = "";
 
-				CardStack stackCheckbook = new CardStack();
-				stackCheckbook.setTitle("CHECKBOOK");
-				view.addStack(stackCheckbook);
+				entry_id = cursor.getInt(0);
+				entry_name = cursor.getString(1);
+				entry_balance = cursor.getString(2);
 
-				view.addCard(new MyPlayCard("Lake Michigan Credit Union",
-						"This account is overdrawn.\nYou might want to review the total balance", 
-						"#e00707", "#222222", false, false));
+				//Determine if Account health is good or not
+				if(Float.parseFloat(entry_balance)>=0){
+					title=entry_name;
+					description="This account is doing well.";
+					color="#4ac925";
+				}
+				else if(Float.parseFloat(entry_balance)<0){
+					title=entry_name;
+					description="This account is overdrawn.\nYou might want to review the total balance";
+					color = "#e00707";
+				}
 
-				view.addCardToLastStack(new MyPlayCard("Cash",
-						"This account is doing well.\nPerhaps you should deposit some money into Lake Michigan Credit Union",
-						"#4ac925", "#222222", false, false));
-			}
+				if(title.length()>0){
+					cards.add(new MyPlayCard(title,description,color, "#222222", false, false));
+				}
 
-			else if(type.equals("Transaction")){
-				Log.e("CardTask", "Type is Transaction");
-				
-				view.addCard(new MyPlayCard("Rent",
-						"This transaction occured recently",
-						"#f2a400", "#222222", false, false));
+			}//end while
 
-				view.addCardToLastStack(new MyPlayCard("IOU",
-						"This transaction occured recently",
-						"#f2a400", "#222222", false, false));				
-				
-			}
-			
-			else if(type.equals("Plans")){
-				Log.e("CardTask", "Type is plans");
 
-				CardStack stackPlans = new CardStack();
-				stackPlans.setTitle("PLANS");
-				view.addStack(stackPlans);
-
-				view.addCard(new MyPlayCard("Paycheck",
-						"This planned transaction occured recently",
-						"#33b6ea", "#222222", false, false));
-
-				view.addCardToLastStack(new MyPlayCard("Gas Bill",
-						"This planned transaction occured recently",
-						"#f2a400", "#222222", false, false));
-			}
-
-			else if(type.equals("Statistics")){
-				Log.e("CardTask", "Type is statistics");
-
-				CardStack stackStatistics = new CardStack();
-				stackStatistics.setTitle("STATISTICS");
-				view.addStack(stackStatistics);
-
-				view.addCard(new MyPlayCard("Lake Michigan Credit Union",
-						"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"Car-New Tires\" ",
-						"#e00707", "#222222", false, false));
-
-				view.addCardToLastStack(new MyPlayCard("Lake Michigan Credit Union",
-						"You are significantly over your monthly budget for this account.\nThis may be due to a new transaction \"House-New Roof\" ",
-						"#e00707", "#222222", false, false));
-
-				view.addCardToLastStack(new MyPlayCard("Cash",
-						"You are making more money than usual for this account",
-						"#4ac925", "#222222", false, false));
-			}
-
-			return null;
+			return cards;
 		}
+
+		@Override
+		protected void onPostExecute(ArrayList<Card> result) {
+			CardStack stackCheckbook = new CardStack();
+			stackCheckbook.setTitle("CHECKBOOK");
+			mCardView.addStack(stackCheckbook);
+			int count = 0;
+			
+			for (Card item : result) {
+				if(count==0){
+					mCardView.addCard(item);
+				}
+				else{
+					mCardView.addCardToLastStack(item);
+				}
+				
+				count++;
+			}
+		}		
 	}
+
+	private class CardTaskTransactions extends AsyncTask<Object,Void, ArrayList<Card>> {
+
+		@Override
+		protected ArrayList<Card> doInBackground(Object... params) {
+			Cursor cursor = (Cursor)params[0];
+			ArrayList<Card> cards = new ArrayList<Card>();
+
+			int entry_id;
+			String entry_name;
+			String entry_value;
+			String entry_type = null;
+			String entry_category;
+			String entry_checknum;
+			String entry_memo;
+			String entry_time;
+			DateTime entry_date;
+			String entry_cleared;
+
+			while (cursor.moveToNext() && !isCancelled()) {
+				String title = "";
+				String description = "";
+				String color = "";
+				long difference = 0;
+
+				entry_id = cursor.getInt(0);
+				entry_name = cursor.getString(3);
+				entry_value = cursor.getString(4);
+				entry_type = cursor.getString(5);
+				entry_time = cursor.getString(9);
+				entry_date = new DateTime ();
+				entry_date.setStringSQL(cursor.getString(10));
+				entry_cleared = cursor.getString(11);
+
+				//Calculate difference of dates
+				try {
+					Date today_date = new Date();
+					difference = (today_date.getTime()- entry_date.getYearMonthDay().getTime())/86400000;
+					Log.e("Cards",entry_name + " Difference="+difference);
+				} catch (ParseException e) {
+					Log.e("Cards", "Error parsing transaction time? e="+e);
+					e.printStackTrace();
+				}
+
+				//Uncleared transactions
+				if(!Boolean.parseBoolean(entry_cleared)){
+					title=entry_name;
+					description="This transaction has not been cleared.";
+					color="#f2a400";
+				}
+
+				//Recent transactions within last five days
+				if(difference<5 && entry_type.equals("Withdraw")){
+					title=entry_name;
+					description="This transaction occured recently.";
+					color="#f2a400";
+				}
+				else if(difference<5 && entry_type.equals("Deposit")){
+					title=entry_name;
+					description="This transaction occured recently.";
+					color="#f2a400";
+				}
+
+				if(title.length()>0){
+					cards.add(new MyPlayCard(title,description,color, "#222222", false, false));
+				}
+
+			}//end while
+
+			return cards;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<Card> result) {
+			int count = 0;
+			
+			for (Card item : result) {
+				if(count==0){
+					mCardView.addCard(item);
+				}
+				else{
+					mCardView.addCardToLastStack(item);
+				}
+				
+				count++;
+			}
+		}		
+	}
+
+	private class CardTaskPlans extends AsyncTask<Object,Void, ArrayList<Card>> {
+
+		@Override
+		protected ArrayList<Card> doInBackground(Object... params) {
+			Cursor cursor = (Cursor)params[0];
+
+			ArrayList<Card> cards = new ArrayList<Card>();
+
+			String title = "";
+			String description = "";
+			String color = "";
+
+			int entry_id;
+			String entry_name;
+			String entry_balance;
+			String entry_time;
+			String entry_date;
+
+			while (cursor.moveToNext() && !isCancelled()) {
+				entry_id = cursor.getInt(0);
+				entry_name = cursor.getString(2);
+				//entry_balance = cursor.getString(cursor.getColumnIndex("AcctBalance"));
+				//entry_time = cursor.getString(cursor.getColumnIndex("AcctTime"));
+				//entry_date = cursor.getString(cursor.getColumnIndex("AcctDate"));
+
+				//Recent plans
+				if(true){
+					title=entry_name;
+					description="This planned transaction occured recently";
+					color="#33b6ea";
+				}
+
+				if(title.length()>0){
+					cards.add(new MyPlayCard(title,description,color, "#222222", false, false));
+				}
+
+			}//end while
+
+			return cards;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<Card> result) {
+			CardStack stackPlans = new CardStack();
+			stackPlans.setTitle("PLANS");
+			mCardView.addStack(stackPlans);
+			int count = 0;
+			
+			for (Card item : result) {
+				if(count==0){
+					mCardView.addCard(item);
+				}
+				else{
+					mCardView.addCardToLastStack(item);
+				}
+				
+				count++;
+			}
+		}		
+	}
+
 
 	//MyCard Class
 	public class MyCard extends Card {

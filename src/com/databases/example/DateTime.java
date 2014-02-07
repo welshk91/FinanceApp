@@ -165,5 +165,5 @@ public class DateTime{
 	public Date getYearMonthDay() throws ParseException{
 		return dateSQLFormat.parse(stringSQL);
 	}
-
+	
 }//End DateTime

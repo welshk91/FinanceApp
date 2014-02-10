@@ -3,21 +3,72 @@
     android:id="@+id/notification_item_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:color/transparent"
-    android:gravity="left|center"
     android:orientation="vertical"
-    android:paddingBottom="2dp"
-    android:paddingLeft="4dp"
-    android:paddingTop="2dp" >
+    android:paddingBottom="6dp" >
 
-    <TextView
-        android:id="@+id/TextNotification"
-        android:layout_width="wrap_content"
-        android:textIsSelectable="false"
-        android:layout_height="150dp"
-        android:gravity="center"
-        android:textColor="#0099CC"
-        android:textSize="20sp"
-        android:typeface="monospace" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="100" >
+
+        <ImageView
+            android:id="@+id/stripe"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:adjustViewBounds="true"
+            android:background="@color/red"
+            android:baselineAlignBottom="true"
+            android:contentDescription="Color Stripe stuff HERE"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:id="@+id/contentLayout"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_weight="90"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/transaction_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="center"
+                android:textColor="#222222"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/transaction_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/transaction_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/transaction_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

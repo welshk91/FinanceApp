@@ -12,7 +12,7 @@
             android:defaultValue="false"
             android:key="checkbox_card_accountOnlyOverdrawn"
             android:summary="If checked, only overdrawn account cards will be shown"
-            android:title="Show Only Overdrawn Accouunts?" >
+            android:title="Show Only Overdrawn Accounts?" >
         </CheckBoxPreference>
 
         <EditTextPreference

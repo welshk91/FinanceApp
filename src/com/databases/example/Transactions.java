@@ -813,7 +813,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				tvDate.setVisibility(View.GONE);
 			}
 
-			if(useDefaults||prefs.getBoolean("checkbox_transaction_timeField", true)){
+			if(prefs.getBoolean("checkbox_transaction_timeField", false) && !useDefaults){
 				tvTime.setVisibility(View.VISIBLE);
 			}
 			else{

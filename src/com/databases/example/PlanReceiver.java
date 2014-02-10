@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -101,10 +102,7 @@ public class PlanReceiver extends BroadcastReceiver{
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void notify(Context context, Bundle bundle) {
-		NotificationManager nm = (NotificationManager) context
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		CharSequence from = "Welsh Finances";
-
+		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		String plan_id = bundle.getString("plan_id");
 		String plan_acct_id = bundle.getString("plan_acct_id");
 		String plan_name = bundle.getString("plan_name");
@@ -117,30 +115,37 @@ public class PlanReceiver extends BroadcastReceiver{
 		String plan_cleared = bundle.getString("plan_cleared");
 
 		//Intent fired when notification is clicked on
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				new Intent(context,Checkbook.class), 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,new Intent(context,Checkbook.class), 0);
 
-		Calendar cal = Calendar.getInstance();
+		//Get today's readable date
+		DateTime today = new DateTime();
+		today.setCalendar(Calendar.getInstance());
 
-		Notification notification = new NotificationCompat.Builder(context).
-				setContentTitle(from+ ": " + plan_name)
-				.setContentText(plan_id + " " + plan_name + " " + plan_value + " " + plan_offset + " " + plan_rate)
+		//Get Value with correct money format
+		Money value = new Money(plan_value);
+		value.getNumberFormat(context.getResources().getConfiguration().locale);
+		
+		Notification notification = new NotificationCompat.Builder(context)
+				.setContentTitle("Planned Transaction " + plan_name + " Occured")
+				.setContentText(value + " " + today.getReadableDate())
 				.setSmallIcon(R.drawable.ic_launcher)
 				.setContentIntent(contentIntent)
 				.build();
 
 		//Notification's Big View
 		if (Build.VERSION.SDK_INT > 15){
-			RemoteViews customNotifView = new RemoteViews("com.databases.example", 
-					R.layout.notification_big);
-			customNotifView.setTextViewText(R.id.TextNotification, plan_id + " " + plan_name + " " + plan_value + " " + plan_offset + " " + plan_rate + "\n Fired on " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) +":" + cal.get(Calendar.SECOND));
+			RemoteViews customNotifView = new RemoteViews("com.databases.example", R.layout.notification_big);
+			customNotifView.setTextViewText(R.id.transaction_name, plan_name);
+			customNotifView.setTextViewText(R.id.transaction_value,"Value: " + plan_value);
+			customNotifView.setTextViewText(R.id.transaction_category, "Category: " + plan_category);
+			customNotifView.setTextViewText(R.id.transaction_date, "Date: " + today.getReadableDate());
+			customNotifView.setInt(R.id.stripe, "setBackgroundResource", Color.parseColor("#33b6ea"));
 
 			notification.bigContentView = customNotifView;
 		}
 
 		//notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		nm.notify(Integer.parseInt(plan_id), notification);
-
 	}
 
 	//Method that remakes the planned transaction

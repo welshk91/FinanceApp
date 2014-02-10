@@ -4,6 +4,7 @@
 
 package com.databases.example;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,9 +58,6 @@ public class Cards extends SherlockFragment {
 		dealCardsPlans(mCardView);
 		//dealCardsStatistics(mCardView);
 
-		//Draw cards
-		mCardView.refresh();
-
 		return myFragmentView;
 	}
 
@@ -96,9 +94,7 @@ public class Cards extends SherlockFragment {
 	//		return true;
 	//	}
 
-
 	public void dealCardsCheckbook(CardUI view){
-
 		Cursor accountCursor = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
 		Cursor transactionCursor = getActivity().getContentResolver().query(MyContentProvider.TRANSACTIONS_URI, null, null, null, null);
 
@@ -110,7 +106,6 @@ public class Cards extends SherlockFragment {
 	}
 
 	public void dealCardsPlans(CardUI view){
-
 		Cursor planCursor = getActivity().getContentResolver().query(MyContentProvider.PLANNED_TRANSACTIONS_URI, null, null, null, null);
 
 		CardTaskPlans runner = new CardTaskPlans();
@@ -118,10 +113,8 @@ public class Cards extends SherlockFragment {
 	}
 
 	public void dealCardsStatistics(CardUI view){
-
 		//CardTask runner = new CardTask();
 		//runner.execute("Statistics",view);
-
 	}
 
 	private class CardTaskAccounts extends AsyncTask<Object,Void, ArrayList<Card>> {
@@ -136,7 +129,7 @@ public class Cards extends SherlockFragment {
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			boolean onlyOverdrawn = prefs.getBoolean("checkbox_card_accountOnlyOverdrawn", false);
-			
+
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
 				String description = "";
@@ -153,7 +146,7 @@ public class Cards extends SherlockFragment {
 				}
 				else if(Float.parseFloat(account_balance)<0){
 					title=account_name;
-					description="This account is overdrawn.\nYou might want to review the total balance";
+					description="This account is overdrawn.";
 					color = "#e00707";
 				}
 
@@ -162,7 +155,6 @@ public class Cards extends SherlockFragment {
 				}
 
 			}//end while
-
 
 			return cards;
 		}
@@ -184,6 +176,8 @@ public class Cards extends SherlockFragment {
 
 				count++;
 			}
+
+			mCardView.refresh();
 		}		
 	}
 
@@ -201,7 +195,7 @@ public class Cards extends SherlockFragment {
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			int daysRecent = Integer.parseInt(prefs.getString("pref_key_card_transactionDaysRecent", "5"));
-			
+
 			while (cursor.moveToNext() && !isCancelled()) {
 				String title = "";
 				String description = "";
@@ -231,16 +225,23 @@ public class Cards extends SherlockFragment {
 					color="#f2a400";
 				}
 
-				//Recent transactions within last five days
-				if(Math.abs(difference)<daysRecent && transaction_type.equals("Withdraw")){
+				//Recent transactions
+				if(Math.abs(difference)<daysRecent){
 					title=transaction_name;
-					description="This transaction occured recently.";
 					color="#f2a400";
-				}
-				else if(Math.abs(difference)<daysRecent && transaction_type.equals("Deposit")){
-					title=transaction_name;
-					description="This transaction occured recently.";
-					color="#f2a400";
+
+					switch (new BigDecimal(difference).intValueExact()){
+					case 0:
+						description="This transaction occured today.";							
+						break;
+					case 1:
+						description="This transaction occured yesterday.";							
+						break;
+					default:
+						description="This transaction occured " + difference + " days ago";							
+						break;					
+					}
+
 				}
 
 				if(title.length()>0){
@@ -266,6 +267,8 @@ public class Cards extends SherlockFragment {
 
 				count++;
 			}
+
+			mCardView.refresh();
 		}		
 	}
 
@@ -285,10 +288,10 @@ public class Cards extends SherlockFragment {
 			String plan_offset;
 			String plan_rate;
 			DateTime plan_date;
-			
+
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
-			
+
 			while (cursor.moveToNext() && !isCancelled()) {
 				plan_name = cursor.getString(2);
 				plan_offset = cursor.getString(7);
@@ -329,20 +332,34 @@ public class Cards extends SherlockFragment {
 						firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
 					}
 				}
-				
+
 				fRun.setCalendar(firstRun);
 				Log.e("Cards","Next Transaction for " + plan_name + ": " + fRun.getReadableDate());
-
 
 				Date today_date = new Date();
 				difference = (today_date.getTime()-firstRun.getTimeInMillis())/86400000;
 				Log.e("Cards", plan_name + " Difference="+difference);
-				
+
 				//Recent plans
 				if(Math.abs(difference)<lookAhead){
 					title=plan_name;
-					description="This planned transaction is coming up";
 					color="#33b6ea";
+
+					if(difference==0){
+						description="This planned transaction occured today";
+					}
+					else if(difference==-1){
+						description="This planned transaction occured yesterday";
+					}
+					else if(difference==1){
+						description="This planned transaction is coming up tommorow";
+					}
+					else if(difference<-1){
+						description="This planned transaction occured recently";
+					}
+					else if(difference>1){
+						description="This planned transaction is coming up";	
+					}
 				}
 
 				if(title.length()>0){
@@ -372,6 +389,8 @@ public class Cards extends SherlockFragment {
 
 				count++;
 			}
+
+			mCardView.refresh();
 		}		
 	}
 

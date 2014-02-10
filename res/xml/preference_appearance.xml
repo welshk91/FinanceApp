@@ -246,7 +246,7 @@
                     android:title="Date" >
                 </CheckBoxPreference>
                 <CheckBoxPreference
-                    android:defaultValue="true"
+                    android:defaultValue="false"
                     android:key="checkbox_transaction_timeField"
                     android:summary="Time Field"
                     android:title="Time" >

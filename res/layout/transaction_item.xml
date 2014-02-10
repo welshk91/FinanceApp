@@ -37,7 +37,7 @@
             android:layout_marginLeft="10dp"
             android:fontFamily="sans-serif-light"
             android:textColor="#000000"
-            android:textSize="10sp"
+            android:textSize="14sp"
             android:typeface="monospace" />
 
         <TextView

@@ -279,11 +279,6 @@ public class Cards extends SherlockFragment {
 			Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
-			String title = "";
-			String description = "";
-			String color = "";
-			long difference = 0;
-
 			String plan_name;
 			String plan_offset;
 			String plan_rate;
@@ -293,6 +288,11 @@ public class Cards extends SherlockFragment {
 			int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
 
 			while (cursor.moveToNext() && !isCancelled()) {
+				String title = "";
+				String description = "";
+				String color = "";
+				long difference = 0;
+				
 				plan_name = cursor.getString(2);
 				plan_offset = cursor.getString(7);
 				plan_rate = cursor.getString(8);

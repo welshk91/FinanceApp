@@ -133,8 +133,8 @@ public class PlanReceiver extends BroadcastReceiver{
 			customNotifView.setTextViewText(R.id.transaction_value,"Value: " + plan_value);
 			customNotifView.setTextViewText(R.id.transaction_category, "Category: " + plan_category);
 			customNotifView.setTextViewText(R.id.transaction_date, "Date: " + today.getReadableDate());
-			customNotifView.setInt(R.id.stripe, "setBackgroundResource", Color.parseColor("#33b6ea"));
-
+			//customNotifView.setInt(R.id.stripe, "setBackgroundResource", Color.parseColor("#33b6ea"));
+			
 			notification.bigContentView = customNotifView;
 		}
 

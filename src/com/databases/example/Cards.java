@@ -189,7 +189,6 @@ public class Cards extends SherlockFragment {
 			ArrayList<Card> cards = new ArrayList<Card>();
 
 			String transaction_name;
-			String transaction_type = null;
 			DateTime transaction_date;
 			String transaction_cleared;
 
@@ -203,7 +202,6 @@ public class Cards extends SherlockFragment {
 				long difference = 0;
 
 				transaction_name = cursor.getString(3);
-				transaction_type = cursor.getString(5);
 				transaction_date = new DateTime ();
 				transaction_date.setStringSQL(cursor.getString(10));
 				transaction_cleared = cursor.getString(11);
@@ -212,7 +210,7 @@ public class Cards extends SherlockFragment {
 				try {
 					Date today_date = new Date();
 					difference = (today_date.getTime()- transaction_date.getYearMonthDay().getTime())/86400000;
-					Log.e("Cards",transaction_name + " Difference="+difference);
+					Log.d("Cards",transaction_name + " Difference="+difference);
 				} catch (ParseException e) {
 					Log.e("Cards", "Error parsing transaction time? e="+e);
 					e.printStackTrace();
@@ -282,7 +280,6 @@ public class Cards extends SherlockFragment {
 			String plan_name;
 			String plan_offset;
 			String plan_rate;
-			DateTime plan_date;
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
@@ -333,12 +330,9 @@ public class Cards extends SherlockFragment {
 					}
 				}
 
-				fRun.setCalendar(firstRun);
-				Log.e("Cards","Next Transaction for " + plan_name + ": " + fRun.getReadableDate());
-
 				Date today_date = new Date();
 				difference = (today_date.getTime()-firstRun.getTimeInMillis())/86400000;
-				Log.e("Cards", plan_name + " Difference="+difference);
+				Log.d("Cards", plan_name + " Difference="+difference);
 
 				//Recent plans
 				if(Math.abs(difference)<lookAhead){
@@ -362,8 +356,8 @@ public class Cards extends SherlockFragment {
 					}
 				}
 
+				//Title only assigned if it meets criteria
 				if(title.length()>0){
-					Log.e("Cards", "title length="+title.length());
 					cards.add(new MyPlayCard(title,description,color, "#222222", false, false));
 				}
 

@@ -4,9 +4,17 @@
 
 package com.databases.example;
 
+import java.util.Calendar;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 //An Object Class used to handle the NavigationDrawer
@@ -42,6 +51,7 @@ public class Drawer extends Activity{
 
 	/* The listener for ListView in the navigation drawer */
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+		@SuppressLint("NewApi")
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			switch (position) {
@@ -98,6 +108,54 @@ public class Drawer extends Activity{
 				//	Intent intentStats = new Intent(Main.this, Accounts.class);
 				//	startActivity(intentStats);
 				//drawPattern();
+
+				NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+				String plan_id = "0";
+				String plan_acct_id = "0";
+				String plan_name = "plan_name";
+				String plan_value = "5000";
+				String plan_type = "plan_type";
+				String plan_category = "plan_category";
+				String plan_memo = "plan_memo";
+				String plan_offset = "plan_offset";
+				String plan_rate = "plan_rate";
+				String plan_cleared = "plan_cleared";
+
+				PendingIntent contentIntent = PendingIntent.getActivity(context, 0,new Intent(context,Checkbook.class), 0);
+
+				//Get today's readable date
+				DateTime today = new DateTime();
+				today.setCalendar(Calendar.getInstance());
+
+				//Get Value with correct money format
+				Money value = new Money(plan_value);
+				value.getNumberFormat(context.getResources().getConfiguration().locale);
+				
+				Notification notification = new NotificationCompat.Builder(context)
+				.setContentTitle("Planned Transaction " + plan_name + " Occured")
+				.setContentText(value + " " + today.getReadableDate())
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentIntent(contentIntent)
+				.build();
+				
+				Log.e("Help", "Android.color.orange="+android.R.color.holo_orange_dark);
+				Log.e("Help","Color.parse="+Color.parseColor("#33b6ea"));
+				
+				//Notification's Big View
+				if (Build.VERSION.SDK_INT > 15){
+					RemoteViews customNotifView = new RemoteViews("com.databases.example", R.layout.notification_big);
+					customNotifView.setTextViewText(R.id.transaction_name, plan_name);
+					customNotifView.setTextViewText(R.id.transaction_value,"Value: " + plan_value);
+					customNotifView.setTextViewText(R.id.transaction_category, "Category: " + plan_category);
+					customNotifView.setTextViewText(R.id.transaction_date, "Date: " + today.getReadableDate());
+					//customNotifView.setInt(R.id.stripe, "setBackgroundResource", Color.parseColor("#33b6ea"));
+					
+					notification.bigContentView = customNotifView;
+				}
+
+				//notification.flags |= Notification.FLAG_AUTO_CANCEL;
+				nm.notify(Integer.parseInt(plan_id), notification);
+
 				break;
 
 			case 7:
@@ -143,12 +201,12 @@ public class Drawer extends Activity{
 		public int getViewTypeCount(){
 			return 2;
 		}
-		
+
 		@Override
 		public int getItemViewType(int position) {
-		    return position % 2;
+			return position % 2;
 		}
-		
+
 		@Override
 		public View getView(int position, View coverView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -156,7 +214,7 @@ public class Drawer extends Activity{
 
 			TextView itemName = (TextView)rowView.findViewById(R.id.drawer_item_name);
 			itemName.setText(names[position]);			
-			
+
 			switch (position) {
 			case 0:
 				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
@@ -194,10 +252,10 @@ public class Drawer extends Activity{
 				Log.e("SliderMenu", "Default Listener Fired");
 				break;
 			}			
-			
+
 			return rowView;
 		}
 
 	}	
-	
+
 }//end class

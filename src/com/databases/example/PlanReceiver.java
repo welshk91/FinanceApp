@@ -29,13 +29,7 @@ import android.widget.Toast;
 
 public class PlanReceiver extends BroadcastReceiver{	
 	private static DatabaseHelper dh = null;
-
-	//Date Format to use for date (03-26-2013)
-	//private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");		
-
-	//Date Format to use for time (01:42 PM)
-	//private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
-
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle bundle = intent.getExtras();

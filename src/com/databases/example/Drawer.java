@@ -5,14 +5,19 @@
 package com.databases.example;
 
 import java.util.Calendar;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,6 +36,9 @@ public class Drawer extends Activity{
 	private Context context;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
+	int notificationCount;
+	NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+	final int NOTIFICATION_ID = 0123456;
 
 	private String[] drawerItems;
 
@@ -130,32 +138,23 @@ public class Drawer extends Activity{
 				//Get Value with correct money format
 				Money value = new Money(plan_value);
 				value.getNumberFormat(context.getResources().getConfiguration().locale);
-				
-				Notification notification = new NotificationCompat.Builder(context)
-				.setContentTitle("Planned Transaction " + plan_name + " Occured")
-				.setContentText(value + " " + today.getReadableDate())
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentIntent(contentIntent)
-				.build();
-				
-				Log.e("Help", "Android.color.orange="+android.R.color.holo_orange_dark);
-				Log.e("Help","Color.parse="+Color.parseColor("#33b6ea"));
-				
-				//Notification's Big View
-				if (Build.VERSION.SDK_INT > 15){
-					RemoteViews customNotifView = new RemoteViews("com.databases.example", R.layout.notification_big);
-					customNotifView.setTextViewText(R.id.transaction_name, plan_name);
-					customNotifView.setTextViewText(R.id.transaction_value,"Value: " + plan_value);
-					customNotifView.setTextViewText(R.id.transaction_category, "Category: " + plan_category);
-					customNotifView.setTextViewText(R.id.transaction_date, "Date: " + today.getReadableDate());
-					//customNotifView.setInt(R.id.stripe, "setBackgroundResource", Color.parseColor("#33b6ea"));
-					
-					notification.bigContentView = customNotifView;
-				}
 
-				//notification.flags |= Notification.FLAG_AUTO_CANCEL;
-				nm.notify(Integer.parseInt(plan_id), notification);
+				NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(context);	
+				mBuilder.setContentTitle("Plan " + plan_name + " Occured");
+				mBuilder.setContentText(value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
+				//mBuilder.setTicker("New Message Alert!");
+				mBuilder.setSmallIcon(R.drawable.ic_launcher);
+				mBuilder.setContentIntent(contentIntent);
+				mBuilder.setAutoCancel(true);								
+				mBuilder.setNumber(notificationCount++);
 
+				//Inbox Style
+				inboxStyle.setBigContentTitle("Plans:");
+				//inboxStyle.setSummaryText(" +9 more!");
+				inboxStyle.addLine(plan_name + ":" + value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
+				mBuilder.setStyle(inboxStyle);
+				
+				nm.notify(NOTIFICATION_ID, mBuilder.build());
 				break;
 
 			case 7:

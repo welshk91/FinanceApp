@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -19,17 +18,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 public class PlanReceiver extends BroadcastReceiver{	
 	private static DatabaseHelper dh = null;
-	
+	final int NOTIFICATION_ID = 0123456;
+	int notificationCount;
+	NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle bundle = intent.getExtras();
@@ -118,28 +118,23 @@ public class PlanReceiver extends BroadcastReceiver{
 		//Get Value with correct money format
 		Money value = new Money(plan_value);
 		value.getNumberFormat(context.getResources().getConfiguration().locale);
-		
-		Notification notification = new NotificationCompat.Builder(context)
-				.setContentTitle("Planned Transaction " + plan_name + " Occured")
-				.setContentText(value + " " + today.getReadableDate())
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentIntent(contentIntent)
-				.build();
 
-		//Notification's Big View
-		if (Build.VERSION.SDK_INT > 15){
-			RemoteViews customNotifView = new RemoteViews("com.databases.example", R.layout.notification_big);
-			customNotifView.setTextViewText(R.id.transaction_name, plan_name);
-			customNotifView.setTextViewText(R.id.transaction_value,"Value: " + plan_value);
-			customNotifView.setTextViewText(R.id.transaction_category, "Category: " + plan_category);
-			customNotifView.setTextViewText(R.id.transaction_date, "Date: " + today.getReadableDate());
-			//customNotifView.setInt(R.id.stripe, "setBackgroundResource", Color.parseColor("#33b6ea"));
-			
-			notification.bigContentView = customNotifView;
-		}
+		NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(context);	
+		mBuilder.setContentTitle("Plan " + plan_name + " Occured");
+		mBuilder.setContentText(value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
+		//mBuilder.setTicker("New Message Alert!");
+		mBuilder.setSmallIcon(R.drawable.ic_launcher);
+		mBuilder.setContentIntent(contentIntent);
+		mBuilder.setAutoCancel(true);								
+		mBuilder.setNumber(notificationCount++);
 
-		//notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		nm.notify(Integer.parseInt(plan_id), notification);
+		//Inbox Style
+		inboxStyle.setBigContentTitle("Plans:");
+		//inboxStyle.setSummaryText(" +9 more!");
+		inboxStyle.addLine(plan_name + ": " + value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
+		mBuilder.setStyle(inboxStyle);
+
+		nm.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 
 	//Method that remakes the planned transaction
@@ -272,7 +267,6 @@ public class PlanReceiver extends BroadcastReceiver{
 			Log.e("PlanReceiver-schedule", "Could not set alarm; Something wrong with the rate");
 		}
 
-		//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
 	}	
 
 	public class PlanRecord {

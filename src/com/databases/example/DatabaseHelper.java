@@ -26,11 +26,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	// Contacts table name
 	private static final String TABLE_ACCOUNTS = "tblAccounts";
 	private static final String TABLE_TRANSACTIONS = "tblTrans";
-	private static final String TABLE_PLANNED_TRANSACTIONS = "tblPlanTrans";
+	private static final String TABLE_PLANS = "tblPlanTrans";
 	private static final String TABLE_CATEGORIES = "tblCategory";
 	private static final String TABLE_SUBCATEGORIES = "tblSubCategory";
 	private static final String TABLE_LINKS = "tblLinks";
-
+	private static final String TABLE_NOTIFICATIONS = "tblNotifications";
+	
 	private Context context = null;
 
 	public DatabaseHelper(Context context) {
@@ -51,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 				+ " (TransID INTEGER PRIMARY KEY, ToAcctID VARCHAR, ToPlanID VARCHAR, TransName VARCHAR, TransValue VARCHAR, TransType VARCHAR, TransCategory VARCHAR, TransCheckNum VARCHAR, TransMemo VARCHAR, TransTime VARCHAR, TransDate VARCHAR, TransCleared VARCHAR);";
 
 		String sqlCommandPlannedTransactions = "CREATE TABLE IF NOT EXISTS "
-				+ TABLE_PLANNED_TRANSACTIONS
+				+ TABLE_PLANS
 				+ " (PlanID INTEGER PRIMARY KEY, ToAcctID VARCHAR, PlanName VARCHAR, PlanValue VARCHAR, PlanType VARCHAR, PlanCategory VARCHAR, PlanMemo VARCHAR, PlanOffset VARCHAR, PlanRate VARCHAR, PlanCleared VARCHAR);";
 		
 		String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
@@ -66,12 +67,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 				+ TABLE_LINKS
 				+ " (LinkID INTEGER PRIMARY KEY, ToID VARCHAR, LinkName VARCHAR, LinkMemo VARCHAR, ParentType VARCHAR);";
 
+		String sqlCommandNotifications = "CREATE TABLE IF NOT EXISTS "
+				+ TABLE_NOTIFICATIONS
+				+ " (NotificationID INTEGER PRIMARY KEY, NotificationName VARCHAR, NotificationValue VARCHAR, NotificationDate VARCHAR);";
+
 		db.execSQL(sqlCommandAccounts);
 		db.execSQL(sqlCommandTransactions);
 		db.execSQL(sqlCommandPlannedTransactions);
 		db.execSQL(sqlCommandCategory);
 		db.execSQL(sqlCommandSubCategory);
 		db.execSQL(sqlCommandLinks);
+		db.execSQL(sqlCommandNotifications);
 
 		addDefaultCategories(db);
 	}
@@ -95,10 +101,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		Log.d("DatabaseHelper-onUpgrade", "Upgrading database from " + oldVersion + " to " + newVersion);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANSACTIONS);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLANNED_TRANSACTIONS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLANS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBCATEGORIES);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_LINKS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
 		onCreate(db);
 	}
 
@@ -590,20 +597,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Get all planned transactions for all accounts
-	public Cursor getPlannedTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder){
+	public Cursor getPlans(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_PLANNED_TRANSACTIONS, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, selection,
+		cursor = db.query(TABLE_PLANS, new String[] { "PlanID as _id", "ToAcctID", "PlanName", "PlanValue", "PlanType", "PlanCategory", "PlanMemo", "PlanOffset", "PlanRate", "PlanCleared"}, selection,
 				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}
 
 	//Get single planned transaction
-	public Cursor getPlannedTransaction(String pID){
+	public Cursor getPlan(String pID){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		String sqlCommand = "SELECT * FROM " + TABLE_PLANNED_TRANSACTIONS + 
+		String sqlCommand = "SELECT * FROM " + TABLE_PLANS + 
 				" WHERE PlanID = " + pID;
 
 		cursor = db.rawQuery(sqlCommand, null);
@@ -611,18 +618,54 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	}
 
 	//Add planned transaction (no ID)
-	public long addPlannedTransaction(ContentValues values){
+	public long addPlan(ContentValues values){
 		SQLiteDatabase db = this.getWritableDatabase();
-		long id = db.insert(TABLE_PLANNED_TRANSACTIONS, null, values);
+		long id = db.insert(TABLE_PLANS, null, values);
 		return id;
 	}
 
 	//Delete planned transaction
-	public int deletePlannedTransaction(Uri uri, String whereClause, String[] whereArgs){
+	public int deletePlan(Uri uri, String whereClause, String[] whereArgs){
 		SQLiteDatabase db = this.getWritableDatabase();
 		int rowsDeleted = 0;
-		rowsDeleted = db.delete(TABLE_PLANNED_TRANSACTIONS, whereClause, whereArgs);		
+		rowsDeleted = db.delete(TABLE_PLANS, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
 
+	//Get all notifications
+	public Cursor getNotifications(String[] projection, String selection, String[] selectionArgs, String sortOrder){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+		cursor = db.query(TABLE_NOTIFICATIONS, new String[] { "NotificationID as _id", "NotificationName", "NotificationValue", "NotificationDate"}, selection,
+				selectionArgs, null, null, sortOrder);
+		return cursor;
+	}
+
+	//Get single notification
+	public Cursor getNotification(String nID){
+		Cursor cursor = null;
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		String sqlCommand = "SELECT * FROM " + TABLE_NOTIFICATIONS + 
+				" WHERE NotificationID = " + nID;
+
+		cursor = db.rawQuery(sqlCommand, null);
+		return cursor;
+	}
+
+	//Add planned transaction (no ID)
+	public long addNotification(ContentValues values){
+		SQLiteDatabase db = this.getWritableDatabase();
+		long id = db.insert(TABLE_NOTIFICATIONS, null, values);
+		return id;
+	}
+
+	//Delete planned transaction
+	public int deleteNotification(Uri uri, String whereClause, String[] whereArgs){
+		SQLiteDatabase db = this.getWritableDatabase();
+		int rowsDeleted = 0;
+		rowsDeleted = db.delete(TABLE_NOTIFICATIONS, whereClause, whereArgs);		
+		return rowsDeleted;
+	}
+	
 }//End DatabaseHelper

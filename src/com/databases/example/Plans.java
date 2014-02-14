@@ -257,10 +257,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			DateTime fRun = new DateTime(); 
 			fRun.setCalendar(firstRun);
 
-			//Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 		}
 		else if(tokens[1].contains("Weeks")){
@@ -275,10 +273,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			DateTime fRun = new DateTime(); 
 			fRun.setCalendar(firstRun);
 
-			//Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
@@ -295,20 +291,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			DateTime fRun = new DateTime(); 
 			fRun.setCalendar(firstRun);
 
-			//Toast.makeText(this, "Next Transaction scheduled for " + dateFormat.format(firstRun.getTime()), Toast.LENGTH_SHORT).show();
 			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_FIFTEEN_MINUTES), sender);
-			//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*30, sender);
 		}
 		else{
 			Log.e("Plans-schedule", "Could not set alarm; Something wrong with the rate");
 		}
 
-		//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
-		//am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), 1000*20, sender);
-		//am.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*6, sender);
 	}
 
 	private void cancelPlan(PlanRecord plan) {
@@ -335,6 +325,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		try {
 			am.cancel(sender);
 		} catch (Exception e) {
+			Toast.makeText(this, "Error canceling plan", Toast.LENGTH_SHORT).show();
 			Log.e("Plans-schedule", "AlarmManager update was not canceled. " + e.toString());
 		}
 
@@ -430,10 +421,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		Log.d("Plans-onSharedPreferenceChanged", "Options changed. Requery");
 		//getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
-        //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
+		//getLoaderManager().restartLoader(PLAN_LOADER, null, this);
 	}
 
-	
+
 	//Method for selecting a Date when adding a transaction
 	public void showDatePickerDialog(View v) {
 		DialogFragment newFragment = new DatePickerFragment();
@@ -759,7 +750,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			else{
 				tvAccount.setVisibility(View.GONE);
 			}
-			
+
 			if(useDefaults||prefs.getBoolean("checkbox_plan_valueField", true)){
 				tvValue.setVisibility(View.VISIBLE);
 			}
@@ -848,7 +839,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				String query = this.getIntent().getStringExtra(SearchManager.QUERY);
 				return new CursorLoader(
 						this,   	// Parent activity context
-						(Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_ID + "/SEARCH/" + query)),// Table to query
+						(Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query
 						null,     			// Projection to return
 						null,            	// No selection clause
 						null,            	// No selection arguments

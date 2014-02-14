@@ -35,14 +35,12 @@ import com.fima.cardsui.views.CardUI;
 public class Cards extends SherlockFragment {
 	private Drawer mDrawerLayout;
 	private CardUI mCardView;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.getLoaderManager();
-
 		//setHasOptionsMenu(true);
-
 		setRetainInstance(false);
 	}// end onCreate
 
@@ -53,7 +51,7 @@ public class Cards extends SherlockFragment {
 		//Initialize Card View
 		mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
-
+				
 		dealCardsCheckbook(mCardView);
 		dealCardsPlans(mCardView);
 		//dealCardsStatistics(mCardView);
@@ -177,6 +175,12 @@ public class Cards extends SherlockFragment {
 				count++;
 			}
 
+			if(count==0){
+				String title="No Accounts";
+				String description="No Accounts created yet";
+				mCardView.addCard(new MyCard(title,description));
+			}
+			
 			mCardView.refresh();
 		}		
 	}
@@ -266,6 +270,12 @@ public class Cards extends SherlockFragment {
 				count++;
 			}
 
+			if(count==0){
+				String title="No Transactions";
+				String description="No Transactions have occured recently";
+				mCardView.addCard(new MyCard(title,description));
+			}
+			
 			mCardView.refresh();
 		}		
 	}
@@ -289,7 +299,7 @@ public class Cards extends SherlockFragment {
 				String description = "";
 				String color = "";
 				long difference = 0;
-				
+
 				plan_name = cursor.getString(2);
 				plan_offset = cursor.getString(7);
 				plan_rate = cursor.getString(8);
@@ -382,6 +392,12 @@ public class Cards extends SherlockFragment {
 				}
 
 				count++;
+			}
+
+			if(count==0){
+				String title="No Plans";
+				String description="No Plans are coming up";
+				mCardView.addCard(new MyCard(title,description));
 			}
 
 			mCardView.refresh();

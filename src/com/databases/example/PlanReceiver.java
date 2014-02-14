@@ -18,6 +18,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -27,8 +28,6 @@ import android.widget.Toast;
 public class PlanReceiver extends BroadcastReceiver{	
 	private static DatabaseHelper dh = null;
 	final int NOTIFICATION_ID = 0123456;
-	int notificationCount;
-	NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -97,19 +96,16 @@ public class PlanReceiver extends BroadcastReceiver{
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void notify(Context context, Bundle bundle) {
 		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		String plan_id = bundle.getString("plan_id");
-		String plan_acct_id = bundle.getString("plan_acct_id");
+		int notificationCount=0;
+		NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+
 		String plan_name = bundle.getString("plan_name");
 		String plan_value = bundle.getString("plan_value");
-		String plan_type = bundle.getString("plan_type");
-		String plan_category = bundle.getString("plan_category");
-		String plan_memo = bundle.getString("plan_memo");
-		String plan_offset = bundle.getString("plan_offset");
-		String plan_rate = bundle.getString("plan_rate");
-		String plan_cleared = bundle.getString("plan_cleared");
 
 		//Intent fired when notification is clicked on
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,new Intent(context,Checkbook.class), 0);
+		Intent intent = new Intent(context,Checkbook.class);
+		intent.putExtra("fromNotification", true);
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		//Get today's readable date
 		DateTime today = new DateTime();
@@ -119,19 +115,42 @@ public class PlanReceiver extends BroadcastReceiver{
 		Money value = new Money(plan_value);
 		value.getNumberFormat(context.getResources().getConfiguration().locale);
 
+		//Add current notification to database of notifications
+		ContentValues notificationValues = new ContentValues();
+		notificationValues.put("NotificationName",plan_name);
+		notificationValues.put("NotificationValue",plan_value);
+		notificationValues.put("NotificationDate",today.getSQLDate(context.getResources().getConfiguration().locale));
+		context.getContentResolver().insert(MyContentProvider.NOTIFICATIONS_URI, notificationValues);
+
 		NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(context);	
 		mBuilder.setContentTitle("Plan " + plan_name + " Occured");
 		mBuilder.setContentText(value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
-		//mBuilder.setTicker("New Message Alert!");
 		mBuilder.setSmallIcon(R.drawable.ic_launcher);
 		mBuilder.setContentIntent(contentIntent);
-		mBuilder.setAutoCancel(true);								
-		mBuilder.setNumber(notificationCount++);
+		mBuilder.setAutoCancel(true);
 
 		//Inbox Style
 		inboxStyle.setBigContentTitle("Plans:");
-		//inboxStyle.setSummaryText(" +9 more!");
-		inboxStyle.addLine(plan_name + ": " + value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
+		Cursor notifications = context.getContentResolver().query(Uri.parse(MyContentProvider.NOTIFICATIONS_URI+"/"), null, null, null, null);
+
+		while (notifications.moveToNext()){
+			notificationCount++;
+			String notification_name = notifications.getString(1);
+			String notification_value = notifications.getString(2);
+			String notification_date = notifications.getString(3);
+			DateTime date = new DateTime();
+			date.setStringSQL(notification_date);			
+
+			inboxStyle.addLine(notification_name + ": " + notification_value + " " + date.getReadableDate());
+		}
+
+		if(notificationCount>1){
+			mBuilder.setNumber(notificationCount);								
+		}
+
+		if(notificationCount>7){
+			inboxStyle.setSummaryText("+" + (notificationCount-7) + " more");
+		}
 		mBuilder.setStyle(inboxStyle);
 
 		nm.notify(NOTIFICATION_ID, mBuilder.build());
@@ -139,7 +158,7 @@ public class PlanReceiver extends BroadcastReceiver{
 
 	//Method that remakes the planned transaction
 	public void reschedulePlans(Context context){
-		Cursor cursorPlans = dh.getPlannedTransactions(null,null,null,null);
+		Cursor cursorPlans = dh.getPlans(null,null,null,null);
 
 		//startManagingCursor(cursorPlans);
 		int IDColumn = cursorPlans.getColumnIndex("PlanID");
@@ -230,7 +249,7 @@ public class PlanReceiver extends BroadcastReceiver{
 		if(tokens[1].contains("Days")){
 			Log.d("PlanReceiver-schedule", "Days");
 
-			//If Starting Time is in the past, fire off next month(s)
+			//If Starting Time is in the past, fire off next day(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
 			}
@@ -241,7 +260,7 @@ public class PlanReceiver extends BroadcastReceiver{
 		else if(tokens[1].contains("Weeks")){
 			Log.d("PlanReceiver-schedule", "Weeks");
 
-			//If Starting Time is in the past, fire off next month(s)
+			//If Starting Time is in the past, fire off next week(s)
 			while (firstRun.before(Calendar.getInstance())) {
 				firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
 			}

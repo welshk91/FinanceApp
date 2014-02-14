@@ -27,18 +27,21 @@ public class MyContentProvider extends ContentProvider{
 	public static final int CATEGORY_ID = 310;
 	public static final int SUBCATEGORIES_ID = 400;
 	public static final int SUBCATEGORY_ID = 410;
-	public static final int PLANNED_TRANSACTIONS_ID = 500;
-	public static final int PLANNED_TRANSACTION_ID = 510;
+	public static final int PLANS_ID = 500;
+	public static final int PLAN_ID = 510;
 	public static final int LINKS_ID = 600;
 	public static final int LINK_ID = 610;
+	public static final int NOTIFICATIONS_ID = 700;
+	public static final int NOTIFICATION_ID = 710;
 
 	private static final String AUTHORITY = "com.databases.example.provider";
 	private static final String PATH_ACCOUNTS = "accounts";
 	private static final String PATH_TRANSACTIONS = "transactions";
 	private static final String PATH_CATEGORIES = "categories";
 	private static final String PATH_SUBCATEGORIES = "subcategories";
-	private static final String PATH_PLANNED_TRANSACTIONS = "plannedTransactions";
+	private static final String PATH_PLANS = "plannedTransactions";
 	private static final String PATH_LINKS = "links";
+	private static final String PATH_NOTIFICATIONS = "notifications";
 
 	public static final Uri DATABASE_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -51,12 +54,13 @@ public class MyContentProvider extends ContentProvider{
 	public static final Uri SUBCATEGORIES_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_SUBCATEGORIES);
 	public static final Uri PLANNED_TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + PATH_PLANNED_TRANSACTIONS);
+			+ "/" + PATH_PLANS);
 	public static final Uri LINKS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_LINKS);
+	public static final Uri NOTIFICATIONS_URI = Uri.parse("content://" + AUTHORITY
+			+ "/" + PATH_NOTIFICATIONS);
 
-	private static final UriMatcher sURIMatcher = new UriMatcher(
-			UriMatcher.NO_MATCH);
+	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
 	static{
 		sURIMatcher.addURI(AUTHORITY, null, DATABASE_ID);
@@ -70,10 +74,12 @@ public class MyContentProvider extends ContentProvider{
 		sURIMatcher.addURI(AUTHORITY, PATH_CATEGORIES + "/#", CATEGORY_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_SUBCATEGORIES, SUBCATEGORIES_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_SUBCATEGORIES + "/#", SUBCATEGORY_ID);
-		sURIMatcher.addURI(AUTHORITY, PATH_PLANNED_TRANSACTIONS, PLANNED_TRANSACTIONS_ID);
-		sURIMatcher.addURI(AUTHORITY, PATH_PLANNED_TRANSACTIONS + "/#", PLANNED_TRANSACTION_ID);
+		sURIMatcher.addURI(AUTHORITY, PATH_PLANS, PLANS_ID);
+		sURIMatcher.addURI(AUTHORITY, PATH_PLANS + "/#", PLAN_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_LINKS, LINKS_ID);
 		sURIMatcher.addURI(AUTHORITY, PATH_LINKS + "/#", LINK_ID);
+		sURIMatcher.addURI(AUTHORITY, PATH_NOTIFICATIONS, NOTIFICATIONS_ID);
+		sURIMatcher.addURI(AUTHORITY, PATH_NOTIFICATIONS + "/#", NOTIFICATION_ID);
 	}
 
 	@Override
@@ -85,7 +91,7 @@ public class MyContentProvider extends ContentProvider{
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-		
+
 		Cursor cursor;
 		int uriType = sURIMatcher.match(uri);
 
@@ -131,18 +137,26 @@ public class MyContentProvider extends ContentProvider{
 			cursor = dh.getSubCategory(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
-		case PLANNED_TRANSACTIONS_ID:
-			cursor = dh.getPlannedTransactions(projection, selection, selectionArgs, sortOrder);
+		case PLANS_ID:
+			cursor = dh.getPlans(projection, selection, selectionArgs, sortOrder);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
-		case PLANNED_TRANSACTION_ID:
-			cursor = dh.getPlannedTransaction(uri.getLastPathSegment());
+		case PLAN_ID:
+			cursor = dh.getPlan(uri.getLastPathSegment());
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case LINKS_ID:
 			// TODO Need to handle Links eventually
 		case LINK_ID:
 			// TODO Need to handle Links eventually
+		case NOTIFICATIONS_ID:
+			cursor = dh.getNotifications(projection, selection, selectionArgs, sortOrder);
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);
+			return cursor;
+		case NOTIFICATION_ID:
+			cursor = dh.getNotification(uri.getLastPathSegment());
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);
+			return cursor;
 		default:
 			throw new IllegalArgumentException("MyContentProvider-query: Unknown URI");
 		}
@@ -181,12 +195,16 @@ public class MyContentProvider extends ContentProvider{
 			rowsDeleted = dh.deleteSubCategory(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
-		case PLANNED_TRANSACTION_ID:
-			rowsDeleted = dh.deletePlannedTransaction(uri,whereClause,whereArgs);
+		case PLAN_ID:
+			rowsDeleted = dh.deletePlan(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		case LINK_ID:
 			// TODO Need to handle Links eventually
+			break;
+		case NOTIFICATION_ID:
+			rowsDeleted = dh.deleteNotification(uri,whereClause,whereArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		default:
 			throw new IllegalArgumentException("MyContentProvider-delete: Unknown URI");
@@ -216,10 +234,14 @@ public class MyContentProvider extends ContentProvider{
 			id = dh.addSubCategory(values);
 			getContext().getContentResolver().notifyChange(uri, null);
 			return Uri.parse(PATH_SUBCATEGORIES + "/" + id);
-		case PLANNED_TRANSACTIONS_ID:
-			id = dh.addPlannedTransaction(values);
+		case PLANS_ID:
+			id = dh.addPlan(values);
 			getContext().getContentResolver().notifyChange(uri, null);
-			return Uri.parse(PATH_PLANNED_TRANSACTIONS + "/" + id);
+			return Uri.parse(PATH_PLANS + "/" + id);
+		case NOTIFICATIONS_ID:
+			id = dh.addNotification(values);
+			getContext().getContentResolver().notifyChange(uri, null);
+			return Uri.parse(PATH_NOTIFICATIONS + "/" + id);
 		case LINK_ID:
 			// TODO Need to handle Links eventually
 		default:
@@ -251,7 +273,6 @@ public class MyContentProvider extends ContentProvider{
 		}
 
 		return rowsUpdated;
-
 	}
 
 	@Override

@@ -4,22 +4,9 @@
 
 package com.databases.example;
 
-import java.util.Calendar;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
 //An Object Class used to handle the NavigationDrawer
@@ -36,8 +22,6 @@ public class Drawer extends Activity{
 	private Context context;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
-	int notificationCount;
-	NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 	final int NOTIFICATION_ID = 0123456;
 
 	private String[] drawerItems;
@@ -59,7 +43,6 @@ public class Drawer extends Activity{
 
 	/* The listener for ListView in the navigation drawer */
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
-		@SuppressLint("NewApi")
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			switch (position) {
@@ -113,48 +96,6 @@ public class Drawer extends Activity{
 			case 6:
 				Log.d("SliderMenu", "Help Listener Fired");
 				Drawer.this.toggle();
-				//	Intent intentStats = new Intent(Main.this, Accounts.class);
-				//	startActivity(intentStats);
-				//drawPattern();
-
-				NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-				String plan_id = "0";
-				String plan_acct_id = "0";
-				String plan_name = "plan_name";
-				String plan_value = "5000";
-				String plan_type = "plan_type";
-				String plan_category = "plan_category";
-				String plan_memo = "plan_memo";
-				String plan_offset = "plan_offset";
-				String plan_rate = "plan_rate";
-				String plan_cleared = "plan_cleared";
-
-				PendingIntent contentIntent = PendingIntent.getActivity(context, 0,new Intent(context,Checkbook.class), 0);
-
-				//Get today's readable date
-				DateTime today = new DateTime();
-				today.setCalendar(Calendar.getInstance());
-
-				//Get Value with correct money format
-				Money value = new Money(plan_value);
-				value.getNumberFormat(context.getResources().getConfiguration().locale);
-
-				NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(context);	
-				mBuilder.setContentTitle("Plan " + plan_name + " Occured");
-				mBuilder.setContentText(value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
-				//mBuilder.setTicker("New Message Alert!");
-				mBuilder.setSmallIcon(R.drawable.ic_launcher);
-				mBuilder.setContentIntent(contentIntent);
-				mBuilder.setAutoCancel(true);								
-				mBuilder.setNumber(notificationCount++);
-
-				//Inbox Style
-				inboxStyle.setBigContentTitle("Plans:");
-				//inboxStyle.setSummaryText(" +9 more!");
-				inboxStyle.addLine(plan_name + ":" + value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
-				mBuilder.setStyle(inboxStyle);
-				
-				nm.notify(NOTIFICATION_ID, mBuilder.build());
 				break;
 
 			case 7:
@@ -166,8 +107,7 @@ public class Drawer extends Activity{
 			default:
 				Log.e("SliderMenu", "Default Listener Fired");
 				break;
-			}			
-
+			}
 		}
 	}
 

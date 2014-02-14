@@ -10,11 +10,12 @@ import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
 
@@ -33,19 +34,18 @@ public class Checkbook extends SherlockFragmentActivity {
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
 
-		/*
-		 * Hack fix for when in transactions (single pane), rotating keeps the account back stack
-		 * so dual pane users have to hit back twice to leave checkbook
-		 */
-		//		if(savedInstanceState!=null){
-		//			//Clear BackStack
-		//			while(getSupportFragmentManager().getBackStackEntryCount()>0){
-		//				getSupportFragmentManager().popBackStackImmediate();
-		//			}
-		//		}
-
 		if(savedInstanceState!=null){
+			Log.e("Checkbook","SavedState");
 			return;
+		}
+
+		//Clear notifications
+		if (getIntent().getExtras() != null) {
+			Bundle b = getIntent().getExtras();
+
+			if(b.getBoolean("fromNotification")){
+				clearNotifications();
+			}
 		}
 
 		//NavigationDrawer
@@ -83,6 +83,22 @@ public class Checkbook extends SherlockFragmentActivity {
 
 	}//end onCreate
 
+	//Needed to have notification extras work
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+
+		if (getIntent().getExtras() != null) {
+			Bundle b = getIntent().getExtras();
+
+			if(b.getBoolean("fromNotification")){
+				clearNotifications();
+			}
+		}
+
+	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle bundle1){
 		super.onSaveInstanceState(bundle1);
@@ -98,6 +114,13 @@ public class Checkbook extends SherlockFragmentActivity {
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	//Method for clearing notifications if they were clicked on
+	public void clearNotifications(){
+		Log.v("Checkbook","Clearing notifications...");
+		Uri uri = Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/" + 0);
+		getContentResolver().delete(uri, null,null);
 	}
 
 	//Method for selecting a Time when adding a transaction

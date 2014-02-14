@@ -352,11 +352,11 @@ public class Cards extends SherlockFragment {
 					if(difference==0){
 						description="This planned transaction occured today";
 					}
-					else if(difference==-1){
+					else if(difference==1){
 						description="This planned transaction occured yesterday";
 					}
-					else if(difference==1){
-						description="This planned transaction is coming up tommorow";
+					else if(difference==-1){
+						description="This planned transaction is coming up tomorrow";
 					}
 					else if(difference<-1){
 						description="This planned transaction occured recently";

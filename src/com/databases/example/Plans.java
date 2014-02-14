@@ -147,7 +147,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
 
-		Uri uri = Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI + "/" + record.id);
+		Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
 		this.getContentResolver().delete(uri, "PlanID="+record.id, null);
 
 		Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
@@ -846,7 +846,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			else{
 				return new CursorLoader(
 						this,   	// Parent activity context
-						MyContentProvider.PLANNED_TRANSACTIONS_URI,// Table to query
+						MyContentProvider.PLANS_URI,// Table to query
 						null,     			// Projection to return
 						null,            	// No selection clause
 						null,            	// No selection arguments
@@ -889,7 +889,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI+"/"+(ID)), null, null, null, null);
+			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"+(ID)), null, null, null, null);
 
 			int entry_id = 0;
 			String entry_acctId = null;
@@ -1102,7 +1102,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							transactionValues.put("PlanRate", transactionRate);
 							transactionValues.put("PlanCleared", transactionCleared);
 
-							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
+							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANS_URI, transactionValues);
 
 							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);
@@ -1334,14 +1334,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 					try{
 						if (transactionName.length()>0 && validRate) {
-
 							Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
-							Uri uri = Uri.parse(MyContentProvider.PLANNED_TRANSACTIONS_URI + "/" + oldRecord.id);
-							getActivity().getContentResolver().delete(uri, "PlanID="+oldRecord.id, null);
-							((Plans) getSherlockActivity()).cancelPlan(oldRecord);
-
 							ContentValues transactionValues=new ContentValues();
+							transactionValues.put("PlanID", ID);
 							transactionValues.put("ToAcctID", transactionAccountID);
 							transactionValues.put("PlanName", transactionName);
 							transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
@@ -1352,9 +1348,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							transactionValues.put("PlanRate", transactionRate);
 							transactionValues.put("PlanCleared", transactionCleared);
 
-							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANNED_TRANSACTIONS_URI, transactionValues);
+							//Cancel old plan
+							((Plans) getSherlockActivity()).cancelPlan(oldRecord);
+							
+							//Update plan
+							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+ID), transactionValues, "PlanID ="+ID, null);
 
-							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
+							//Reschedule plan
+							PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);;
 							((Plans) getSherlockActivity()).plansPopulate();;
 						} 
@@ -1364,7 +1365,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 						}
 					}
 					catch(Exception e){
-						Log.e("Plans-Edit", "e = ");
+						Log.e("Plans-Edit", "e = "+e);
 						Toast.makeText(getSherlockActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 

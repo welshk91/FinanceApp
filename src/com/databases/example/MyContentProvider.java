@@ -53,7 +53,7 @@ public class MyContentProvider extends ContentProvider{
 			+ "/" + PATH_CATEGORIES);
 	public static final Uri SUBCATEGORIES_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_SUBCATEGORIES);
-	public static final Uri PLANNED_TRANSACTIONS_URI = Uri.parse("content://" + AUTHORITY
+	public static final Uri PLANS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_PLANS);
 	public static final Uri LINKS_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + PATH_LINKS);
@@ -177,7 +177,7 @@ public class MyContentProvider extends ContentProvider{
 			getContext().getContentResolver().notifyChange(CATEGORIES_URI, null);
 			getContext().getContentResolver().notifyChange(SUBCATEGORIES_URI, null);
 			getContext().getContentResolver().notifyChange(LINKS_URI, null);
-			getContext().getContentResolver().notifyChange(PLANNED_TRANSACTIONS_URI, null);
+			getContext().getContentResolver().notifyChange(PLANS_URI, null);
 			break;
 		case ACCOUNT_ID:
 			rowsDeleted = dh.deleteAccount(uri, whereClause, whereArgs);
@@ -266,6 +266,11 @@ public class MyContentProvider extends ContentProvider{
 		case ACCOUNT_ID:
 			Log.d("MyContentProvider-update", "Updating account information");
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
+		case PLAN_ID:
+			Log.d("MyContentProvider-update", "Updating notification information");
+			rowsUpdated = dh.updatePlan(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
 		default:

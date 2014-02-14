@@ -104,7 +104,7 @@ public class Cards extends SherlockFragment {
 	}
 
 	public void dealCardsPlans(CardUI view){
-		Cursor planCursor = getActivity().getContentResolver().query(MyContentProvider.PLANNED_TRANSACTIONS_URI, null, null, null, null);
+		Cursor planCursor = getActivity().getContentResolver().query(MyContentProvider.PLANS_URI, null, null, null, null);
 
 		CardTaskPlans runner = new CardTaskPlans();
 		runner.execute(planCursor);

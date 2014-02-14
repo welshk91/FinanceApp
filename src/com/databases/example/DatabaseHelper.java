@@ -631,6 +631,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		rowsDeleted = db.delete(TABLE_PLANS, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
+	
+	//Updates a plan
+	public int updatePlan(ContentValues values, String whereClause, String[] whereArgs){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.update(TABLE_PLANS, values, whereClause, whereArgs);
+		return 0;
+	}
 
 	//Get all notifications
 	public Cursor getNotifications(String[] projection, String selection, String[] selectionArgs, String sortOrder){
@@ -667,5 +674,5 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		rowsDeleted = db.delete(TABLE_NOTIFICATIONS, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
-	
+		
 }//End DatabaseHelper

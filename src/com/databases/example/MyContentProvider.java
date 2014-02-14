@@ -268,8 +268,18 @@ public class MyContentProvider extends ContentProvider{
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;
+		case CATEGORY_ID:
+			Log.d("MyContentProvider-update", "Updating category information");
+			rowsUpdated = dh.updateCategory(values,whereClause,whereArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;		
+		case SUBCATEGORY_ID:
+			Log.d("MyContentProvider-update", "Updating subcategory information");
+			rowsUpdated = dh.updateSubCategory(values,whereClause,whereArgs);
+			getContext().getContentResolver().notifyChange(uri, null);
+			break;
 		case PLAN_ID:
-			Log.d("MyContentProvider-update", "Updating notification information");
+			Log.d("MyContentProvider-update", "Updating plan information");
 			rowsUpdated = dh.updatePlan(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			break;

@@ -845,31 +845,22 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 					try{
 						if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
 							SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
-							Uri uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + oldRecord.id);
-
-							//Delete Account
-							getActivity().getContentResolver().delete(uri,"SubCatID="+oldRecord.id, null);
 
 							ContentValues subcategoryValues=new ContentValues();
 							subcategoryValues.put("SubCatID",oldRecord.id);
 							subcategoryValues.put("ToCatID",oldRecord.catId);
 							subcategoryValues.put("SubCatName",newName);
 							subcategoryValues.put("SubCatNote",newNote);
-							getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
+							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI+"/"+oldRecord.id), subcategoryValues,"SubCatID ="+oldRecord.id,null);
 						}
 						else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 							CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
-							Uri uri = Uri.parse(MyContentProvider.CATEGORIES_URI + "/" + oldRecord.id);
-
-							//Delete Account
-							getActivity().getContentResolver().delete(uri,"CatID="+oldRecord.id, null);
 
 							ContentValues categoryValues=new ContentValues();
 							categoryValues.put("CatID",oldRecord.id);
 							categoryValues.put("SubCatName",newName);
 							categoryValues.put("SubCatNote",newNote);
-							getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
+							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI+"/"+oldRecord.id), categoryValues,"CatID ="+oldRecord.id,null);
 						}
 					}
 					catch(Exception e){

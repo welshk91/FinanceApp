@@ -559,6 +559,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		rowsDeleted = db.delete(TABLE_CATEGORIES, whereClause, whereArgs);		
 		return rowsDeleted;
 	}
+	
+	//Updates a category
+	public int updateCategory(ContentValues values, String whereClause, String[] whereArgs){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.update(TABLE_CATEGORIES, values, whereClause, whereArgs);
+		return 0;
+	}
 
 	//Get subcategories for a category
 	public Cursor getSubCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder){
@@ -594,6 +601,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		int rowsDeleted = 0;
 		rowsDeleted = db.delete(TABLE_SUBCATEGORIES, whereClause, whereArgs);		
 		return rowsDeleted;
+	}
+	
+	//Updates a subcategory
+	public int updateSubCategory(ContentValues values, String whereClause, String[] whereArgs){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.update(TABLE_SUBCATEGORIES, values, whereClause, whereArgs);
+		return 0;
 	}
 
 	//Get all planned transactions for all accounts

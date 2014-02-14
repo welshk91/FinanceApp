@@ -4,9 +4,10 @@
 
 package com.databases.example;
 
-import android.app.Activity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,26 +19,54 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 //An Object Class used to handle the NavigationDrawer
-public class Drawer extends Activity{
+public class Drawer extends SherlockFragmentActivity{
 	private Context context;
-	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerList;
-	final int NOTIFICATION_ID = 0123456;
-
+	private DrawerLayout drawerLayout;
+	private ListView drawerListView;
 	private String[] drawerItems;
 
 	private static MyAdapter adapterDrawer = null;
+	private ActionBarDrawerToggle drawerToggle;
 
-	public Drawer(Context context, DrawerLayout layout, ListView drawer) {
+	public Drawer(final Context context) {
 		this.context=context;
-		this.mDrawerLayout=layout;
-		this.mDrawerList=drawer;
+		drawerLayout = (DrawerLayout) ((SherlockFragmentActivity) context).findViewById(R.id.drawer_layout);
+		drawerListView = (ListView) ((SherlockFragmentActivity) context).findViewById(R.id.drawer);
 
 		drawerItems = context.getResources().getStringArray(R.array.drawer_items);
 
 		adapterDrawer = new MyAdapter(context, drawerItems);
-		mDrawerList.setAdapter(adapterDrawer);
-		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+		drawerListView.setAdapter(adapterDrawer);
+		drawerListView.setOnItemClickListener(new DrawerItemClickListener());
+
+		drawerToggle = new ActionBarDrawerToggle(
+				(SherlockFragmentActivity) context,
+				drawerLayout,
+				R.drawable.ic_navigation_drawer,
+				R.string.drawer_open,  
+				R.string.drawer_closed  
+				) {
+
+			// Called when a drawer has settled in a completely closed state. *//*
+			public void onDrawerClosed(View view) {
+				super.onDrawerClosed(view);
+				//((SherlockFragmentActivity) context).getSupportActionBar().setTitle("The title stuff for close");
+			}
+
+			// Called when a drawer has settled in a completely open state. *//*
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				//((SherlockFragmentActivity) context).getSupportActionBar().setTitle("The title stuff for open");
+			}
+		};
+
+		//drawerToggle.setDrawerIndicatorEnabled(true);
+		//Log.e("Drawer","Indicator enabled="+drawerToggle.isDrawerIndicatorEnabled());
+
+		// Set the drawer toggle as the DrawerListener
+		drawerLayout.setDrawerListener(drawerToggle);
+		((SherlockFragmentActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
+		((SherlockFragmentActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}//end constructor
 
@@ -111,6 +140,10 @@ public class Drawer extends Activity{
 		}
 	}
 
+	public ActionBarDrawerToggle getDrawerToggle(){
+		return drawerToggle;
+	}
+	
 	//Method to exit app
 	private void closeApp() {
 		System.exit(0);
@@ -118,10 +151,10 @@ public class Drawer extends Activity{
 
 	//Close/Open drawer
 	protected void toggle() {
-		if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-			mDrawerLayout.closeDrawer(mDrawerList);
+		if (drawerLayout.isDrawerOpen(drawerListView)) {
+			drawerLayout.closeDrawer(drawerListView);
 		} else {
-			mDrawerLayout.openDrawer(mDrawerList);
+			drawerLayout.openDrawer(drawerListView);
 		}
 	}
 
@@ -194,7 +227,6 @@ public class Drawer extends Activity{
 
 			return rowView;
 		}
-
-	}	
+	}
 
 }//end class

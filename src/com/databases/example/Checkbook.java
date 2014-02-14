@@ -11,6 +11,7 @@ import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,14 +23,13 @@ import android.support.v4.widget.DrawerLayout;
 public class Checkbook extends SherlockFragmentActivity {
 
 	//NavigationDrawer
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.checkbook);
 		setTitle("Checkbook");
-		getSupportActionBar().setHomeButtonEnabled(true);
 
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
@@ -49,9 +49,7 @@ public class Checkbook extends SherlockFragmentActivity {
 		}
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 
 		Accounts account_frag = new Accounts();
 		Transactions transaction_frag = new Transactions();
@@ -109,7 +107,7 @@ public class Checkbook extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 		}
 
@@ -135,4 +133,16 @@ public class Checkbook extends SherlockFragmentActivity {
 		newFragment.show(this.getSupportFragmentManager(), "datePicker");
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+	}
+	
 }//end Checkbook

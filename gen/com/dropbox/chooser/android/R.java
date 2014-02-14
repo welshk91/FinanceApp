@@ -123,9 +123,9 @@ public final class R {
 		public static final int common_button_green = 0x7f02008e;
 		public static final int common_button_light_gray = 0x7f02008f;
 		public static final int ic_launcher = 0x7f020091;
-		public static final int icon_new = 0x7f02009c;
-		public static final int tab_dropbox = 0x7f0200a1;
-		public static final int tab_dropbox_inactive = 0x7f0200a2;
+		public static final int icon_new = 0x7f02009d;
+		public static final int tab_dropbox = 0x7f0200a2;
+		public static final int tab_dropbox_inactive = 0x7f0200a3;
 	}
 	public static final class id {
 		public static final int dbx_bottom_bar = 0x7f0c0062;

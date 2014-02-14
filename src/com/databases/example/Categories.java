@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -47,7 +48,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	private static DatabaseHelper dh = null;
 
 	//NavigationDrawer
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
 
 	private ExpandableListView lvCategory = null;
 	private static UserItemAdapter adapterCategory = null;
@@ -76,13 +77,9 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		setContentView(R.layout.categories);
 		setTitle("Categories");
-		getSupportActionBar().setHomeButtonEnabled(true);
-
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 
 		lvCategory = (ExpandableListView)this.findViewById(R.id.category_list);
 
@@ -281,7 +278,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 
 		case R.id.account_menu_search:    
@@ -994,4 +991,16 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		}
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+	}
+	
 }//end Categories

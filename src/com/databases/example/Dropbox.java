@@ -23,6 +23,7 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -35,7 +36,7 @@ import android.widget.Toast;
 
 public class Dropbox extends SherlockFragmentActivity{
 	//NavigationDrawer
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
 
 	//DropBox
 	private DbxAccountManager dbAccountManager;
@@ -49,13 +50,9 @@ public class Dropbox extends SherlockFragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dropbox);
 		setTitle("Dropbox");
-		getSupportActionBar().setHomeButtonEnabled(true);
-
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 
 		//Initialize DropBox Account Manager
 		dbAccountManager = DbxAccountManager.getInstance(getApplicationContext(), appKey, appSecret);
@@ -226,10 +223,22 @@ public class Dropbox extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+	}
+	
 }//end of Dropbox

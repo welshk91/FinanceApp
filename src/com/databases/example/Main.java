@@ -8,14 +8,15 @@ import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 import group.pals.android.lib.ui.lockpattern.util.Settings;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -23,7 +24,13 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class Main extends SherlockFragmentActivity {
 	private static final int LOCKSCREEN_SIGNIN = 1;
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
+	
+	private DrawerLayout drawerLayout;
+	private ListView drawerListView;
+	private String[] drawerItems;
+	private ActionBarDrawerToggle drawerToggle;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +44,6 @@ public class Main extends SherlockFragmentActivity {
 		}
 
 		setContentView(R.layout.main);
-		getSupportActionBar().setHomeButtonEnabled(true);
 
 		//Add Cards Fragments
 		Cards cards_frag = new Cards();
@@ -47,10 +53,8 @@ public class Main extends SherlockFragmentActivity {
 		getSupportFragmentManager().executePendingTransactions();		
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
-
+		drawer = new Drawer(this);
+						
 	}// end onCreate
 
 	//For Menu
@@ -67,7 +71,7 @@ public class Main extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 
 		case R.id.main_menu_search:    
@@ -138,4 +142,16 @@ public class Main extends SherlockFragmentActivity {
 		}
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+	}
+	
 }// end Main

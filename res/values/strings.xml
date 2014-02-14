@@ -25,6 +25,8 @@
     <string name="memo:">MEMO:</string>
     <string name="date:">DATE:</string>
     <string name="cleared:">CLEARED:</string>
+    <string name="drawer_open">Drawer is open</string>
+    <string name="drawer_closed">Drawer is closed</string>
     <string name="pref_key_account_nameSize">key_account_nameSize</string>
     <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
     <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>

@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.MenuItem;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -39,7 +40,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	private String query;
 
 	//NavigationDrawer
-	private Drawer mDrawerLayout;	
+	private Drawer drawer;	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
@@ -64,7 +65,6 @@ public class SearchMain extends SherlockFragmentActivity {
 	//Method that handles setting up the Tabs
 	public void makeView(){
 		setContentView(R.layout.search);
-		getSupportActionBar().setHomeButtonEnabled(true);
 
 		ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
 		mViewPager.setOffscreenPageLimit(2);
@@ -76,9 +76,7 @@ public class SearchMain extends SherlockFragmentActivity {
 		mTabsAdapter.notifyDataSetChanged();
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 	}
 
 	//Override method to send the search extra data, letting it know which class called it
@@ -208,7 +206,7 @@ public class SearchMain extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 
 		case R.id.search_menu_search:    
@@ -219,4 +217,16 @@ public class SearchMain extends SherlockFragmentActivity {
 		return true;
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+	}
+	
 }//end SearchMain

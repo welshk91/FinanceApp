@@ -15,6 +15,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -40,7 +41,7 @@ public class Links extends SherlockFragmentActivity{
 	private final static int PICKCONTACT_RESULT_CODE = 2;
 
 	//NavigationDrawer
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
 
 	private Intent lastLink;
 	private String linkFilePath = null;
@@ -60,13 +61,9 @@ public class Links extends SherlockFragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.links);
 		setTitle("Attachments");
-		getSupportActionBar().setHomeButtonEnabled(true);
-
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 
 	}//end onCreate
 
@@ -329,11 +326,23 @@ public class Links extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 
 		}
 		return true;
+	}
+	
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
 
 }//end of Links

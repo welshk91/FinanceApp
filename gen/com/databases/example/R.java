@@ -1380,15 +1380,16 @@ containing a value of this type.
         public static final int ic_menu_preferences=0x7f020098;
         public static final int ic_menu_sort_by_size=0x7f020099;
         public static final int ic_menu_today=0x7f02009a;
-        public static final int icon=0x7f02009b;
-        public static final int icon_new=0x7f02009c;
-        public static final int red=0x7f02009d;
-        public static final int selectable_background_cardbank=0x7f02009e;
-        public static final int shadow=0x7f02009f;
-        public static final int slidingmenu_exit=0x7f0200a0;
-        public static final int tab_dropbox=0x7f0200a1;
-        public static final int tab_dropbox_inactive=0x7f0200a2;
-        public static final int top_shadow=0x7f0200a3;
+        public static final int ic_navigation_drawer=0x7f02009b;
+        public static final int icon=0x7f02009c;
+        public static final int icon_new=0x7f02009d;
+        public static final int red=0x7f02009e;
+        public static final int selectable_background_cardbank=0x7f02009f;
+        public static final int shadow=0x7f0200a0;
+        public static final int slidingmenu_exit=0x7f0200a1;
+        public static final int tab_dropbox=0x7f0200a2;
+        public static final int tab_dropbox_inactive=0x7f0200a3;
+        public static final int top_shadow=0x7f0200a4;
     }
     public static final class id {
         public static final int BalanceTexts=0x7f0c0037;
@@ -1819,6 +1820,8 @@ containing a value of this type.
          */
         public static final int dialog_color_picker=0x7f070023;
         public static final int done=0x7f070046;
+        public static final int drawer_closed=0x7f070055;
+        public static final int drawer_open=0x7f070054;
         public static final int every_=0x7f07004c;
         public static final int exit=0x7f070045;
         /**  App 
@@ -1830,16 +1833,16 @@ containing a value of this type.
         /**  Preferences 
          */
         public static final int pref_category=0x7f070025;
-        public static final int pref_key_account_fieldSize=0x7f070055;
-        public static final int pref_key_account_nameSize=0x7f070054;
-        public static final int pref_key_category_fieldSize=0x7f07005b;
-        public static final int pref_key_category_nameSize=0x7f07005a;
-        public static final int pref_key_plan_fieldSize=0x7f070059;
-        public static final int pref_key_plan_nameSize=0x7f070058;
-        public static final int pref_key_subcategory_fieldSize=0x7f07005d;
-        public static final int pref_key_subcategory_nameSize=0x7f07005c;
-        public static final int pref_key_transaction_fieldSize=0x7f070057;
-        public static final int pref_key_transaction_nameSize=0x7f070056;
+        public static final int pref_key_account_fieldSize=0x7f070057;
+        public static final int pref_key_account_nameSize=0x7f070056;
+        public static final int pref_key_category_fieldSize=0x7f07005d;
+        public static final int pref_key_category_nameSize=0x7f07005c;
+        public static final int pref_key_plan_fieldSize=0x7f07005b;
+        public static final int pref_key_plan_nameSize=0x7f07005a;
+        public static final int pref_key_subcategory_fieldSize=0x7f07005f;
+        public static final int pref_key_subcategory_nameSize=0x7f07005e;
+        public static final int pref_key_transaction_fieldSize=0x7f070059;
+        public static final int pref_key_transaction_nameSize=0x7f070058;
         public static final int press_color_to_apply=0x7f070024;
         public static final int search_hint=0x7f07003d;
         public static final int start_on_=0x7f07004d;

@@ -20,6 +20,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,20 +41,16 @@ public class SD extends SherlockFragmentActivity{
 	private final static int PICKFILE_RESULT_CODE = 123;
 
 	//NavigationDrawer
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sd);
 		setTitle("Local Backup");
-		getSupportActionBar().setHomeButtonEnabled(true);
-
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 
 	}//end onCreate
 
@@ -62,13 +59,25 @@ public class SD extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+	}
+	
 	public void sdRestore(View v) {
 		try {
 			File sd = Environment.getExternalStorageDirectory();

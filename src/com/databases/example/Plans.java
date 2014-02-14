@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -66,7 +67,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
 	//NavigationDrawer
-	private Drawer mDrawerLayout;
+	private Drawer drawer;
 
 	//Adapter for category spinner
 	private static SimpleCursorAdapter categorySpinnerAdapter = null;
@@ -103,13 +104,9 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 		setContentView(R.layout.plans);
 		setTitle("Plans");
-		getSupportActionBar().setHomeButtonEnabled(true);
-
 
 		//NavigationDrawer
-		DrawerLayout view = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ListView drawer = (ListView) findViewById(R.id.drawer);
-		mDrawerLayout = new Drawer(this,view,drawer);
+		drawer = new Drawer(this);
 
 		lvPlans = (ListView)this.findViewById(R.id.plans_list);
 
@@ -354,7 +351,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			mDrawerLayout.toggle();
+			drawer.toggle();
 			break;
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:
@@ -1382,6 +1379,18 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 			return alertDialogBuilder.create();			
 		}
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawer.getDrawerToggle().syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
 
 }//end of Plans

@@ -11,6 +11,7 @@ import group.pals.android.lib.ui.lockpattern.util.Settings;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 		super.onCreate(savedInstanceState);
 		setTitle("Options");
 		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		if (Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB) {
 			addPreferencesFromResource(R.xml.preference_appearance);
@@ -167,7 +170,6 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 				break;
 			}
 		}
-
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -285,9 +287,8 @@ public class Options extends SherlockPreferenceActivity implements OnSharedPrefe
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:    
-			//mDrawerLayout.toggle();
-			Toast.makeText(this, "Navigation Drawer\nComing Soon", Toast.LENGTH_SHORT).show();;
+		case android.R.id.home:
+	        NavUtils.navigateUpFromSameTask(this);
 			break;
 		}
 

@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,17 +41,14 @@ public class SD extends SherlockFragmentActivity{
 	private final static String DEFAULT_BACKUP_DIR = "/WelshFinanceBackUps";
 	private final static int PICKFILE_RESULT_CODE = 123;
 
-	//NavigationDrawer
-	private Drawer drawer;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sd);
 		setTitle("Local Backup");
-
-		//NavigationDrawer
-		drawer = new Drawer(this);
+		
+		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}//end onCreate
 
@@ -59,23 +57,11 @@ public class SD extends SherlockFragmentActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:    
-			drawer.toggle();
+	        NavUtils.navigateUpFromSameTask(this);
 			break;
 		}
 
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		drawer.getDrawerToggle().syncState();
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
 	
 	public void sdRestore(View v) {

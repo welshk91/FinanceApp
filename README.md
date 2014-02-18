@@ -21,15 +21,14 @@ There is currently no license I'm releasing this code under (subject to change).
 
 Known Issues
 --------------------------------------
-* Options does not have the navigationDrawer yet
-* Have a minor window leak in Options from delete dialog not being dismissed on rotation change (change to dialog fragment)
+* Need to refresh cards when plans/transactions/accounts are changed
+* Options navigates "up" awkwardly
 
 Things To Do
 --------------------------------------
 * Complete work on Dropbox sync and add Dropbox 'Saver' Drop-In (when it becomes available)
 * Add Archieve support (ie keep balance when making back ups)
 * Password/Pattern, warning of liability. Add encryption and email for recovery?
-* CardsUI to display important information on homesceen
 * Make the Attachment code available
 * Add custom search suggestions
 * PDF Reports
@@ -54,6 +53,7 @@ Optimizations
 * Make ListView only show a few entries, load new entries when needed (Endless listview)
 * Make sure any SQL Joins are small (older sql_lite versions struggle with it)
 
+
 Notes to Self
 --------------------------------------
 * Need more spinners, less typing
@@ -61,10 +61,7 @@ Notes to Self
 * Possibly 'hide' advance options in add dialogs, 'expand' for more options
 * Link a contact (own table?)
 * Possibly a payee field, own table. Can avoid if description is dropdown.
-* GIT Reminders for Myself:
-	- git add -A
-	- git commit -a -m 'Fixed some warnings'
-	- git push -u origin master
+
 
 Attachments
 ---------------------------------------
@@ -85,5 +82,6 @@ Third-Party Libraries Used
 * [Android Lock Pattern](https://code.google.com/p/android-lockpattern/)
 * [ColorPickerPreference](https://github.com/attenzione/android-ColorPickerPreference) by Sergey Margaritov
 * [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide
+* Soon: [Wizard Pager](https://github.com/romannurik/Android-WizardPager) by Roman Nurik
 * Soon: [Showcase View](https://github.com/Espiandev/ShowcaseView) by Alex Curran
 * Soon: [ChartView](https://github.com/nadavfima/ChartView/) by nadavfima

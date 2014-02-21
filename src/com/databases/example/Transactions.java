@@ -110,7 +110,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			setHasOptionsMenu(true);
 		}
 
-		setRetainInstance(false);
+		setRetainInstance(true);
 
 	}//end onCreate
 

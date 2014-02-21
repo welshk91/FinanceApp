@@ -93,7 +93,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			setHasOptionsMenu(true);
 		}
 
-		setRetainInstance(false);
+		setRetainInstance(true);
 
 	}// end onCreate
 

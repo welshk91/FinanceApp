@@ -31,10 +31,15 @@ public class Checkbook extends SherlockFragmentActivity {
 		setContentView(R.layout.checkbook);
 		setTitle("Checkbook");
 
-		if(savedInstanceState!=null){
-			Log.e("Checkbook","SavedState");
-			return;
-		}
+		/*
+		 * This crashes if you change orientation
+		 * has to do with onPostCreate()
+		 * */
+		
+		//if(savedInstanceState!=null){
+		//	Log.e("Checkbook","SavedState");
+		//	return;
+		//}
 		
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
@@ -42,7 +47,7 @@ public class Checkbook extends SherlockFragmentActivity {
 		//Clear notifications
 		if (getIntent().getExtras() != null) {
 			Bundle b = getIntent().getExtras();
-
+		
 			if(b.getBoolean("fromNotification")){
 				clearNotifications();
 			}

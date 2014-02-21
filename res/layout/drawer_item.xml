@@ -5,6 +5,7 @@
     android:background="@android:color/transparent"
     android:drawableLeft="@drawable/slidingmenu_exit"
     android:drawablePadding="12dp"
+    android:fontFamily="sans-serif-light"
     android:gravity="center_vertical"
     android:minHeight="48dp"
     android:paddingBottom="2dp"

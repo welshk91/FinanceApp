@@ -85,3 +85,7 @@ Third-Party Libraries Used
 * Soon: [Wizard Pager](https://github.com/romannurik/Android-WizardPager) by Roman Nurik
 * Soon: [Showcase View](https://github.com/Espiandev/ShowcaseView) by Alex Curran
 * Soon: [ChartView](https://github.com/nadavfima/ChartView/) by nadavfima
+
+Icons Used
+------------------------------------------
+* [Elegant Icon Font](http://www.elegantthemes.com/blog/resources/elegant-icon-font) by Nick Roach

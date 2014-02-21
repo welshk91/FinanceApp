@@ -189,35 +189,35 @@ public class Drawer extends SherlockFragmentActivity{
 
 			switch (position) {
 			case 0:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_home, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_house_alt, 0, 0, 0);
 				break;	
 
 			case 1:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_archive, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_wallet, 0, 0, 0);
 				break;
 
 			case 2:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_sort_by_size, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_ul, 0, 0, 0);
 				break;
 
 			case 3:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_today, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_calendar, 0, 0, 0);
 				break;
 
 			case 4:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_agenda, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_easel, 0, 0, 0);
 				break;
 
 			case 5:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_preferences, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_adjust_horiz, 0, 0, 0);
 				break;
 
 			case 6:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_help, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_question, 0, 0, 0);
 				break;
 
 			case 7:
-				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_close_clear_cancel, 0, 0, 0);
+				itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_close_alt2, 0, 0, 0);
 				break;
 
 			default:

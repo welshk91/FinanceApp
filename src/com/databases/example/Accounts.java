@@ -359,6 +359,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//If you're in dual-pane mode
 		if(transaction_frame!=null){
 			MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+			menuSearch.setActionView(R.layout.search_widget);
 			menuSearch.setIcon(android.R.drawable.ic_menu_search);
 			menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 

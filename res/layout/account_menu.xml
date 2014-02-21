@@ -20,7 +20,7 @@
 
     <item
         android:id="@+id/account_menu_sort"
-        android:icon="@drawable/ic_menu_sort_by_size"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Sort"/>
 
     <item

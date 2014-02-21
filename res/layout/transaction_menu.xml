@@ -3,8 +3,9 @@
 
     <item
         android:id="@+id/transaction_menu_search"
+        android:actionViewClass="com.actionbarsherlock.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
-        android:showAsAction="ifRoom"
+        android:showAsAction="ifRoom|collapseActionView"
         android:title="Search"/>
 
     <item
@@ -20,7 +21,7 @@
 
     <item
         android:id="@+id/transaction_menu_sort"
-        android:icon="@drawable/ic_menu_sort_by_size"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Sort"/>
 
 </menu>

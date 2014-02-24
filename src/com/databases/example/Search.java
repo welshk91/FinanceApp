@@ -35,7 +35,7 @@ import android.support.v4.widget.DrawerLayout;
  * Look at Dictionary example for reference (Virtual Tables)
  */
 
-public class SearchMain extends SherlockFragmentActivity {
+public class Search extends SherlockFragmentActivity {
 	//The word being searched
 	private String query;
 

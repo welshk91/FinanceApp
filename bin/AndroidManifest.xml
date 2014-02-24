@@ -91,7 +91,7 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".SearchMain"
+            android:name=".Search"
             android:clearTaskOnLaunch="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"

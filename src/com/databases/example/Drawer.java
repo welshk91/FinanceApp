@@ -60,9 +60,6 @@ public class Drawer extends SherlockFragmentActivity{
 			}
 		};
 
-		//drawerToggle.setDrawerIndicatorEnabled(true);
-		//Log.e("Drawer","Indicator enabled="+drawerToggle.isDrawerIndicatorEnabled());
-
 		// Set the drawer toggle as the DrawerListener
 		drawerLayout.setDrawerListener(drawerToggle);
 		((SherlockFragmentActivity) context).getSupportActionBar().setHomeButtonEnabled(true);

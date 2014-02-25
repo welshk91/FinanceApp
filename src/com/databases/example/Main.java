@@ -65,7 +65,8 @@ public class Main extends SherlockFragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getSupportMenuInflater();
-		inflater.inflate(R.layout.main_menu, menu);		
+		inflater.inflate(R.layout.main_menu, menu);
+		SearchWidget searchWidget = new SearchWidget(this,menu.findItem(R.id.main_menu_search).getActionView());
 		return true;
 	}
 
@@ -76,11 +77,6 @@ public class Main extends SherlockFragmentActivity {
 		case android.R.id.home:
 			drawer.toggle();
 			break;
-
-		case R.id.main_menu_search:    
-			onSearchRequested();
-			break;
-
 		}
 		return true;
 	}

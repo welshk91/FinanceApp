@@ -1,6 +1,7 @@
-/* A simple Activity for the Checkbook screen
- * Most of the work seen in the Checkbook screen is actually the fragments,
- * not this class. This class is just a simple parent Activity for the fragments
+/* A activity to handle the when a user forgets his lockscreen pattern
+ * Not used just yet. Might be better to make this a plugin for the app
+ * to avoid the Internet permission and extra third-party library needed
+ * to email
  */
 
 package com.databases.example;

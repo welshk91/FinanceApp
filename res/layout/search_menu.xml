@@ -3,8 +3,9 @@
 
     <item
         android:id="@+id/search_menu_search"
+        android:actionViewClass="com.actionbarsherlock.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always|collapseActionView"
         android:title="Search"/>
 
 </menu>

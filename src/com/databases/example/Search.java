@@ -55,11 +55,9 @@ public class Search extends SherlockFragmentActivity {
 	} 
 
 	private void handleIntent(Intent intent) { 
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) { 
-			query = intent.getStringExtra(SearchManager.QUERY);
-			setTitle("Search <" + query + ">");
-			makeView();
-		}
+		query = intent.getStringExtra("query");
+		setTitle("Search <" + query + ">");
+		makeView();
 	}    
 
 	//Method that handles setting up the Tabs
@@ -77,14 +75,6 @@ public class Search extends SherlockFragmentActivity {
 
 		//NavigationDrawer
 		drawer = new Drawer(this);
-	}
-
-	//Override method to send the search extra data, letting it know which class called it
-	@Override
-	public boolean onSearchRequested() {
-		Bundle appData = new Bundle();
-		startSearch(null, false, appData, false);
-		return true;
 	}
 
 	public static class MyPagerAdapter extends FragmentStatePagerAdapter
@@ -186,18 +176,13 @@ public class Search extends SherlockFragmentActivity {
 
 	}//end mypageadapter
 
-	@Override
-	public void onDestroy(){
-		//Toast.makeText(this, "Destroying...", Toast.LENGTH_SHORT).show();
-		super.onDestroy();
-	}
-
 	//For Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.layout.search_menu, menu);
+		SearchWidget searchWidget = new SearchWidget(this, menu.findItem(R.id.search_menu_search).getActionView());		
 		return true;
 	}
 
@@ -208,11 +193,6 @@ public class Search extends SherlockFragmentActivity {
 		case android.R.id.home:
 			drawer.toggle();
 			break;
-
-		case R.id.search_menu_search:    
-			onSearchRequested();
-			break;
-
 		}
 		return true;
 	}
@@ -228,5 +208,5 @@ public class Search extends SherlockFragmentActivity {
 		super.onConfigurationChanged(newConfig);
 		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
-	
+
 }//end SearchMain

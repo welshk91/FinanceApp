@@ -59,15 +59,6 @@ public class Cards extends SherlockFragment {
 		return myFragmentView;
 	}
 
-	//For Menu
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		super.onCreateOptionsMenu(menu);
-	//		MenuInflater inflater = getSupportMenuInflater();
-	//		inflater.inflate(R.layout.main_menu, menu);
-	//		return true;
-	//	}
-
 	//For Menu Items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -83,14 +74,6 @@ public class Cards extends SherlockFragment {
 		}
 		return true;
 	}
-
-	//Override method to send the search extra data, letting it know which class called it
-	//	@Override
-	//	public boolean onSearchRequested() {
-	//		Bundle appData = new Bundle();
-	//		startSearch(null, false, appData, false);
-	//		return true;
-	//	}
 
 	public void dealCardsCheckbook(CardUI view){
 		Cursor accountCursor = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);

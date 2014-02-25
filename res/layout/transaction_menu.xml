@@ -5,7 +5,7 @@
         android:id="@+id/transaction_menu_search"
         android:actionViewClass="com.actionbarsherlock.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
-        android:showAsAction="ifRoom|collapseActionView"
+        android:showAsAction="always|collapseActionView"
         android:title="Search"/>
 
     <item

@@ -233,7 +233,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 
 		if(item.getItemId()==CONTEXT_MENU_OPEN){
-			//Toast.makeText(Transactions.this.getActivity(), "Open in trans", Toast.LENGTH_SHORT).show();
 			transactionOpen(item);
 			return true;
 		}  
@@ -312,6 +311,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		else{
 			menu.clear();
 			inflater.inflate(R.layout.transaction_menu, menu);
+			SearchWidget searchWidget = new SearchWidget(getSherlockActivity(),menu.findItem(R.id.transaction_menu_search).getActionView());
 		}
 
 	}
@@ -329,10 +329,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		case R.id.transaction_menu_add:    
 			transactionAdd();
-			return true;
-
-		case R.id.transaction_menu_search:    
-			getActivity().onSearchRequested();
 			return true;
 
 		case R.id.transaction_menu_schedule:    

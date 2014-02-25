@@ -48,10 +48,12 @@ import android.support.v4.app.LoaderManager;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.widget.SearchView;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private final int PICKFILE_RESULT_CODE = 1;
@@ -359,9 +361,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//If you're in dual-pane mode
 		if(transaction_frame!=null){
 			MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
-			menuSearch.setActionView(R.layout.search_widget);
 			menuSearch.setIcon(android.R.drawable.ic_menu_search);
-			menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+	        menuSearch.setActionView(new SearchView(getSherlockActivity().getSupportActionBar().getThemedContext()));
+			
+			SearchWidget searchWidget = new SearchWidget(getActivity(),menuSearch.getActionView());
 
 			SubMenu subMenu1 = menu.addSubMenu("Account");
 			subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
@@ -374,6 +378,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 		else{
 			inflater.inflate(R.layout.account_menu, menu);
+			SearchWidget searchWidget = new SearchWidget(getActivity(),menu.findItem(R.id.account_menu_search).getActionView());			
 		}
 
 	}
@@ -388,10 +393,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			//startActivity(intentUp);
 			//menu.toggle();
 			break;
-
-		case R.id.account_menu_search:
-			getActivity().onSearchRequested();
-			return true;
 
 		case R.id.account_menu_add:    
 			accountAdd();

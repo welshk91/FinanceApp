@@ -1698,17 +1698,16 @@ containing a value of this type.
         public static final int sd_backup=0x7f030042;
         public static final int search=0x7f030043;
         public static final int search_menu=0x7f030044;
-        public static final int search_widget=0x7f030045;
-        public static final int sherlock_spinner_dropdown_item=0x7f030046;
-        public static final int sherlock_spinner_item=0x7f030047;
-        public static final int sort_accounts=0x7f030048;
-        public static final int sort_transactions=0x7f030049;
-        public static final int subcategory_item=0x7f03004a;
-        public static final int transaction_add=0x7f03004b;
-        public static final int transaction_item=0x7f03004c;
-        public static final int transaction_menu=0x7f03004d;
-        public static final int transaction_stats=0x7f03004e;
-        public static final int transactions=0x7f03004f;
+        public static final int sherlock_spinner_dropdown_item=0x7f030045;
+        public static final int sherlock_spinner_item=0x7f030046;
+        public static final int sort_accounts=0x7f030047;
+        public static final int sort_transactions=0x7f030048;
+        public static final int subcategory_item=0x7f030049;
+        public static final int transaction_add=0x7f03004a;
+        public static final int transaction_item=0x7f03004b;
+        public static final int transaction_menu=0x7f03004c;
+        public static final int transaction_stats=0x7f03004d;
+        public static final int transactions=0x7f03004e;
     }
     public static final class plurals {
         public static final int alp_pmsg_connect_x_dots=0x7f0a0000;

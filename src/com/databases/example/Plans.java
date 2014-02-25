@@ -16,6 +16,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -336,8 +337,11 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		//Show Search
 		MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
-		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
+		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
+		
+		SearchWidget searchWidget = new SearchWidget(this,menuSearch.getActionView());
+		
 		//Add
 		MenuItem subMenu1Item = menu.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
 		subMenu1Item.setIcon(android.R.drawable.ic_menu_add);
@@ -356,13 +360,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 		case ACTIONBAR_MENU_ADD_PLAN_ID:
 			planAdd();
-			//PlanRecord testRecord = new PlanRecord(1+"", 1+"", "test record", "50", "Deposit", "Electrical", "Memo things", "02-25-2013", "3 Months", "false");
-			//schedule(testRecord);
 			break;
-
-		case R.id.account_menu_search:    
-			onSearchRequested();
-			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -1350,7 +1348,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 							//Cancel old plan
 							((Plans) getSherlockActivity()).cancelPlan(oldRecord);
-							
+
 							//Update plan
 							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+ID), transactionValues, "PlanID ="+ID, null);
 

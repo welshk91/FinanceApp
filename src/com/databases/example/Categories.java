@@ -35,6 +35,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -263,7 +264,10 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		//Show Search
 		MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
-		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
+		
+		SearchWidget searchWidget = new SearchWidget(this,menuSearch.getActionView());
 
 		//Show Add Icon
 		MenuItem menuAdd = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
@@ -280,11 +284,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		case android.R.id.home:    
 			drawer.toggle();
 			break;
-
-		case R.id.account_menu_search:    
-			onSearchRequested();
-			return true;
-
+			
 		case R.id.account_menu_add:    
 			categoryAdd(null);
 			return true;

@@ -64,6 +64,7 @@ import com.actionbarsherlock.view.SubMenu;
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
 	private static final int TRANS_SEARCH_LOADER = 98765;
+	private static final int TRANS_BALANCE_LOADER = 987;
 
 	//Used to determine if fragment should show all transactions
 	private boolean showAllTransactions=false;
@@ -85,10 +86,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private int CONTEXT_MENU_OPEN=5;
 	private int CONTEXT_MENU_EDIT=6;
 	private int CONTEXT_MENU_DELETE=7;
-	private int CONTEXT_MENU_ATTACH=8;
 
 	//ListView Adapter
-	private static UserItemAdapter adapterTransaction = null;
+	private static UserItemAdapter adapterTransactions = null;
 
 	//For Autocomplete
 	private static ArrayList<String> dropdownResults = new ArrayList<String>();
@@ -100,15 +100,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		//Arguments
-		Bundle bundle=getArguments();
-
-		//bundle is empty if from search, so don't add extra menu options
-		if(bundle!=null || savedInstanceState!=null){
-			setHasOptionsMenu(true);
-		}
-
 	}//end onCreate
 
 	@Override
@@ -127,8 +118,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-				int selectionRowID = (int) adapterTransaction.getItemId(position);
-				String item = adapterTransaction.getTransaction(position).name;
+				int selectionRowID = (int) adapterTransactions.getItemId(position);
+				String item = adapterTransactions.getTransaction(position).name;
 
 				Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
 
@@ -148,11 +139,20 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
 		lv.setEmptyView(noResult);
 
-		adapterTransaction = new UserItemAdapter(this.getActivity(), null);
-		lv.setAdapter(adapterTransaction);
+		adapterTransactions = new UserItemAdapter(this.getActivity(), null);
+		lv.setAdapter(adapterTransactions);
 
+		//Call Loaders to get data
 		populate();
-		//calculateBalance();
+
+		//Arguments
+		Bundle bundle=getArguments();
+
+		//bundle is empty if from search, so don't add extra menu options
+		if(bundle!=null){
+			setHasOptionsMenu(true);
+			calculateBalance();
+		}
 
 		setRetainInstance(true);
 
@@ -225,7 +225,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = adapterTransaction.getTransaction(itemInfo.position).name;
+		String name = adapterTransactions.getTransaction(itemInfo.position).name;
 
 		menu.setHeaderTitle(name);  
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
@@ -259,7 +259,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Opening a Transaction
 	public void transactionOpen(android.view.MenuItem item){  
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		int id = adapterTransaction.getTransaction(itemInfo.position).id;
+		int id = adapterTransactions.getTransaction(itemInfo.position).id;
 
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getChildFragmentManager(), "dialogView");
@@ -274,7 +274,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Editing an Transaction
 	public void transactionEdit(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final TransactionRecord record = adapterTransaction.getTransaction(itemInfo.position);
+		final TransactionRecord record = adapterTransactions.getTransaction(itemInfo.position);
 
 		DialogFragment newFragment = EditDialogFragment.newInstance(record);
 		newFragment.show(getChildFragmentManager(), "dialogEdit");	
@@ -283,7 +283,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	//For Deleting an Transaction
 	public void transactionDelete(android.view.MenuItem item){
 		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		TransactionRecord record = adapterTransaction.getTransaction(itemInfo.position);
+		TransactionRecord record = adapterTransactions.getTransaction(itemInfo.position);
 
 		Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
 		getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
@@ -367,30 +367,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Calculates the balance
 	public void calculateBalance(){
-		DatabaseHelper dh = new DatabaseHelper(getActivity());
-		Locale locale = getResources().getConfiguration().locale;
-
-		Cursor cDeposit = dh.sumDeposits(account_id);
-		cDeposit.moveToFirst();
-		Money sumDeposits = new Money(cDeposit.getFloat(0));
-
-		Cursor cWithdraw = dh.sumWithdraws(account_id);
-		cWithdraw.moveToFirst();
-		Money sumWithdraws = new Money(cWithdraw.getFloat(0));
-
-		BigDecimal totalBalance = sumDeposits.getBigDecimal(locale).subtract(sumWithdraws.getBigDecimal(locale));
-
-		TextView balance = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
-		balance.setText("Total Balance: " + totalBalance);
-
-		if(account_id!=0){
-			ContentValues values = new ContentValues();
-			values.put("AcctBalance", totalBalance+"");		
-			getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
-		}
-
-		cDeposit.close();
-		cWithdraw.close();
+		getLoaderManager().initLoader(TRANS_BALANCE_LOADER, null, this);		
 	}
 
 	//Method Called to refresh the list of categories if user changes the list
@@ -1433,6 +1410,19 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					null,            	// No selection arguments
 					sortOrder           // Default sort order
 					);			
+
+		case TRANS_BALANCE_LOADER:
+			String[] projection = new String[]{ "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"};
+			String selection = "ToAcctID=" + account_id;
+			Log.e("Transactions-onCreateLoader","new balance loader created");
+			return new CursorLoader(
+					getActivity(),   	// Parent activity context
+					MyContentProvider.TRANSACTIONS_URI,// Table to query
+					projection,     			// Projection to return
+					selection,            	// No selection clause
+					null,            	// No selection arguments
+					sortOrder           // Default sort order
+					);			
 		default:
 			Log.e("Transactions-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1441,14 +1431,60 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
-		adapterTransaction.swapCursor(data);
+		switch(loader.getId()){
+		case TRANS_BALANCE_LOADER:
+
+			int balanceColumn = data.getColumnIndex("TransValue");
+			int typeColumn = data.getColumnIndex("TransType");
+			BigDecimal totalBalance = BigDecimal.ZERO;
+			Locale locale=getResources().getConfiguration().locale;
+
+
+			while(data.moveToNext()){
+				if(data.getString(typeColumn).equals("Deposit")){
+					totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));					
+				}
+				else{
+					totalBalance = totalBalance.subtract(new Money(data.getString(balanceColumn)).getBigDecimal(locale));					
+				}
+			}
+
+			Log.e("Transactions-onLoadFinished","totalBalance="+totalBalance);
+
+			try{
+				TextView balanceTV = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
+				balanceTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
+			}
+			catch(Exception e){
+				Log.e("Transactions-onLoadFinished", "Error setting balance TextView. e="+e);
+			}
+
+			if(account_id!=0){
+				ContentValues values = new ContentValues();
+				values.put("AcctBalance", totalBalance+"");		
+				getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
+			}
+
+			break;
+		default:
+			adapterTransactions.swapCursor(data);
+			Log.e("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			break;
+		}	
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		Log.e("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
-		adapterTransaction.swapCursor(null);
+		switch(loader.getId()){
+		case TRANS_BALANCE_LOADER:
+			Log.e("Transactions-onLoaderReset", "balance loader reset. loader="+loader.getId());			
+			break;
+
+		default:
+			adapterTransactions.swapCursor(null);
+			Log.e("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+		}	
 	}
 
 }//end Transactions

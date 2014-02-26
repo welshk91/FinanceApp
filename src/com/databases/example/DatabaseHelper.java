@@ -343,14 +343,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return currentDB;
 	}
 
-	//Sum up all the account balances
-	public Cursor sumAccounts(){
-		SQLiteDatabase db = this.getReadableDatabase();
-		String sqlCommand = "SELECT SUM(AcctBalance) FROM " + TABLE_ACCOUNTS;
-		Cursor cursor = db.rawQuery(sqlCommand, null);
-		return cursor;
-	}
-
 	//Get all accounts
 	public Cursor getAccounts(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;

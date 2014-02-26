@@ -8,7 +8,7 @@
         android:id="@+id/account_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/account_total_balance"
+        android:layout_above="@+id/account_footer"
         android:layout_alignParentTop="true"
         android:drawSelectorOnTop="true" />
 
@@ -22,7 +22,7 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/account_total_balance"
+        android:id="@+id/account_footer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -64,7 +64,6 @@ import com.actionbarsherlock.view.SubMenu;
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
 	private static final int TRANS_SEARCH_LOADER = 98765;
-	private static final int TRANS_BALANCE_LOADER = 987;
 
 	//Used to determine if fragment should show all transactions
 	private boolean showAllTransactions=false;
@@ -151,7 +150,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//bundle is empty if from search, so don't add extra menu options
 		if(bundle!=null){
 			setHasOptionsMenu(true);
-			calculateBalance();
 		}
 
 		setRetainInstance(true);
@@ -184,13 +182,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				account_id = bundle.getInt("ID");				
 			}
 
-			Log.e("Transactions-onResume","searchFragment="+searchFragment+"\nshowAllTransactions="+showAllTransactions+"\nAccount_id="+account_id);
+			Log.e("Transactions-populate","searchFragment="+searchFragment+"\nshowAllTransactions="+showAllTransactions+"\nAccount_id="+account_id);
 		}
 
 		if(showAllTransactions){
 			Bundle b = new Bundle();
 			b.putBoolean("boolShowAll", true);
-			Log.e("Transactions-onResume","start loader (all transactions)...");
+			Log.e("Transactions-populate","start loader (all transactions)...");
 			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 		else if(searchFragment){
@@ -200,11 +198,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				Log.e("Transactions-onResume","start search loader...");
+				Log.e("Transactions-populate","start search loader...");
 				getLoaderManager().initLoader(TRANS_SEARCH_LOADER, b, this);
 			}
 			catch(Exception e){
-				Log.e("Transactions-onResume", "Search Failed. Error e=" + e);
+				Log.e("Transactions-populate", "Search Failed. Error e=" + e);
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
 				//return;
 			}
@@ -213,7 +211,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		else{
 			Bundle b = new Bundle();
 			b.putInt("aID", account_id);
-			Log.e("Transactions-onResume","start loader (ToAcctID="+ account_id + ")...");
+			Log.e("Transactions-populate","start loader (ToAcctID="+ account_id + ")...");
 			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 
@@ -363,11 +361,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Log.e("Transactions-onSharedPreferenceChanged","Transaction is detached");
 			//Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();			
 		}
-	}
-
-	//Calculates the balance
-	public void calculateBalance(){
-		getLoaderManager().initLoader(TRANS_BALANCE_LOADER, null, this);		
 	}
 
 	//Method Called to refresh the list of categories if user changes the list
@@ -1411,18 +1404,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					sortOrder           // Default sort order
 					);			
 
-		case TRANS_BALANCE_LOADER:
-			String[] projection = new String[]{ "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"};
-			String selection = "ToAcctID=" + account_id;
-			Log.e("Transactions-onCreateLoader","new balance loader created");
-			return new CursorLoader(
-					getActivity(),   	// Parent activity context
-					MyContentProvider.TRANSACTIONS_URI,// Table to query
-					projection,     			// Projection to return
-					selection,            	// No selection clause
-					null,            	// No selection arguments
-					sortOrder           // Default sort order
-					);			
 		default:
 			Log.e("Transactions-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1431,29 +1412,33 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		switch(loader.getId()){
-		case TRANS_BALANCE_LOADER:
+		TextView footerTV = (TextView)this.myFragmentView.findViewById(R.id.transaction_footer);
 
-			int balanceColumn = data.getColumnIndex("TransValue");
+		switch(loader.getId()){
+		case TRANS_LOADER:
+			adapterTransactions.swapCursor(data);
+			Log.e("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+
+			int valueColumn = data.getColumnIndex("TransValue");
 			int typeColumn = data.getColumnIndex("TransType");
 			BigDecimal totalBalance = BigDecimal.ZERO;
 			Locale locale=getResources().getConfiguration().locale;
 
 
 			while(data.moveToNext()){
+				Log.e("Transaction-onLoadFinished","value="+data.getString(valueColumn) + " type="+data.getString(typeColumn));
 				if(data.getString(typeColumn).equals("Deposit")){
-					totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));					
+					totalBalance = totalBalance.add(new Money(data.getString(valueColumn)).getBigDecimal(locale));					
 				}
 				else{
-					totalBalance = totalBalance.subtract(new Money(data.getString(balanceColumn)).getBigDecimal(locale));					
+					totalBalance = totalBalance.subtract(new Money(data.getString(valueColumn)).getBigDecimal(locale));					
 				}
 			}
 
 			Log.e("Transactions-onLoadFinished","totalBalance="+totalBalance);
 
 			try{
-				TextView balanceTV = (TextView)this.myFragmentView.findViewById(R.id.transaction_total_balance);
-				balanceTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
+				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
 			}
 			catch(Exception e){
 				Log.e("Transactions-onLoadFinished", "Error setting balance TextView. e="+e);
@@ -1462,13 +1447,26 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			if(account_id!=0){
 				ContentValues values = new ContentValues();
 				values.put("AcctBalance", totalBalance+"");		
-				getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
+				getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
 			}
 
 			break;
-		default:
+
+		case TRANS_SEARCH_LOADER:
 			adapterTransactions.swapCursor(data);
 			Log.e("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+
+			try{
+				footerTV.setText("Search Results");
+			}
+			catch(Exception e){
+				Log.e("Transactions-onLoadFinished", "Error setting search TextView. e="+e);
+			}
+
+			break;
+
+		default:
+			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
 	}
@@ -1476,10 +1474,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch(loader.getId()){
-		case TRANS_BALANCE_LOADER:
-			Log.e("Transactions-onLoaderReset", "balance loader reset. loader="+loader.getId());			
-			break;
-
 		default:
 			adapterTransactions.swapCursor(null);
 			Log.e("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());

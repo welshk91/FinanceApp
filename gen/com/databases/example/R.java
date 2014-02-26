@@ -1491,6 +1491,7 @@ containing a value of this type.
         public static final int abs__up=0x7f0c000b;
         public static final int account_balance=0x7f0c003c;
         public static final int account_date=0x7f0c003d;
+        public static final int account_footer=0x7f0c0051;
         public static final int account_frag_frame=0x7f0c0083;
         public static final int account_gradient=0x7f0c003a;
         public static final int account_layout=0x7f0c0039;
@@ -1503,7 +1504,6 @@ containing a value of this type.
         public static final int account_name=0x7f0c003b;
         public static final int account_noTransaction=0x7f0c0052;
         public static final int account_time=0x7f0c003e;
-        public static final int account_total_balance=0x7f0c0051;
         public static final int accounts=0x7f0c004f;
         public static final int accounts_stats=0x7f0c0044;
         public static final int alp_button_cancel=0x7f0c0056;
@@ -1600,6 +1600,7 @@ containing a value of this type.
         public static final int transaction_checknum=0x7f0c00d4;
         public static final int transaction_cleared=0x7f0c00d8;
         public static final int transaction_date=0x7f0c00d6;
+        public static final int transaction_footer=0x7f0c00e1;
         public static final int transaction_frag_frame=0x7f0c0085;
         public static final int transaction_gradient=0x7f0c00cf;
         public static final int transaction_layout=0x7f0c00ce;
@@ -1612,7 +1613,6 @@ containing a value of this type.
         public static final int transaction_name=0x7f0c00d0;
         public static final int transaction_noTransaction=0x7f0c00e2;
         public static final int transaction_time=0x7f0c00d7;
-        public static final int transaction_total_balance=0x7f0c00e1;
         public static final int transaction_type=0x7f0c00d2;
         public static final int transaction_value=0x7f0c00d1;
         public static final int useLogo=0x7f0c0004;

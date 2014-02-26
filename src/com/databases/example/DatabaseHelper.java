@@ -412,36 +412,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return 0;
 	}
 
-	//Sum up all the positive transactions 
-	public Cursor sumDeposits(int AcctID){
-		SQLiteDatabase db = this.getReadableDatabase();
-		String sqlCommand;
-
-		if(AcctID==0){
-			sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE TransType='Deposit'";
-		}
-		else{
-			sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID + " AND TransType='Deposit'";			
-		}
-		Cursor cursor = db.rawQuery(sqlCommand, null);
-		return cursor;
-	}
-
-	//Sum up all the negative transactions 
-	public Cursor sumWithdraws(int AcctID){
-		SQLiteDatabase db = this.getReadableDatabase();
-		String sqlCommand;
-
-		if(AcctID==0){
-			sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE TransType='Withdraw'";
-		}
-		else{
-			sqlCommand = "SELECT SUM(TransValue) FROM " + TABLE_TRANSACTIONS + " WHERE ToAcctID="+AcctID + " AND TransType='Withdraw'";			
-		}
-		Cursor cursor = db.rawQuery(sqlCommand, null);
-		return cursor;
-	}
-
 	//Get all transactions for an account
 	public Cursor getTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;

@@ -4,7 +4,6 @@
 
 package com.databases.example;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Locale;
@@ -57,13 +56,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private final int PICKFILE_RESULT_CODE = 1;
 	private static final int ACCOUNTS_LOADER = 123456789;
 	private static final int ACCOUNTS_SEARCH_LOADER = 12345;
-	private static final int ACCOUNTS_BALANCE_LOADER = 123;
 
 	//Constants for ContextMenu
 	private int CONTEXT_MENU_OPEN=1;
 	private int CONTEXT_MENU_EDIT=2;
 	private int CONTEXT_MENU_DELETE=3;
-	private int CONTEXT_MENU_ATTACH=4;
 
 	//Spinners for transfers
 	private static Spinner transferSpinnerTo;
@@ -163,7 +160,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		//bundle is empty if from search, so don't add extra menu options
 		if(bundle!=null){
 			setHasOptionsMenu(true);
-			calculateBalance();
 		}		
 				
 		setRetainInstance(true);
@@ -192,11 +188,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				Log.e("Accounts-onResume","start search loader...");
+				Log.e("Accounts-populate","start search loader...");
 				getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
 			}
 			catch(Exception e){
-				Log.e("Accounts-onResume","Search Failed. Error e="+e);
+				Log.e("Accounts-populate","Search Failed. Error e="+e);
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_LONG).show();
 			}
 
@@ -204,7 +200,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			Log.e("Accounts-onResume","start loader...");
+			Log.e("Accounts-populate","start loader...");
 			getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
 		}
 
@@ -222,7 +218,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
 		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
 		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
-		menu.add(0, CONTEXT_MENU_ATTACH, 3, "Attach");
 	}  
 
 	//Handles which methods are called when using the long presses menu
@@ -239,10 +234,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 		else if(item.getItemId()==CONTEXT_MENU_DELETE){
 			accountDelete(item);
-			return true;
-		}
-		else if(item.getItemId()==CONTEXT_MENU_ATTACH){
-			accountAttach(item);
 			return true;
 		}
 		else {
@@ -390,11 +381,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		case R.id.account_menu_sort:    
 			accountSort();
 			return true;
-
-		case R.id.account_menu_unknown:    
-			//Insert Unknown Code Here
-			pickFile(null);
-			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -408,37 +394,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			//getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
 			//getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
 		}
-	}
-
-	//Calculates the balance
-	public void calculateBalance(){
-		getLoaderManager().initLoader(ACCOUNTS_BALANCE_LOADER, null, this);		
-	}
-
-	//Method used to handle picking a file
-	void pickFile(File aFile) {
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType("*/*");
-		startActivityForResult(intent,PICKFILE_RESULT_CODE);
-	}
-
-	//Method called after picking a file
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data){
-		switch (requestCode) {
-		case PICKFILE_RESULT_CODE:
-			if(resultCode==getActivity().RESULT_OK){
-				Log.d("Accounts-onActivityResult", "OK");
-				/******CALL POPULATE AGAIN TO SHOW THE ATTACHMENT ICON*******/
-			}
-
-			if(resultCode==getActivity().RESULT_CANCELED){
-				Log.d("Accounts-onActivityResult", "canceled");
-			}
-
-			break;
-		}
-
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
@@ -1284,18 +1239,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					null,            	// No selection arguments
 					sortOrder           // Default sort order
 					);
-
-		case ACCOUNTS_BALANCE_LOADER:
-			Log.e("Accounts-onCreateLoader","new balance loader created");
-			return new CursorLoader(
-					getActivity(),   	// Parent activity context
-					MyContentProvider.ACCOUNTS_URI,// Table to query
-					null,     			// Projection to return
-					null,            	// No selection clause
-					null,            	// No selection arguments
-					sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
-					);
-
+			
 		default:
 			Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1304,8 +1248,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		TextView footerTV = (TextView)this.myFragmentView.findViewById(R.id.account_footer);
+
 		switch(loader.getId()){
-		case ACCOUNTS_BALANCE_LOADER:
+		case ACCOUNTS_LOADER:
+			adapterAccounts.swapCursor(data);
+			Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			int balanceColumn = data.getColumnIndex("AcctBalance");
 			BigDecimal totalBalance = BigDecimal.ZERO;
@@ -1318,17 +1266,29 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			Log.e("Accounts-onLoadFinished","totalBalance="+totalBalance);
 
 			try{
-				TextView balanceTV = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
-				balanceTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
+				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
 			}
 			catch(Exception e){
 				Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
 			}
 
 			break;
-		default:
+
+		case ACCOUNTS_SEARCH_LOADER:
 			adapterAccounts.swapCursor(data);
 			Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+
+			try{
+				footerTV.setText("Search Results");
+			}
+			catch(Exception e){
+				Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
+			}
+
+			break;
+
+		default:
+			Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}
 	}
@@ -1336,10 +1296,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch(loader.getId()){
-		case ACCOUNTS_BALANCE_LOADER:
-			Log.e("Accounts-onLoaderReset", "balance loader reset. loader="+loader.getId());			
-			break;
-
 		default:
 			adapterAccounts.swapCursor(null);
 			Log.e("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());

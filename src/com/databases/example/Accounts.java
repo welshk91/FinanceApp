@@ -57,7 +57,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private final int PICKFILE_RESULT_CODE = 1;
 	private static final int ACCOUNTS_LOADER = 123456789;
 	private static final int ACCOUNTS_SEARCH_LOADER = 12345;
-	private static DatabaseHelper dh = null;
+	private static final int ACCOUNTS_BALANCE_LOADER = 123;
 
 	//Constants for ContextMenu
 	private int CONTEXT_MENU_OPEN=1;
@@ -81,17 +81,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		dh = new DatabaseHelper(getActivity());
-
-		//Arguments
-		Bundle bundle=getArguments();
-
-		//bundle is empty if from search, so don't add extra menu options
-		if(bundle!=null || savedInstanceState!=null){
-			setHasOptionsMenu(true);
-		}
-
 	}// end onCreate
 
 	@Override
@@ -167,10 +156,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		lv.setAdapter(adapterAccounts);
 
 		populate();
-		//calculateBalance();
-
-		setRetainInstance(true);
 		
+		//Arguments
+		Bundle bundle=getArguments();
+
+		//bundle is empty if from search, so don't add extra menu options
+		if(bundle!=null){
+			setHasOptionsMenu(true);
+			calculateBalance();
+		}		
+				
+		setRetainInstance(true);
+
 		return myFragmentView;
 	}
 
@@ -337,16 +334,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
 	}//end of accountPopulate
 
-	//Handle closing database helper properly to avoid corruption
-	@Override
-	public void onDestroy() {
-		if(dh!=null){
-			dh.close();
-		}
-
-		super.onDestroy();
-	}
-
 	//For Menu
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -425,19 +412,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Calculates the balance
 	public void calculateBalance(){
-		Cursor c = dh.sumAccounts();
-		c.moveToFirst();
-		try{
-			Money totalBalance = new Money(c.getFloat(0));
-			TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
-			balance.setText("Total Balance: " + totalBalance.getNumberFormat(getResources().getConfiguration().locale));
-		}
-		catch(Exception e){
-			Log.e("Accounts-calculateBalance", "No Accounts? Error e="+e);
-			TextView balance = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
-			balance.setText("Total Balance: " + "BALANCED" );
-		}
-		c.close();
+		getLoaderManager().initLoader(ACCOUNTS_BALANCE_LOADER, null, this);		
 	}
 
 	//Method used to handle picking a file
@@ -1307,8 +1282,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					null,     			// Projection to return
 					null,            	// No selection clause
 					null,            	// No selection arguments
-					null             	// Default sort order
-					);			
+					sortOrder           // Default sort order
+					);
+
+		case ACCOUNTS_BALANCE_LOADER:
+			Log.e("Accounts-onCreateLoader","new balance loader created");
+			return new CursorLoader(
+					getActivity(),   	// Parent activity context
+					MyContentProvider.ACCOUNTS_URI,// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
+					);
 
 		default:
 			Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
@@ -1318,14 +1304,47 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		adapterAccounts.swapCursor(data);
-		Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+		switch(loader.getId()){
+		case ACCOUNTS_BALANCE_LOADER:
+
+			int balanceColumn = data.getColumnIndex("AcctBalance");
+			BigDecimal totalBalance = BigDecimal.ZERO;
+			Locale locale=getResources().getConfiguration().locale;
+
+			while(data.moveToNext()){
+				totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));
+			}
+
+			Log.e("Accounts-onLoadFinished","totalBalance="+totalBalance);
+
+			try{
+				TextView balanceTV = (TextView)this.myFragmentView.findViewById(R.id.account_total_balance);
+				balanceTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
+			}
+			catch(Exception e){
+				Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
+			}
+
+			break;
+		default:
+			adapterAccounts.swapCursor(data);
+			Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			break;
+		}
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		adapterAccounts.swapCursor(null);
-		Log.e("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+		switch(loader.getId()){
+		case ACCOUNTS_BALANCE_LOADER:
+			Log.e("Accounts-onLoaderReset", "balance loader reset. loader="+loader.getId());			
+			break;
+
+		default:
+			adapterAccounts.swapCursor(null);
+			Log.e("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+		}
 	}
 
 }//End Accounts

@@ -23,7 +23,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,7 +41,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.DrawerLayout;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -831,7 +829,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		switch (loaderID) {
 		case PLAN_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolSearch")){
-				String query = this.getIntent().getStringExtra(SearchManager.QUERY);
+				String query = this.getIntent().getStringExtra("query");
 				return new CursorLoader(
 						this,   	// Parent activity context
 						(Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query

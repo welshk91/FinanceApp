@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,7 +47,6 @@ import android.support.v4.app.LoaderManager;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -58,6 +56,7 @@ import com.actionbarsherlock.widget.SearchView;
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private final int PICKFILE_RESULT_CODE = 1;
 	private static final int ACCOUNTS_LOADER = 123456789;
+	private static final int ACCOUNTS_SEARCH_LOADER = 12345;
 	private static DatabaseHelper dh = null;
 
 	//Constants for ContextMenu
@@ -73,7 +72,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
 	private View myFragmentView;
-
 	private static String sortOrder= "null";
 
 	private ListView lv = null;
@@ -83,7 +81,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.getLoaderManager();
 
 		dh = new DatabaseHelper(getActivity());
 
@@ -94,8 +91,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(bundle!=null || savedInstanceState!=null){
 			setHasOptionsMenu(true);
 		}
-
-		setRetainInstance(false);
 
 	}// end onCreate
 
@@ -172,14 +167,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		lv.setAdapter(adapterAccounts);
 
 		populate();
+		//calculateBalance();
 
+		setRetainInstance(true);
+		
 		return myFragmentView;
 	}
 
-	//Method called after creation, populates list with account information
-	protected void populate() {
-		Log.d("Accounts","populating");
-		//Arguments sent by Account Fragment
+	//Populate view with accounts
+	protected void populate(){
+		Log.e("Accounts-populate","populating");
+
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
 
@@ -191,16 +189,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(searchFragment){
 
 			//Word being searched
-			String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);			
+			String query = getActivity().getIntent().getStringExtra("query");			
 
 			try{
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				getLoaderManager().restartLoader(ACCOUNTS_LOADER, b, this);
+				Log.e("Accounts-onResume","start search loader...");
+				getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
 			}
 			catch(Exception e){
-				Log.e("Accounts-populate","Search Failed. Error e="+e);
+				Log.e("Accounts-onResume","Search Failed. Error e="+e);
 				Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_LONG).show();
 			}
 
@@ -208,12 +207,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			getLoaderManager().restartLoader(ACCOUNTS_LOADER, bundle, this);
+			Log.e("Accounts-onResume","start loader...");
+			getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
 		}
 
-		calculateBalance();
-
-	}//end populate
+	}
 
 	//Creates menu for long presses
 	@Override  
@@ -363,8 +361,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 			menuSearch.setIcon(android.R.drawable.ic_menu_search);
 			menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-	        menuSearch.setActionView(new SearchView(getSherlockActivity().getSupportActionBar().getThemedContext()));
-			
+			menuSearch.setActionView(new SearchView(getSherlockActivity().getSupportActionBar().getThemedContext()));
+
 			SearchWidget searchWidget = new SearchWidget(getActivity(),menuSearch.getActionView());
 
 			SubMenu subMenu1 = menu.addSubMenu("Account");
@@ -1238,38 +1236,38 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					case 0:
 						//TODO Fix date so it can be sorted
 						sortOrder = "AcctDate" + " DESC" + ", AcctTime" + " DESC";
-						((Accounts) getParentFragment()).populate();
+						//((Accounts) getParentFragment()).populate();
 						break;
 
 						//Oldest
 					case 1:
 						//TODO Fix date so it can be sorted
 						sortOrder = "AcctDate" + " ASC" + ", AcctTime" + " ASC";
-						((Accounts) getParentFragment()).populate();
+						//((Accounts) getParentFragment()).populate();
 						break;
 
 						//Largest
 					case 2:
 						sortOrder = "CAST (AcctBalance AS INTEGER)" + " DESC";
-						((Accounts) getParentFragment()).populate();
+						//((Accounts) getParentFragment()).populate();
 						break;
 
 						//Smallest	
 					case 3:
 						sortOrder = "CAST (AcctBalance AS INTEGER)" + " ASC";
-						((Accounts) getParentFragment()).populate();
+						//((Accounts) getParentFragment()).populate();
 						break;
 
 						//Alphabetical	
 					case 4:
 						sortOrder = "AcctName" + " ASC";
-						((Accounts) getParentFragment()).populate();
+						//((Accounts) getParentFragment()).populate();
 						break;
 
 						//None	
 					case 5:
 						sortOrder = null;
-						((Accounts) getParentFragment()).populate();
+						//((Accounts) getParentFragment()).populate();
 						break;
 
 					default:
@@ -1291,27 +1289,27 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		Log.d("Accounts-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case ACCOUNTS_LOADER:
-			if(bundle!=null && bundle.getBoolean("boolSearch")){
-				String query = getActivity().getIntent().getStringExtra(SearchManager.QUERY);
-				return new CursorLoader(
-						getActivity(),   	// Parent activity context
-						(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
-						null,     			// Projection to return
-						null,            	// No selection clause
-						null,            	// No selection arguments
-						null             	// Default sort order
-						);
-			}
-			else{
-				return new CursorLoader(
-						getActivity(),   	// Parent activity context
-						MyContentProvider.ACCOUNTS_URI,// Table to query
-						null,     			// Projection to return
-						null,            	// No selection clause
-						null,            	// No selection arguments
-						sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
-						);				
-			}
+			Log.e("Accounts-onCreateLoader","new loader created");
+			return new CursorLoader(
+					getActivity(),   	// Parent activity context
+					MyContentProvider.ACCOUNTS_URI,// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
+					);
+		case ACCOUNTS_SEARCH_LOADER:
+			String query = getActivity().getIntent().getStringExtra("query");
+			Log.e("Accounts-onCreateLoader","new loader (boolSearch "+ query + ") created");
+			return new CursorLoader(
+					getActivity(),   	// Parent activity context
+					(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					null             	// Default sort order
+					);			
+
 		default:
 			Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1320,18 +1318,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		if(adapterAccounts!=null && data!=null){
-			adapterAccounts.swapCursor(data);			
-		}
-		Log.v("Accounts-onLoadFinished", "load done. loader="+loader + " data="+data);
+		adapterAccounts.swapCursor(data);
+		Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		if(adapterAccounts!=null){
-			adapterAccounts.swapCursor(null);
-		}
-		Log.v("Accounts-onLoaderReset", "loaderReset on " + loader);
+		adapterAccounts.swapCursor(null);
+		Log.e("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
 	}
 
 }//End Accounts

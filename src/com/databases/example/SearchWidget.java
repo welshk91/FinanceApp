@@ -35,7 +35,7 @@ public class SearchWidget extends SherlockFragmentActivity{
 				searchView.clearFocus();
 				Intent intentSearch = new Intent(context, Search.class);
 				intentSearch.putExtra("query", query);
-				intentSearch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intentSearch.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				context.startActivity(intentSearch);
 				return true; }
 		});

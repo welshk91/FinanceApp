@@ -31,15 +31,13 @@ public class Checkbook extends SherlockFragmentActivity {
 		setContentView(R.layout.checkbook);
 		setTitle("Checkbook");
 
-		/*
-		 * This crashes if you change orientation
-		 * has to do with onPostCreate()
-		 * */
+		//NavigationDrawer
+		drawer = new Drawer(this);
 		
-		//if(savedInstanceState!=null){
-		//	Log.e("Checkbook","SavedState");
-		//	return;
-		//}
+		if(savedInstanceState!=null){
+			Log.e("Checkbook","SavedState");
+			return;
+		}
 		
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
@@ -52,9 +50,6 @@ public class Checkbook extends SherlockFragmentActivity {
 				clearNotifications();
 			}
 		}
-
-		//NavigationDrawer
-		drawer = new Drawer(this);
 
 		Accounts account_frag = new Accounts();
 		Transactions transaction_frag = new Transactions();
@@ -100,11 +95,6 @@ public class Checkbook extends SherlockFragmentActivity {
 			}
 		}
 
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle bundle1){
-		super.onSaveInstanceState(bundle1);
 	}
 
 	//For Menu Items

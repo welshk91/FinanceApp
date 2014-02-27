@@ -16,9 +16,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
+
 import android.support.v4.app.DialogFragment;
-import android.support.v4.widget.DrawerLayout;
 
 public class Checkbook extends SherlockFragmentActivity {
 
@@ -28,24 +27,25 @@ public class Checkbook extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.checkbook);
 		setTitle("Checkbook");
 
 		//NavigationDrawer
 		drawer = new Drawer(this);
-		
+
 		if(savedInstanceState!=null){
 			Log.e("Checkbook","SavedState");
 			return;
 		}
-		
+
 		//The transaction frame, if null it means we can't see transactions in this particular view
 		View checkbook_frame = findViewById(R.id.checkbook_frag_frame);
 
 		//Clear notifications
 		if (getIntent().getExtras() != null) {
 			Bundle b = getIntent().getExtras();
-		
+
 			if(b.getBoolean("fromNotification")){
 				clearNotifications();
 			}
@@ -69,7 +69,9 @@ public class Checkbook extends SherlockFragmentActivity {
 		if(checkbook_frame==null){
 			Log.d("Checkbook-onCreate","Mode:dualpane");
 			getSupportFragmentManager().beginTransaction()
-			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag").replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag").commit();
+			.replace(R.id.account_frag_frame, account_frag,"account_frag_tag")
+			.replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag")
+			.commit();
 		}
 		else{
 			Log.d("Checkbook-onCreate","Mode:singlepane");
@@ -139,5 +141,5 @@ public class Checkbook extends SherlockFragmentActivity {
 		super.onConfigurationChanged(newConfig);
 		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
-	
+
 }//end Checkbook

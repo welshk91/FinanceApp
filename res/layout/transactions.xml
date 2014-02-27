@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="No Transactions\n\n To Add A Transaction, Please Use The ActionBar On The Top"
+        android:text="Loading..."
         android:visibility="gone" />
 
     <TextView

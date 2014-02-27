@@ -80,6 +80,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static int account_id;
 
 	private static String sortOrder = "null";
+	
+	private ListView lv = null;
 
 	//Constants for ContextMenu
 	private int CONTEXT_MENU_OPEN=5;
@@ -105,9 +107,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		myFragmentView = inflater.inflate(R.layout.transactions, null, false);				
-
-		ListView lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
+		myFragmentView = inflater.inflate(R.layout.transactions, null, false);
+		lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
 
 		//Turn clicks on
 		lv.setClickable(true);
@@ -134,9 +135,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
-
-		TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
-		lv.setEmptyView(noResult);
 
 		adapterTransactions = new UserItemAdapter(this.getActivity(), null);
 		lv.setAdapter(adapterTransactions);
@@ -1434,6 +1432,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 
 			try{
+				TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
+				lv.setEmptyView(noResult);
+				noResult.setText("No Transactions\n\n To Add A Transaction, Please Use The ActionBar On The Top");
+
 				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
 			}
 			catch(Exception e){
@@ -1453,6 +1455,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Log.v("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			try{
+				TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
+				lv.setEmptyView(noResult);
+				noResult.setText("No Transactions Found");
+
 				footerTV.setText("Search Results");
 			}
 			catch(Exception e){
@@ -1462,7 +1468,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 
 		default:
-			Log.v("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
 	}
@@ -1470,9 +1476,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch(loader.getId()){
-		default:
+		case TRANS_LOADER:
 			adapterTransactions.swapCursor(null);
 			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
+		case TRANS_SEARCH_LOADER:
+			adapterTransactions.swapCursor(null);
+			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
+		default:
+			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
 	}

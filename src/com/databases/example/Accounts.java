@@ -50,6 +50,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -103,7 +104,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
 				if(checkbook_frame!=null){
-					//Data to send to transaction fragment
 					Bundle args = new Bundle();
 					args.putInt("ID",entry_id);
 
@@ -118,18 +118,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					getFragmentManager().executePendingTransactions();
 				}
 				else{
-
-					//Data to send to transaction fragment
 					Bundle args = new Bundle();
 					args.putBoolean("showAll", false);
 					args.putBoolean("boolSearch", false);
 					args.putInt("ID",entry_id);
 
-					//Add the fragment to the activity, pushing this transaction on to the back stack.
+					//Add the fragment to the activity
+					//NOTE: Don't add custom animation, seems to mess with onLoaderReset
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+					//ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 					ft.replace(R.id.transaction_frag_frame, tran_frag);
 					ft.commit();
 					getFragmentManager().executePendingTransactions();
@@ -146,8 +145,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
-		lv.setEmptyView(noResult);
+		//lv.setEmptyView((TextView)myFragmentView.findViewById(R.id.account_noTransaction));
 
 		adapterAccounts = new UserItemAdapter(this.getActivity(), null);
 		lv.setAdapter(adapterAccounts);
@@ -175,7 +173,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(bundle!=null){
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
-
+		
+		//Start Progressbar in ActionBar
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		
 		//Fragment is a search fragment
 		if(searchFragment){
 
@@ -1262,12 +1263,16 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			}
 
 			try{
+				TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
+				noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
+				lv.setEmptyView(noResult);
+				
 				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
 			}
 			catch(Exception e){
 				Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
 			}
-
+			
 			break;
 
 		case ACCOUNTS_SEARCH_LOADER:
@@ -1275,12 +1280,16 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			try{
+				TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
+				noResult.setText("No Accounts Found");
+				lv.setEmptyView(noResult);
+				
 				footerTV.setText("Search Results");
 			}
 			catch(Exception e){
 				Log.e("Accounts-onLoadFinished", "Error setting search TextView. e="+e);
 			}
-
+			
 			break;
 
 		default:
@@ -1292,9 +1301,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch(loader.getId()){
-		default:
+		case ACCOUNTS_LOADER:
 			adapterAccounts.swapCursor(null);
 			Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+			
+		case ACCOUNTS_SEARCH_LOADER:
+			adapterAccounts.swapCursor(null);
+			Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+			
+		default:
+			Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}
 	}

@@ -111,8 +111,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,android.R.anim.slide_in_left,android.R.anim.slide_out_right);
 					ft.replace(R.id.checkbook_frag_frame, tran_frag);
-					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.addToBackStack(null);
 					ft.commit();
 					getFragmentManager().executePendingTransactions();
@@ -129,8 +129,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					Transactions tran_frag = new Transactions();
 					tran_frag.setArguments(args);
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,android.R.anim.slide_in_left,android.R.anim.slide_out_right);
 					ft.replace(R.id.transaction_frag_frame, tran_frag);
-					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.commit();
 					getFragmentManager().executePendingTransactions();
 				}
@@ -153,7 +153,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		lv.setAdapter(adapterAccounts);
 
 		populate();
-		
+
 		//Arguments
 		Bundle bundle=getArguments();
 
@@ -161,7 +161,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(bundle!=null){
 			setHasOptionsMenu(true);
 		}		
-				
+
 		setRetainInstance(true);
 
 		return myFragmentView;
@@ -169,8 +169,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Populate view with accounts
 	protected void populate(){
-		Log.e("Accounts-populate","populating");
-
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
 
@@ -188,7 +186,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				Log.e("Accounts-populate","start search loader...");
+				Log.v("Accounts-populate","start search loader...");
 				getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
 			}
 			catch(Exception e){
@@ -200,7 +198,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		//Not A Search Fragment
 		else{
-			Log.e("Accounts-populate","start loader...");
+			Log.v("Accounts-populate","start loader...");
 			getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
 		}
 
@@ -1219,7 +1217,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		Log.d("Accounts-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case ACCOUNTS_LOADER:
-			Log.e("Accounts-onCreateLoader","new loader created");
+			Log.v("Accounts-onCreateLoader","new loader created");
 			return new CursorLoader(
 					getActivity(),   	// Parent activity context
 					MyContentProvider.ACCOUNTS_URI,// Table to query
@@ -1230,7 +1228,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					);
 		case ACCOUNTS_SEARCH_LOADER:
 			String query = getActivity().getIntent().getStringExtra("query");
-			Log.e("Accounts-onCreateLoader","new loader (boolSearch "+ query + ") created");
+			Log.v("Accounts-onCreateLoader","new loader (boolSearch "+ query + ") created");
 			return new CursorLoader(
 					getActivity(),   	// Parent activity context
 					(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
@@ -1239,7 +1237,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					null,            	// No selection arguments
 					sortOrder           // Default sort order
 					);
-			
+
 		default:
 			Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1253,7 +1251,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch(loader.getId()){
 		case ACCOUNTS_LOADER:
 			adapterAccounts.swapCursor(data);
-			Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			int balanceColumn = data.getColumnIndex("AcctBalance");
 			BigDecimal totalBalance = BigDecimal.ZERO;
@@ -1262,8 +1260,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			while(data.moveToNext()){
 				totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));
 			}
-
-			Log.e("Accounts-onLoadFinished","totalBalance="+totalBalance);
 
 			try{
 				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
@@ -1276,13 +1272,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		case ACCOUNTS_SEARCH_LOADER:
 			adapterAccounts.swapCursor(data);
-			Log.e("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			try{
 				footerTV.setText("Search Results");
 			}
 			catch(Exception e){
-				Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
+				Log.e("Accounts-onLoadFinished", "Error setting search TextView. e="+e);
 			}
 
 			break;
@@ -1298,7 +1294,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch(loader.getId()){
 		default:
 			adapterAccounts.swapCursor(null);
-			Log.e("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+			Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
 		}
 	}

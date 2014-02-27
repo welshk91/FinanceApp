@@ -159,7 +159,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Populate view with all the transactions of selected account
 	protected void populate(){
-		Log.e("Transactions-populate","populating");
 		Bundle bundle=getArguments();
 		boolean searchFragment=true;
 
@@ -182,13 +181,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				account_id = bundle.getInt("ID");				
 			}
 
-			Log.e("Transactions-populate","searchFragment="+searchFragment+"\nshowAllTransactions="+showAllTransactions+"\nAccount_id="+account_id);
+			Log.v("Transactions-populate","searchFragment="+searchFragment+"\nshowAllTransactions="+showAllTransactions+"\nAccount_id="+account_id);
 		}
 
 		if(showAllTransactions){
 			Bundle b = new Bundle();
 			b.putBoolean("boolShowAll", true);
-			Log.e("Transactions-populate","start loader (all transactions)...");
+			Log.v("Transactions-populate","start loader (all transactions)...");
 			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 		else if(searchFragment){
@@ -198,7 +197,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				Bundle b = new Bundle();
 				b.putBoolean("boolSearch", true);
 				b.putString("query", query);
-				Log.e("Transactions-populate","start search loader...");
+				Log.v("Transactions-populate","start search loader...");
 				getLoaderManager().initLoader(TRANS_SEARCH_LOADER, b, this);
 			}
 			catch(Exception e){
@@ -211,7 +210,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		else{
 			Bundle b = new Bundle();
 			b.putInt("aID", account_id);
-			Log.e("Transactions-populate","start loader (ToAcctID="+ account_id + ")...");
+			Log.v("Transactions-populate","start loader (ToAcctID="+ account_id + ")...");
 			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 
@@ -1369,7 +1368,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		switch (loaderID) {
 		case TRANS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolShowAll")){
-				Log.e("Transactions-onCreateLoader","new loader (ShowAll) created");
+				Log.v("Transactions-onCreateLoader","new loader (ShowAll) created");
 				return new CursorLoader(
 						getActivity(),   	// Parent activity context
 						MyContentProvider.TRANSACTIONS_URI,// Table to query
@@ -1382,7 +1381,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			else{
 				String[] projection = new String[]{ "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"};
 				String selection = "ToAcctID=" + account_id;
-				Log.e("Transactions-onCreateLoader","new loader created");
+				Log.v("Transactions-onCreateLoader","new loader created");
 				return new CursorLoader(
 						getActivity(),   	// Parent activity context
 						MyContentProvider.TRANSACTIONS_URI,// Table to query
@@ -1394,7 +1393,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 		case TRANS_SEARCH_LOADER:
 			String query = getActivity().getIntent().getStringExtra("query");
-			Log.e("Transactions-onCreateLoader","new loader (boolSearch "+ query + ") created");
+			Log.v("Transactions-onCreateLoader","new loader (boolSearch "+ query + ") created");
 			return new CursorLoader(
 					getActivity(),   	// Parent activity context
 					(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/SEARCH/" + query)),// Table to query
@@ -1417,7 +1416,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		switch(loader.getId()){
 		case TRANS_LOADER:
 			adapterTransactions.swapCursor(data);
-			Log.e("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			Log.v("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			int valueColumn = data.getColumnIndex("TransValue");
 			int typeColumn = data.getColumnIndex("TransType");
@@ -1426,7 +1425,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 
 			while(data.moveToNext()){
-				Log.e("Transaction-onLoadFinished","value="+data.getString(valueColumn) + " type="+data.getString(typeColumn));
 				if(data.getString(typeColumn).equals("Deposit")){
 					totalBalance = totalBalance.add(new Money(data.getString(valueColumn)).getBigDecimal(locale));					
 				}
@@ -1434,8 +1432,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					totalBalance = totalBalance.subtract(new Money(data.getString(valueColumn)).getBigDecimal(locale));					
 				}
 			}
-
-			Log.e("Transactions-onLoadFinished","totalBalance="+totalBalance);
 
 			try{
 				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
@@ -1454,7 +1450,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		case TRANS_SEARCH_LOADER:
 			adapterTransactions.swapCursor(data);
-			Log.e("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			Log.v("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			try{
 				footerTV.setText("Search Results");
@@ -1466,7 +1462,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 
 		default:
-			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+			Log.v("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
 	}
@@ -1476,7 +1472,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		switch(loader.getId()){
 		default:
 			adapterTransactions.swapCursor(null);
-			Log.e("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
 		}	
 	}

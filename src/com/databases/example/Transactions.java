@@ -1474,13 +1474,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		if(!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()){
-			Log.e("Transactions-onLoadFinished", "No Loaders running");
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);			
 		}
-		else{
-			Log.e("Transactions-onLoadFinished", "Loaders running");
-		}
-
 	}
 
 	@Override

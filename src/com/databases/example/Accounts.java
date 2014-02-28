@@ -63,6 +63,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private int CONTEXT_MENU_DELETE=3;
 
 	//Spinners for transfers
+	private Cursor accountCursor = null;
 	private static Spinner transferSpinnerTo;
 	private static Spinner transferSpinnerFrom;
 	private static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
@@ -303,21 +304,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method to get the list of accounts for transfer spinner
 	public void accountPopulate(){
-		Cursor accountCursor1 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
-		Cursor accountCursor2 = getActivity().getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
-		getActivity().startManagingCursor(accountCursor1);
-		getActivity().startManagingCursor(accountCursor2);
 		String[] from = new String[] {"AcctName", "_id"}; 
 		int[] to = new int[] { android.R.id.text1};
 
-		transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor1, from, to);
+		transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to);
 		transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor2, from, to);
+		transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to);
 		transferSpinnerAdapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 		transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
 		transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
+		
 	}//end of accountPopulate
 
 	//For Menu
@@ -935,7 +933,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			LayoutInflater li = LayoutInflater.from(getActivity());
+			final LayoutInflater li = LayoutInflater.from(getActivity());
 			final View promptsView = li.inflate(R.layout.account_transfer, null);
 			final EditText tAmount = (EditText) promptsView.findViewById(R.id.EditAccountAmount);
 
@@ -1250,6 +1248,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch(loader.getId()){
 		case ACCOUNTS_LOADER:
 			adapterAccounts.swapCursor(data);
+			accountCursor=data;
+			
 			Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			int balanceColumn = data.getColumnIndex("AcctBalance");
@@ -1296,11 +1296,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 
 		if(!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()){
-			Log.e("Accounts-onLoadFinished", "No Loaders running");
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);			
-		}
-		else{
-			Log.e("Accounts-onLoadFinished", "Loaders running");			
 		}
 	}
 

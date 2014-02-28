@@ -64,6 +64,8 @@ import com.actionbarsherlock.view.SubMenu;
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
 	private static final int TRANS_SEARCH_LOADER = 98765;
+	private static final int TRANS_SUBCATEGORY_LOADER = 987;
+
 
 	//Used to determine if fragment should show all transactions
 	private boolean showAllTransactions=false;
@@ -77,7 +79,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static Button tDate;
 
 	//ID of account transaction belongs to
-	private static int account_id;
+	private static int account_id=0;
 
 	private static String sortOrder = "null";
 
@@ -101,6 +103,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		account_id=0;
 	}//end onCreate
 
 	@Override
@@ -283,7 +286,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
 		getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
 
-		//calculateBalance();
 		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
 	}//end of transactionDelete
 
@@ -359,19 +361,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			//Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();			
 		}
 	}
-
-	//Method Called to refresh the list of categories if user changes the list
-	public void categoryPopulate(){
-		Cursor categoryCursor = getActivity().getContentResolver().query(MyContentProvider.SUBCATEGORIES_URI, null, null, null, null);
-
-		getActivity().startManagingCursor(categoryCursor);
-		String[] from = new String[] {"SubCatName"}; 
-		int[] to = new int[] { android.R.id.text1 };
-
-		categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, categoryCursor, from, to);
-		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		tCategory.setAdapter(categorySpinnerAdapter);
-	}//end of categoryPopulate
 
 	//Method to help create TimePicker
 	public static class TimePickerFragment extends DialogFragment
@@ -990,7 +979,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tMemo.setKeyListener(input);
 
 			//Populate Category Spinner			
-			((Transactions) getParentFragment()).categoryPopulate();					
+			getLoaderManager().initLoader(TRANS_SUBCATEGORY_LOADER, null, ((Transactions) getParentFragment()));
 
 			tName.setText(name);
 			tValue.setText(value);
@@ -1079,8 +1068,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 							//Make new record with same ID
 							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
-
-							//((Transactions) getParentFragment()).calculateBalance();					
 						}
 
 						else{
@@ -1166,7 +1153,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			tTime.setText(date.getReadableTime());
 
 			//Populate Category Drop-down List
-			((Transactions) getParentFragment()).categoryPopulate();					
+			getLoaderManager().initLoader(TRANS_SUBCATEGORY_LOADER, null, ((Transactions) getParentFragment()));
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
@@ -1242,8 +1229,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							transactionValues.put("TransCleared", transactionCleared);
 
 							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
-
-							//((Transactions) getParentFragment()).calculateBalance();
 						} 
 
 						else {
@@ -1403,6 +1388,17 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					sortOrder           // Default sort order
 					);			
 
+		case TRANS_SUBCATEGORY_LOADER:
+			Log.v("Transactions-onCreateLoader","new category loader created");
+			return new CursorLoader(
+					getActivity(),   	// Parent activity context
+					MyContentProvider.SUBCATEGORIES_URI,// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					sortOrder           // Default sort order
+					);			
+
 		default:
 			Log.e("Transactions-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1468,6 +1464,16 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 			break;
 
+		case TRANS_SUBCATEGORY_LOADER:
+			String[] from = new String[] {"SubCatName"}; 
+			int[] to = new int[] { android.R.id.text1 };
+
+			categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, data, from, to);
+			categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			tCategory.setAdapter(categorySpinnerAdapter);
+
+			break;
+
 		default:
 			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
@@ -1496,9 +1502,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 		}	
 	}
-
-	public interface OnFragmentFinished {
-		public void fragmentFinished(String frag);
-	}
+	
+	
 
 }//end Transactions

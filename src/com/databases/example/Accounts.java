@@ -666,7 +666,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
+			final Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
 
 			int entry_id = 0;
 			String entry_name = null;

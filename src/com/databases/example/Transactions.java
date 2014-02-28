@@ -80,7 +80,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static int account_id;
 
 	private static String sortOrder = "null";
-	
+
 	private ListView lv = null;
 
 	//Constants for ContextMenu
@@ -1362,6 +1362,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+
 		Log.d("Transactions-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case TRANS_LOADER:
@@ -1464,13 +1466,21 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			catch(Exception e){
 				Log.e("Transactions-onLoadFinished", "Error setting search TextView. e="+e);
 			}
-
 			break;
 
 		default:
 			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
-		}	
+		}
+
+		if(!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()){
+			Log.e("Transactions-onLoadFinished", "No Loaders running");
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);			
+		}
+		else{
+			Log.e("Transactions-onLoadFinished", "Loaders running");
+		}
+
 	}
 
 	@Override
@@ -1490,6 +1500,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
+	}
+
+	public interface OnFragmentFinished {
+		public void fragmentFinished(String frag);
 	}
 
 }//end Transactions

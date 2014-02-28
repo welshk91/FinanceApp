@@ -50,7 +50,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -173,10 +172,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(bundle!=null){
 			searchFragment = bundle.getBoolean("boolSearch");
 		}
-		
-		//Start Progressbar in ActionBar
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-		
+
 		//Fragment is a search fragment
 		if(searchFragment){
 
@@ -1215,6 +1211,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+
 		Log.d("Accounts-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case ACCOUNTS_LOADER:
@@ -1266,13 +1264,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
 				noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
 				lv.setEmptyView(noResult);
-				
+
 				footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
 			}
 			catch(Exception e){
 				Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
 			}
-			
+
 			break;
 
 		case ACCOUNTS_SEARCH_LOADER:
@@ -1283,18 +1281,26 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
 				noResult.setText("No Accounts Found");
 				lv.setEmptyView(noResult);
-				
+
 				footerTV.setText("Search Results");
 			}
 			catch(Exception e){
 				Log.e("Accounts-onLoadFinished", "Error setting search TextView. e="+e);
 			}
-			
+
 			break;
 
 		default:
 			Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
+		}
+
+		if(!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()){
+			Log.e("Accounts-onLoadFinished", "No Loaders running");
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);			
+		}
+		else{
+			Log.e("Accounts-onLoadFinished", "Loaders running");			
 		}
 	}
 
@@ -1305,12 +1311,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			adapterAccounts.swapCursor(null);
 			Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
-			
+
 		case ACCOUNTS_SEARCH_LOADER:
 			adapterAccounts.swapCursor(null);
 			Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
-			
+
 		default:
 			Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;

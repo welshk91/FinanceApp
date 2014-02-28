@@ -7,6 +7,7 @@ package com.databases.example;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.databases.example.Transactions.DatePickerFragment;
 import com.databases.example.Transactions.TimePickerFragment;
 
@@ -16,7 +17,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
 import android.support.v4.app.DialogFragment;
 
 public class Checkbook extends SherlockFragmentActivity {
@@ -27,7 +27,8 @@ public class Checkbook extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState);
-
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		
 		setContentView(R.layout.checkbook);
 		setTitle("Checkbook");
 
@@ -117,7 +118,7 @@ public class Checkbook extends SherlockFragmentActivity {
 		Uri uri = Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/" + 0);
 		getContentResolver().delete(uri, null,null);
 	}
-
+	
 	//Method for selecting a Time when adding a transaction
 	public void showTimePickerDialog(View v){
 		DialogFragment newFragment = new TimePickerFragment();

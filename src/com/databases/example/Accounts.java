@@ -1256,6 +1256,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			BigDecimal totalBalance = BigDecimal.ZERO;
 			Locale locale=getResources().getConfiguration().locale;
 
+			data.moveToPosition(-1);
 			while(data.moveToNext()){
 				totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));
 			}

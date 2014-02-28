@@ -60,12 +60,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.Categories.SubCategoryRecord;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
 	private static final int TRANS_SEARCH_LOADER = 98765;
 	private static final int TRANS_SUBCATEGORY_LOADER = 987;
-
 
 	//Used to determine if fragment should show all transactions
 	private boolean showAllTransactions=false;
@@ -419,8 +419,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	}
 
 	public class UserItemAdapter extends CursorAdapter {
-		private Context context;
-
 		public UserItemAdapter(Context context, Cursor transactions) {
 			super(context, transactions);
 		}
@@ -494,7 +492,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				int clearedColumn = user.getColumnIndex("TransCleared");
 
 				int id = user.getInt(0);
-				//int id = user.getInt(idColumn);
 				int acctId = user.getInt(acctIDColumn);
 				int planId = user.getInt(planIDColumn);
 				String name = user.getString(nameColumn);
@@ -1420,6 +1417,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Locale locale=getResources().getConfiguration().locale;
 
 
+			//Cursor doesn't seem to catch the first transaction using this loop if i add/edit a transaction
+			//and balance needs to be recalculated :/
+			data.moveToPosition(-1);
 			while(data.moveToNext()){
 				if(data.getString(typeColumn).equals("Deposit")){
 					totalBalance = totalBalance.add(new Money(data.getString(valueColumn)).getBigDecimal(locale));					
@@ -1497,12 +1497,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
 
+		case TRANS_SUBCATEGORY_LOADER:
+			adapterTransactions.swapCursor(null);
+			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
 		default:
 			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
 	}
-	
-	
 
 }//end Transactions

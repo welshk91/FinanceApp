@@ -65,17 +65,16 @@ import android.widget.Toast;
 public class Plans extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
+	private static final int PLAN_LOADER = 5882300;
+	private static final int PLAN_SUBCATEGORY_LOADER = 588;
+	private static final int PLAN_ACCOUNT_LOADER = 2300;	
+	
 	//NavigationDrawer
 	private Drawer drawer;
 
 	//Adapter for category spinner
 	private static SimpleCursorAdapter categorySpinnerAdapter = null;
 	private static Spinner categorySpinner;
-
-	private static final int PLAN_LOADER = 5882300;
-
-	//Cursor (Need to be closed properly)
-	private Cursor cursorPlans;
 
 	//Adapter for category spinner
 	private static SimpleCursorAdapter accountSpinnerAdapter = null;
@@ -123,7 +122,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		TextView noResult = (TextView)findViewById(R.id.plans_noPlans);
 		lvPlans.setEmptyView(noResult);
 
-		adapterPlans = new UserItemAdapter(this, cursorPlans);		
+		adapterPlans = new UserItemAdapter(this, null);		
 		lvPlans.setAdapter(adapterPlans);
 
 		plansPopulate();
@@ -176,30 +175,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
 		newFragment.show(getSupportFragmentManager(), "dialogView");
 	}
-
-	//Method to get the list of categories for spinner
-	public void categoryPopulate(){
-		Cursor categoryCursor = this.getContentResolver().query(MyContentProvider.SUBCATEGORIES_URI, null, null, null, null);
-		startManagingCursor(categoryCursor);
-		String[] from = new String[] {"SubCatName"}; 
-		int[] to = new int[] { android.R.id.text1 };
-
-		categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, categoryCursor, from, to);
-		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		categorySpinner.setAdapter(categorySpinnerAdapter);
-	}//end of categoryPopulate
-
-	//Method to get the list of accounts for spinner
-	public void accountPopulate(){
-		Cursor accountCursor = this.getContentResolver().query(MyContentProvider.ACCOUNTS_URI, null, null, null, null);
-		startManagingCursor(accountCursor);
-		String[] from = new String[] {"AcctName", "_id"}; 
-		int[] to = new int[] { android.R.id.text1};
-
-		accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, accountCursor, from, to);
-		accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		accountSpinner.setAdapter(accountSpinnerAdapter);
-	}//end of accountPopulate
 
 	private void schedule(PlanRecord plan) {
 		PlanRecord record = plan;
@@ -824,53 +799,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		}
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
-		switch (loaderID) {
-		case PLAN_LOADER:
-			if(bundle!=null && bundle.getBoolean("boolSearch")){
-				String query = this.getIntent().getStringExtra("query");
-				return new CursorLoader(
-						this,   	// Parent activity context
-						(Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query
-						null,     			// Projection to return
-						null,            	// No selection clause
-						null,            	// No selection arguments
-						null             	// Default sort order
-						);
-			}
-			else{
-				return new CursorLoader(
-						this,   	// Parent activity context
-						MyContentProvider.PLANS_URI,// Table to query
-						null,     			// Projection to return
-						null,            	// No selection clause
-						null,            	// No selection arguments
-						null             	// Default sort order
-						);				
-			}
-		default:
-			Log.e("Plans-onCreateLoader", "Not a valid CursorLoader ID");
-			return null;
-		}
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		if(adapterPlans!=null && data!=null){
-			adapterPlans.swapCursor(data);			
-		}
-		Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		if(adapterPlans!=null){
-			adapterPlans.swapCursor(null);
-		}
-		Log.v("Plans-onLoaderReset", "loaderReset on " + loader);		
-	}
-
 	//Class that handles view fragment
 	public static class ViewDialogFragment extends SherlockDialogFragment {
 
@@ -987,10 +915,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			tMemo.setKeyListener(input);
 
 			//Populate Category Drop-down List
-			((Plans) getSherlockActivity()).categoryPopulate();
+			getLoaderManager().initLoader(PLAN_SUBCATEGORY_LOADER, null, ((Plans) getSherlockActivity()));
 
 			//Populate Account Drop-down List
-			((Plans) getSherlockActivity()).accountPopulate();
+			getLoaderManager().initLoader(PLAN_ACCOUNT_LOADER, null, ((Plans) getSherlockActivity()));
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
 
@@ -1187,10 +1115,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			tMemo.setKeyListener(input);
 
 			//Populate Category Drop-down List
-			((Plans) getSherlockActivity()).categoryPopulate();
+			getLoaderManager().initLoader(PLAN_SUBCATEGORY_LOADER, null, ((Plans) getSherlockActivity()));
 
 			//Populate Account Drop-down List
-			((Plans) getSherlockActivity()).accountPopulate();
+			getLoaderManager().initLoader(PLAN_ACCOUNT_LOADER, null, ((Plans) getSherlockActivity()));
 
 			tName.setText(name);
 			tValue.setText(value);
@@ -1390,4 +1318,116 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
 
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {		
+		switch (loaderID) {
+		case PLAN_LOADER:
+			if(bundle!=null && bundle.getBoolean("boolSearch")){
+				//Log.v("Plans-onCreateLoader","new loader (boolSearch "+ query + ") created");
+				String query = this.getIntent().getStringExtra("query");
+				return new CursorLoader(
+						this,   	// Parent activity context
+						(Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);
+			}
+			else{
+				Log.v("Plans-onCreateLoader","new loader created");
+				return new CursorLoader(
+						this,   	// Parent activity context
+						MyContentProvider.PLANS_URI,// Table to query
+						null,     			// Projection to return
+						null,            	// No selection clause
+						null,            	// No selection arguments
+						null             	// Default sort order
+						);				
+			}
+			
+		case PLAN_ACCOUNT_LOADER:
+			Log.v("Plans-onCreateLoader","new plan loader created");
+			return new CursorLoader(
+					this,   	// Parent activity context
+					MyContentProvider.ACCOUNTS_URI,// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					null           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
+					);
+
+		case PLAN_SUBCATEGORY_LOADER:
+			Log.v("Plans-onCreateLoader","new category loader created");
+			return new CursorLoader(
+					this,   	// Parent activity context
+					MyContentProvider.SUBCATEGORIES_URI,// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					null           // Default sort order
+					);			
+						
+		default:
+			Log.e("Plans-onCreateLoader", "Not a valid CursorLoader ID");
+			return null;
+		}
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		switch(loader.getId()){
+		case PLAN_LOADER:			
+			adapterPlans.swapCursor(data);
+			Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+			break;
+			
+		case PLAN_ACCOUNT_LOADER:
+			String[] from = new String[] {"AcctName", "_id"}; 
+			int[] to = new int[] { android.R.id.text1};
+
+			accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to);
+			accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			accountSpinner.setAdapter(accountSpinnerAdapter);
+			Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+			break;
+			
+		case PLAN_SUBCATEGORY_LOADER:
+			from = new String[] {"SubCatName"}; 
+			to = new int[] { android.R.id.text1 };
+
+			categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to);
+			categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			categorySpinner.setAdapter(categorySpinnerAdapter);
+			Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+			break;
+			
+		default:
+			Log.v("Plans-onLoadFinished", "Error. Unknown loader ("+loader.getId());			
+			break;
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		switch(loader.getId()){
+		case PLAN_LOADER:
+			adapterPlans.swapCursor(null);
+			Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
+		case PLAN_ACCOUNT_LOADER:
+			Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+			
+		case PLAN_SUBCATEGORY_LOADER:
+			Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
+		default:
+			Log.e("Plans-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+			break;
+		}		
+	}
+	
 }//end of Plans

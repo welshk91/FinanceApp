@@ -234,7 +234,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 		else {
 			Log.e("Accounts-onContextItemSelected","Item selected is unknown!");		
-		}  
+		}
 
 		return super.onContextItemSelected(item);  
 	}  

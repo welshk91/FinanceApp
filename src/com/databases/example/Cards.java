@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -441,7 +442,7 @@ public class Cards extends SherlockFragment {
 			((TextView) v.findViewById(R.id.description)).setText(description);
 			((ImageView) v.findViewById(R.id.stripe)).setBackgroundColor(Color
 					.parseColor(color));
-
+			
 			if (isClickable == true)
 				((LinearLayout) v.findViewById(R.id.contentLayout))
 				.setBackgroundResource(R.drawable.selectable_background_cardbank);

@@ -60,7 +60,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
-import com.databases.example.Categories.SubCategoryRecord;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
@@ -942,16 +941,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			final String time = getArguments().getString("time");
 			final String cleared = getArguments().getString("cleared");
 
-			// get transaction_add.xml view
 			LayoutInflater li = LayoutInflater.from(getActivity());
 			promptsView = li.inflate(R.layout.transaction_add, null);
 
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-			// set account_add.xml to AlertDialog builder
 			alertDialogBuilder.setView(promptsView);
-
-			//set Title
 			alertDialogBuilder.setTitle("Edit A Transaction");
 
 			//Set fields to old values
@@ -1026,8 +1020,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					DateTime transactionTime = new DateTime();
 					transactionTime.setStringReadable(tTime.getText().toString().trim());
 					Locale locale=getResources().getConfiguration().locale;
-
-
 
 					//Check to see if value is a number
 					boolean validValue=false;
@@ -1498,7 +1490,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 
 		case TRANS_SUBCATEGORY_LOADER:
-			adapterTransactions.swapCursor(null);
 			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
 

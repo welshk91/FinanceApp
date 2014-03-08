@@ -39,11 +39,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 
-public class Categories extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener{
-	private static DatabaseHelper dh = null;
+public class Categories extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener,LoaderManager.LoaderCallbacks<Cursor>{
+	private static final int CATEGORIES_LOADER = 8675309;
+	private static final int SUBCATEGORIES_LOADER = 867;
 
 	//NavigationDrawer
 	private Drawer drawer;
@@ -62,17 +66,15 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	private final int CONTEXT_MENU_SUBCATEGORY_EDIT=6;
 	private final int CONTEXT_MENU_SUBCATEGORY_DELETE=7;
 
-	private ArrayList<CategoryRecord> resultsCategory = new ArrayList<CategoryRecord>();
-	private ArrayList<SubCategoryRecord> resultsSubCategory = new ArrayList<SubCategoryRecord>();
-	private ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
-	private Cursor cursorCategory;
 	private Cursor cursorSubCategory;
-
+	private static DatabaseHelper dh = null;
+	private ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		dh = new DatabaseHelper(this);
-
+		
 		setContentView(R.layout.categories);
 		setTitle("Categories");
 
@@ -92,87 +94,16 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		categoryPopulate();
+		getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
+
+		adapterCategory = new UserItemAdapter(this,0,null,resultsCursor);
+		lvCategory.setAdapter(adapterCategory);
 	}
 
-	//Method Called to refresh the list of categories if user changes the list
-	public void categoryPopulate(){
-		//Reinitialize arrays to start fresh
-		resultsCategory = new ArrayList<CategoryRecord>();
-		resultsSubCategory = new ArrayList<SubCategoryRecord>();
-		resultsCursor = new ArrayList<Cursor>();
-
-		//A textView alerting the user if database is empty
-		TextView noResult = (TextView)this.findViewById(R.id.category_noCategory);
-		noResult.setVisibility(View.GONE);
-
-		cursorCategory = dh.getCategories(null,null,null,null);
-
-		startManagingCursor(cursorCategory);
-		int NameColumn = cursorCategory.getColumnIndex("CatName");
-		int NoteColumn = cursorCategory.getColumnIndex("CatNote");
-
-		cursorCategory.moveToFirst();
-		if (cursorCategory != null) {
-			if (cursorCategory.isFirst()) {
-				do {
-					String id = cursorCategory.getString(0);
-					String name = cursorCategory.getString(NameColumn);
-					String note = cursorCategory.getString(NoteColumn);
-
-					CategoryRecord entry = new CategoryRecord(id, name, note);
-					//Log.d("Category", "Added Category: " + id + " " + name + " " + note);
-					subcategoryPopulate(id);
-					resultsCategory.add(entry);
-
-				} while (cursorCategory.moveToNext());
-			}
-
-			else {
-				//No Results Found
-				noResult.setVisibility(View.VISIBLE);
-				Log.d("Category-categoryPopulate", "No Categories found");
-			}
-		} 
-
-		//Give the item adapter a list of all categories and subcategories
-		adapterCategory = new UserItemAdapter(this, android.R.layout.simple_list_item_1, cursorCategory, resultsCursor);		
-		lvCategory.setAdapter(adapterCategory);
-
-	}//end of categoryPopulate
-
 	//Method for filling subcategories
-	public void subcategoryPopulate(String catId){		
+	public void subcategoryPopulate(String catId){	
 		cursorSubCategory = dh.getSubCategories(null,"ToCatID="+catId,null,null);
 		resultsCursor.add(cursorSubCategory);
-
-		startManagingCursor(cursorSubCategory);
-		int ToIDColumn = cursorSubCategory.getColumnIndex("ToCatID");
-		int NameColumn = cursorSubCategory.getColumnIndex("SubCatName");
-		int NoteColumn = cursorSubCategory.getColumnIndex("SubCatNote");
-
-		cursorSubCategory.moveToFirst();
-		if (cursorSubCategory != null) {
-			if (cursorSubCategory.isFirst()) {
-				do {
-					String id = cursorSubCategory.getString(0);
-					String to_id = cursorSubCategory.getString(ToIDColumn);
-					String name = cursorSubCategory.getString(NameColumn);
-					String note = cursorSubCategory.getString(NoteColumn);
-
-					SubCategoryRecord entry = new SubCategoryRecord(id, to_id, name, note);
-					resultsSubCategory.add(entry);
-					//Log.d("Category", "Added SubCategory: " + id + " " + to_id + " " + name + " " + note);
-
-				} while (cursorSubCategory.moveToNext());
-			}
-
-			else {
-				//No Results Found
-				Log.d("Category-subcategoryPopulate", "No Subcategories found");
-			}
-		} 
-
 	}//end of subcategoryPopulate
 
 	//Adding a new category
@@ -190,7 +121,6 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		}
 		//CategoryAdd
 		else{
-
 			DialogFragment newFragment = AddDialogFragment.newInstance();
 			newFragment.show(getSupportFragmentManager(), "dialogAdd");
 		}
@@ -226,9 +156,6 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
 		}
 
-		//Refresh the categories list
-		categoryPopulate();
-
 	}//end categoryDelete
 
 	//Edit Category
@@ -262,8 +189,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
 		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-        menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
-		
+		menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
+
 		SearchWidget searchWidget = new SearchWidget(this,menuSearch.getActionView());
 
 		//Show Add Icon
@@ -281,7 +208,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		case android.R.id.home:    
 			drawer.toggle();
 			break;
-			
+
 		case R.id.account_menu_add:    
 			categoryAdd(null);
 			return true;
@@ -375,13 +302,12 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 	public class UserItemAdapter extends BaseExpandableListAdapter{
 		private Cursor category;
-		private ArrayList<Cursor> subcategory;
+		private ArrayList<Cursor> subcategory = new ArrayList<Cursor>();
 		private Context context;
 
 		public UserItemAdapter(Context context, int textViewResourceId, Cursor cats, ArrayList<Cursor> subcats) {
-			this.category = cats;
-			this.subcategory = subcats;
 			this.context = context;
+			this.subcategory=subcats;
 		}
 
 		//My method for getting a Category Record at a certain position
@@ -650,8 +576,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			Cursor temp = subcategory.get(groupPosition);
-			return temp.getCount();
+			return subcategory.get(groupPosition).getCount();
 		}
 
 		@Override
@@ -662,6 +587,10 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		@Override
 		public int getGroupCount() {
+			if(category==null){
+				return 0;
+			}
+
 			return category.getCount();
 		}
 
@@ -680,6 +609,15 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		@Override
 		public boolean isChildSelectable(int groupPosition, int childPosition) {
 			return true;
+		}
+
+		public void swapCategoryCursor(Cursor data){
+			category=data;
+		}
+
+		public void swapSubCategoryCursor(Cursor data){
+			Log.e("Categories-swapSubCategoryCursor", "Cursor data="+data + " data size="+data.getCount());
+			subcategory.add(data);
 		}
 
 	} //end of UserItemAdapter
@@ -724,14 +662,6 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			this.name = name;
 			this.note = note;
 		}
-	}
-
-	@Override
-	public void onDestroy() {
-		if(dh!=null){
-			dh.close();
-		}
-		super.onDestroy();
 	}
 
 	//Class that handles view fragment
@@ -865,7 +795,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 					}
 
 					//Refresh the categories list
-					((Categories) getActivity()).categoryPopulate();
+					//((Categories) getActivity()).categoryPopulate();
 
 				}
 			})
@@ -965,7 +895,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 					}
 
 					//Refresh the categories list
-					((Categories) getActivity()).categoryPopulate();
+					//((Categories) getActivity()).categoryPopulate();
 
 				}
 			})
@@ -990,5 +920,85 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		super.onConfigurationChanged(newConfig);
 		drawer.getDrawerToggle().onConfigurationChanged(newConfig);
 	}
-	
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
+		Log.d("Categories-onCreateLoader", "calling create loader...");
+		switch (loaderID) {
+		case CATEGORIES_LOADER:
+			Log.e("Categories-onCreateLoader","new category loader created");
+			return new CursorLoader(
+					this,   	// Parent activity context
+					MyContentProvider.CATEGORIES_URI,// Table to query
+					null,     			// Projection to return
+					null,            	// No selection clause
+					null,            	// No selection arguments
+					null           		// Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
+					);
+
+		case SUBCATEGORIES_LOADER:
+			Log.e("Categories-onCreateLoader","new subcategory loader created");
+			String selection = "ToCatID="+ bundle.getString("id");
+			return new CursorLoader(
+					this,   	// Parent activity context
+					MyContentProvider.SUBCATEGORIES_URI,// Table to query
+					null,     			// Projection to return
+					null,         	// No selection clause
+					null,            	// No selection arguments
+					null           		// Default sort order
+					);
+
+		default:
+			Log.e("Categories-onCreateLoader", "Not a valid CursorLoader ID");
+			return null;
+		}
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		switch(loader.getId()){
+		case CATEGORIES_LOADER:
+			adapterCategory.swapCategoryCursor(data);			
+			Log.v("Categories-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+
+			data.moveToPosition(-1);
+			while(data.moveToNext()){
+				//Bundle bundle = new Bundle();
+				//bundle.putString("id", data.getString(0));
+				//getSupportLoaderManager().restartLoader(SUBCATEGORIES_LOADER, bundle, this);				
+				subcategoryPopulate(data.getString(0));
+			}
+
+			break;
+
+		case SUBCATEGORIES_LOADER:
+			adapterCategory.swapSubCategoryCursor(data);
+			Log.v("Categories-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+			break;
+
+		default:
+			Log.e("Categories-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+			break;
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		switch(loader.getId()){
+		case CATEGORIES_LOADER:
+			adapterCategory.swapCategoryCursor(null);
+			Log.v("Categories-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
+		case SUBCATEGORIES_LOADER:
+			adapterCategory.swapSubCategoryCursor(null);
+			Log.e("Categories-onLoaderReset", "loader reset. loader="+loader.getId());
+			break;
+
+		default:
+			Log.e("Categories-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+			break;
+		}
+	}
+
 }//end Categories

@@ -565,8 +565,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					tvCleared.setText("Cleared: " + cleared );
 				}
 
-				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
-				
+				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);				
 			}			
 
 		}
@@ -1567,7 +1566,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
 						getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
 
-						Toast.makeText(getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), "Deleted Transaction:\n" + record.name, Toast.LENGTH_SHORT).show();
 					}
 				}
 

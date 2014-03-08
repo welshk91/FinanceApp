@@ -1387,7 +1387,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
 						getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
 
-						Toast.makeText(getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
+						Toast.makeText(getActivity(), "Deleted Account:\n" + record.name, Toast.LENGTH_SHORT).show();
 					}
 				}
 

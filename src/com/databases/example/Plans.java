@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
@@ -43,11 +44,10 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
-import android.view.ContextMenu;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -61,6 +61,8 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class Plans extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
@@ -68,7 +70,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private static final int PLAN_LOADER = 5882300;
 	private static final int PLAN_SUBCATEGORY_LOADER = 588;
 	private static final int PLAN_ACCOUNT_LOADER = 2300;	
-	
+
 	//NavigationDrawer
 	private Drawer drawer;
 
@@ -93,6 +95,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private UserItemAdapter adapterPlans;
 	private ListView lvPlans;
 
+	//ActionMode
+	protected Object mActionMode = null;
+	private SparseBooleanArray mSelectedItemsIds;
+
 	//For Memo autocomplete
 	private static ArrayList<String> dropdownResults = new ArrayList<String>();
 
@@ -112,8 +118,34 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		lvPlans.setClickable(true);
 		lvPlans.setLongClickable(true);
 
-		//Allows Context Menus for each item of the list view
-		registerForContextMenu(lvPlans);
+		//Set Listener for regular mouse click
+		lvPlans.setOnItemClickListener(new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+				if (mActionMode != null) {
+					listItemChecked(position);
+				}
+				else{
+					//Stuff for clicking...
+				}
+			}// end onItemClick
+
+		}//end onItemClickListener
+				);//end setOnItemClickListener
+
+		lvPlans.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (mActionMode != null) {
+					return false;
+				}
+
+				listItemChecked(position);
+				return true;
+			}
+		});
 
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -129,6 +161,28 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 	}//end onCreate
 
+	//Used for ActionMode
+	public void listItemChecked(int position){
+		adapterPlans.toggleSelection(position);
+		boolean hasCheckedItems = adapterPlans.getSelectedCount() > 0;
+
+		if (hasCheckedItems && mActionMode == null){
+			Toast.makeText(this, "hasCheckedItems && mActionMode == null", Toast.LENGTH_SHORT).show();;
+			// there are some selected items, start the actionMode
+			mActionMode = this.startActionMode(new MyActionMode());
+		}
+		else if (!hasCheckedItems && mActionMode != null){
+			Toast.makeText(this, "!hasCheckedItems && mActionMode != null", Toast.LENGTH_SHORT).show();;
+			// there no selected items, finish the actionMode
+			((ActionMode) mActionMode).finish();
+		}
+
+		if(mActionMode != null){
+			((ActionMode) mActionMode).invalidate();
+			((ActionMode)mActionMode).setTitle(String.valueOf(adapterPlans.getSelectedCount()) + " selected");
+		}
+	}
+
 	//Method to list all plans
 	public void plansPopulate(){
 		getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
@@ -139,42 +193,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		DialogFragment newFragment = AddDialogFragment.newInstance();
 		newFragment.show(getSupportFragmentManager(), "dialogAdd");		
 	}//end of planAdd
-
-	//Delete Plan
-	public void planDelete(android.view.MenuItem item){
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
-
-		Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
-		this.getContentResolver().delete(uri, "PlanID="+record.id, null);
-
-		Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
-
-		//Cancel all upcoming notifications
-		cancelPlan(record);
-
-		//Refresh the plans list
-		plansPopulate();
-
-	}//end planDelete
-
-	//For Editing a Scheduled Transaction
-	public void planEdit(final android.view.MenuItem item){
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		PlanRecord record = adapterPlans.getPlan(itemInfo.position);
-
-		DialogFragment newFragment = EditDialogFragment.newInstance(record);
-		newFragment.show(getSupportFragmentManager(), "dialogEdit");
-	}//end of planEdit
-
-	//View Plan
-	public void planView(android.view.MenuItem item){
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		String id = adapterPlans.getPlan(itemInfo.position).id;
-
-		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
-		newFragment.show(getSupportFragmentManager(), "dialogView");
-	}
 
 	private void schedule(PlanRecord plan) {
 		PlanRecord record = plan;
@@ -311,10 +329,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
 		menuSearch.setIcon(android.R.drawable.ic_menu_search);
 		menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-        menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
-		
+		menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
+
 		SearchWidget searchWidget = new SearchWidget(this,menuSearch.getActionView());
-		
+
 		//Add
 		MenuItem subMenu1Item = menu.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
 		subMenu1Item.setIcon(android.R.drawable.ic_menu_add);
@@ -339,51 +357,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		return super.onOptionsItemSelected(item);
 	}
 
-	//Creates menu for long presses
-	@Override  
-	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
-		super.onCreateContextMenu(menu, v, menuInfo);
-
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapterPlans.getPlan(itemInfo.position).name;
-
-		menu.setHeaderTitle(name);  
-		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");
-		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
-		menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
-	}  
-
-	//Handles which methods are called when using the long presses menu
-	@Override
-	public boolean onContextItemSelected(android.view.MenuItem item) {
-		switch (item.getItemId()) {
-		case CONTEXT_MENU_OPEN:
-			planView(item);
-			return true;
-
-		case CONTEXT_MENU_EDIT:
-			planEdit(item);
-			return true;
-
-		case CONTEXT_MENU_DELETE:
-			planDelete(item);
-			return true;
-
-		case CONTEXT_MENU_CANCEL:
-			AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-			PlanRecord record = adapterPlans.getPlan(itemInfo.position);
-			cancelPlan(record);
-			return true;
-
-		default:
-			Log.e("Plans-onContextItemSelected", "Context Menu defualt listener fired?");
-			break;
-		}
-
-		return super.onContextItemSelected(item);
-	}  
-
 	//Used after a change in settings occurs
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -391,7 +364,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		//getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
 		//getLoaderManager().restartLoader(PLAN_LOADER, null, this);
 	}
-
 
 	//Method for selecting a Date when adding a transaction
 	public void showDatePickerDialog(View v) {
@@ -432,6 +404,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		public UserItemAdapter(Context context,Cursor plans) {
 			super(context, plans);
 			this.context = context;
+			mSelectedItemsIds = new SparseBooleanArray();
 		}
 
 		public PlanRecord getPlan(long position){
@@ -574,6 +547,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					tvCleared.setText("Cleared: " + cleared);
 				}
 
+				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
 			}
 
 		}
@@ -770,6 +744,35 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 			return v;
 		}
+
+		public void toggleSelection(int position)
+		{
+			selectView(position, !mSelectedItemsIds.get(position));
+		}
+
+		public void removeSelection() {
+			mSelectedItemsIds = new SparseBooleanArray();
+			notifyDataSetChanged();
+		}
+
+		public void selectView(int position, boolean value)
+		{
+			if(value)
+				mSelectedItemsIds.put(position, value);
+			else
+				mSelectedItemsIds.delete(position);
+
+			notifyDataSetChanged();
+		}
+
+		public int getSelectedCount() {
+			return mSelectedItemsIds.size();// mSelectedCount;
+		}
+
+		public SparseBooleanArray getSelectedIds() {
+			return mSelectedItemsIds;
+		}
+
 	}//end UserItem
 
 	//An Object Class used to hold the data of each transaction record
@@ -1345,7 +1348,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 						null             	// Default sort order
 						);				
 			}
-			
+
 		case PLAN_ACCOUNT_LOADER:
 			Log.v("Plans-onCreateLoader","new plan loader created");
 			return new CursorLoader(
@@ -1367,7 +1370,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					null,            	// No selection arguments
 					null           // Default sort order
 					);			
-						
+
 		default:
 			Log.e("Plans-onCreateLoader", "Not a valid CursorLoader ID");
 			return null;
@@ -1381,7 +1384,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			adapterPlans.swapCursor(data);
 			Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 			break;
-			
+
 		case PLAN_ACCOUNT_LOADER:
 			String[] from = new String[] {"AcctName", "_id"}; 
 			int[] to = new int[] { android.R.id.text1};
@@ -1391,7 +1394,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			accountSpinner.setAdapter(accountSpinnerAdapter);
 			Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 			break;
-			
+
 		case PLAN_SUBCATEGORY_LOADER:
 			from = new String[] {"SubCatName"}; 
 			to = new int[] { android.R.id.text1 };
@@ -1401,7 +1404,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			categorySpinner.setAdapter(categorySpinnerAdapter);
 			Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
 			break;
-			
+
 		default:
 			Log.v("Plans-onLoadFinished", "Error. Unknown loader ("+loader.getId());			
 			break;
@@ -1419,7 +1422,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		case PLAN_ACCOUNT_LOADER:
 			Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
-			
+
 		case PLAN_SUBCATEGORY_LOADER:
 			Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
@@ -1429,5 +1432,139 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			break;
 		}		
 	}
-	
+
+	private final class MyActionMode implements ActionMode.Callback {
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+			menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			menu.clear();
+			if (adapterPlans.getSelectedCount() == 1 && mode != null) {
+				menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");				
+				menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
+				return true;
+			} else if (adapterPlans.getSelectedCount() > 1) {
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+				menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
+				return true;
+			}
+
+			return true;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			SparseBooleanArray selected = adapterPlans.getSelectedIds();
+			PlanRecord record;
+
+			switch (item.getItemId()) {
+			case CONTEXT_MENU_OPEN:
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						DialogFragment newFragment = ViewDialogFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);
+						newFragment.show(getSupportFragmentManager(), "dialogView");
+					}
+				}
+
+				mode.finish();
+				return true;
+			case CONTEXT_MENU_EDIT:
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						DialogFragment newFragment = EditDialogFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)));
+						newFragment.show(getSupportFragmentManager(), "dialogEdit");
+					}
+				}
+
+				mode.finish();
+				return true;
+			case CONTEXT_MENU_DELETE:				
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						record = adapterPlans.getPlan(selected.keyAt(i));
+
+						Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
+						getContentResolver().delete(uri, "PlanID="+record.id, null);
+
+						Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
+
+						//Cancel all upcoming notifications
+						cancelPlan(record);
+
+						//Refresh the plans list
+						plansPopulate();				
+					}
+				}
+
+				mode.finish();
+				return true;
+
+
+			case CONTEXT_MENU_CANCEL:
+				Intent intent;
+				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						record = adapterPlans.getPlan(selected.keyAt(i));
+
+						intent = new Intent(Plans.this, PlanReceiver.class);
+						intent.putExtra("plan_id", record.id);
+						intent.putExtra("plan_acct_id",record.acctId);
+						intent.putExtra("plan_name",record.name);
+						intent.putExtra("plan_value",record.value);
+						intent.putExtra("plan_type",record.type);
+						intent.putExtra("plan_category",record.category);
+						intent.putExtra("plan_memo",record.memo);
+						intent.putExtra("plan_offset",record.offset);
+						intent.putExtra("plan_rate",record.rate);
+						intent.putExtra("plan_cleared",record.cleared);
+
+						// In reality, you would want to have a static variable for the request code instead of 192837
+						PendingIntent sender = PendingIntent.getBroadcast(Plans.this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+						try {
+							am.cancel(sender);
+							Toast.makeText(Plans.this, "Canceled plan:\n"+record.name, Toast.LENGTH_SHORT).show();
+						} catch (Exception e) {
+							Toast.makeText(Plans.this, "Error canceling plan \n"+record.name, Toast.LENGTH_SHORT).show();
+							Log.e("Plans-schedule", "AlarmManager update was not canceled. " + e.toString());
+						}
+					}
+				}
+
+				mode.finish();
+				return true;
+
+			default:
+				mode.finish();
+				Log.e("Plans-onActionItemClciked","ERROR. Clicked " + item);
+				return false;
+			}
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			mActionMode=null;
+			adapterPlans.removeSelection();
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		if(mActionMode!=null){
+			((ActionMode)mActionMode).finish();		
+		}
+
+		super.onDestroy();
+	}
+
 }//end of Plans

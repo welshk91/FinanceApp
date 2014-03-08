@@ -33,6 +33,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,10 +53,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.DatePicker;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -85,9 +88,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private ListView lv = null;
 
 	//Constants for ContextMenu
-	private int CONTEXT_MENU_OPEN=5;
-	private int CONTEXT_MENU_EDIT=6;
-	private int CONTEXT_MENU_DELETE=7;
+	private final int CONTEXT_MENU_OPEN=5;
+	private final int CONTEXT_MENU_EDIT=6;
+	private final int CONTEXT_MENU_DELETE=7;
 
 	//ListView Adapter
 	private static UserItemAdapter adapterTransactions = null;
@@ -97,6 +100,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	//Adapter for category spinner
 	private static SimpleCursorAdapter categorySpinnerAdapter = null;
+
+	//ActionMode
+	protected Object mActionMode = null;
+	private SparseBooleanArray mSelectedItemsIds;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -120,19 +127,33 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-				int selectionRowID = (int) adapterTransactions.getItemId(position);
-				String item = adapterTransactions.getTransaction(position).name;
+				if (mActionMode != null) {
+					listItemChecked(position);
+				}
+				else{
+					int selectionRowID = (int) adapterTransactions.getItemId(position);
+					String item = adapterTransactions.getTransaction(position).name;
 
-				Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
-
+					Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
+				}
 			}// end onItemClick
 
 		}//end onItemClickListener
 				);//end setOnItemClickListener
 
+		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-		//Allows Context Menus for each item of the list view
-		registerForContextMenu(lv);
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (mActionMode != null) {
+					return false;
+				}
+
+				listItemChecked(position);
+				return true;
+			}
+		});
 
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
@@ -152,9 +173,31 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			setHasOptionsMenu(true);
 		}
 
-		setRetainInstance(true);
+		setRetainInstance(false);
 
 		return myFragmentView;
+	}
+
+	//Used for ActionMode
+	public void listItemChecked(int position){
+		adapterTransactions.toggleSelection(position);
+		boolean hasCheckedItems = adapterTransactions.getSelectedCount() > 0;
+
+		if (hasCheckedItems && mActionMode == null){
+			Toast.makeText(getSherlockActivity(), "hasCheckedItems && mActionMode == null", Toast.LENGTH_SHORT).show();;
+			// there are some selected items, start the actionMode
+			mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
+		}
+		else if (!hasCheckedItems && mActionMode != null){
+			Toast.makeText(getSherlockActivity(), "!hasCheckedItems && mActionMode != null", Toast.LENGTH_SHORT).show();;
+			// there no selected items, finish the actionMode
+			((ActionMode) mActionMode).finish();
+		}
+
+		if(mActionMode != null){
+			((ActionMode) mActionMode).invalidate();
+			((ActionMode)mActionMode).setTitle(String.valueOf(adapterTransactions.getSelectedCount()) + " selected");
+		}
 	}
 
 	//Populate view with all the transactions of selected account
@@ -216,77 +259,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 	}
 
-	//Creates menu for long presses
-	@Override  
-	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
-		super.onCreateContextMenu(menu, v, menuInfo);
-
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = adapterTransactions.getTransaction(itemInfo.position).name;
-
-		menu.setHeaderTitle(name);  
-		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
-	}  
-
-	//Handles which methods are called when using the long presses menu
-	@Override  
-	public boolean onContextItemSelected(android.view.MenuItem item) {
-
-		if(item.getItemId()==CONTEXT_MENU_OPEN){
-			transactionOpen(item);
-			return true;
-		}  
-		else if(item.getItemId()==CONTEXT_MENU_EDIT){
-			transactionEdit(item);
-			return true;
-		}
-		else if(item.getItemId()==CONTEXT_MENU_DELETE){
-			transactionDelete(item);
-			return true;
-		}
-		else {
-			//return super.onContextItemSelected(item);
-		}  
-
-		return super.onContextItemSelected(item);  
-	}
-
-	//For Opening a Transaction
-	public void transactionOpen(android.view.MenuItem item){  
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		int id = adapterTransactions.getTransaction(itemInfo.position).id;
-
-		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
-		newFragment.show(getChildFragmentManager(), "dialogView");
-	}  
-
 	//For Adding a Transaction
 	public void transactionAdd(){
 		DialogFragment newFragment = AddDialogFragment.newInstance();
 		newFragment.show(getChildFragmentManager(), "dialogAdd");
 	}//end of transactionAdd
-
-	//For Editing an Transaction
-	public void transactionEdit(android.view.MenuItem item){
-		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final TransactionRecord record = adapterTransactions.getTransaction(itemInfo.position);
-
-		DialogFragment newFragment = EditDialogFragment.newInstance(record);
-		newFragment.show(getChildFragmentManager(), "dialogEdit");	
-	}
-
-	//For Deleting an Transaction
-	public void transactionDelete(android.view.MenuItem item){
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		TransactionRecord record = adapterTransactions.getTransaction(itemInfo.position);
-
-		Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
-		getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
-
-		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
-	}//end of transactionDelete
 
 	//For Sorting Transactions
 	public void transactionSort(){
@@ -420,6 +397,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public class UserItemAdapter extends CursorAdapter {
 		public UserItemAdapter(Context context, Cursor transactions) {
 			super(context, transactions);
+			mSelectedItemsIds = new SparseBooleanArray();
 		}
 
 		public TransactionRecord getTransaction(long position){
@@ -587,6 +565,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					tvCleared.setText("Cleared: " + cleared );
 				}
 
+				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
+				
 			}			
 
 		}
@@ -782,6 +762,35 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			return v;
 		}
+
+		public void toggleSelection(int position)
+		{
+			selectView(position, !mSelectedItemsIds.get(position));
+		}
+
+		public void removeSelection() {
+			mSelectedItemsIds = new SparseBooleanArray();
+			notifyDataSetChanged();
+		}
+
+		public void selectView(int position, boolean value)
+		{
+			if(value)
+				mSelectedItemsIds.put(position, value);
+			else
+				mSelectedItemsIds.delete(position);
+
+			notifyDataSetChanged();
+		}
+
+		public int getSelectedCount() {
+			return mSelectedItemsIds.size();// mSelectedCount;
+		}
+
+		public SparseBooleanArray getSelectedIds() {
+			return mSelectedItemsIds;
+		}
+
 	}
 
 	//An Object Class used to hold the data of each transaction record
@@ -1497,6 +1506,95 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}	
+	}
+
+	private final class MyActionMode implements ActionMode.Callback {
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			menu.clear();
+			if (adapterTransactions.getSelectedCount() == 1 && mode != null) {
+				menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");				
+				return true;
+			} else if (adapterTransactions.getSelectedCount() > 1) {
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+				return true;
+			}
+
+			return true;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			SparseBooleanArray selected = adapterTransactions.getSelectedIds();
+
+			switch (item.getItemId()) {
+			case CONTEXT_MENU_OPEN:
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						DialogFragment newFragment = ViewDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)).id);
+						newFragment.show(getChildFragmentManager(), "dialogView");
+					}
+				}
+
+				mode.finish();
+				return true;
+			case CONTEXT_MENU_EDIT:
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						DialogFragment newFragment = EditDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)));
+						newFragment.show(getChildFragmentManager(), "dialogEdit");
+					}
+				}
+
+				mode.finish();
+				return true;
+			case CONTEXT_MENU_DELETE:
+				TransactionRecord record;
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						record = adapterTransactions.getTransaction(selected.keyAt(i));
+
+						Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
+						getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
+
+						Toast.makeText(getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
+					}
+				}
+
+				mode.finish();
+				return true;
+
+			default:
+				mode.finish();
+				Log.e("Transactions-onActionItemClciked","ERROR. Clicked " + item);
+				return false;
+			}
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			mActionMode=null;
+			adapterTransactions.removeSelection();
+		}
+	}
+
+	@Override
+	public void onDestroyView() {
+		if(mActionMode!=null){
+			((ActionMode)mActionMode).finish();		
+		}
+
+		super.onDestroyView();
 	}
 
 }//end Transactions

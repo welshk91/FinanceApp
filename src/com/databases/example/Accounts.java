@@ -27,8 +27,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -165,9 +163,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			}
 		});
 
-
-		//registerForContextMenu(lv);
-
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
@@ -185,11 +180,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			setHasOptionsMenu(true);
 		}		
 
-		setRetainInstance(true);
+		setRetainInstance(false);
 
 		return myFragmentView;
 	}
-
+	
 	//Used for ActionMode
 	public void listItemChecked(int position){
 		adapterAccounts.toggleSelection(position);
@@ -475,15 +470,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					tvTime.setText("Time: " + t.getReadableTime());
 				}
 
-				//change background color if list item is selected
-				//if(mSelectedItemsIds.get(user.getPosition())){
 				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
-				//	v.setBackgroundColor(0x9934B5E4);
-				//}
-				//else{
-				//	//v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-				//	v.setBackgroundColor(Color.parseColor("#FFFFFF"));
-				//}
 			}
 
 		}
@@ -725,6 +712,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			c.close();
 			return alertDialogBuilder.create();
 		}
+				
 	}
 
 	//Class that handles edit fragment
@@ -1313,7 +1301,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);			
 		}
 	}
-
+	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch(loader.getId()){
@@ -1425,6 +1413,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(mActionMode!=null){
 			((ActionMode)mActionMode).finish();		
 		}
+				
 		super.onDestroyView();
 	}
 

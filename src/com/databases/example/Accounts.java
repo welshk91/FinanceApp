@@ -26,6 +26,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
@@ -46,6 +48,7 @@ import android.support.v4.app.LoaderManager;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -58,9 +61,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
 	//Constants for ContextMenu
-	private int CONTEXT_MENU_OPEN=1;
-	private int CONTEXT_MENU_EDIT=2;
-	private int CONTEXT_MENU_DELETE=3;
+	final private int CONTEXT_MENU_OPEN=1;
+	final private int CONTEXT_MENU_EDIT=2;
+	final private int CONTEXT_MENU_DELETE=3;
 
 	//Spinners for transfers
 	private Cursor accountCursor = null;
@@ -74,6 +77,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	private ListView lv = null;
 	private static UserItemAdapter adapterAccounts = null;
+
+	protected Object mActionMode = null;
+	private SparseBooleanArray mSelectedItemsIds;	
 
 	//Method called upon first creation
 	@Override
@@ -93,59 +99,78 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		lv.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-				int selectionRowID = (int) adapterAccounts.getItemId(position);
-				Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
 
-				//Just get the Account ID
-				c.moveToFirst();
-				int	entry_id = c.getInt(0);
-				c.close();
-
-				View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
-
-				if(checkbook_frame!=null){
-					Bundle args = new Bundle();
-					args.putInt("ID",entry_id);
-
-					//Add the fragment to the activity, pushing this transaction on to the back stack.
-					Transactions tran_frag = new Transactions();
-					tran_frag.setArguments(args);
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,android.R.anim.slide_in_left,android.R.anim.slide_out_right);
-					ft.replace(R.id.checkbook_frag_frame, tran_frag);
-					ft.addToBackStack(null);
-					ft.commit();
-					getFragmentManager().executePendingTransactions();
+				if (mActionMode != null) {
+					listItemChecked(position);
 				}
+
 				else{
-					Bundle args = new Bundle();
-					args.putBoolean("showAll", false);
-					args.putBoolean("boolSearch", false);
-					args.putInt("ID",entry_id);
+					int selectionRowID = (int) adapterAccounts.getItemId(position);
+					Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
 
-					//Add the fragment to the activity
-					//NOTE: Don't add custom animation, seems to mess with onLoaderReset
-					Transactions tran_frag = new Transactions();
-					tran_frag.setArguments(args);
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					//ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-					ft.replace(R.id.transaction_frag_frame, tran_frag);
-					ft.commit();
-					getFragmentManager().executePendingTransactions();
+					//Just get the Account ID
+					c.moveToFirst();
+					int	entry_id = c.getInt(0);
+					c.close();
+
+					View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+
+					if(checkbook_frame!=null){
+						Bundle args = new Bundle();
+						args.putInt("ID",entry_id);
+
+						//Add the fragment to the activity, pushing this transaction on to the back stack.
+						Transactions tran_frag = new Transactions();
+						tran_frag.setArguments(args);
+						FragmentTransaction ft = getFragmentManager().beginTransaction();
+						ft.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+						ft.replace(R.id.checkbook_frag_frame, tran_frag);
+						ft.addToBackStack(null);
+						ft.commit();
+						getFragmentManager().executePendingTransactions();
+					}
+					else{
+						Bundle args = new Bundle();
+						args.putBoolean("showAll", false);
+						args.putBoolean("boolSearch", false);
+						args.putInt("ID",entry_id);
+
+						//Add the fragment to the activity
+						//NOTE: Don't add custom animation, seems to mess with onLoaderReset
+						Transactions tran_frag = new Transactions();
+						tran_frag.setArguments(args);
+						FragmentTransaction ft = getFragmentManager().beginTransaction();
+						//ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+						ft.replace(R.id.transaction_frag_frame, tran_frag);
+						ft.commit();
+						getFragmentManager().executePendingTransactions();
+					}
 				}
-
 			}// end onItemClick
 
 		}//end onItemClickListener
 				);//end setOnItemClickListener
 
-		registerForContextMenu(lv);
+		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (mActionMode != null) {
+					return false;
+				}
+
+				listItemChecked(position);
+				return true;
+			}
+		});
+
+
+		//registerForContextMenu(lv);
 
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
-
-		//lv.setEmptyView((TextView)myFragmentView.findViewById(R.id.account_noTransaction));
 
 		adapterAccounts = new UserItemAdapter(this.getActivity(), null);
 		lv.setAdapter(adapterAccounts);
@@ -163,6 +188,28 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		setRetainInstance(true);
 
 		return myFragmentView;
+	}
+
+	//Used for ActionMode
+	public void listItemChecked(int position){
+		adapterAccounts.toggleSelection(position);
+		boolean hasCheckedItems = adapterAccounts.getSelectedCount() > 0;
+
+		if (hasCheckedItems && mActionMode == null){
+			Toast.makeText(getSherlockActivity(), "hasCheckedItems && mActionMode == null", Toast.LENGTH_SHORT).show();;
+			// there are some selected items, start the actionMode
+			mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
+		}
+		else if (!hasCheckedItems && mActionMode != null){
+			Toast.makeText(getSherlockActivity(), "!hasCheckedItems && mActionMode != null", Toast.LENGTH_SHORT).show();;
+			// there no selected items, finish the actionMode
+			((ActionMode) mActionMode).finish();
+		}
+
+		if(mActionMode != null){
+			((ActionMode) mActionMode).invalidate();
+			((ActionMode)mActionMode).setTitle(String.valueOf(adapterAccounts.getSelectedCount()) + " selected");
+		}
 	}
 
 	//Populate view with accounts
@@ -202,61 +249,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	}
 
-	//Creates menu for long presses
-	@Override  
-	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
-		super.onCreateContextMenu(menu, v, menuInfo);
-
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)menuInfo;
-		String name = "" + adapterAccounts.getAccount(itemInfo.position).name;
-
-		menu.setHeaderTitle(name);  
-		menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-		menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-		menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
-	}  
-
-	//Handles which methods are called when using the long presses menu
-	@Override  
-	public boolean onContextItemSelected(android.view.MenuItem item) {
-
-		if(item.getItemId()==CONTEXT_MENU_OPEN){
-			accountOpen(item);
-			return true;
-		}  
-		else if(item.getItemId()==CONTEXT_MENU_EDIT){
-			accountEdit(item);
-			return true;
-		}
-		else if(item.getItemId()==CONTEXT_MENU_DELETE){
-			accountDelete(item);
-			return true;
-		}
-		else {
-			Log.e("Accounts-onContextItemSelected","Item selected is unknown!");		
-		}
-
-		return super.onContextItemSelected(item);  
-	}  
-
-	//For Opening an Account
-	public void accountOpen(android.view.MenuItem item){  
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		String id = adapterAccounts.getAccount(itemInfo.position).id;
-
-		DialogFragment newFragment = ViewDialogFragment.newInstance(id);
-		newFragment.show(getChildFragmentManager(), "dialogView");
-	}
-
-	//For Editing an Account
-	public void accountEdit(android.view.MenuItem item){
-		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		final AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
-
-		DialogFragment newFragment = EditDialogFragment.newInstance(record);
-		newFragment.show(getChildFragmentManager(), "dialogEdit");
-	}
-
 	//For Attaching to an Account
 	public void accountAttach(android.view.MenuItem item){
 		final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
@@ -267,22 +259,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		intentLink.putExtra("AcctName", record.name);
 		startActivityForResult(intentLink, PICKFILE_RESULT_CODE);
 	}
-
-	//For Deleting an Account
-	public void accountDelete(android.view.MenuItem item){
-		AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
-		Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
-
-		//Delete Account
-		getActivity().getContentResolver().delete(uri,"AcctID="+record.id, null);
-
-		//Delete All Transactions of that account
-		uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
-		getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
-
-		Toast.makeText(this.getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
-	}//end of accountDelete
 
 	//For Adding an Account
 	public void accountAdd(){
@@ -315,7 +291,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
 		transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
-		
+
 	}//end of accountPopulate
 
 	//For Menu
@@ -356,7 +332,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:    
+		case android.R.id.home:
 			//Intent intentUp = new Intent(Accounts.this.getActivity(), Main.class);
 			//intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			//startActivity(intentUp);
@@ -395,6 +371,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public UserItemAdapter(Context context, Cursor accounts) {
 			super(context, accounts);
 			this.context = context;
+			mSelectedItemsIds = new SparseBooleanArray();
 		}
 
 		public AccountRecord getAccount(long position){
@@ -498,6 +475,15 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					tvTime.setText("Time: " + t.getReadableTime());
 				}
 
+				//change background color if list item is selected
+				//if(mSelectedItemsIds.get(user.getPosition())){
+				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
+				//	v.setBackgroundColor(0x9934B5E4);
+				//}
+				//else{
+				//	//v.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+				//	v.setBackgroundColor(Color.parseColor("#FFFFFF"));
+				//}
 			}
 
 		}
@@ -633,6 +619,35 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			return v;
 		}
+
+		public void toggleSelection(int position)
+		{
+			selectView(position, !mSelectedItemsIds.get(position));
+		}
+
+		public void removeSelection() {
+			mSelectedItemsIds = new SparseBooleanArray();
+			notifyDataSetChanged();
+		}
+
+		public void selectView(int position, boolean value)
+		{
+			if(value)
+				mSelectedItemsIds.put(position, value);
+			else
+				mSelectedItemsIds.delete(position);
+
+			notifyDataSetChanged();
+		}
+
+		public int getSelectedCount() {
+			return mSelectedItemsIds.size();// mSelectedCount;
+		}
+
+		public SparseBooleanArray getSelectedIds() {
+			return mSelectedItemsIds;
+		}
+
 	}
 
 	//An Object Class used to hold the data of each account record
@@ -1248,8 +1263,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		switch(loader.getId()){
 		case ACCOUNTS_LOADER:
 			adapterAccounts.swapCursor(data);
-			accountCursor=data;
-			
 			Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
 			int balanceColumn = data.getColumnIndex("AcctBalance");
@@ -1318,6 +1331,101 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
 			break;
 		}
+	}
+
+	private final class MyActionMode implements ActionMode.Callback {
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			menu.clear();
+			if (adapterAccounts.getSelectedCount() == 1 && mode != null) {
+				menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
+				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");				
+				return true;
+			} else if (adapterAccounts.getSelectedCount() > 1) {
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+				return true;
+			}
+
+			return true;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			SparseBooleanArray selected = adapterAccounts.getSelectedIds();
+
+			switch (item.getItemId()) {
+			case CONTEXT_MENU_OPEN:
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						//accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);
+						DialogFragment newFragment = ViewDialogFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)).id);
+						newFragment.show(getChildFragmentManager(), "dialogView");
+					}
+				}
+
+				mode.finish();
+				return true;
+			case CONTEXT_MENU_EDIT:
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						//accountEdit(adapterAccounts.getAccount(selected.keyAt(i)));
+						DialogFragment newFragment = EditDialogFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
+						newFragment.show(getChildFragmentManager(), "dialogEdit");
+					}
+				}
+
+				mode.finish();
+				return true;
+			case CONTEXT_MENU_DELETE:
+				AccountRecord record;
+				for (int i = 0; i < selected.size(); i++){				
+					if (selected.valueAt(i)) {
+						record = adapterAccounts.getAccount(selected.keyAt(i));
+
+						//Delete Account
+						Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
+						getActivity().getContentResolver().delete(uri,"AcctID="+record.id, null);
+
+						//Delete All Transactions of that account
+						uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
+						getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
+
+						Toast.makeText(getActivity(), "Deleted Item:\n" + record.name, Toast.LENGTH_SHORT).show();
+					}
+				}
+
+				mode.finish();
+				return true;
+
+			default:
+				mode.finish();
+				Log.e("Accounts-onActionItemClciked","ERROR. Clicked " + item);
+				return false;
+			}
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			mActionMode=null;
+			adapterAccounts.removeSelection();
+		}
+	}
+
+	@Override
+	public void onDestroyView() {
+		if(mActionMode!=null){
+			((ActionMode)mActionMode).finish();		
+		}
+		super.onDestroyView();
 	}
 
 }//End Accounts

@@ -274,25 +274,29 @@ public class Cards extends SherlockFragment {
 			String plan_name;
 			String plan_offset;
 			String plan_rate;
+			Date d = null;
+			DateTime fRun = new DateTime(); 
+			DateTime test = new DateTime();
+			Date today_date = new Date();
+			String title = "";
+			String description = "";
+			String color = "";
+			long difference = 0;
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
 
 			while (cursor.moveToNext() && !isCancelled()) {
-				String title = "";
-				String description = "";
-				String color = "";
-				long difference = 0;
+				title = "";
+				description = "";
+				color = "";
+				difference = 0;
 
 				plan_name = cursor.getString(2);
 				plan_offset = cursor.getString(7);
 				plan_rate = cursor.getString(8);
 
-				Date d = null;
-				DateTime fRun = new DateTime(); 
-
 				try {
-					DateTime test = new DateTime();
 					test.setStringSQL(plan_offset);
 					d = test.getYearMonthDay();
 				}catch (java.text.ParseException e) {
@@ -324,7 +328,6 @@ public class Cards extends SherlockFragment {
 					}
 				}
 
-				Date today_date = new Date();
 				difference = (today_date.getTime()-firstRun.getTimeInMillis())/86400000;
 				Log.d("Cards", plan_name + " Difference="+difference);
 

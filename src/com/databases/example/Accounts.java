@@ -54,7 +54,7 @@ import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.widget.SearchView;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
-	private final int PICKFILE_RESULT_CODE = 1;
+	private static final int PICKFILE_RESULT_CODE = 1;
 	private static final int ACCOUNTS_LOADER = 123456789;
 	private static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
@@ -191,12 +191,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		boolean hasCheckedItems = adapterAccounts.getSelectedCount() > 0;
 
 		if (hasCheckedItems && mActionMode == null){
-			Toast.makeText(getSherlockActivity(), "hasCheckedItems && mActionMode == null", Toast.LENGTH_SHORT).show();;
 			// there are some selected items, start the actionMode
 			mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
 		}
 		else if (!hasCheckedItems && mActionMode != null){
-			Toast.makeText(getSherlockActivity(), "!hasCheckedItems && mActionMode != null", Toast.LENGTH_SHORT).show();;
 			// there no selected items, finish the actionMode
 			((ActionMode) mActionMode).finish();
 		}
@@ -250,8 +248,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		final AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
 
 		Intent intentLink = new Intent(this.getActivity(), Links.class);
-		intentLink.putExtra("AcctID", record.id);
-		intentLink.putExtra("AcctName", record.name);
+		intentLink.putExtra(DatabaseHelper.ACCOUNT_ID, record.id);
+		intentLink.putExtra(DatabaseHelper.ACCOUNT_NAME, record.name);
 		startActivityForResult(intentLink, PICKFILE_RESULT_CODE);
 	}
 
@@ -275,7 +273,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 	//Method to get the list of accounts for transfer spinner
 	public void accountPopulate(){
-		String[] from = new String[] {"AcctName", "_id"}; 
+		String[] from = new String[] {DatabaseHelper.ACCOUNT_ID, "_id"}; 
 		int[] to = new int[] { android.R.id.text1};
 
 		transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to);
@@ -403,10 +401,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				TextView tvDate = (TextView) v.findViewById(R.id.account_date);
 				TextView tvTime = (TextView) v.findViewById(R.id.account_time);
 
-				int NameColumn = user.getColumnIndex("AcctName");
-				int BalanceColumn = user.getColumnIndex("AcctBalance");
-				int TimeColumn = user.getColumnIndex("AcctTime");
-				int DateColumn = user.getColumnIndex("AcctDate");
+				int NameColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_NAME);
+				int BalanceColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
+				int TimeColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_TIME);
+				int DateColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_DATE);
 
 				String id = user.getString(0);
 				String name = user.getString(NameColumn);
@@ -678,11 +676,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			c.moveToFirst();
 			do{
-				entry_id = c.getInt(c.getColumnIndex("AcctID"));
-				entry_name = c.getString(c.getColumnIndex("AcctName"));
-				entry_balance = c.getString(c.getColumnIndex("AcctBalance"));
-				entry_time = c.getString(c.getColumnIndex("AcctTime"));
-				entry_date = c.getString(c.getColumnIndex("AcctDate"));
+				entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
+				entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
+				entry_balance = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE));
+				entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
+				entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
 			}while(c.moveToNext());
 
 			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
@@ -770,14 +768,14 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					try{
 						//Delete Old Record
 						Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + ID);
-						getActivity().getContentResolver().delete(uri, "AcctID="+ID, null);
+						getActivity().getContentResolver().delete(uri, DatabaseHelper.ACCOUNT_ID+"="+ID, null);
 
 						ContentValues accountValues=new ContentValues();
-						accountValues.put("AcctID",ID);
-						accountValues.put("AcctName",accountName);
-						accountValues.put("AcctBalance",accountBalance);
-						accountValues.put("AcctTime",accountDate.getSQLTime(locale));
-						accountValues.put("AcctDate",accountDate.getSQLDate(locale));
+						accountValues.put(DatabaseHelper.ACCOUNT_ID,ID);
+						accountValues.put(DatabaseHelper.ACCOUNT_NAME,accountName);
+						accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,accountBalance);
+						accountValues.put(DatabaseHelper.ACCOUNT_TIME,accountDate.getSQLTime(locale));
+						accountValues.put(DatabaseHelper.ACCOUNT_DATE,accountDate.getSQLDate(locale));
 
 						//Make new record with same ID
 						getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
@@ -876,26 +874,26 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						if (accountName.length()>0) {
 
 							ContentValues accountValues=new ContentValues();
-							accountValues.put("AcctName",accountName);
-							accountValues.put("AcctBalance",accountBalance.getBigDecimal(locale)+"");
-							accountValues.put("AcctTime",accountDate.getSQLTime(locale));
-							accountValues.put("AcctDate",accountDate.getSQLDate(locale));
+							accountValues.put(DatabaseHelper.ACCOUNT_NAME,accountName);
+							accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,accountBalance.getBigDecimal(locale)+"");
+							accountValues.put(DatabaseHelper.ACCOUNT_TIME,accountDate.getSQLTime(locale));
+							accountValues.put(DatabaseHelper.ACCOUNT_DATE,accountDate.getSQLDate(locale));
 
 							//Insert values into accounts table
 							Uri u = getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
 
 							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("ToAcctID", Long.parseLong(u.getLastPathSegment()));
-							transactionValues.put("ToPlanID", transactionPlanId);
-							transactionValues.put("TransName", transactionName);
-							transactionValues.put("TransValue", transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put("TransType", transactionType);
-							transactionValues.put("TransCategory", transactionCategory);
-							transactionValues.put("TransCheckNum", transactionCheckNum);
-							transactionValues.put("TransMemo", transactionMemo);
-							transactionValues.put("TransTime", transactionTime);
-							transactionValues.put("TransDate", transactionDate);
-							transactionValues.put("TransCleared", transactionCleared);
+							transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(u.getLastPathSegment()));
+							transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, transactionPlanId);
+							transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);
+							transactionValues.put(DatabaseHelper.TRANS_VALUE, transactionValue.getBigDecimal(locale)+"");
+							transactionValues.put(DatabaseHelper.TRANS_TYPE, transactionType);
+							transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transactionCategory);
+							transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transactionCheckNum);
+							transactionValues.put(DatabaseHelper.TRANS_MEMO, transactionMemo);
+							transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime);
+							transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate);
+							transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
 
 							//Insert values into accounts table
 							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
@@ -971,9 +969,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					String transferFromID = null;
 
 					try{
-						transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex("AcctName"));
+						transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
 						transferFromID = cursorAccount1.getString(cursorAccount1.getColumnIndex("_id"));
-						transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex("AcctName"));
+						transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
 						transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
 					}
 					catch(Exception e){
@@ -1009,22 +1007,23 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						return;
 					}				
 
+					ContentValues transferValues=new ContentValues();
+					
 					try{
-						ContentValues transferFromValues=new ContentValues();
-						transferFromValues.put("ToAcctID", transferFromID);
-						transferFromValues.put("ToPlanID", transferPlanId);
-						transferFromValues.put("TransName", transferName);
-						transferFromValues.put("TransValue", tAmount);
-						transferFromValues.put("TransType", transferType);
-						transferFromValues.put("TransCategory", transferCategory);
-						transferFromValues.put("TransCheckNum", transferCheckNum);
-						transferFromValues.put("TransMemo", transferMemo);
-						transferFromValues.put("TransTime", transferDate.getSQLTime(locale));
-						transferFromValues.put("TransDate", transferDate.getSQLDate(locale));
-						transferFromValues.put("TransCleared", transferCleared);
+						transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferFromID);
+						transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
+						transferValues.put(DatabaseHelper.TRANS_NAME, transferName);
+						transferValues.put(DatabaseHelper.TRANS_VALUE, tAmount);
+						transferValues.put(DatabaseHelper.TRANS_TYPE, transferType);
+						transferValues.put(DatabaseHelper.TRANS_CATEGORY, transferCategory);
+						transferValues.put(DatabaseHelper.TRANS_CHECKNUM, transferCheckNum);
+						transferValues.put(DatabaseHelper.TRANS_MEMO, transferMemo);
+						transferValues.put(DatabaseHelper.TRANS_TIME, transferDate.getSQLTime(locale));
+						transferValues.put(DatabaseHelper.TRANS_DATE, transferDate.getSQLDate(locale));
+						transferValues.put(DatabaseHelper.TRANS_CLEARED, transferCleared);
 
 						//Insert values into transaction table
-						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferFromValues);
+						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferValues);
 
 						//Update Account Info
 						ContentValues accountValues=new ContentValues();
@@ -1039,20 +1038,20 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 						c.moveToFirst();
 						do{
-							entry_id = c.getInt(c.getColumnIndex("AcctID"));
-							entry_name = c.getString(c.getColumnIndex("AcctName"));
-							entry_balance = Float.parseFloat(c.getString(c.getColumnIndex("AcctBalance")))-tAmount+"";
-							entry_time = c.getString(c.getColumnIndex("AcctTime"));
-							entry_date = c.getString(c.getColumnIndex("AcctDate"));
+							entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
+							entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
+							entry_balance = Float.parseFloat(c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE)))-tAmount+"";
+							entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
+							entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
 						}while(c.moveToNext());
 
-						accountValues.put("AcctID",entry_id);
-						accountValues.put("AcctName",entry_name);
-						accountValues.put("AcctBalance",entry_balance);
-						accountValues.put("AcctTime",entry_time);
-						accountValues.put("AcctDate",entry_date);
+						accountValues.put(DatabaseHelper.ACCOUNT_ID,entry_id);
+						accountValues.put(DatabaseHelper.ACCOUNT_NAME,entry_name);
+						accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,entry_balance);
+						accountValues.put(DatabaseHelper.ACCOUNT_TIME,entry_time);
+						accountValues.put(DatabaseHelper.ACCOUNT_DATE,entry_date);
 
-						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferFromID), accountValues,"AcctID ="+transferFromID, null);
+						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferFromID), accountValues,DatabaseHelper.ACCOUNT_ID+"="+transferFromID, null);
 						c.close();
 
 					} catch(Exception e){
@@ -1065,21 +1064,21 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					transferType = "Deposit";
 
 					try{
-						ContentValues transferToValues=new ContentValues();
-						transferToValues.put("ToAcctID", transferToID);
-						transferToValues.put("ToPlanID", transferPlanId);
-						transferToValues.put("TransName", transferName);
-						transferToValues.put("TransValue", tAmount);
-						transferToValues.put("TransType", transferType);
-						transferToValues.put("TransCategory", transferCategory);
-						transferToValues.put("TransCheckNum", transferCheckNum);
-						transferToValues.put("TransMemo", transferMemo);
-						transferToValues.put("TransTime", transferDate.getSQLTime(locale));
-						transferToValues.put("TransDate", transferDate.getSQLDate(locale));
-						transferToValues.put("TransCleared", transferCleared);
+						transferValues.clear();
+						transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferToID);
+						transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
+						transferValues.put(DatabaseHelper.TRANS_NAME, transferName);
+						transferValues.put(DatabaseHelper.TRANS_VALUE, tAmount);
+						transferValues.put(DatabaseHelper.TRANS_TYPE, transferType);
+						transferValues.put(DatabaseHelper.TRANS_CATEGORY, transferCategory);
+						transferValues.put(DatabaseHelper.TRANS_CHECKNUM, transferCheckNum);
+						transferValues.put(DatabaseHelper.TRANS_MEMO, transferMemo);
+						transferValues.put(DatabaseHelper.TRANS_TIME, transferDate.getSQLTime(locale));
+						transferValues.put(DatabaseHelper.TRANS_DATE, transferDate.getSQLDate(locale));
+						transferValues.put(DatabaseHelper.TRANS_CLEARED, transferCleared);
 
 						//Insert values into transaction table
-						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferToValues);
+						getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferValues);
 
 						//Update Account Info
 						ContentValues accountValues=new ContentValues();
@@ -1094,20 +1093,20 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 						c.moveToFirst();
 						do{
-							entry_id = c.getInt(c.getColumnIndex("AcctID"));
-							entry_name = c.getString(c.getColumnIndex("AcctName"));
-							entry_balance = Float.parseFloat(c.getString(c.getColumnIndex("AcctBalance")))+tAmount+"";
-							entry_time = c.getString(c.getColumnIndex("AcctTime"));
-							entry_date = c.getString(c.getColumnIndex("AcctDate"));
+							entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
+							entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
+							entry_balance = Float.parseFloat(c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE)))+tAmount+"";
+							entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
+							entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
 						}while(c.moveToNext());
 
-						accountValues.put("AcctID",entry_id);
-						accountValues.put("AcctName",entry_name);
-						accountValues.put("AcctBalance",entry_balance);
-						accountValues.put("AcctTime",entry_time);
-						accountValues.put("AcctDate",entry_date);
+						accountValues.put(DatabaseHelper.ACCOUNT_ID,entry_id);
+						accountValues.put(DatabaseHelper.ACCOUNT_NAME,entry_name);
+						accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,entry_balance);
+						accountValues.put(DatabaseHelper.ACCOUNT_TIME,entry_time);
+						accountValues.put(DatabaseHelper.ACCOUNT_DATE,entry_date);
 
-						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), accountValues,"AcctID ="+transferToID, null);
+						getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), accountValues,DatabaseHelper.ACCOUNT_ID+"="+transferToID, null);
 						c.close();
 
 					} catch(Exception e){
@@ -1160,40 +1159,33 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					switch (position) {
 					//Newest
 					case 0:
-						//TODO Fix date so it can be sorted
-						sortOrder = "AcctDate" + " DESC" + ", AcctTime" + " DESC";
-						//((Accounts) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.ACCOUNT_DATE + " DESC, " + DatabaseHelper.ACCOUNT_TIME + " DESC";
 						break;
 
 						//Oldest
 					case 1:
 						//TODO Fix date so it can be sorted
-						sortOrder = "AcctDate" + " ASC" + ", AcctTime" + " ASC";
-						//((Accounts) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.ACCOUNT_DATE + " ASC, " + DatabaseHelper.ACCOUNT_TIME + " ASC";
 						break;
 
 						//Largest
 					case 2:
-						sortOrder = "CAST (AcctBalance AS INTEGER)" + " DESC";
-						//((Accounts) getParentFragment()).populate();
+						sortOrder = "CAST ("+DatabaseHelper.ACCOUNT_BALANCE+" AS INTEGER)" + " DESC";
 						break;
 
 						//Smallest	
 					case 3:
-						sortOrder = "CAST (AcctBalance AS INTEGER)" + " ASC";
-						//((Accounts) getParentFragment()).populate();
+						sortOrder = "CAST ("+DatabaseHelper.ACCOUNT_BALANCE+" AS INTEGER)" + " ASC";
 						break;
 
 						//Alphabetical	
 					case 4:
-						sortOrder = "AcctName" + " ASC";
-						//((Accounts) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.ACCOUNT_NAME + " ASC";
 						break;
 
 						//None	
 					case 5:
 						sortOrder = null;
-						//((Accounts) getParentFragment()).populate();
 						break;
 
 					default:
@@ -1253,7 +1245,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			adapterAccounts.swapCursor(data);
 			Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
-			int balanceColumn = data.getColumnIndex("AcctBalance");
+			int balanceColumn = data.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
 			BigDecimal totalBalance = BigDecimal.ZERO;
 			Locale locale=getResources().getConfiguration().locale;
 
@@ -1381,11 +1373,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 						//Delete Account
 						Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
-						getActivity().getContentResolver().delete(uri,"AcctID="+record.id, null);
+						getActivity().getContentResolver().delete(uri,DatabaseHelper.ACCOUNT_ID+"="+record.id, null);
 
 						//Delete All Transactions of that account
 						uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
-						getActivity().getContentResolver().delete(uri,"ToAcctID="+record.id, null);
+						getActivity().getContentResolver().delete(uri,DatabaseHelper.TRANS_ACCT_ID+"="+record.id, null);
 
 						Toast.makeText(getActivity(), "Deleted Account:\n" + record.name, Toast.LENGTH_SHORT).show();
 					}

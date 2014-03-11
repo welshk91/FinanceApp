@@ -329,13 +329,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		
 	}
 
-	//Updates balance of an account
-	public void setBalance(String aID, float balance){
-		SQLiteDatabase db = this.getWritableDatabase();
-		String sqlCommand = "UPDATE " + TABLE_ACCOUNTS + " SET AcctBalance = " + balance + " WHERE AcctID = " + aID+ ";";
-		db.execSQL(sqlCommand);
-	}
-
 	//Returns Database file
 	public File getDatabase(){
 		File currentDB = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);

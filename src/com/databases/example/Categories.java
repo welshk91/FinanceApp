@@ -995,5 +995,5 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			break;
 		}
 	}
-
+	
 }//end Categories

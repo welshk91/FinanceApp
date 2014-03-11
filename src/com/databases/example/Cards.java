@@ -28,8 +28,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
-import com.fima.cardsui.StackAdapter;
-import com.fima.cardsui.objects.AbstractCard;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
@@ -37,14 +35,13 @@ import com.fima.cardsui.views.CardUI;
 public class Cards extends SherlockFragment {
 	private Drawer mDrawerLayout;
 	protected static CardUI mCardView;
-	protected static boolean accountChanged = true;
-	protected static boolean transactionChanged = true;
-	protected static boolean planChanged = true;
+	protected static boolean accountChanged = false;
+	protected static boolean transactionChanged = false;
+	protected static boolean planChanged = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.getLoaderManager();
 		setRetainInstance(false);
 	}// end onCreate
 
@@ -70,8 +67,8 @@ public class Cards extends SherlockFragment {
 		mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
 
-		//dealCardsCheckbook(mCardView);
-		//dealCardsPlans(mCardView);
+		dealCardsCheckbook(mCardView);
+		dealCardsPlans(mCardView);
 		//dealCardsStatistics(mCardView);
 
 		return myFragmentView;
@@ -308,7 +305,6 @@ public class Cards extends SherlockFragment {
 			String plan_offset;
 			String plan_rate;
 			Date d = null;
-			DateTime fRun = new DateTime(); 
 			DateTime test = new DateTime();
 			final Date today_date = new Date();
 			Calendar firstRun;
@@ -500,14 +496,4 @@ public class Cards extends SherlockFragment {
 
 	}//End of MyPlayCard Class
 
-	public class UserItemAdapter extends StackAdapter {
-
-		public UserItemAdapter(Context context, ArrayList<AbstractCard> cards,
-				boolean swipable) {
-			super(context, cards, swipable);
-			// TODO Auto-generated constructor stub
-		}
-	
-	}
-	
 }// end Cards

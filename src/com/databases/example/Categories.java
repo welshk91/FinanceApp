@@ -921,7 +921,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		Log.d("Categories-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case CATEGORIES_LOADER:
-			Log.e("Categories-onCreateLoader","new category loader created");
+			Log.v("Categories-onCreateLoader","new category loader created");
 			return new CursorLoader(
 					this,   	// Parent activity context
 					MyContentProvider.CATEGORIES_URI,// Table to query
@@ -932,7 +932,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 					);
 
 		case SUBCATEGORIES_LOADER:
-			Log.e("Categories-onCreateLoader","new subcategory loader created");
+			Log.v("Categories-onCreateLoader","new subcategory loader created");
 			String selection = "ToCatID="+ bundle.getString("id");
 			return new CursorLoader(
 					this,   	// Parent activity context

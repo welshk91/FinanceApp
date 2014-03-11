@@ -41,7 +41,6 @@ public class Cards extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.getLoaderManager();
-		//setHasOptionsMenu(true);
 		setRetainInstance(false);
 	}// end onCreate
 
@@ -103,22 +102,28 @@ public class Cards extends SherlockFragment {
 
 		@Override
 		protected ArrayList<Card> doInBackground(Object... params) {
-			Cursor cursor = (Cursor)params[0];
+			final Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
+			final int account_name_column=cursor.getColumnIndex(DatabaseHelper.ACCOUNT_NAME);
+			final int account_balance_column=cursor.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
 			String account_name;
 			String account_balance;
 
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			boolean onlyOverdrawn = prefs.getBoolean("checkbox_card_accountOnlyOverdrawn", false);
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final boolean onlyOverdrawn = prefs.getBoolean("checkbox_card_accountOnlyOverdrawn", false);
 
+			String title = "";
+			String description = "";
+			String color = "";
+			
 			while (cursor.moveToNext() && !isCancelled()) {
-				String title = "";
-				String description = "";
-				String color = "";
+				title = "";
+				description = "";
+				color = "";
 
-				account_name = cursor.getString(1);
-				account_balance = cursor.getString(2);
+				account_name = cursor.getString(account_name_column);
+				account_balance = cursor.getString(account_balance_column);
 
 				//Determine if Account health is good or not
 				if(Float.parseFloat(account_balance)>=0 && !onlyOverdrawn){
@@ -173,30 +178,40 @@ public class Cards extends SherlockFragment {
 
 		@Override
 		protected ArrayList<Card> doInBackground(Object... params) {
-			Cursor cursor = (Cursor)params[0];
+			final Cursor cursor = (Cursor)params[0];
 			ArrayList<Card> cards = new ArrayList<Card>();
 
+			final int transaction_name_column=cursor.getColumnIndex(DatabaseHelper.TRANS_NAME);
+			final int transaction_date_column=cursor.getColumnIndex(DatabaseHelper.TRANS_DATE);
+			final int transaction_cleared_column=cursor.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
+			
 			String transaction_name;
-			DateTime transaction_date;
+			DateTime transaction_date=new DateTime ();
 			String transaction_cleared;
 
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			int daysRecent = Integer.parseInt(prefs.getString("pref_key_card_transactionDaysRecent", "5"));
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final int daysRecent = Integer.parseInt(prefs.getString("pref_key_card_transactionDaysRecent", "5"));
 
+			String title = "";
+			String description = "";
+			String color = "";
+			long difference = 0;
+
+			final Date today_date = new Date();
+			
 			while (cursor.moveToNext() && !isCancelled()) {
-				String title = "";
-				String description = "";
-				String color = "";
-				long difference = 0;
+				title = "";
+				description = "";
+				color = "";
+				difference = 0;
 
-				transaction_name = cursor.getString(3);
-				transaction_date = new DateTime ();
-				transaction_date.setStringSQL(cursor.getString(10));
-				transaction_cleared = cursor.getString(11);
+				transaction_name = cursor.getString(transaction_name_column);
+				//transaction_date = new DateTime ();
+				transaction_date.setStringSQL(cursor.getString(transaction_date_column));
+				transaction_cleared = cursor.getString(transaction_cleared_column);
 
 				//Calculate difference of dates
 				try {
-					Date today_date = new Date();
 					difference = (today_date.getTime()- transaction_date.getYearMonthDay().getTime())/86400000;
 					Log.d("Cards",transaction_name + " Difference="+difference);
 				} catch (ParseException e) {
@@ -277,14 +292,19 @@ public class Cards extends SherlockFragment {
 			Date d = null;
 			DateTime fRun = new DateTime(); 
 			DateTime test = new DateTime();
-			Date today_date = new Date();
+			final Date today_date = new Date();
+			Calendar firstRun;
 			String title = "";
 			String description = "";
 			String color = "";
 			long difference = 0;
 
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
+			final int plan_name_column=cursor.getColumnIndex(DatabaseHelper.PLAN_NAME);
+			final int plan_offset_column=cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+			final int plan_rate_column=cursor.getColumnIndex(DatabaseHelper.PLAN_RATE);
+			
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
 
 			while (cursor.moveToNext() && !isCancelled()) {
 				title = "";
@@ -292,9 +312,9 @@ public class Cards extends SherlockFragment {
 				color = "";
 				difference = 0;
 
-				plan_name = cursor.getString(2);
-				plan_offset = cursor.getString(7);
-				plan_rate = cursor.getString(8);
+				plan_name = cursor.getString(plan_name_column);
+				plan_offset = cursor.getString(plan_offset_column);
+				plan_rate = cursor.getString(plan_rate_column);
 
 				try {
 					test.setStringSQL(plan_offset);
@@ -304,10 +324,10 @@ public class Cards extends SherlockFragment {
 				}
 
 				//Parse Rate (token 0 is amount, token 1 is type)
-				String delims = "[ ]+";
-				String[] tokens = plan_rate.split(delims);
+				final String delims = "[ ]+";
+				final String[] tokens = plan_rate.split(delims);
 
-				Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
+				firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
 
 				if(tokens[1].contains("Days")){
 					//If Starting Time is in the past, fire off next day(s)

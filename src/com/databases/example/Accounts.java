@@ -368,21 +368,21 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 
 		public AccountRecord getAccount(long position){
-			Cursor group = getCursor();
+			final Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
-			int NameColumn = group.getColumnIndex("AcctName");
-			int BalanceColumn = group.getColumnIndex("AcctBalance");
-			int TimeColumn = group.getColumnIndex("AcctTime");
-			int DateColumn = group.getColumnIndex("AcctDate");
+			final int NameColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_NAME);
+			final int BalanceColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
+			final int TimeColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_TIME);
+			final int DateColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_DATE);
 
-			String id = group.getString(0);
-			String name = group.getString(NameColumn);
-			String balance = group.getString(BalanceColumn);
-			String time = group.getString(TimeColumn);
-			String date = group.getString(DateColumn);
+			final String id = group.getString(0);
+			final String name = group.getString(NameColumn);
+			final String balance = group.getString(BalanceColumn);
+			final String time = group.getString(TimeColumn);
+			final String date = group.getString(DateColumn);
 
-			AccountRecord record = new AccountRecord(id, name, balance, time, date);
+			final AccountRecord record = new AccountRecord(id, name, balance, time, date);
 			return record;
 		}
 

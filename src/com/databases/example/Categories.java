@@ -101,8 +101,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	}
 
 	//Method for filling subcategories
-	public void subcategoryPopulate(String catId){	
-		cursorSubCategory = dh.getSubCategories(null,"ToCatID="+catId,null,null);
+	public void subcategoryPopulate(String catId){
+		cursorSubCategory = dh.getSubCategories(null,DatabaseHelper.SUBCATEGORY_CAT_ID+"="+catId,null,null);
 		resultsCursor.add(cursorSubCategory);
 	}//end of subcategoryPopulate
 
@@ -138,7 +138,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			String subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
 			Uri uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + subcategoryID);
 
-			getContentResolver().delete(uri,"SubCatID="+subcategoryID, null);
+			getContentResolver().delete(uri,DatabaseHelper.SUBCATEGORY_ID+"="+subcategoryID, null);
 
 			Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
 		}
@@ -147,15 +147,17 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 			//Delete category
 			Uri uri = Uri.parse(MyContentProvider.CATEGORIES_URI + "/" + categoryID);
-			getContentResolver().delete(uri,"CatID="+categoryID, null);
+			getContentResolver().delete(uri,DatabaseHelper.CATEGORY_ID+"="+categoryID, null);
 
 			//Delete remaining subcategories
 			uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + 0);
-			getContentResolver().delete(uri,"ToCatID="+categoryID, null);
+			getContentResolver().delete(uri,DatabaseHelper.SUBCATEGORY_CAT_ID+"="+categoryID, null);
 
 			Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
 		}
 
+		getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, this);
+		
 	}//end categoryDelete
 
 	//Edit Category
@@ -302,7 +304,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 	public class UserItemAdapter extends BaseExpandableListAdapter{
 		private Cursor category;
-		private ArrayList<Cursor> subcategory = new ArrayList<Cursor>();
+		private ArrayList<Cursor> subcategory;
 		private Context context;
 
 		public UserItemAdapter(Context context, int textViewResourceId, Cursor cats, ArrayList<Cursor> subcats) {
@@ -315,8 +317,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			Cursor group = category;
 
 			group.moveToPosition((int) id);
-			int NameColumn = group.getColumnIndex("CatName");
-			int NoteColumn = group.getColumnIndex("CatNote");
+			int NameColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NAME);
+			int NoteColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NOTE);
 
 			String itemId = group.getString(0);
 			String itemName = group.getString(NameColumn);
@@ -331,9 +333,9 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			Cursor group = subcategory.get(groupId);
 
 			group.moveToPosition(childId);
-			int ToIDColumn = group.getColumnIndex("ToCatID");
-			int NameColumn = group.getColumnIndex("SubCatName");
-			int NoteColumn = group.getColumnIndex("SubCatNote");
+			int ToIDColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID);
+			int NameColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME);
+			int NoteColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE);
 
 			//Log.e("HERE", "columns " + IDColumn + " " + ToIDColumn + " " + NameColumn + " " + NoteColumn);
 			String itemId = group.getString(0);
@@ -422,8 +424,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 			}
 
-			int NameColumn = user.getColumnIndex("CatName");
-			int NoteColumn = user.getColumnIndex("CatNote");
+			int NameColumn = user.getColumnIndex(DatabaseHelper.CATEGORY_NAME);
+			int NoteColumn = user.getColumnIndex(DatabaseHelper.CATEGORY_NOTE);
 
 			user.moveToPosition(groupPosition);
 			String itemId = user.getString(0);
@@ -545,9 +547,9 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
 			}
 
-			int ToIDColumn = user.getColumnIndex("ToCatID");
-			int NameColumn = user.getColumnIndex("SubCatName");
-			int NoteColumn = user.getColumnIndex("SubCatNote");
+			int ToIDColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID);
+			int NameColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME);
+			int NoteColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE);
 
 			user.moveToPosition(childPosition);
 			String itemId = user.getString(0);
@@ -775,26 +777,28 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 							SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
 
 							ContentValues subcategoryValues=new ContentValues();
-							subcategoryValues.put("SubCatID",oldRecord.id);
-							subcategoryValues.put("ToCatID",oldRecord.catId);
-							subcategoryValues.put("SubCatName",newName);
-							subcategoryValues.put("SubCatNote",newNote);
-							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI+"/"+oldRecord.id), subcategoryValues,"SubCatID ="+oldRecord.id,null);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_ID,oldRecord.id);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID,oldRecord.catId);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,newName);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,newNote);
+							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI+"/"+oldRecord.id), subcategoryValues,DatabaseHelper.SUBCATEGORY_ID+" = "+oldRecord.id,null);							
 						}
 						else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 							CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
 
 							ContentValues categoryValues=new ContentValues();
-							categoryValues.put("CatID",oldRecord.id);
-							categoryValues.put("CatName",newName);
-							categoryValues.put("CatNote",newNote);
-							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI+"/"+oldRecord.id), categoryValues,"CatID ="+oldRecord.id,null);
+							categoryValues.put(DatabaseHelper.CATEGORY_ID,oldRecord.id);
+							categoryValues.put(DatabaseHelper.CATEGORY_NAME,newName);
+							categoryValues.put(DatabaseHelper.CATEGORY_NOTE,newNote);
+							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI+"/"+oldRecord.id), categoryValues,DatabaseHelper.CATEGORY_ID+" = "+oldRecord.id,null);
 						}
 					}
 					catch(Exception e){
 						Log.e("Categories-EditDialog", "Error editing Categories");
 					}
-
+					
+					((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
+					
 				}
 			})
 			.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
@@ -874,24 +878,27 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 						//Add a category
 						if(isCat){
 							ContentValues categoryValues=new ContentValues();
-							categoryValues.put("CatName",name);
-							categoryValues.put("CatNote",note);
+							categoryValues.put(DatabaseHelper.CATEGORY_NAME,name);
+							categoryValues.put(DatabaseHelper.CATEGORY_NOTE,note);
 							getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
 						}
 						//Add a subcategory
 						else{
 							ContentValues subcategoryValues=new ContentValues();
-							subcategoryValues.put("ToCatID",catID);
-							subcategoryValues.put("CatName",name);
-							subcategoryValues.put("CatNote",note);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID,catID);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,name);
+							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,note);
 							getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
+							
+							//((Categories) getActivity()).subcategoryPopulate(catID);
 						}
 
 					}
 					catch(Exception e){
 						Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
 					}
-
+					
+					((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
 				}
 			})
 			.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
@@ -933,12 +940,12 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		case SUBCATEGORIES_LOADER:
 			Log.v("Categories-onCreateLoader","new subcategory loader created");
-			String selection = "ToCatID="+ bundle.getString("id");
+			String selection = DatabaseHelper.SUBCATEGORY_CAT_ID+"="+ bundle.getString("id");
 			return new CursorLoader(
 					this,   	// Parent activity context
 					MyContentProvider.SUBCATEGORIES_URI,// Table to query
 					null,     			// Projection to return
-					selection,         		// No selection clause
+					selection,         	// No selection clause
 					null,            	// No selection arguments
 					null           		// Default sort order
 					);
@@ -987,7 +994,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		case SUBCATEGORIES_LOADER:
 			adapterCategory.swapSubCategoryCursor(null);
-			Log.e("Categories-onLoaderReset", "loader reset. loader="+loader.getId());
+			Log.v("Categories-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
 
 		default:

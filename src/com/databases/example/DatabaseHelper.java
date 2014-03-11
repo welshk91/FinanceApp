@@ -24,57 +24,57 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	private static final String DATABASE_NAME = "dbFinance";
 
 	//Table Names
-	private static final String TABLE_ACCOUNTS = "tblAccounts";
-	private static final String TABLE_TRANSACTIONS = "tblTrans";
-	private static final String TABLE_PLANS = "tblPlanTrans";
-	private static final String TABLE_CATEGORIES = "tblCategory";
-	private static final String TABLE_SUBCATEGORIES = "tblSubCategory";
-	private static final String TABLE_LINKS = "tblLinks";
-	private static final String TABLE_NOTIFICATIONS = "tblNotifications";
+	protected static final String TABLE_ACCOUNTS = "tblAccounts";
+	protected static final String TABLE_TRANSACTIONS = "tblTrans";
+	protected static final String TABLE_PLANS = "tblPlanTrans";
+	protected static final String TABLE_CATEGORIES = "tblCategory";
+	protected static final String TABLE_SUBCATEGORIES = "tblSubCategory";
+	protected static final String TABLE_LINKS = "tblLinks";
+	protected static final String TABLE_NOTIFICATIONS = "tblNotifications";
 	
-	private static final String ACCOUNT_ID = "AcctID";
-	private static final String ACCOUNT_NAME = "AcctName";
-	private static final String ACCOUNT_BALANCE = "AcctBalance";
-	private static final String ACCOUNT_TIME = "AcctTime";
-	private static final String ACCOUNT_DATE = "AcctDate";
+	protected static final String ACCOUNT_ID = "AcctID";
+	protected static final String ACCOUNT_NAME = "AcctName";
+	protected static final String ACCOUNT_BALANCE = "AcctBalance";
+	protected static final String ACCOUNT_TIME = "AcctTime";
+	protected static final String ACCOUNT_DATE = "AcctDate";
 	
-	private static final String TRANS_ID = "TransID";
-	private static final String TRANS_ACCT_ID = "ToAcctID";
-	private static final String TRANS_PLAN_ID = "ToPlanID";
-	private static final String TRANS_NAME = "TransName";
-	private static final String TRANS_VALUE = "TransValue";
-	private static final String TRANS_TYPE = "TransType";
-	private static final String TRANS_CATEGORY = "TransCategory";
-	private static final String TRANS_CHECKNUM = "TransCheckNum";
-	private static final String TRANS_MEMO = "TransMemo";
-	private static final String TRANS_TIME = "TransTime";
-	private static final String TRANS_DATE = "TransDate";
-	private static final String TRANS_CLEARED = "TransCleared";
+	protected static final String TRANS_ID = "TransID";
+	protected static final String TRANS_ACCT_ID = "ToAcctID";
+	protected static final String TRANS_PLAN_ID = "ToPlanID";
+	protected static final String TRANS_NAME = "TransName";
+	protected static final String TRANS_VALUE = "TransValue";
+	protected static final String TRANS_TYPE = "TransType";
+	protected static final String TRANS_CATEGORY = "TransCategory";
+	protected static final String TRANS_CHECKNUM = "TransCheckNum";
+	protected static final String TRANS_MEMO = "TransMemo";
+	protected static final String TRANS_TIME = "TransTime";
+	protected static final String TRANS_DATE = "TransDate";
+	protected static final String TRANS_CLEARED = "TransCleared";
 
-	private static final String PLAN_ID = "PlanID";
-	private static final String PLAN_ACCT_ID = TRANS_ACCT_ID;
-	private static final String PLAN_NAME = "PlanName";
-	private static final String PLAN_VALUE = "PlanValue";
-	private static final String PLAN_TYPE = "PlanType";
-	private static final String PLAN_CATEGORY = "PlanCategory";
-	private static final String PLAN_MEMO = "PlanMemo";
-	private static final String PLAN_OFFSET = "PlanOffset";
-	private static final String PLAN_RATE = "PlanRate";
-	private static final String PLAN_CLEARED = "PlanCleared";
+	protected static final String PLAN_ID = "PlanID";
+	protected static final String PLAN_ACCT_ID = TRANS_ACCT_ID;
+	protected static final String PLAN_NAME = "PlanName";
+	protected static final String PLAN_VALUE = "PlanValue";
+	protected static final String PLAN_TYPE = "PlanType";
+	protected static final String PLAN_CATEGORY = "PlanCategory";
+	protected static final String PLAN_MEMO = "PlanMemo";
+	protected static final String PLAN_OFFSET = "PlanOffset";
+	protected static final String PLAN_RATE = "PlanRate";
+	protected static final String PLAN_CLEARED = "PlanCleared";
 
-	private static final String CATEGORY_ID = "CatID";
-	private static final String CATEGORY_NAME = "CatName";
-	private static final String CATEGORY_NOTE = "CatNote";
+	protected static final String CATEGORY_ID = "CatID";
+	protected static final String CATEGORY_NAME = "CatName";
+	protected static final String CATEGORY_NOTE = "CatNote";
 
-	private static final String SUBCATEGORY_ID = "SubCatID";
-	private static final String SUBCATEGORY_CAT_ID = "ToCatID";
-	private static final String SUBCATEGORY_NAME = "SubCatName";
-	private static final String SUBCATEGORY_NOTE = "SubCatNote";
+	protected static final String SUBCATEGORY_ID = "SubCatID";
+	protected static final String SUBCATEGORY_CAT_ID = "ToCatID";
+	protected static final String SUBCATEGORY_NAME = "SubCatName";
+	protected static final String SUBCATEGORY_NOTE = "SubCatNote";
 
-	private static final String NOT_ID = "NotificationID";
-	private static final String NOT_NAME = "NotificationName";
-	private static final String NOT_VALUE = "NotificationValue";
-	private static final String NOT_DATE = "NotificationDate";
+	protected static final String NOT_ID = "NotificationID";
+	protected static final String NOT_NAME = "NotificationName";
+	protected static final String NOT_VALUE = "NotificationValue";
+	protected static final String NOT_DATE = "NotificationDate";
 	
 	private Context context = null;
 

@@ -395,37 +395,37 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		public TransactionRecord getTransaction(long position){
-			Cursor group = getCursor();
+			final Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
-			int idColumn = group.getColumnIndex(DatabaseHelper.TRANS_ID);
-			int acctIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID);
-			int planIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID);
-			int nameColumn = group.getColumnIndex(DatabaseHelper.TRANS_NAME);
-			int valueColumn = group.getColumnIndex(DatabaseHelper.TRANS_VALUE);
-			int typeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TYPE);
-			int categoryColumn = group.getColumnIndex(DatabaseHelper.TRANS_CATEGORY);
-			int checknumColumn = group.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM);
-			int memoColumn = group.getColumnIndex(DatabaseHelper.TRANS_MEMO);
-			int timeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TIME);
-			int dateColumn = group.getColumnIndex(DatabaseHelper.TRANS_DATE);
-			int clearedColumn = group.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
+			final int idColumn = group.getColumnIndex(DatabaseHelper.TRANS_ID);
+			final int acctIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID);
+			final int planIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID);
+			final int nameColumn = group.getColumnIndex(DatabaseHelper.TRANS_NAME);
+			final int valueColumn = group.getColumnIndex(DatabaseHelper.TRANS_VALUE);
+			final int typeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TYPE);
+			final int categoryColumn = group.getColumnIndex(DatabaseHelper.TRANS_CATEGORY);
+			final int checknumColumn = group.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM);
+			final int memoColumn = group.getColumnIndex(DatabaseHelper.TRANS_MEMO);
+			final int timeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TIME);
+			final int dateColumn = group.getColumnIndex(DatabaseHelper.TRANS_DATE);
+			final int clearedColumn = group.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
 
 			//int id = group.getInt(idColumn);
-			int id = group.getInt(0);
-			int acctId = group.getInt(acctIDColumn);
-			int planId = group.getInt(planIDColumn);
-			String name = group.getString(nameColumn);
-			String value = group.getString(valueColumn);
-			String type = group.getString(typeColumn);
-			String category = group.getString(categoryColumn);
-			String checknum = group.getString(checknumColumn);
-			String memo = group.getString(memoColumn);
-			String time = group.getString(timeColumn);
-			String date = group.getString(dateColumn);
-			String cleared = group.getString(clearedColumn);
+			final int id = group.getInt(0);
+			final int acctId = group.getInt(acctIDColumn);
+			final int planId = group.getInt(planIDColumn);
+			final String name = group.getString(nameColumn);
+			final String value = group.getString(valueColumn);
+			final String type = group.getString(typeColumn);
+			final String category = group.getString(categoryColumn);
+			final String checknum = group.getString(checknumColumn);
+			final String memo = group.getString(memoColumn);
+			final String time = group.getString(timeColumn);
+			final String date = group.getString(dateColumn);
+			final String cleared = group.getString(clearedColumn);
 
-			TransactionRecord record = new TransactionRecord(id, acctId, planId, name, value,type,category,checknum,memo,time,date,cleared);
+			final TransactionRecord record = new TransactionRecord(id, acctId, planId, name, value,type,category,checknum,memo,time,date,cleared);
 			return record;
 		}
 

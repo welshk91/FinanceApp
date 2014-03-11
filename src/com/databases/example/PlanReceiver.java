@@ -77,16 +77,16 @@ public class PlanReceiver extends BroadcastReceiver{
 		date.setCalendar(cal);
 
 		ContentValues transactionValues=new ContentValues();
-		transactionValues.put("ToAcctID", plan.acctId);
-		transactionValues.put("ToPlanID", plan.id);
-		transactionValues.put("TransName", plan.name);
-		transactionValues.put("TransValue", plan.value);
-		transactionValues.put("TransType", plan.type);
-		transactionValues.put("TransCategory", plan.category);
-		transactionValues.put("TransMemo", plan.memo);
-		transactionValues.put("TransTime", date.getSQLTime(locale));
-		transactionValues.put("TransDate", date.getSQLDate(locale));
-		transactionValues.put("TransCleared", plan.cleared);
+		transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, plan.acctId);
+		transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, plan.id);
+		transactionValues.put(DatabaseHelper.TRANS_NAME, plan.name);
+		transactionValues.put(DatabaseHelper.TRANS_VALUE, plan.value);
+		transactionValues.put(DatabaseHelper.TRANS_TYPE, plan.type);
+		transactionValues.put(DatabaseHelper.TRANS_CATEGORY, plan.category);
+		transactionValues.put(DatabaseHelper.TRANS_MEMO, plan.memo);
+		transactionValues.put(DatabaseHelper.TRANS_TIME, date.getSQLTime(locale));
+		transactionValues.put(DatabaseHelper.TRANS_DATE, date.getSQLDate(locale));
+		transactionValues.put(DatabaseHelper.TRANS_CLEARED, plan.cleared);
 
 		//Insert values into accounts table
 		dh.addTransaction(transactionValues);							
@@ -117,9 +117,9 @@ public class PlanReceiver extends BroadcastReceiver{
 
 		//Add current notification to database of notifications
 		ContentValues notificationValues = new ContentValues();
-		notificationValues.put("NotificationName",plan_name);
-		notificationValues.put("NotificationValue",plan_value);
-		notificationValues.put("NotificationDate",today.getSQLDate(context.getResources().getConfiguration().locale));
+		notificationValues.put(DatabaseHelper.NOT_NAME,plan_name);
+		notificationValues.put(DatabaseHelper.NOT_VALUE,plan_value);
+		notificationValues.put(DatabaseHelper.NOT_DATE,today.getSQLDate(context.getResources().getConfiguration().locale));
 		context.getContentResolver().insert(MyContentProvider.NOTIFICATIONS_URI, notificationValues);
 
 		NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(context);	
@@ -161,16 +161,16 @@ public class PlanReceiver extends BroadcastReceiver{
 		Cursor cursorPlans = dh.getPlans(null,null,null,null);
 
 		//startManagingCursor(cursorPlans);
-		int IDColumn = cursorPlans.getColumnIndex("PlanID");
-		int ToIDColumn = cursorPlans.getColumnIndex("ToAcctID");
-		int NameColumn = cursorPlans.getColumnIndex("PlanName");
-		int ValueColumn = cursorPlans.getColumnIndex("PlanValue");
-		int TypeColumn = cursorPlans.getColumnIndex("PlanType");
-		int CategoryColumn = cursorPlans.getColumnIndex("PlanCategory");
-		int MemoColumn = cursorPlans.getColumnIndex("PlanMemo");
-		int OffsetColumn = cursorPlans.getColumnIndex("PlanOffset");
-		int RateColumn = cursorPlans.getColumnIndex("PlanRate");
-		int ClearedColumn = cursorPlans.getColumnIndex("PlanCleared");
+		int IDColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ID);
+		int ToIDColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
+		int NameColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_NAME);
+		int ValueColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_VALUE);
+		int TypeColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_TYPE);
+		int CategoryColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
+		int MemoColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_MEMO);
+		int OffsetColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+		int RateColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_RATE);
+		int ClearedColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
 		cursorPlans.moveToFirst();
 		if (cursorPlans != null) {
@@ -189,8 +189,8 @@ public class PlanReceiver extends BroadcastReceiver{
 					String cleared = cursorPlans.getString(ClearedColumn);
 
 					/****RESET ALARMS HERE****/
-					Log.e("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
-					PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,cleared);
+					Log.d("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
+					final PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,cleared);
 					schedule(record,context);
 
 				} while (cursorPlans.moveToNext());

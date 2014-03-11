@@ -157,7 +157,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		adapterPlans = new UserItemAdapter(this, null);		
 		lvPlans.setAdapter(adapterPlans);
 
-		plansPopulate();
+		getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
 
 	}//end onCreate
 
@@ -167,13 +167,9 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		boolean hasCheckedItems = adapterPlans.getSelectedCount() > 0;
 
 		if (hasCheckedItems && mActionMode == null){
-			Toast.makeText(this, "hasCheckedItems && mActionMode == null", Toast.LENGTH_SHORT).show();;
-			// there are some selected items, start the actionMode
 			mActionMode = this.startActionMode(new MyActionMode());
 		}
 		else if (!hasCheckedItems && mActionMode != null){
-			Toast.makeText(this, "!hasCheckedItems && mActionMode != null", Toast.LENGTH_SHORT).show();;
-			// there no selected items, finish the actionMode
 			((ActionMode) mActionMode).finish();
 		}
 
@@ -181,11 +177,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			((ActionMode) mActionMode).invalidate();
 			((ActionMode)mActionMode).setTitle(String.valueOf(adapterPlans.getSelectedCount()) + " selected");
 		}
-	}
-
-	//Method to list all plans
-	public void plansPopulate(){
-		getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
 	}
 
 	//For Scheduling a Transaction
@@ -377,15 +368,15 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current date as the default date in the picker
-			final Calendar c = Calendar.getInstance();
+			final Calendar cal = Calendar.getInstance();
 
 			SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
 			SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
 			SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
 
-			int year = Integer.parseInt(dateFormatYear.format(c.getTime()));
-			int month = Integer.parseInt(dateFormatMonth.format(c.getTime()))-1;
-			int day = Integer.parseInt(dateFormatDay.format(c.getTime()));
+			int year = Integer.parseInt(dateFormatYear.format(cal.getTime()));
+			int month = Integer.parseInt(dateFormatMonth.format(cal.getTime()))-1;
+			int day = Integer.parseInt(dateFormatDay.format(cal.getTime()));
 
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
@@ -408,32 +399,32 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		}
 
 		public PlanRecord getPlan(long position){
-			Cursor group = getCursor();
+			final Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
-			int IDColumn = group.getColumnIndex("PlanID");
-			int ToIDColumn = group.getColumnIndex("ToAcctID");
-			int NameColumn = group.getColumnIndex("PlanName");
-			int ValueColumn = group.getColumnIndex("PlanValue");
-			int TypeColumn = group.getColumnIndex("PlanType");
-			int CategoryColumn = group.getColumnIndex("PlanCategory");
-			int MemoColumn = group.getColumnIndex("PlanMemo");
-			int OffsetColumn = group.getColumnIndex("PlanOffset");
-			int RateColumn = group.getColumnIndex("PlanRate");
-			int ClearedColumn = group.getColumnIndex("PlanCleared");
+			final int IDColumn = group.getColumnIndex(DatabaseHelper.PLAN_ID);
+			final int ToIDColumn = group.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
+			final int NameColumn = group.getColumnIndex(DatabaseHelper.PLAN_NAME);
+			final int ValueColumn = group.getColumnIndex(DatabaseHelper.PLAN_VALUE);
+			final int TypeColumn = group.getColumnIndex(DatabaseHelper.PLAN_TYPE);
+			final int CategoryColumn = group.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
+			final int MemoColumn = group.getColumnIndex(DatabaseHelper.PLAN_MEMO);
+			final int OffsetColumn = group.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+			final int RateColumn = group.getColumnIndex(DatabaseHelper.PLAN_RATE);
+			final int ClearedColumn = group.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
-			String id = group.getString(0);
-			String to_id = group.getString(ToIDColumn);
-			String name = group.getString(NameColumn);
-			String value = group.getString(ValueColumn);
-			String type = group.getString(TypeColumn);
-			String category = group.getString(CategoryColumn);
-			String memo = group.getString(MemoColumn);
-			String offset = group.getString(OffsetColumn);
-			String rate = group.getString(RateColumn);
-			String cleared = group.getString(ClearedColumn);
+			final String id = group.getString(0);
+			final String to_id = group.getString(ToIDColumn);
+			final String name = group.getString(NameColumn);
+			final String value = group.getString(ValueColumn);
+			final String type = group.getString(TypeColumn);
+			final String category = group.getString(CategoryColumn);
+			final String memo = group.getString(MemoColumn);
+			final String offset = group.getString(OffsetColumn);
+			final String rate = group.getString(RateColumn);
+			final String cleared = group.getString(ClearedColumn);
 
-			PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
+			final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, cleared);
 			return record;
 		}
 
@@ -457,16 +448,16 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				TextView tvRate = (TextView) v.findViewById(R.id.plan_rate);
 				TextView tvCleared = (TextView) v.findViewById(R.id.plan_cleared);
 
-				int IDColumn = user.getColumnIndex("PlanID");
-				int ToIDColumn = user.getColumnIndex("ToAcctID");
-				int NameColumn = user.getColumnIndex("PlanName");
-				int ValueColumn = user.getColumnIndex("PlanValue");
-				int TypeColumn = user.getColumnIndex("PlanType");
-				int CategoryColumn = user.getColumnIndex("PlanCategory");
-				int MemoColumn = user.getColumnIndex("PlanMemo");
-				int OffsetColumn = user.getColumnIndex("PlanOffset");
-				int RateColumn = user.getColumnIndex("PlanRate");
-				int ClearedColumn = user.getColumnIndex("PlanCleared");
+				final int IDColumn = user.getColumnIndex(DatabaseHelper.PLAN_ID);
+				final int ToIDColumn = user.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
+				final int NameColumn = user.getColumnIndex(DatabaseHelper.PLAN_NAME);
+				final int ValueColumn = user.getColumnIndex(DatabaseHelper.PLAN_VALUE);
+				final int TypeColumn = user.getColumnIndex(DatabaseHelper.PLAN_TYPE);
+				final int CategoryColumn = user.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
+				final int MemoColumn = user.getColumnIndex(DatabaseHelper.PLAN_MEMO);
+				final int OffsetColumn = user.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+				final int RateColumn = user.getColumnIndex(DatabaseHelper.PLAN_RATE);
+				final int ClearedColumn = user.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
 				String id = user.getString(0);
 				String to_id = user.getString(ToIDColumn);
@@ -480,7 +471,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				String cleared = user.getString(ClearedColumn);
 
 				Locale locale=getResources().getConfiguration().locale;
-
 
 				//Change gradient
 				try{
@@ -816,7 +806,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"+(ID)), null, null, null, null);
+			Cursor cursor = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"+(ID)), null, null, null, null);
 
 			int entry_id = 0;
 			String entry_acctId = null;
@@ -829,19 +819,19 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			String entry_rate = null;
 			String entry_cleared = null;
 
-			c.moveToFirst();
+			cursor.moveToFirst();
 			do{
-				entry_id = c.getInt(c.getColumnIndex("PlanID"));
-				entry_acctId = c.getString(c.getColumnIndex("ToAcctID"));
-				entry_name = c.getString(c.getColumnIndex("PlanName"));
-				entry_value = c.getString(c.getColumnIndex("PlanValue"));
-				entry_type = c.getString(c.getColumnIndex("PlanType"));
-				entry_category = c.getString(c.getColumnIndex("PlanCategory"));
-				entry_memo = c.getString(c.getColumnIndex("PlanMemo"));
-				entry_offset = c.getString(c.getColumnIndex("PlanOffset"));
-				entry_rate = c.getString(c.getColumnIndex("PlanRate"));
-				entry_cleared = c.getString(c.getColumnIndex("PlanCleared"));
-			}while(c.moveToNext());
+				entry_id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.PLAN_ID));
+				entry_acctId = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID));
+				entry_name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_NAME));
+				entry_value = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_VALUE));
+				entry_type = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_TYPE));
+				entry_category = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CATEGORY));
+				entry_memo = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_MEMO));
+				entry_offset = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET));
+				entry_rate = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_RATE));
+				entry_cleared = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CLEARED));
+			}while(cursor.moveToNext());
 
 			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
 			final View planStatsView = li.inflate(R.layout.plan_stats, null);
@@ -972,7 +962,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					transactionType = tType.getSelectedItem().toString().trim();
 
 					try{
-						transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex("AcctName"));
+						transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
 						transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
 					}
 					catch(Exception e){
@@ -985,7 +975,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 					try{
 						//	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
-						transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
+						transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 					}
 					catch(Exception e){
 						//Usually caused if no category exists
@@ -1019,24 +1009,21 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							Log.d("Plans-Add", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 							ContentValues transactionValues = new ContentValues();
-							transactionValues.put("ToAcctID", transactionAccountID);
-							transactionValues.put("PlanName", transactionName);
-							transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put("PlanType", transactionType);
-							transactionValues.put("PlanCategory", transactionCategory);
-							transactionValues.put("PlanMemo", transactionMemo);
-							transactionValues.put("PlanOffset", transactionOffset.getSQLDate(locale));
-							transactionValues.put("PlanRate", transactionRate);
-							transactionValues.put("PlanCleared", transactionCleared);
+							transactionValues.put(DatabaseHelper.PLAN_ACCT_ID, transactionAccountID);
+							transactionValues.put(DatabaseHelper.PLAN_NAME, transactionName);
+							transactionValues.put(DatabaseHelper.PLAN_VALUE, transactionValue.getBigDecimal(locale)+"");
+							transactionValues.put(DatabaseHelper.PLAN_TYPE, transactionType);
+							transactionValues.put(DatabaseHelper.PLAN_CATEGORY, transactionCategory);
+							transactionValues.put(DatabaseHelper.PLAN_MEMO, transactionMemo);
+							transactionValues.put(DatabaseHelper.PLAN_OFFSET, transactionOffset.getSQLDate(locale));
+							transactionValues.put(DatabaseHelper.PLAN_RATE, transactionRate);
+							transactionValues.put(DatabaseHelper.PLAN_CLEARED, transactionCleared);
 
 							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANS_URI, transactionValues);
 
 							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);
 
-							//Refresh the plans list
-							((Plans) getSherlockActivity()).plansPopulate();
-							//plansPopulate();
 						} 
 
 						else {
@@ -1132,7 +1119,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			//Used to find correct category to select
 			for (int i = 0; i < categorySpinner.getCount(); i++) {
 				Cursor cursorValue = (Cursor) categorySpinner.getItemAtPosition(i);
-				String cursorName = cursorValue.getString(cursorValue.getColumnIndex("SubCatName"));
+				String cursorName = cursorValue.getString(cursorValue.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 				if (cursorName.contentEquals(category)) {
 					categorySpinner.setSelection(i);
 					break;
@@ -1218,7 +1205,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					transactionType = tType.getSelectedItem().toString().trim();
 
 					try{
-						transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex("AcctName"));
+						transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
 						transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
 					}
 					catch(Exception e){
@@ -1231,7 +1218,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 					try{
 						//	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
-						transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
+						transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 					}
 					catch(Exception e){
 						//Usually caused if no category exists
@@ -1264,27 +1251,27 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
 							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("PlanID", ID);
-							transactionValues.put("ToAcctID", transactionAccountID);
-							transactionValues.put("PlanName", transactionName);
-							transactionValues.put("PlanValue", transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put("PlanType", transactionType);
-							transactionValues.put("PlanCategory", transactionCategory);
-							transactionValues.put("PlanMemo", transactionMemo);
-							transactionValues.put("PlanOffset", transactionOffset.getSQLDate(locale));
-							transactionValues.put("PlanRate", transactionRate);
-							transactionValues.put("PlanCleared", transactionCleared);
+							transactionValues.put(DatabaseHelper.PLAN_ID, ID);
+							transactionValues.put(DatabaseHelper.PLAN_ACCT_ID, transactionAccountID);
+							transactionValues.put(DatabaseHelper.PLAN_NAME, transactionName);
+							transactionValues.put(DatabaseHelper.PLAN_VALUE, transactionValue.getBigDecimal(locale)+"");
+							transactionValues.put(DatabaseHelper.PLAN_TYPE, transactionType);
+							transactionValues.put(DatabaseHelper.PLAN_CATEGORY, transactionCategory);
+							transactionValues.put(DatabaseHelper.PLAN_MEMO, transactionMemo);
+							transactionValues.put(DatabaseHelper.PLAN_OFFSET, transactionOffset.getSQLDate(locale));
+							transactionValues.put(DatabaseHelper.PLAN_RATE, transactionRate);
+							transactionValues.put(DatabaseHelper.PLAN_CLEARED, transactionCleared);
 
 							//Cancel old plan
 							((Plans) getSherlockActivity()).cancelPlan(oldRecord);
 
 							//Update plan
-							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+ID), transactionValues, "PlanID ="+ID, null);
+							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+ID), transactionValues, DatabaseHelper.PLAN_ID+"="+ID, null);
 
 							//Reschedule plan
-							PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
+							final PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);;
-							((Plans) getSherlockActivity()).plansPopulate();;
+							
 						} 
 
 						else {
@@ -1386,7 +1373,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			break;
 
 		case PLAN_ACCOUNT_LOADER:
-			String[] from = new String[] {"AcctName", "_id"}; 
+			String[] from = new String[] {DatabaseHelper.ACCOUNT_NAME, "_id"}; 
 			int[] to = new int[] { android.R.id.text1};
 
 			accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to);
@@ -1396,7 +1383,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			break;
 
 		case PLAN_SUBCATEGORY_LOADER:
-			from = new String[] {"SubCatName"}; 
+			from = new String[] {DatabaseHelper.SUBCATEGORY_NAME}; 
 			to = new int[] { android.R.id.text1 };
 
 			categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to);
@@ -1493,15 +1480,12 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 						record = adapterPlans.getPlan(selected.keyAt(i));
 
 						Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
-						getContentResolver().delete(uri, "PlanID="+record.id, null);
+						getContentResolver().delete(uri, DatabaseHelper.PLAN_ID+"="+record.id, null);
 
 						Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
 
 						//Cancel all upcoming notifications
 						cancelPlan(record);
-
-						//Refresh the plans list
-						plansPopulate();				
 					}
 				}
 

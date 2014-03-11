@@ -34,10 +34,8 @@ import android.support.v4.widget.CursorAdapter;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -184,13 +182,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		boolean hasCheckedItems = adapterTransactions.getSelectedCount() > 0;
 
 		if (hasCheckedItems && mActionMode == null){
-			Toast.makeText(getSherlockActivity(), "hasCheckedItems && mActionMode == null", Toast.LENGTH_SHORT).show();;
-			// there are some selected items, start the actionMode
 			mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
 		}
 		else if (!hasCheckedItems && mActionMode != null){
-			Toast.makeText(getSherlockActivity(), "!hasCheckedItems && mActionMode != null", Toast.LENGTH_SHORT).show();;
-			// there no selected items, finish the actionMode
 			((ActionMode) mActionMode).finish();
 		}
 
@@ -253,7 +247,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		else{
 			Bundle b = new Bundle();
 			b.putInt("aID", account_id);
-			Log.v("Transactions-populate","start loader (ToAcctID="+ account_id + ")...");
+			Log.v("Transactions-populate","start loader ("+DatabaseHelper.TRANS_ACCT_ID+"="+ account_id + ")...");
 			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 
@@ -345,13 +339,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current time as the default values for the picker
-			final Calendar c = Calendar.getInstance();
+			final Calendar cal = Calendar.getInstance();
 
 			SimpleDateFormat dateFormatHour = new SimpleDateFormat("hh");
 			SimpleDateFormat dateFormatMinute = new SimpleDateFormat("mm");
 
-			int hour = Integer.parseInt(dateFormatHour.format(c.getTime()));
-			int minute = Integer.parseInt(dateFormatMinute.format(c.getTime()));
+			int hour = Integer.parseInt(dateFormatHour.format(cal.getTime()));
+			int minute = Integer.parseInt(dateFormatMinute.format(cal.getTime()));
 
 			return new TimePickerDialog(getActivity(), this, hour, minute,
 					false);
@@ -372,15 +366,15 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current date as the default date in the picker
-			final Calendar c = Calendar.getInstance();
+			final Calendar cal = Calendar.getInstance();
 
 			SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
 			SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
 			SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
 
-			int year = Integer.parseInt(dateFormatYear.format(c.getTime()));
-			int month = Integer.parseInt(dateFormatMonth.format(c.getTime()))-1;
-			int day = Integer.parseInt(dateFormatDay.format(c.getTime()));
+			int year = Integer.parseInt(dateFormatYear.format(cal.getTime()));
+			int month = Integer.parseInt(dateFormatMonth.format(cal.getTime()))-1;
+			int day = Integer.parseInt(dateFormatDay.format(cal.getTime()));
 
 			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -404,18 +398,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
-			int idColumn = group.getColumnIndex("TransID");
-			int acctIDColumn = group.getColumnIndex("ToAcctID");
-			int planIDColumn = group.getColumnIndex("ToPlanID");
-			int nameColumn = group.getColumnIndex("TransName");
-			int valueColumn = group.getColumnIndex("TransValue");
-			int typeColumn = group.getColumnIndex("TransType");
-			int categoryColumn = group.getColumnIndex("TransCategory");
-			int checknumColumn = group.getColumnIndex("TransCheckNum");
-			int memoColumn = group.getColumnIndex("TransMemo");
-			int timeColumn = group.getColumnIndex("TransTime");
-			int dateColumn = group.getColumnIndex("TransDate");
-			int clearedColumn = group.getColumnIndex("TransCleared");
+			int idColumn = group.getColumnIndex(DatabaseHelper.TRANS_ID);
+			int acctIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID);
+			int planIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID);
+			int nameColumn = group.getColumnIndex(DatabaseHelper.TRANS_NAME);
+			int valueColumn = group.getColumnIndex(DatabaseHelper.TRANS_VALUE);
+			int typeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TYPE);
+			int categoryColumn = group.getColumnIndex(DatabaseHelper.TRANS_CATEGORY);
+			int checknumColumn = group.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM);
+			int memoColumn = group.getColumnIndex(DatabaseHelper.TRANS_MEMO);
+			int timeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TIME);
+			int dateColumn = group.getColumnIndex(DatabaseHelper.TRANS_DATE);
+			int clearedColumn = group.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
 
 			//int id = group.getInt(idColumn);
 			int id = group.getInt(0);
@@ -455,18 +449,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				TextView tvTime = (TextView) v.findViewById(R.id.transaction_time);
 				TextView tvCleared = (TextView) v.findViewById(R.id.transaction_cleared);
 
-				int idColumn = user.getColumnIndex("TransID");
-				int acctIDColumn = user.getColumnIndex("ToAcctID");
-				int planIDColumn = user.getColumnIndex("ToPlanID");
-				int nameColumn = user.getColumnIndex("TransName");
-				int valueColumn = user.getColumnIndex("TransValue");
-				int typeColumn = user.getColumnIndex("TransType");
-				int categoryColumn = user.getColumnIndex("TransCategory");
-				int checknumColumn = user.getColumnIndex("TransCheckNum");
-				int memoColumn = user.getColumnIndex("TransMemo");
-				int timeColumn = user.getColumnIndex("TransTime");
-				int dateColumn = user.getColumnIndex("TransDate");
-				int clearedColumn = user.getColumnIndex("TransCleared");
+				int idColumn = user.getColumnIndex(DatabaseHelper.TRANS_ID);
+				int acctIDColumn = user.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID);
+				int planIDColumn = user.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID);
+				int nameColumn = user.getColumnIndex(DatabaseHelper.TRANS_NAME);
+				int valueColumn = user.getColumnIndex(DatabaseHelper.TRANS_VALUE);
+				int typeColumn = user.getColumnIndex(DatabaseHelper.TRANS_TYPE);
+				int categoryColumn = user.getColumnIndex(DatabaseHelper.TRANS_CATEGORY);
+				int checknumColumn = user.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM);
+				int memoColumn = user.getColumnIndex(DatabaseHelper.TRANS_MEMO);
+				int timeColumn = user.getColumnIndex(DatabaseHelper.TRANS_TIME);
+				int dateColumn = user.getColumnIndex(DatabaseHelper.TRANS_DATE);
+				int clearedColumn = user.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
 
 				int id = user.getInt(0);
 				int acctId = user.getInt(acctIDColumn);
@@ -572,9 +566,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			Log.d("Transaction-newView", "cursor="+cursor);
-			Log.d("Transaction-newView", "size cursor="+cursor.getCount());
-
 			LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View v = vi.inflate(R.layout.transaction_item, null);
 
@@ -853,18 +844,18 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			c.moveToFirst();
 			do{
-				entry_id = c.getInt(c.getColumnIndex("TransID"));
-				entry_acctId = c.getInt(c.getColumnIndex("ToAcctID"));
-				entry_planId = c.getInt(c.getColumnIndex("ToPlanID"));
-				entry_name = c.getString(c.getColumnIndex("TransName"));
-				entry_value = c.getString(c.getColumnIndex("TransValue"));
-				entry_type = c.getString(c.getColumnIndex("TransType"));
-				entry_category = c.getString(c.getColumnIndex("TransCategory"));
-				entry_checknum = c.getString(c.getColumnIndex("TransCheckNum"));
-				entry_memo = c.getString(c.getColumnIndex("TransMemo"));
-				entry_time = c.getString(c.getColumnIndex("TransTime"));
-				entry_date = c.getString(c.getColumnIndex("TransDate"));
-				entry_cleared = c.getString(c.getColumnIndex("TransCleared"));
+				entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_ID));
+				entry_acctId = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID));
+				entry_planId = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID));
+				entry_name = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_NAME));
+				entry_value = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_VALUE));
+				entry_type = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_TYPE));
+				entry_category = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CATEGORY));
+				entry_checknum = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM));
+				entry_memo = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_MEMO));
+				entry_time = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_TIME));
+				entry_date = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_DATE));
+				entry_cleared = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CLEARED));
 				//Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 			}while(c.moveToNext());
 
@@ -989,7 +980,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			//Used to find correct category to select
 			for (int i = 0; i < tCategory.getCount(); i++) {
 				Cursor c = (Cursor) tCategory.getItemAtPosition(i);
-				String catName = c.getString(c.getColumnIndex("SubCatName"));
+				String catName = c.getString(c.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 				if (catName.contentEquals(category)) {
 					tCategory.setSelection(i);
 					break;
@@ -1019,7 +1010,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					String transactionName = tName.getText().toString().trim();
 					Money transactionValue = null;
 					String transactionType = tType.getSelectedItem().toString().trim();
-					String transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex("SubCatName"));
+					String transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 					String transactionCheckNum = tCheckNum.getText().toString().trim();
 					String transactionMemo = tMemo.getText().toString().trim();
 					String transactionCleared = tCleared.isChecked()+"";
@@ -1047,21 +1038,21 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							}
 
 							Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + tID);
-							getActivity().getContentResolver().delete(uri, "TransID="+tID, null);
+							getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID+"="+tID, null);
 
 							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("TransID", tID);
-							transactionValues.put("ToAcctID", aID);
-							transactionValues.put("ToPlanID", pID);
-							transactionValues.put("TransName", transactionName);
-							transactionValues.put("TransValue", transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put("TransType", transactionType);
-							transactionValues.put("TransCategory", transactionCategory);
-							transactionValues.put("TransCheckNum", transactionCheckNum);
-							transactionValues.put("TransMemo", transactionMemo);
-							transactionValues.put("TransTime", transactionTime.getSQLTime(locale));
-							transactionValues.put("TransDate", transactionDate.getSQLDate(locale));
-							transactionValues.put("TransCleared", transactionCleared);
+							transactionValues.put(DatabaseHelper.TRANS_ID, tID);
+							transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, aID);
+							transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, pID);
+							transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);
+							transactionValues.put(DatabaseHelper.TRANS_VALUE, transactionValue.getBigDecimal(locale)+"");
+							transactionValues.put(DatabaseHelper.TRANS_TYPE, transactionType);
+							transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transactionCategory);
+							transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transactionCheckNum);
+							transactionValues.put(DatabaseHelper.TRANS_MEMO, transactionMemo);
+							transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
+							transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
+							transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
 
 							//Make new record with same ID
 							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
@@ -1176,7 +1167,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					Locale locale=getResources().getConfiguration().locale;
 
 					try{
-						transactionCategory = cursor.getString(cursor.getColumnIndex("SubCatName"));
+						transactionCategory = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 					}
 					catch(Exception e){
 						Log.e("Transaction-addDialog","No Category? Exception e=" + e);
@@ -1213,17 +1204,17 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							}
 
 							ContentValues transactionValues=new ContentValues();
-							transactionValues.put("ToAcctID", account_id);
-							transactionValues.put("ToPlanID", 0);
-							transactionValues.put("TransName", transactionName);
-							transactionValues.put("TransValue", transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put("TransType", transactionType);
-							transactionValues.put("TransCategory", transactionCategory);
-							transactionValues.put("TransCheckNum", transactionCheckNum);
-							transactionValues.put("TransMemo", transactionMemo);
-							transactionValues.put("TransTime", transactionTime.getSQLTime(locale));
-							transactionValues.put("TransDate", transactionDate.getSQLDate(locale));
-							transactionValues.put("TransCleared", transactionCleared);
+							transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, account_id);
+							transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
+							transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);
+							transactionValues.put(DatabaseHelper.TRANS_VALUE, transactionValue.getBigDecimal(locale)+"");
+							transactionValues.put(DatabaseHelper.TRANS_TYPE, transactionType);
+							transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transactionCategory);
+							transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transactionCheckNum);
+							transactionValues.put(DatabaseHelper.TRANS_MEMO, transactionMemo);
+							transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
+							transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
+							transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
 
 							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
 						} 
@@ -1281,51 +1272,42 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					switch (position) {
 					//Newest
 					case 0:
-						sortOrder = "TransDate" + " DESC" + ", TransTime" + " DESC";						
-						//getLoaderManager().restartLoader(TRANS_LOADER, getArguments(), context);
+						sortOrder = DatabaseHelper.TRANS_DATE + " DESC, " + DatabaseHelper.TRANS_TIME + " DESC";						
 						break;
 
 						//Oldest
 					case 1:
-						//TODO Fix date so it can be sorted
-						sortOrder = "TransDate" + " ASC" + ", TransTime" + " ASC";
-						//((Transactions) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.TRANS_DATE + " ASC, " + DatabaseHelper.TRANS_TIME + " ASC";
 						break;
 
 						//Largest
 					case 2:
-						sortOrder = "TransType ASC, CAST (TransValue AS INTEGER)" + " DESC";
-						//((Transactions) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.TRANS_TYPE+" ASC, CAST ("+DatabaseHelper.TRANS_VALUE+" AS INTEGER)" + " DESC";
 						break;
 
 						//Smallest
 					case 3:
-						sortOrder = "TransType ASC, CAST (TransValue AS INTEGER)" + " ASC";
-						//((Transactions) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.TRANS_TYPE+" ASC, CAST ("+DatabaseHelper.TRANS_VALUE+" AS INTEGER)" + " ASC";
 						break;
 
 						//Category	
 					case 4:
-						sortOrder = "TransCategory" + " ASC";
-						//((Transactions) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.TRANS_CATEGORY + " ASC";
 						break;
 
 						//Type
 					case 5:
-						sortOrder = "TransType" + " ASC";
-						//((Transactions) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.TRANS_TYPE + " ASC";
 						break;
 
 						//Alphabetical
 					case 6:
-						sortOrder = "TransName" + " ASC";
-						//((Transactions) getParentFragment()).populate();
+						sortOrder = DatabaseHelper.TRANS_NAME + " ASC";
 						break;
 
 						//None
 					case 7:
 						sortOrder = null;
-						//((Transactions) getParentFragment()).populate();
 						break;
 
 					default:
@@ -1346,7 +1328,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 
-		Log.d("Transactions-onCreateLoader", "calling create loader...");
 		switch (loaderID) {
 		case TRANS_LOADER:
 			if(bundle!=null && bundle.getBoolean("boolShowAll")){
@@ -1361,13 +1342,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						);
 			}
 			else{
-				String[] projection = new String[]{ "TransID as _id", "ToAcctID", "ToPlanID", "TransName", "TransValue", "TransType", "TransCategory","TransCheckNum", "TransMemo", "TransTime", "TransDate", "TransCleared"};
-				String selection = "ToAcctID=" + account_id;
+				String selection = DatabaseHelper.TRANS_ACCT_ID+"=" + account_id;
 				Log.v("Transactions-onCreateLoader","new loader created");
 				return new CursorLoader(
-						getActivity(),   	// Parent activity context
+						getActivity(),   			// Parent activity context
 						MyContentProvider.TRANSACTIONS_URI,// Table to query
-						projection,     			// Projection to return
+						null,     					// Projection to return
 						selection,					// No selection clause
 						null,						// No selection arguments
 						sortOrder             		// Default sort order
@@ -1411,11 +1391,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			adapterTransactions.swapCursor(data);
 			Log.v("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
 
-			int valueColumn = data.getColumnIndex("TransValue");
-			int typeColumn = data.getColumnIndex("TransType");
+			final int valueColumn = data.getColumnIndex(DatabaseHelper.TRANS_VALUE);
+			final int typeColumn = data.getColumnIndex(DatabaseHelper.TRANS_TYPE);
 			BigDecimal totalBalance = BigDecimal.ZERO;
 			Locale locale=getResources().getConfiguration().locale;
-
 
 			//Cursor doesn't seem to catch the first transaction using this loop if i add/edit a transaction
 			//and balance needs to be recalculated :/
@@ -1442,7 +1421,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			if(account_id!=0){
 				ContentValues values = new ContentValues();
-				values.put("AcctBalance", totalBalance+"");		
+				values.put(DatabaseHelper.ACCOUNT_BALANCE, totalBalance+"");		
 				getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
 			}
 
@@ -1465,7 +1444,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 
 		case TRANS_SUBCATEGORY_LOADER:
-			String[] from = new String[] {"SubCatName"}; 
+			String[] from = new String[] {DatabaseHelper.SUBCATEGORY_NAME}; 
 			int[] to = new int[] { android.R.id.text1 };
 
 			categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, data, from, to);
@@ -1564,7 +1543,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 						record = adapterTransactions.getTransaction(selected.keyAt(i));
 
 						Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
-						getActivity().getContentResolver().delete(uri, "TransID="+record.id, null);
+						getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID+"="+record.id, null);
 
 						Toast.makeText(getActivity(), "Deleted Transaction:\n" + record.name, Toast.LENGTH_SHORT).show();
 					}

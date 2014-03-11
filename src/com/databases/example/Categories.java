@@ -69,12 +69,12 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 	private Cursor cursorSubCategory;
 	private static DatabaseHelper dh = null;
 	private ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		dh = new DatabaseHelper(this);
-		
+
 		setContentView(R.layout.categories);
 		setTitle("Categories");
 
@@ -613,6 +613,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		public void swapCategoryCursor(Cursor data){
 			category=data;
+			notifyDataSetChanged();
 		}
 
 		public void swapSubCategoryCursor(Cursor data){
@@ -785,17 +786,14 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 							ContentValues categoryValues=new ContentValues();
 							categoryValues.put("CatID",oldRecord.id);
-							categoryValues.put("SubCatName",newName);
-							categoryValues.put("SubCatNote",newNote);
+							categoryValues.put("CatName",newName);
+							categoryValues.put("CatNote",newNote);
 							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI+"/"+oldRecord.id), categoryValues,"CatID ="+oldRecord.id,null);
 						}
 					}
 					catch(Exception e){
 						Log.e("Categories-EditDialog", "Error editing Categories");
 					}
-
-					//Refresh the categories list
-					//((Categories) getActivity()).categoryPopulate();
 
 				}
 			})
@@ -884,8 +882,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 						else{
 							ContentValues subcategoryValues=new ContentValues();
 							subcategoryValues.put("ToCatID",catID);
-							subcategoryValues.put("SubCatName",name);
-							subcategoryValues.put("SubCatNote",note);
+							subcategoryValues.put("CatName",name);
+							subcategoryValues.put("CatNote",note);
 							getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
 						}
 
@@ -893,9 +891,6 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 					catch(Exception e){
 						Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
 					}
-
-					//Refresh the categories list
-					//((Categories) getActivity()).categoryPopulate();
 
 				}
 			})
@@ -943,7 +938,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 					this,   	// Parent activity context
 					MyContentProvider.SUBCATEGORIES_URI,// Table to query
 					null,     			// Projection to return
-					null,         	// No selection clause
+					selection,         		// No selection clause
 					null,            	// No selection arguments
 					null           		// Default sort order
 					);

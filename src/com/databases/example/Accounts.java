@@ -766,10 +766,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					accountBalance = balance.trim();
 
 					try{
-						//Delete Old Record
-						Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + ID);
-						getActivity().getContentResolver().delete(uri, DatabaseHelper.ACCOUNT_ID+"="+ID, null);
-
 						ContentValues accountValues=new ContentValues();
 						accountValues.put(DatabaseHelper.ACCOUNT_ID,ID);
 						accountValues.put(DatabaseHelper.ACCOUNT_NAME,accountName);
@@ -777,9 +773,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						accountValues.put(DatabaseHelper.ACCOUNT_TIME,accountDate.getSQLTime(locale));
 						accountValues.put(DatabaseHelper.ACCOUNT_DATE,accountDate.getSQLDate(locale));
 
-						//Make new record with same ID
-						getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
-
+						//Update plan
+						getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+ID), accountValues, DatabaseHelper.ACCOUNT_ID+"="+ID, null);
 					}
 					catch(Exception e){
 						Toast.makeText(getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();

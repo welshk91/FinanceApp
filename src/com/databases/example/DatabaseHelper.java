@@ -525,6 +525,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 		return id; 
 	}
 
+	//Updates a transaction
+	public int updateTransaction(ContentValues values, String whereClause, String[] whereArgs){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.update(TABLE_TRANSACTIONS, values, whereClause, whereArgs);
+		return 0;
+	}
+	
 	//Get all categories
 	public Cursor getCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;

@@ -1037,9 +1037,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 								transactionValue = new Money("0.00");
 							}
 
-							Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + tID);
-							getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID+"="+tID, null);
-
 							ContentValues transactionValues=new ContentValues();
 							transactionValues.put(DatabaseHelper.TRANS_ID, tID);
 							transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, aID);
@@ -1053,9 +1050,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 							transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
 							transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
 							transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
-
-							//Make new record with same ID
-							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+							
+							//Update plan
+							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+tID), transactionValues, DatabaseHelper.TRANS_ID+"="+tID, null);							
 						}
 
 						else{

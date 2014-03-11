@@ -264,7 +264,8 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case TRANSACTION_ID:
 			Log.d("MyContentProvider-update", "Updating transaction & account information");
-			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
+			//rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
+			rowsUpdated = dh.updateTransaction(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
 			Cards.transactionChanged=true;

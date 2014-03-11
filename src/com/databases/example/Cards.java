@@ -422,9 +422,10 @@ public class Cards extends SherlockFragment {
 			}
 
 			mCardView.refresh();
-		}		
+		}
 	}
 
+	
 
 	//MyCard Class
 	public class MyCard extends Card {

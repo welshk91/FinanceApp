@@ -26,13 +26,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class PlanReceiver extends BroadcastReceiver{	
-	private static DatabaseHelper dh = null;
 	final int NOTIFICATION_ID = 0123456;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Bundle bundle = intent.getExtras();
-		dh = new DatabaseHelper(context);
 
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			Log.d("PlanReceiver-onReceive", "Notified of boot");
@@ -89,7 +87,7 @@ public class PlanReceiver extends BroadcastReceiver{
 		transactionValues.put(DatabaseHelper.TRANS_CLEARED, plan.cleared);
 
 		//Insert values into accounts table
-		dh.addTransaction(transactionValues);							
+		context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);		
 	}//end of transactionAdd
 
 
@@ -158,7 +156,7 @@ public class PlanReceiver extends BroadcastReceiver{
 
 	//Method that remakes the planned transaction
 	public void reschedulePlans(Context context){
-		Cursor cursorPlans = dh.getPlans(null,null,null,null);
+		Cursor cursorPlans = context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"), null, null, null, null);
 
 		//startManagingCursor(cursorPlans);
 		int IDColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ID);

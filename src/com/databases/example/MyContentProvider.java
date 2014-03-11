@@ -98,7 +98,6 @@ public class MyContentProvider extends ContentProvider{
 		switch (uriType) {
 		case ACCOUNTS_ID:
 			cursor = dh.getAccounts(projection, selection, selectionArgs, sortOrder);
-			//Log.d("MyContentProvider-query", "URI="+uri);
 			cursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return cursor;
 		case ACCOUNT_ID:
@@ -182,10 +181,12 @@ public class MyContentProvider extends ContentProvider{
 		case ACCOUNT_ID:
 			rowsDeleted = dh.deleteAccount(uri, whereClause, whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.accountChanged=true;
 			break;
 		case TRANSACTION_ID:
 			rowsDeleted = dh.deleteTransaction(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.transactionChanged=true;
 			break;
 		case CATEGORY_ID:
 			rowsDeleted = dh.deleteCategory(uri,whereClause,whereArgs);
@@ -198,6 +199,7 @@ public class MyContentProvider extends ContentProvider{
 		case PLAN_ID:
 			rowsDeleted = dh.deletePlan(uri,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.planChanged=true;
 			break;
 		case LINK_ID:
 			// TODO Need to handle Links eventually
@@ -221,10 +223,12 @@ public class MyContentProvider extends ContentProvider{
 		case ACCOUNTS_ID:
 			id = dh.addAccount(values);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.accountChanged=true;
 			return Uri.parse(PATH_ACCOUNTS + "/" + id);
 		case TRANSACTIONS_ID:
 			id = dh.addTransaction(values);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.transactionChanged=true;
 			return Uri.parse(PATH_TRANSACTIONS + "/" + id);
 		case CATEGORIES_ID:
 			id = dh.addCategory(values);
@@ -237,6 +241,7 @@ public class MyContentProvider extends ContentProvider{
 		case PLANS_ID:
 			id = dh.addPlan(values);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.planChanged=true;
 			return Uri.parse(PATH_PLANS + "/" + id);
 		case NOTIFICATIONS_ID:
 			id = dh.addNotification(values);
@@ -262,11 +267,13 @@ public class MyContentProvider extends ContentProvider{
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
 			getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
+			Cards.transactionChanged=true;
 			break;
 		case ACCOUNT_ID:
 			Log.d("MyContentProvider-update", "Updating account information");
 			rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.accountChanged=true;
 			break;
 		case CATEGORY_ID:
 			Log.d("MyContentProvider-update", "Updating category information");
@@ -282,6 +289,7 @@ public class MyContentProvider extends ContentProvider{
 			Log.d("MyContentProvider-update", "Updating plan information");
 			rowsUpdated = dh.updatePlan(values,whereClause,whereArgs);
 			getContext().getContentResolver().notifyChange(uri, null);
+			Cards.planChanged=true;
 			break;
 		default:
 			throw new IllegalArgumentException("MyContentProvider-update: Unknown URI");

@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,20 +28,39 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
+import com.fima.cardsui.StackAdapter;
+import com.fima.cardsui.objects.AbstractCard;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 
 public class Cards extends SherlockFragment {
 	private Drawer mDrawerLayout;
-	private CardUI mCardView;
-	
+	protected static CardUI mCardView;
+	protected static boolean accountChanged = true;
+	protected static boolean transactionChanged = true;
+	protected static boolean planChanged = true;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.getLoaderManager();
 		setRetainInstance(false);
 	}// end onCreate
+
+	@Override 
+	public void onResume(){
+		super.onResume();
+		if(accountChanged||planChanged||transactionChanged){
+			Log.e("Cards","Refreshing Cards...");
+			mCardView.clearCards();
+			dealCardsCheckbook(mCardView);
+			dealCardsPlans(mCardView);
+			accountChanged=false;
+			planChanged=false;
+			transactionChanged=false;
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -51,9 +69,9 @@ public class Cards extends SherlockFragment {
 		//Initialize Card View
 		mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
 		mCardView.setSwipeable(true);
-				
-		dealCardsCheckbook(mCardView);
-		dealCardsPlans(mCardView);
+
+		//dealCardsCheckbook(mCardView);
+		//dealCardsPlans(mCardView);
 		//dealCardsStatistics(mCardView);
 
 		return myFragmentView;
@@ -116,7 +134,7 @@ public class Cards extends SherlockFragment {
 			String title = "";
 			String description = "";
 			String color = "";
-			
+
 			while (cursor.moveToNext() && !isCancelled()) {
 				title = "";
 				description = "";
@@ -169,7 +187,7 @@ public class Cards extends SherlockFragment {
 				String description="No Accounts created yet";
 				mCardView.addCard(new MyCard(title,description));
 			}
-			
+
 			mCardView.refresh();
 		}		
 	}
@@ -184,7 +202,7 @@ public class Cards extends SherlockFragment {
 			final int transaction_name_column=cursor.getColumnIndex(DatabaseHelper.TRANS_NAME);
 			final int transaction_date_column=cursor.getColumnIndex(DatabaseHelper.TRANS_DATE);
 			final int transaction_cleared_column=cursor.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
-			
+
 			String transaction_name;
 			DateTime transaction_date=new DateTime ();
 			String transaction_cleared;
@@ -198,7 +216,7 @@ public class Cards extends SherlockFragment {
 			long difference = 0;
 
 			final Date today_date = new Date();
-			
+
 			while (cursor.moveToNext() && !isCancelled()) {
 				title = "";
 				description = "";
@@ -274,7 +292,7 @@ public class Cards extends SherlockFragment {
 				String description="No Transactions have occured recently";
 				mCardView.addCard(new MyCard(title,description));
 			}
-			
+
 			mCardView.refresh();
 		}		
 	}
@@ -302,7 +320,7 @@ public class Cards extends SherlockFragment {
 			final int plan_name_column=cursor.getColumnIndex(DatabaseHelper.PLAN_NAME);
 			final int plan_offset_column=cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
 			final int plan_rate_column=cursor.getColumnIndex(DatabaseHelper.PLAN_RATE);
-			
+
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			final int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
 
@@ -391,7 +409,7 @@ public class Cards extends SherlockFragment {
 			int count = 0;
 
 			for (Card item : result) {
-				if(count==0){
+				if(count==0){		
 					mCardView.addCard(item);
 				}
 				else{
@@ -465,7 +483,7 @@ public class Cards extends SherlockFragment {
 			((TextView) v.findViewById(R.id.description)).setText(description);
 			((ImageView) v.findViewById(R.id.stripe)).setBackgroundColor(Color
 					.parseColor(color));
-			
+
 			if (isClickable == true)
 				((LinearLayout) v.findViewById(R.id.contentLayout))
 				.setBackgroundResource(R.drawable.selectable_background_cardbank);
@@ -482,4 +500,14 @@ public class Cards extends SherlockFragment {
 
 	}//End of MyPlayCard Class
 
+	public class UserItemAdapter extends StackAdapter {
+
+		public UserItemAdapter(Context context, ArrayList<AbstractCard> cards,
+				boolean swipable) {
+			super(context, cards, swipable);
+			// TODO Auto-generated constructor stub
+		}
+	
+	}
+	
 }// end Cards

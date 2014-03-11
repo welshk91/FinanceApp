@@ -32,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	protected static final String TABLE_LINKS = "tblLinks";
 	protected static final String TABLE_NOTIFICATIONS = "tblNotifications";
 	
+	//Column Names
 	protected static final String ACCOUNT_ID = "AcctID";
 	protected static final String ACCOUNT_NAME = "AcctName";
 	protected static final String ACCOUNT_BALANCE = "AcctBalance";

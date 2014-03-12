@@ -60,7 +60,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
 	//Constants for ContextMenu
-	final private int CONTEXT_MENU_OPEN=1;
+	final private int CONTEXT_MENU_VIEW=1;
 	final private int CONTEXT_MENU_EDIT=2;
 	final private int CONTEXT_MENU_DELETE=3;
 
@@ -1312,9 +1312,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private final class MyActionMode implements ActionMode.Callback {
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+			menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
 			return true;
 		}
 
@@ -1322,12 +1322,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			menu.clear();
 			if (adapterAccounts.getSelectedCount() == 1 && mode != null) {
-				menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");				
+				menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
+				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);				
 				return true;
 			} else if (adapterAccounts.getSelectedCount() > 1) {
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
 				return true;
 			}
 
@@ -1339,7 +1339,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			SparseBooleanArray selected = adapterAccounts.getSelectedIds();
 
 			switch (item.getItemId()) {
-			case CONTEXT_MENU_OPEN:
+			case CONTEXT_MENU_VIEW:
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
 						//accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);

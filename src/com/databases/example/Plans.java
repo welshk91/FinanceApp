@@ -83,7 +83,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private static Spinner accountSpinner;
 
 	//Constants for ContextMenu
-	private final int CONTEXT_MENU_OPEN=1;
+	private final int CONTEXT_MENU_VIEW=1;
 	private final int CONTEXT_MENU_EDIT=2;
 	private final int CONTEXT_MENU_DELETE=3;
 	private final int CONTEXT_MENU_CANCEL=4;
@@ -175,7 +175,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 		if(mActionMode != null){
 			((ActionMode) mActionMode).invalidate();
-			((ActionMode)mActionMode).setTitle(String.valueOf(adapterPlans.getSelectedCount()) + " selected");
+			((ActionMode)mActionMode).setTitle(String.valueOf(adapterPlans.getSelectedCount()));
 		}
 	}
 
@@ -1423,10 +1423,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private final class MyActionMode implements ActionMode.Callback {
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
-			menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
+			menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+			menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel").setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 			return true;
 		}
 
@@ -1434,14 +1434,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			menu.clear();
 			if (adapterPlans.getSelectedCount() == 1 && mode != null) {
-				menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");				
-				menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
+				menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);				
+				menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel").setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 				return true;
 			} else if (adapterPlans.getSelectedCount() > 1) {
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
-				menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel");
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+				menu.add(0, CONTEXT_MENU_CANCEL, 3, "Cancel").setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 				return true;
 			}
 
@@ -1454,7 +1454,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			PlanRecord record;
 
 			switch (item.getItemId()) {
-			case CONTEXT_MENU_OPEN:
+			case CONTEXT_MENU_VIEW:
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
 						DialogFragment newFragment = ViewDialogFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);

@@ -86,7 +86,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private ListView lv = null;
 
 	//Constants for ContextMenu
-	private final int CONTEXT_MENU_OPEN=5;
+	private final int CONTEXT_MENU_VIEW=5;
 	private final int CONTEXT_MENU_EDIT=6;
 	private final int CONTEXT_MENU_DELETE=7;
 
@@ -190,7 +190,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		if(mActionMode != null){
 			((ActionMode) mActionMode).invalidate();
-			((ActionMode)mActionMode).setTitle(String.valueOf(adapterTransactions.getSelectedCount()) + " selected");
+			((ActionMode)mActionMode).setTitle(String.valueOf(adapterTransactions.getSelectedCount()));
 		}
 	}
 
@@ -1486,9 +1486,9 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private final class MyActionMode implements ActionMode.Callback {
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+			menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
 			return true;
 		}
 
@@ -1496,12 +1496,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			menu.clear();
 			if (adapterTransactions.getSelectedCount() == 1 && mode != null) {
-				menu.add(0, CONTEXT_MENU_OPEN, 0, "Open");  
-				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit");
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");				
+				menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);				
 				return true;
 			} else if (adapterTransactions.getSelectedCount() > 1) {
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete");
+				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
 				return true;
 			}
 
@@ -1513,7 +1513,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			SparseBooleanArray selected = adapterTransactions.getSelectedIds();
 
 			switch (item.getItemId()) {
-			case CONTEXT_MENU_OPEN:
+			case CONTEXT_MENU_VIEW:
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
 						DialogFragment newFragment = ViewDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)).id);

@@ -425,8 +425,6 @@ public class Cards extends SherlockFragment {
 		}
 	}
 
-	
-
 	//MyCard Class
 	public class MyCard extends Card {
 		public MyCard(String title, String desc){

@@ -9,6 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/transaction_footer"
         android:layout_alignParentTop="true"
+        android:background="#e5e5e5"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:drawSelectorOnTop="true" />
 
     <TextView

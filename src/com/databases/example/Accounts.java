@@ -34,6 +34,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -201,7 +202,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		if(mActionMode != null){
 			((ActionMode) mActionMode).invalidate();
-			((ActionMode)mActionMode).setTitle(String.valueOf(adapterAccounts.getSelectedCount()) + " selected");
+			((ActionMode)mActionMode).setTitle(String.valueOf(adapterAccounts.getSelectedCount()));
 		}
 	}
 

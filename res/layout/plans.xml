@@ -5,7 +5,6 @@
     android:layout_height="match_parent" >
 
     <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
@@ -13,6 +12,9 @@
             android:id="@+id/plans_list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:background="#e5e5e5"
+            android:divider="@null"
+            android:dividerHeight="0dp"
             android:drawSelectorOnTop="true" />
 
         <TextView
@@ -20,7 +22,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:focusable="false"
             android:gravity="center"
             android:text="Nothing Scheduled\n\n To Add A Plan, Please Use The ActionBar On The Top"
             android:visibility="gone" />

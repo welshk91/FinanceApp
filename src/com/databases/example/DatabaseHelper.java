@@ -61,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	protected static final String PLAN_MEMO = "PlanMemo";
 	protected static final String PLAN_OFFSET = "PlanOffset";
 	protected static final String PLAN_RATE = "PlanRate";
+	protected static final String PLAN_SCHEDULED = "PlanScheduled";
 	protected static final String PLAN_CLEARED = "PlanCleared";
 
 	protected static final String CATEGORY_ID = "CatID";
@@ -98,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
 		String sqlCommandPlans = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_PLANS
-				+ " ("+PLAN_ID+" INTEGER PRIMARY KEY, "+PLAN_ACCT_ID+" VARCHAR, "+PLAN_NAME+" VARCHAR, "+PLAN_VALUE+" VARCHAR, "+PLAN_TYPE+" VARCHAR, "+PLAN_CATEGORY+" VARCHAR, "+PLAN_MEMO+" VARCHAR, "+PLAN_OFFSET+" VARCHAR, "+PLAN_RATE+" VARCHAR, "+PLAN_CLEARED+" VARCHAR);";
+				+ " ("+PLAN_ID+" INTEGER PRIMARY KEY, "+PLAN_ACCT_ID+" VARCHAR, "+PLAN_NAME+" VARCHAR, "+PLAN_VALUE+" VARCHAR, "+PLAN_TYPE+" VARCHAR, "+PLAN_CATEGORY+" VARCHAR, "+PLAN_MEMO+" VARCHAR, "+PLAN_OFFSET+" VARCHAR, "+PLAN_RATE+" VARCHAR, "+PLAN_SCHEDULED+" VARCHAR, "+PLAN_CLEARED+" VARCHAR);";
 		
 		String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
 				+ TABLE_CATEGORIES
@@ -622,7 +623,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 	public Cursor getPlans(String[] projection, String selection, String[] selectionArgs, String sortOrder){
 		Cursor cursor = null;
 		SQLiteDatabase db = this.getReadableDatabase();
-		cursor = db.query(TABLE_PLANS, new String[] { PLAN_ID+" as _id", PLAN_ACCT_ID, PLAN_NAME, PLAN_VALUE, PLAN_TYPE, PLAN_CATEGORY, PLAN_MEMO, PLAN_OFFSET, PLAN_RATE, PLAN_CLEARED}, selection,
+		cursor = db.query(TABLE_PLANS, new String[] { PLAN_ID+" as _id", PLAN_ACCT_ID, PLAN_NAME, PLAN_VALUE, PLAN_TYPE, PLAN_CATEGORY, PLAN_MEMO, PLAN_OFFSET, PLAN_RATE, PLAN_SCHEDULED, PLAN_CLEARED}, selection,
 				selectionArgs, null, null, sortOrder);
 		return cursor;
 	}

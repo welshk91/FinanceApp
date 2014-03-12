@@ -49,7 +49,7 @@ public class Cards extends SherlockFragment {
 	public void onResume(){
 		super.onResume();
 		if(accountChanged||planChanged||transactionChanged){
-			Log.e("Cards","Refreshing Cards...");
+			Log.d("Cards","Refreshing Cards...");
 			mCardView.clearCards();
 			dealCardsCheckbook(mCardView);
 			dealCardsPlans(mCardView);

@@ -132,6 +132,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/TextTransactionRate"
+        android:text="@string/scheduled:" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/TextTransactionScheduled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/TextView09"
+        android:layout_toRightOf="@id/TextView05" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/TextView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextTransactionScheduled"
         android:text="@string/cleared:" >
     </TextView>
 
@@ -139,7 +155,7 @@
         android:id="@+id/TextTransactionCleared"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/TextView09"
+        android:layout_alignTop="@id/TextView10"
         android:layout_toRightOf="@id/TextView05" >
     </TextView>
 

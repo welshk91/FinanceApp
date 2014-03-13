@@ -219,12 +219,12 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		String delims = "[ ]+";
 		String[] tokens = phrase.split(delims);
 
-		// In reality, you would want to have a static variable for the request code instead of 192837
-		PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		final PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-		// Get the AlarmManager service
-		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-
+		final Locale locale=getResources().getConfiguration().locale;
+		final DateTime nextRun = new DateTime();
+		
 		if(tokens[1].contains("Days")){
 			Log.d("Plans-schedule", "Days");
 
@@ -234,12 +234,15 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 
 			Log.d("Plans-schedule", "firstRun is " + firstRun);
-			DateTime fRun = new DateTime(); 
-			fRun.setCalendar(firstRun);
+			nextRun.setCalendar(firstRun);
 
-			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
-			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
+			ContentValues planValues = new ContentValues();
+			planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
+			getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+	
+			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);			
 		}
 		else if(tokens[1].contains("Weeks")){
 			Log.d("Plans-schedule", "Weeks");
@@ -250,11 +253,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 
 			Log.d("Plans-schedule", "firstRun is " + firstRun);
-			DateTime fRun = new DateTime(); 
-			fRun.setCalendar(firstRun);
+			nextRun.setCalendar(firstRun);
 
-			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
+			ContentValues planValues = new ContentValues();
+			planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
+			getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+			
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
@@ -268,11 +274,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 
 			Log.d("Plans-schedule", "firstRun is " + firstRun);
-			DateTime fRun = new DateTime(); 
-			fRun.setCalendar(firstRun);
+			nextRun.setCalendar(firstRun);
 
-			Toast.makeText(this, "Next Transaction scheduled for " + fRun.getReadableDate(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
 
+			ContentValues planValues = new ContentValues();
+			planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
+			getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+			
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
 		}
 		else{

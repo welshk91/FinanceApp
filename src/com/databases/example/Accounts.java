@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -77,15 +80,27 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	private ListView lv = null;
 	private static UserItemAdapter adapterAccounts = null;
 
-	protected Object mActionMode = null;
-	private SparseBooleanArray mSelectedItemsIds;	
+	private Object mActionMode = null;
+	private SparseBooleanArray mSelectedItemsIds;
+	private int currentAccount=-1;
 
 	//Method called upon first creation
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (savedInstanceState != null) {
+	        currentAccount = savedInstanceState.getInt("currentAccount");
+	    }
+		
 	}// end onCreate
 
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+	    savedInstanceState.putInt("currentAccount", currentAccount);
+	    super.onSaveInstanceState(savedInstanceState);
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 		myFragmentView = inflater.inflate(R.layout.accounts, null, false);
@@ -133,6 +148,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 						args.putBoolean("showAll", false);
 						args.putBoolean("boolSearch", false);
 						args.putInt("ID",entry_id);
+
+						currentAccount=position;
 
 						//Add the fragment to the activity
 						//NOTE: Don't add custom animation, seems to mess with onLoaderReset
@@ -185,7 +202,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 		return myFragmentView;
 	}
-	
+
 	//Used for ActionMode
 	public void listItemChecked(int position){
 		adapterAccounts.toggleSelection(position);
@@ -469,7 +486,16 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					tvTime.setText("Time: " + t.getReadableTime());
 				}
 
-				v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
+				if(user.getPosition()==currentAccount && mActionMode==null){
+					v.setBackgroundColor(0x7734B5E4);
+				}
+
+				else if(mSelectedItemsIds.get(user.getPosition())){
+					v.setBackgroundColor(0x9934B5E4);
+				}
+				else{
+					v.setBackgroundColor(Color.TRANSPARENT);
+				}
 			}
 
 		}
@@ -606,8 +632,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			return v;
 		}
 
-		public void toggleSelection(int position)
-		{
+		public void toggleSelection(int position){
 			selectView(position, !mSelectedItemsIds.get(position));
 		}
 
@@ -616,8 +641,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			notifyDataSetChanged();
 		}
 
-		public void selectView(int position, boolean value)
-		{
+		public void selectView(int position, boolean value){
 			if(value)
 				mSelectedItemsIds.put(position, value);
 			else
@@ -627,13 +651,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		}
 
 		public int getSelectedCount() {
-			return mSelectedItemsIds.size();// mSelectedCount;
+			return mSelectedItemsIds.size();
 		}
 
 		public SparseBooleanArray getSelectedIds() {
 			return mSelectedItemsIds;
 		}
-
 	}
 
 	//An Object Class used to hold the data of each account record
@@ -711,7 +734,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			c.close();
 			return alertDialogBuilder.create();
 		}
-				
+
 	}
 
 	//Class that handles edit fragment
@@ -1004,7 +1027,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 					}				
 
 					ContentValues transferValues=new ContentValues();
-					
+
 					try{
 						transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferFromID);
 						transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
@@ -1289,7 +1312,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);			
 		}
 	}
-	
+
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		switch(loader.getId()){
@@ -1401,7 +1424,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 		if(mActionMode!=null){
 			((ActionMode)mActionMode).finish();		
 		}
-				
+
 		super.onDestroyView();
 	}
 

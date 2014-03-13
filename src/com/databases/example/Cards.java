@@ -71,6 +71,10 @@ public class Cards extends SherlockFragment {
 		dealCardsPlans(mCardView);
 		//dealCardsStatistics(mCardView);
 
+		accountChanged=false;
+		planChanged=false;
+		transactionChanged=false;
+		
 		return myFragmentView;
 	}
 

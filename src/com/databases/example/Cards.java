@@ -61,7 +61,7 @@ public class Cards extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-		View myFragmentView = inflater.inflate(R.layout.cards, null, false);
+		View myFragmentView = inflater.inflate(R.layout.cards_ui, null, false);
 
 		//Initialize Card View
 		mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
@@ -308,6 +308,7 @@ public class Cards extends SherlockFragment {
 			String plan_name;
 			String plan_offset;
 			String plan_rate;
+			String plan_scheduled;
 			Date d = null;
 			DateTime test = new DateTime();
 			final Date today_date = new Date();
@@ -320,6 +321,7 @@ public class Cards extends SherlockFragment {
 			final int plan_name_column=cursor.getColumnIndex(DatabaseHelper.PLAN_NAME);
 			final int plan_offset_column=cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
 			final int plan_rate_column=cursor.getColumnIndex(DatabaseHelper.PLAN_RATE);
+			final int plan_scheduled_column=cursor.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
 
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			final int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
@@ -333,7 +335,8 @@ public class Cards extends SherlockFragment {
 				plan_name = cursor.getString(plan_name_column);
 				plan_offset = cursor.getString(plan_offset_column);
 				plan_rate = cursor.getString(plan_rate_column);
-
+				plan_scheduled = cursor.getString(plan_scheduled_column);
+				
 				try {
 					test.setStringSQL(plan_offset);
 					d = test.getYearMonthDay();
@@ -370,7 +373,7 @@ public class Cards extends SherlockFragment {
 				Log.d("Cards", plan_name + " Difference="+difference);
 
 				//Recent plans
-				if(Math.abs(difference)<lookAhead){
+				if(Math.abs(difference)<lookAhead && plan_scheduled.equals("true")){
 					title=plan_name;
 					color="#33b6ea";
 

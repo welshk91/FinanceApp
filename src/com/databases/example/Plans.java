@@ -83,10 +83,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private static Spinner accountSpinner;
 
 	//Constants for ContextMenu
-	private final int CONTEXT_MENU_VIEW=1;
-	private final int CONTEXT_MENU_EDIT=2;
-	private final int CONTEXT_MENU_DELETE=3;
-	private final int CONTEXT_MENU_TOGGLE=4;
+	private final int ACTION_MODE_VIEW=1;
+	private final int ACTION_MODE_EDIT=2;
+	private final int ACTION_MODE_DELETE=3;
+	private final int ACTION_MODE_TOGGLE=4;
 
 	//Dialog for Adding Transaction
 	private static View promptsView;
@@ -402,31 +402,33 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			final Cursor group = getCursor();
 
 			group.moveToPosition((int) position);
-			final int IDColumn = group.getColumnIndex(DatabaseHelper.PLAN_ID);
-			final int ToIDColumn = group.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
-			final int NameColumn = group.getColumnIndex(DatabaseHelper.PLAN_NAME);
-			final int ValueColumn = group.getColumnIndex(DatabaseHelper.PLAN_VALUE);
-			final int TypeColumn = group.getColumnIndex(DatabaseHelper.PLAN_TYPE);
-			final int CategoryColumn = group.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
-			final int MemoColumn = group.getColumnIndex(DatabaseHelper.PLAN_MEMO);
-			final int OffsetColumn = group.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
-			final int RateColumn = group.getColumnIndex(DatabaseHelper.PLAN_RATE);
-			final int ScheduledColumn = group.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
-			final int ClearedColumn = group.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
+			final int columnID = group.getColumnIndex(DatabaseHelper.PLAN_ID);
+			final int columnToID = group.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
+			final int columnName = group.getColumnIndex(DatabaseHelper.PLAN_NAME);
+			final int columnValue = group.getColumnIndex(DatabaseHelper.PLAN_VALUE);
+			final int columnType = group.getColumnIndex(DatabaseHelper.PLAN_TYPE);
+			final int columnCategory = group.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
+			final int columnMemo = group.getColumnIndex(DatabaseHelper.PLAN_MEMO);
+			final int columnOffset = group.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+			final int columnRate = group.getColumnIndex(DatabaseHelper.PLAN_RATE);
+			final int columnNext = group.getColumnIndex(DatabaseHelper.PLAN_NEXT);
+			final int columnScheduled = group.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
+			final int columnCleared = group.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
 			final String id = group.getString(0);
-			final String to_id = group.getString(ToIDColumn);
-			final String name = group.getString(NameColumn);
-			final String value = group.getString(ValueColumn);
-			final String type = group.getString(TypeColumn);
-			final String category = group.getString(CategoryColumn);
-			final String memo = group.getString(MemoColumn);
-			final String offset = group.getString(OffsetColumn);
-			final String rate = group.getString(RateColumn);
-			final String scheduled = group.getString(ScheduledColumn);
-			final String cleared = group.getString(ClearedColumn);
+			final String to_id = group.getString(columnToID);
+			final String name = group.getString(columnName);
+			final String value = group.getString(columnValue);
+			final String type = group.getString(columnType);
+			final String category = group.getString(columnCategory);
+			final String memo = group.getString(columnMemo);
+			final String offset = group.getString(columnOffset);
+			final String rate = group.getString(columnRate);
+			final String next = group.getString(columnNext);
+			final String scheduled = group.getString(columnScheduled);
+			final String cleared = group.getString(columnCleared);
 
-			final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, scheduled, cleared);
+			final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
 			return record;
 		}
 
@@ -448,31 +450,35 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				TextView tvMemo = (TextView) v.findViewById(R.id.plan_memo);
 				TextView tvOffset = (TextView) v.findViewById(R.id.plan_offset);
 				TextView tvRate = (TextView) v.findViewById(R.id.plan_rate);
+				TextView tvNext = (TextView) v.findViewById(R.id.plan_next);
+				TextView tvScheduled = (TextView) v.findViewById(R.id.plan_scheduled);
 				TextView tvCleared = (TextView) v.findViewById(R.id.plan_cleared);
 
-				final int IDColumn = user.getColumnIndex(DatabaseHelper.PLAN_ID);
-				final int ToIDColumn = user.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
-				final int NameColumn = user.getColumnIndex(DatabaseHelper.PLAN_NAME);
-				final int ValueColumn = user.getColumnIndex(DatabaseHelper.PLAN_VALUE);
-				final int TypeColumn = user.getColumnIndex(DatabaseHelper.PLAN_TYPE);
-				final int CategoryColumn = user.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
-				final int MemoColumn = user.getColumnIndex(DatabaseHelper.PLAN_MEMO);
-				final int OffsetColumn = user.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
-				final int RateColumn = user.getColumnIndex(DatabaseHelper.PLAN_RATE);
-				final int ScheduledColumn = user.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
-				final int ClearedColumn = user.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
+				final int columnID = user.getColumnIndex(DatabaseHelper.PLAN_ID);
+				final int columnToID = user.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
+				final int columnName = user.getColumnIndex(DatabaseHelper.PLAN_NAME);
+				final int columnValue = user.getColumnIndex(DatabaseHelper.PLAN_VALUE);
+				final int columnType = user.getColumnIndex(DatabaseHelper.PLAN_TYPE);
+				final int columnCategory = user.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
+				final int columnMemo = user.getColumnIndex(DatabaseHelper.PLAN_MEMO);
+				final int columnOffset = user.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+				final int columnRate = user.getColumnIndex(DatabaseHelper.PLAN_RATE);
+				final int columnNext = user.getColumnIndex(DatabaseHelper.PLAN_NEXT);
+				final int columnScheduled = user.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
+				final int columnCleared = user.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
 				String id = user.getString(0);
-				String to_id = user.getString(ToIDColumn);
-				String name = user.getString(NameColumn);
-				Money value = new Money(user.getString(ValueColumn));
-				String type = user.getString(TypeColumn);
-				String category = user.getString(CategoryColumn);
-				String memo = user.getString(MemoColumn);
-				String offset = user.getString(OffsetColumn);
-				String rate = user.getString(RateColumn);
-				String scheduled = user.getString(ScheduledColumn);
-				String cleared = user.getString(ClearedColumn);
+				String to_id = user.getString(columnToID);
+				String name = user.getString(columnName);
+				Money value = new Money(user.getString(columnValue));
+				String type = user.getString(columnType);
+				String category = user.getString(columnCategory);
+				String memo = user.getString(columnMemo);
+				String offset = user.getString(columnOffset);
+				String rate = user.getString(columnRate);
+				String next = user.getString(columnNext);
+				String scheduled = user.getString(columnScheduled);
+				String cleared = user.getString(columnCleared);
 
 				Locale locale=getResources().getConfiguration().locale;
 
@@ -511,6 +517,9 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					Toast.makeText(Plans.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
+
+				final DateTime temp = new DateTime();
+				
 				if (name != null) {
 					tvName.setText(name);
 				}
@@ -530,12 +539,18 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					tvMemo.setText("Memo: " + memo);
 				}
 				if (offset != null) {
-					DateTime o = new DateTime();
-					o.setStringSQL(offset);
-					tvOffset.setText("Offset: " + o.getReadableDate());
+					temp.setStringSQL(offset);
+					tvOffset.setText("Offset: " + temp.getReadableDate());
 				}
 				if (rate != null) {
 					tvRate.setText("Rate: " + rate);
+				}
+				if (next != null) {
+					temp.setStringSQL(next);
+					tvNext.setText("Next: " + temp.getReadableDate());
+				}
+				if (scheduled != null) {
+					tvScheduled.setText("Scheduled: " + scheduled);
 				}
 				if (cleared != null) {
 					tvCleared.setText("Cleared: " + cleared);
@@ -566,6 +581,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			TextView tvMemo=(TextView)v.findViewById(R.id.plan_memo);
 			TextView tvOffset=(TextView)v.findViewById(R.id.plan_offset);
 			TextView tvRate=(TextView)v.findViewById(R.id.plan_rate);
+			TextView tvNext=(TextView)v.findViewById(R.id.plan_next);
+			TextView tvScheduled=(TextView)v.findViewById(R.id.plan_scheduled);
 			TextView tvCleared=(TextView)v.findViewById(R.id.plan_cleared);
 
 			//For Custom View Properties
@@ -632,6 +649,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					tvMemo.setTextSize(14);
 					tvOffset.setTextSize(14);
 					tvRate.setTextSize(14);
+					tvNext.setTextSize(14);
+					tvScheduled.setTextSize(14);
 					tvCleared.setTextSize(14);
 				}
 				else{
@@ -642,6 +661,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					tvMemo.setTextSize(customSize);
 					tvOffset.setTextSize(customSize);
 					tvRate.setTextSize(customSize);
+					tvNext.setTextSize(customSize);
+					tvScheduled.setTextSize(customSize);
 					tvCleared.setTextSize(customSize);
 				}
 
@@ -661,6 +682,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					tvMemo.setTextColor(Color.parseColor("#000000"));
 					tvOffset.setTextColor(Color.parseColor("#000000"));
 					tvRate.setTextColor(Color.parseColor("#000000"));
+					tvNext.setTextColor(Color.parseColor("#000000"));
+					tvScheduled.setTextColor(Color.parseColor("#000000"));
 					tvCleared.setTextColor(Color.parseColor("#000000"));
 				}
 				else{
@@ -671,6 +694,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					tvMemo.setTextColor(DefaultColor);
 					tvOffset.setTextColor(DefaultColor);
 					tvRate.setTextColor(DefaultColor);
+					tvNext.setTextColor(DefaultColor);
+					tvScheduled.setTextColor(DefaultColor);
 					tvCleared.setTextColor(DefaultColor);
 				}
 
@@ -722,7 +747,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				tvMemo.setVisibility(View.GONE);
 			}
 
-			if(useDefaults||prefs.getBoolean("checkbox_plan_offsetField", true)){
+			if(prefs.getBoolean("checkbox_plan_offsetField", false) && !useDefaults){
 				tvOffset.setVisibility(View.VISIBLE);
 			}
 			else{
@@ -734,6 +759,20 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}
 			else{
 				tvRate.setVisibility(View.GONE);
+			}
+
+			if(useDefaults||prefs.getBoolean("checkbox_plan_nextField", true)){
+				tvNext.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvNext.setVisibility(View.GONE);
+			}
+			
+			if(prefs.getBoolean("checkbox_plan_scheduledField", false) && !useDefaults){
+				tvScheduled.setVisibility(View.VISIBLE);
+			}
+			else{
+				tvScheduled.setVisibility(View.GONE);
 			}
 
 			if(prefs.getBoolean("checkbox_plan_clearedField", false) && !useDefaults){
@@ -787,10 +826,11 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		protected String memo;
 		protected String offset;
 		protected String rate;
+		protected String next;
 		protected String scheduled;
 		protected String cleared;
 
-		public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String scheduled, String cleared) {
+		public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
 			this.id = id;
 			this.acctId = acctId;
 			this.name = name;
@@ -800,6 +840,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			this.memo = memo;
 			this.offset = offset;
 			this.rate = rate;
+			this.next = next;
 			this.scheduled = scheduled;
 			this.cleared = cleared;
 		}
@@ -830,6 +871,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			String entry_memo = null;
 			String entry_offset = null;
 			String entry_rate = null;
+			String entry_next = null;
 			String entry_scheduled = null;
 			String entry_cleared = null;
 
@@ -844,6 +886,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				entry_memo = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_MEMO));
 				entry_offset = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET));
 				entry_rate = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_RATE));
+				entry_next = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_NEXT));
 				entry_scheduled = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED));
 				entry_cleared = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CLEARED));
 			}while(cursor.moveToNext());
@@ -856,6 +899,8 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			alertDialogBuilder.setTitle("View Plan");
 			alertDialogBuilder.setCancelable(true);
 
+			DateTime temp = new DateTime();
+			
 			//Set Statistics
 			TextView statsName = (TextView)planStatsView.findViewById(R.id.TextTransactionName);
 			statsName.setText(entry_name);
@@ -870,11 +915,13 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			TextView statsMemo = (TextView)planStatsView.findViewById(R.id.TextTransactionMemo);
 			statsMemo.setText(entry_memo);
 			TextView statsOffset = (TextView)planStatsView.findViewById(R.id.TextTransactionOffset);
-			DateTime o = new DateTime();
-			o.setStringSQL(entry_offset);
-			statsOffset.setText(o.getReadableDate());
+			temp.setStringSQL(entry_offset);
+			statsOffset.setText(temp.getReadableDate());
 			TextView statsRate = (TextView)planStatsView.findViewById(R.id.TextTransactionRate);
 			statsRate.setText(entry_rate);
+			TextView statsNext = (TextView)planStatsView.findViewById(R.id.TextTransactionNext);
+			temp.setStringSQL(entry_next);
+			statsNext.setText(temp.getReadableDate());
 			TextView statsScheduled = (TextView)planStatsView.findViewById(R.id.TextTransactionScheduled);
 			statsScheduled.setText(entry_scheduled);
 			TextView statsCleared = (TextView)planStatsView.findViewById(R.id.TextTransactionCleared);
@@ -936,7 +983,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			alertDialogBuilder.setView(promptsView);
 
 			//set Title
-			alertDialogBuilder.setTitle("Schedule A Transaction");
+			alertDialogBuilder.setTitle("Add A Plan");
 
 			// set dialog message
 			alertDialogBuilder
@@ -1034,22 +1081,23 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							transactionValues.put(DatabaseHelper.PLAN_MEMO, transactionMemo);
 							transactionValues.put(DatabaseHelper.PLAN_OFFSET, transactionOffset.getSQLDate(locale));
 							transactionValues.put(DatabaseHelper.PLAN_RATE, transactionRate);
+							transactionValues.put(DatabaseHelper.PLAN_NEXT, "");
 							transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "true");
 							transactionValues.put(DatabaseHelper.PLAN_CLEARED, transactionCleared);
 
 							Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANS_URI, transactionValues);
 
-							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "true", transactionCleared);
+							PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "", "true", transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);
 						} 
 
 						else {
-							Toast.makeText(getSherlockActivity(), "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
+							Toast.makeText(getSherlockActivity(), "Plans need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
 						}
 					}
 					catch(Exception e){
 						Log.e("Plans-Add", "e = " + e);
-						Toast.makeText(getSherlockActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getSherlockActivity(), "Error Adding Plan!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
 				}//end onClick "OK"
@@ -1080,6 +1128,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			args.putString("memo", record.memo);
 			args.putString("rate", record.rate);
 			args.putString("offset", record.offset);
+			args.putString("next", record.next);
 			args.putString("scheduled", record.scheduled);
 			args.putString("cleared", record.cleared);
 			frag.setArguments(args);
@@ -1097,12 +1146,13 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			final String memo = getArguments().getString("memo");
 			final String offset = getArguments().getString("offset");
 			final String rate = getArguments().getString("rate");
+			final String next = getArguments().getString("next");
 			final String scheduled = getArguments().getString("scheduled");
 			final String cleared = getArguments().getString("cleared");
 
-			final PlanRecord oldRecord = new PlanRecord(ID, aID, name, value, type, category, memo, offset, rate, scheduled, cleared);
+			final PlanRecord oldRecord = new PlanRecord(ID, aID, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
 
-			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
 			promptsView = li.inflate(R.layout.plan_add, null);
 
 			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
@@ -1180,7 +1230,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			alertDialogBuilder.setView(promptsView);
 
 			//set Title
-			alertDialogBuilder.setTitle("Editing A Scheduled Transaction");
+			alertDialogBuilder.setTitle("Editing A Plan");
 
 			// set dialog message
 			alertDialogBuilder
@@ -1215,7 +1265,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 						transactionValue = new Money(tValue.getText().toString().trim());	
 					}
 					catch(Exception e){
-						Log.e("Plans-schedulingEdit","Invalid Value? Exception e:" + e);
+						Log.e("Plans-Edit","Invalid Value? Exception e:" + e);
 						dialog.cancel();
 						Toast.makeText(getSherlockActivity(), "Invalid Value", Toast.LENGTH_LONG).show();
 						return;
@@ -1230,7 +1280,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					}
 					catch(Exception e){
 						//Usually caused if no account exists
-						Log.e("Plans-schedulingEdit","No Account? Exception e:" + e);
+						Log.e("Plans-Edit","No Account? Exception e:" + e);
 						dialog.cancel();
 						Toast.makeText(getSherlockActivity(), "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
 						return;
@@ -1242,7 +1292,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					}
 					catch(Exception e){
 						//Usually caused if no category exists
-						Log.e("Plans-schedulingEdit","No Category? Exception e:" + e);
+						Log.e("Plans-Edit","No Category? Exception e:" + e);
 						dialog.cancel();
 						Toast.makeText(getSherlockActivity(), "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
 						return;
@@ -1280,6 +1330,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							transactionValues.put(DatabaseHelper.PLAN_MEMO, transactionMemo);
 							transactionValues.put(DatabaseHelper.PLAN_OFFSET, transactionOffset.getSQLDate(locale));
 							transactionValues.put(DatabaseHelper.PLAN_RATE, transactionRate);
+							transactionValues.put(DatabaseHelper.PLAN_NEXT, "");
 							transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "true");
 							transactionValues.put(DatabaseHelper.PLAN_CLEARED, transactionCleared);
 
@@ -1290,17 +1341,17 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+ID), transactionValues, DatabaseHelper.PLAN_ID+"="+ID, null);
 
 							//Reschedule plan
-							final PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "true", transactionCleared);
+							final PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "", "true", transactionCleared);
 							((Plans) getSherlockActivity()).schedule(record);
 						} 
 
 						else {
-							Toast.makeText(getSherlockActivity(), "Transactions need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
+							Toast.makeText(getSherlockActivity(), "Plans need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
 						}
 					}
 					catch(Exception e){
 						Log.e("Plans-Edit", "e = "+e);
-						Toast.makeText(getSherlockActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getSherlockActivity(), "Error Adding Plan!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
 					}
 
 				}//end onClick "OK"
@@ -1443,10 +1494,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 	private final class MyActionMode implements ActionMode.Callback {
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
-			menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-			menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
-			menu.add(0, CONTEXT_MENU_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
+			menu.add(0, ACTION_MODE_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+			menu.add(0, ACTION_MODE_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+			menu.add(0, ACTION_MODE_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+			menu.add(0, ACTION_MODE_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
 			return true;
 		}
 
@@ -1454,14 +1505,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			menu.clear();
 			if (adapterPlans.getSelectedCount() == 1 && mode != null) {
-				menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
-				menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);				
-				menu.add(0, CONTEXT_MENU_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
+				menu.add(0, ACTION_MODE_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);  
+				menu.add(0, ACTION_MODE_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+				menu.add(0, ACTION_MODE_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);				
+				menu.add(0, ACTION_MODE_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
 				return true;
 			} else if (adapterPlans.getSelectedCount() > 1) {
-				menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
-				menu.add(0, CONTEXT_MENU_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
+				menu.add(0, ACTION_MODE_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+				menu.add(0, ACTION_MODE_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
 				return true;
 			}
 
@@ -1474,7 +1525,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			PlanRecord record;
 
 			switch (item.getItemId()) {
-			case CONTEXT_MENU_VIEW:
+			case ACTION_MODE_VIEW:
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
 						DialogFragment newFragment = ViewDialogFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);
@@ -1484,7 +1535,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 				mode.finish();
 				return true;
-			case CONTEXT_MENU_EDIT:
+			case ACTION_MODE_EDIT:
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
 						DialogFragment newFragment = EditDialogFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)));
@@ -1494,7 +1545,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
 				mode.finish();
 				return true;
-			case CONTEXT_MENU_DELETE:				
+			case ACTION_MODE_DELETE:				
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
 						record = adapterPlans.getPlan(selected.keyAt(i));
@@ -1512,7 +1563,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 				mode.finish();
 				return true;
 
-			case CONTEXT_MENU_TOGGLE:
+			case ACTION_MODE_TOGGLE:
 				Intent intent;
 				AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 				for (int i = 0; i < selected.size(); i++){				
@@ -1529,6 +1580,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 						intent.putExtra("plan_memo",record.memo);
 						intent.putExtra("plan_offset",record.offset);
 						intent.putExtra("plan_rate",record.rate);
+						intent.putExtra("plan_next",record.next);
 						intent.putExtra("plan_scheduled",record.scheduled);
 						intent.putExtra("plan_cleared",record.cleared);
 

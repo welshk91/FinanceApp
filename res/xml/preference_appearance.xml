@@ -385,7 +385,7 @@
                     android:title="Memo" >
                 </CheckBoxPreference>
                 <CheckBoxPreference
-                    android:defaultValue="true"
+                    android:defaultValue="false"
                     android:key="checkbox_plan_offsetField"
                     android:summary="Offset Field"
                     android:title="Offset" >
@@ -395,6 +395,18 @@
                     android:key="checkbox_plan_rateField"
                     android:summary="Rate Field"
                     android:title="Rate" >
+                </CheckBoxPreference>
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="checkbox_plan_nextField"
+                    android:summary="Next Field"
+                    android:title="Next" >
+                </CheckBoxPreference>
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="checkbox_plan_scheduledField"
+                    android:summary="Scheduled Field"
+                    android:title="Scheduled" >
                 </CheckBoxPreference>
                 <CheckBoxPreference
                     android:defaultValue="false"

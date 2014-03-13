@@ -50,9 +50,11 @@ public class PlanReceiver extends BroadcastReceiver{
 				String plan_memo = bundle.getString("plan_memo");
 				String plan_offset = bundle.getString("plan_offset");
 				String plan_rate = bundle.getString("plan_rate");
+				String plan_next = bundle.getString("plan_next");
+				String plan_scheduled = bundle.getString("plan_scheduled");
 				String plan_cleared = bundle.getString("plan_cleared");
 
-				PlanRecord record = new PlanRecord(plan_id,plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate,plan_cleared);
+				PlanRecord record = new PlanRecord(plan_id,plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
 
 				transactionAdd(record,context);
 
@@ -159,16 +161,18 @@ public class PlanReceiver extends BroadcastReceiver{
 		Cursor cursorPlans = context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"), null, null, null, null);
 
 		//startManagingCursor(cursorPlans);
-		int IDColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ID);
-		int ToIDColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
-		int NameColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_NAME);
-		int ValueColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_VALUE);
-		int TypeColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_TYPE);
-		int CategoryColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
-		int MemoColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_MEMO);
-		int OffsetColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
-		int RateColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_RATE);
-		int ClearedColumn = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
+		int columnID = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ID);
+		int columnToID = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
+		int columnName = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_NAME);
+		int columnValue = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_VALUE);
+		int columnType = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_TYPE);
+		int columnCategory = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
+		int columnMemo = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_MEMO);
+		int columnOffset = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
+		int columnRate = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_RATE);
+		int columnNext = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_NEXT);
+		int columnScheduled = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
+		int columnCleared = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
 		cursorPlans.moveToFirst();
 		if (cursorPlans != null) {
@@ -176,19 +180,21 @@ public class PlanReceiver extends BroadcastReceiver{
 				do {
 
 					String id = cursorPlans.getString(0);
-					String to_id = cursorPlans.getString(ToIDColumn);
-					String name = cursorPlans.getString(NameColumn);
-					String value = cursorPlans.getString(ValueColumn);
-					String type = cursorPlans.getString(TypeColumn);
-					String category = cursorPlans.getString(CategoryColumn);
-					String memo = cursorPlans.getString(MemoColumn);
-					String offset = cursorPlans.getString(OffsetColumn);
-					String rate = cursorPlans.getString(RateColumn);
-					String cleared = cursorPlans.getString(ClearedColumn);
+					String to_id = cursorPlans.getString(columnToID);
+					String name = cursorPlans.getString(columnName);
+					String value = cursorPlans.getString(columnValue);
+					String type = cursorPlans.getString(columnType);
+					String category = cursorPlans.getString(columnCategory);
+					String memo = cursorPlans.getString(columnMemo);
+					String offset = cursorPlans.getString(columnOffset);
+					String rate = cursorPlans.getString(columnRate);
+					String next = cursorPlans.getString(columnNext);
+					String scheduled = cursorPlans.getString(columnScheduled);
+					String cleared = cursorPlans.getString(columnCleared);
 
 					/****RESET ALARMS HERE****/
 					Log.d("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
-					final PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,cleared);
+					final PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,next,scheduled,cleared);
 					schedule(record,context);
 
 				} while (cursorPlans.moveToNext());
@@ -231,19 +237,23 @@ public class PlanReceiver extends BroadcastReceiver{
 		intent.putExtra("plan_memo",record.memo);
 		intent.putExtra("plan_offset",record.offset);
 		intent.putExtra("plan_rate",record.rate);
+		intent.putExtra("plan_next",record.next);
+		intent.putExtra("plan_scheduled",record.scheduled);
 		intent.putExtra("plan_cleared",record.cleared);
 
 		//Parse Rate (token 0 is amount, token 1 is type)
-		String phrase = record.rate;
-		String delims = "[ ]+";
-		String[] tokens = phrase.split(delims);
+		final String phrase = record.rate;
+		final String delims = "[ ]+";
+		final String[] tokens = phrase.split(delims);
 
-		// In reality, you would want to have a static variable for the request code instead of 192837
-		PendingIntent sender = PendingIntent.getBroadcast(context, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		final PendingIntent sender = PendingIntent.getBroadcast(context, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		// Get the AlarmManager service
-		AlarmManager am = (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
+		//Get the AlarmManager service
+		final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
+		final Locale locale=context.getResources().getConfiguration().locale;
+		final DateTime nextRun = new DateTime();
+		
 		if(tokens[1].contains("Days")){
 			Log.d("PlanReceiver-schedule", "Days");
 
@@ -253,6 +263,13 @@ public class PlanReceiver extends BroadcastReceiver{
 			}
 
 			Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
+			
+			nextRun.setCalendar(firstRun);
+			
+			ContentValues planValues = new ContentValues();
+			planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
+			context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+			
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
 		}
 		else if(tokens[1].contains("Weeks")){
@@ -264,6 +281,13 @@ public class PlanReceiver extends BroadcastReceiver{
 			}
 
 			Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
+			
+			nextRun.setCalendar(firstRun);
+
+			ContentValues planValues = new ContentValues();
+			planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
+			context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+			
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
 		}
 		else if(tokens[1].contains("Months")){
@@ -278,6 +302,13 @@ public class PlanReceiver extends BroadcastReceiver{
 			}
 
 			Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
+ 
+			nextRun.setCalendar(firstRun);
+			
+			ContentValues planValues = new ContentValues();
+			planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
+			context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+			
 			am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
 		}
 		else{
@@ -296,9 +327,11 @@ public class PlanReceiver extends BroadcastReceiver{
 		protected String memo;
 		protected String offset;
 		protected String rate;
+		protected String next;
+		protected String scheduled;
 		protected String cleared;
 
-		public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String cleared) {
+		public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
 			this.id = id;
 			this.acctId = acctId;
 			this.name = name;
@@ -308,6 +341,8 @@ public class PlanReceiver extends BroadcastReceiver{
 			this.memo = memo;
 			this.offset = offset;
 			this.rate = rate;
+			this.next = next;
+			this.scheduled = scheduled;
 			this.cleared = cleared;
 		}
 	}

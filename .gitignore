@@ -9,6 +9,7 @@
 *.class
 
 # Generated files
+out/
 bin/
 gen/
 
@@ -24,3 +25,19 @@ proguard/
 
 # Settings folder for Eclipse
 .settings/
+
+# Eclipse project files
+.classpath
+.project
+
+# IDEA files
+*.iml
+*.ipr
+*.iws
+
+# Other build files
+project.properties
+ant.properties
+build.xml
+proguard-project.txt
+lint.xml

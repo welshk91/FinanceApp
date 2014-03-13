@@ -526,7 +526,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 					Toast.makeText(Plans.this, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 				}
 
-
 				final DateTime temp = new DateTime();
 				
 				if (name != null) {
@@ -869,7 +868,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final String ID = getArguments().getString("id");
-			Cursor cursor = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"+(ID)), null, null, null, null);
+			final Cursor cursor = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"+(ID)), null, null, null, null);
 
 			int entry_id = 0;
 			String entry_acctId = null;
@@ -901,40 +900,80 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 			}while(cursor.moveToNext());
 
 			final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-			final View planStatsView = li.inflate(R.layout.plan_stats, null);
+			final View planStatsView = li.inflate(R.layout.plan_item, null);
 
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+
+			final Locale locale=getResources().getConfiguration().locale;
+			final Money value = new Money(entry_value);
+			
+			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
 			alertDialogBuilder.setView(planStatsView);
-			alertDialogBuilder.setTitle("View Plan");
 			alertDialogBuilder.setCancelable(true);
 
 			DateTime temp = new DateTime();
 			
+			//Change gradient
+			try{
+				LinearLayout l;
+				l=(LinearLayout)planStatsView.findViewById(R.id.plan_gradient);
+				GradientDrawable defaultGradientPos = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {0xFF4ac925,0xFF4ac925});
+
+				GradientDrawable defaultGradientNeg = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {0xFFe00707,0xFFe00707});
+
+				if(useDefaults){
+					if(entry_type.contains("Deposit")){
+						l.setBackgroundDrawable(defaultGradientPos);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradientNeg);
+					}
+
+				}
+				else{
+					if(entry_type.contains("Deposit")){
+						l.setBackgroundDrawable(defaultGradientPos);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradientNeg);
+					}
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+			}
+			
 			//Set Statistics
-			TextView statsName = (TextView)planStatsView.findViewById(R.id.TextTransactionName);
+			TextView statsName = (TextView)planStatsView.findViewById(R.id.plan_name);
 			statsName.setText(entry_name);
-			TextView statsAccount = (TextView)planStatsView.findViewById(R.id.TextTransactionAccount);
-			statsAccount.setText(entry_acctId);
-			TextView statsValue = (TextView)planStatsView.findViewById(R.id.TextTransactionValue);
-			statsValue.setText(entry_value);
-			TextView statsType = (TextView)planStatsView.findViewById(R.id.TextTransactionType);
-			statsType.setText(entry_type);
-			TextView statsCategory = (TextView)planStatsView.findViewById(R.id.TextTransactionCategory);
-			statsCategory.setText(entry_category);
-			TextView statsMemo = (TextView)planStatsView.findViewById(R.id.TextTransactionMemo);
-			statsMemo.setText(entry_memo);
-			TextView statsOffset = (TextView)planStatsView.findViewById(R.id.TextTransactionOffset);
+			TextView statsAccount = (TextView)planStatsView.findViewById(R.id.plan_account);
+			statsAccount.setText("Account: " + entry_acctId);
+			TextView statsValue = (TextView)planStatsView.findViewById(R.id.plan_value);
+			statsValue.setText("Value: " + value.getNumberFormat(locale));
+			TextView statsType = (TextView)planStatsView.findViewById(R.id.plan_type);
+			statsType.setText("Type: " + entry_type);
+			TextView statsCategory = (TextView)planStatsView.findViewById(R.id.plan_category);
+			statsCategory.setText("Category: " + entry_category);
+			TextView statsMemo = (TextView)planStatsView.findViewById(R.id.plan_memo);
+			statsMemo.setText("Memo: " + entry_memo);
+			TextView statsOffset = (TextView)planStatsView.findViewById(R.id.plan_offset);
 			temp.setStringSQL(entry_offset);
-			statsOffset.setText(temp.getReadableDate());
-			TextView statsRate = (TextView)planStatsView.findViewById(R.id.TextTransactionRate);
-			statsRate.setText(entry_rate);
-			TextView statsNext = (TextView)planStatsView.findViewById(R.id.TextTransactionNext);
+			statsOffset.setText("Offset: " + temp.getReadableDate());
+			TextView statsRate = (TextView)planStatsView.findViewById(R.id.plan_rate);
+			statsRate.setText("Rate: " + entry_rate);
+			TextView statsNext = (TextView)planStatsView.findViewById(R.id.plan_next);
 			temp.setStringSQL(entry_next);
-			statsNext.setText(temp.getReadableDate());
-			TextView statsScheduled = (TextView)planStatsView.findViewById(R.id.TextTransactionScheduled);
-			statsScheduled.setText(entry_scheduled);
-			TextView statsCleared = (TextView)planStatsView.findViewById(R.id.TextTransactionCleared);
-			statsCleared.setText(entry_cleared);
+			statsNext.setText("Next: " + temp.getReadableDate());
+			TextView statsScheduled = (TextView)planStatsView.findViewById(R.id.plan_scheduled);
+			statsScheduled.setText("Scheduled: " + entry_scheduled);
+			TextView statsCleared = (TextView)planStatsView.findViewById(R.id.plan_cleared);
+			statsCleared.setText("Cleared: " + entry_cleared);
 
 			return alertDialogBuilder.create();
 		}

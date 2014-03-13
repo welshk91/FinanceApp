@@ -21,6 +21,8 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -449,7 +451,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			else{
 				viewHolder.tvNote.setVisibility(View.GONE);
 			}
-
+			
 			return v;
 		}//end getView
 
@@ -491,7 +493,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				viewHolder = new SubCategoryViewHolder();
 				viewHolder.tvName = (TextView) v.findViewById(R.id.subcategory_name);
 				viewHolder.tvNote = (TextView) v.findViewById(R.id.subcategory_note);
-
+				viewHolder.tvCategory = (TextView) v.findViewById(R.id.subcategory_parent);
 				v.setTag(viewHolder);
 			}
 
@@ -573,6 +575,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				viewHolder.tvNote.setVisibility(View.GONE);
 			}
 
+			viewHolder.tvCategory.setVisibility(View.GONE);
+			
 			return v;
 		}
 
@@ -681,39 +685,39 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			LayoutInflater li = LayoutInflater.from(this.getActivity());
-			final View categoryStatsView = li.inflate(R.layout.category_stats, null);
-
 			final int type = getArguments().getInt("type");
 			final int groupPos = getArguments().getInt("group");
 			final int childPos = getArguments().getInt("child");
 
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-			alertDialogBuilder.setView(categoryStatsView);
-			alertDialogBuilder.setTitle("View Category");
+			final LayoutInflater li = LayoutInflater.from(this.getActivity());
+			
+			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 			alertDialogBuilder.setCancelable(true);
 
 			if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+				final View categoryStatsView = li.inflate(R.layout.subcategory_item, null);
+				alertDialogBuilder.setView(categoryStatsView);
+
 				SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
 
 				//Set Statistics
-				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.subcategory_name);
 				statsName.setText(record.name);
-				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
+				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.subcategory_parent);
 				statsValue.setText(record.catId);
-				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
-				statsDate.setText(record.note);			
-
+				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.subcategory_note);
+				statsDate.setText(record.note);
 			}
 			else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+				final View categoryStatsView = li.inflate(R.layout.category_item, null);
+				alertDialogBuilder.setView(categoryStatsView);
+
 				CategoryRecord record = adapterCategory.getCategory(groupPos);
 
 				//Set Statistics
-				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.TextCategoryName);
+				TextView statsName = (TextView)categoryStatsView.findViewById(R.id.category_name);
 				statsName.setText(record.name);
-				TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.TextCategoryParent);
-				statsValue.setText("None");
-				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.TextCategoryNote);
+				TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.category_note);
 				statsDate.setText(record.note);
 			}
 
@@ -737,7 +741,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			LayoutInflater li = LayoutInflater.from(this.getActivity());
-			final View categoryAddView = li.inflate(R.layout.category_add, null);
+			final View categoryEditView = li.inflate(R.layout.category_add, null);
 
 			final int type = getArguments().getInt("type");
 			final int groupPos = getArguments().getInt("group");
@@ -746,8 +750,8 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 			SubCategoryRecord subrecord = null;
 			CategoryRecord record = null;
 
-			final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-			final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
+			final EditText editName = (EditText)categoryEditView.findViewById(R.id.EditCategoryName);
+			final EditText editNote = (EditText)categoryEditView.findViewById(R.id.EditCategoryNote);
 
 			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
@@ -764,7 +768,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 				editNote.setText(record.note);			
 			}
 
-			alertDialogBuilder.setView(categoryAddView);
+			alertDialogBuilder.setView(categoryEditView);
 			alertDialogBuilder
 			.setCancelable(true)
 			.setPositiveButton("Done",new DialogInterface.OnClickListener() {
@@ -782,6 +786,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,newName);
 							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,newNote);
 							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI+"/"+oldRecord.id), subcategoryValues,DatabaseHelper.SUBCATEGORY_ID+" = "+oldRecord.id,null);							
+							((Categories) getActivity()).subcategoryPopulate(oldRecord.id);
 						}
 						else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
 							CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
@@ -791,14 +796,13 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 							categoryValues.put(DatabaseHelper.CATEGORY_NAME,newName);
 							categoryValues.put(DatabaseHelper.CATEGORY_NOTE,newNote);
 							getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI+"/"+oldRecord.id), categoryValues,DatabaseHelper.CATEGORY_ID+" = "+oldRecord.id,null);
+							((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
 						}
 					}
 					catch(Exception e){
 						Log.e("Categories-EditDialog", "Error editing Categories");
 					}
-					
-					((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
-					
+															
 				}
 			})
 			.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
@@ -881,6 +885,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 							categoryValues.put(DatabaseHelper.CATEGORY_NAME,name);
 							categoryValues.put(DatabaseHelper.CATEGORY_NOTE,note);
 							getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
+							((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
 						}
 						//Add a subcategory
 						else{
@@ -889,16 +894,14 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,name);
 							subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,note);
 							getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
+							((Categories) getActivity()).subcategoryPopulate(catID);
 							
-							//((Categories) getActivity()).subcategoryPopulate(catID);
 						}
 
 					}
 					catch(Exception e){
 						Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
-					}
-					
-					((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
+					}					
 				}
 			})
 			.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {

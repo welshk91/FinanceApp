@@ -826,8 +826,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			int id = getArguments().getInt("id");
-			Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+id), null, null, null, null);
+			final int id = getArguments().getInt("id");
+			final Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+id), null, null, null, null);
 
 			int entry_id = 0;
 			int entry_acctId = 0;
@@ -856,48 +856,80 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 				entry_time = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_TIME));
 				entry_date = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_DATE));
 				entry_cleared = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CLEARED));
-				//Toast.makeText(Transactions.this, "ID: "+entry_id+"\nName: "+entry_name+"\nBalance: "+entry_value+"\nTime: "+entry_time+"\nDate: "+entry_date, Toast.LENGTH_SHORT).show();
 			}while(c.moveToNext());
 
-			// get transaction_stats.xml view
-			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-			View transStatsView = li.inflate(R.layout.transaction_stats, null);
+			final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			final View transStatsView = li.inflate(R.layout.transaction_item, null);
 
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+			
+			final Locale locale=getResources().getConfiguration().locale;
+			final Money value = new Money(entry_value);
 
-			// set xml to AlertDialog builder
+			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+
 			alertDialogBuilder.setView(transStatsView);
+			alertDialogBuilder.setCancelable(true);
 
-			//set Title
-			alertDialogBuilder.setTitle("View Transaction");
+			//Change gradient
+			try{
+				LinearLayout l;
+				l=(LinearLayout)transStatsView.findViewById(R.id.transaction_gradient);
+				GradientDrawable defaultGradientPos = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {0xFF4ac925,0xFF4ac925});
 
-			// set dialog message
-			alertDialogBuilder
-			.setCancelable(true);
+				GradientDrawable defaultGradientNeg = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {0xFFe00707,0xFFe00707});
 
+				if(useDefaults){
+					if(entry_type.contains("Deposit")){
+						l.setBackgroundDrawable(defaultGradientPos);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradientNeg);
+					}
+
+				}
+				else{
+					if(entry_type.contains("Deposit")){
+						l.setBackgroundDrawable(defaultGradientPos);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradientNeg);
+					}
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+			}
+			
 			//Set Statistics
-			TextView statsName = (TextView)transStatsView.findViewById(R.id.TextTransactionName);
+			TextView statsName = (TextView)transStatsView.findViewById(R.id.transaction_name);
 			statsName.setText(entry_name);
-			TextView statsValue = (TextView)transStatsView.findViewById(R.id.TextTransactionValue);
-			statsValue.setText(entry_value);
-			TextView statsType = (TextView)transStatsView.findViewById(R.id.TextTransactionType);
-			statsType.setText(entry_type);
-			TextView statsCategory = (TextView)transStatsView.findViewById(R.id.TextTransactionCategory);
-			statsCategory.setText(entry_category);
-			TextView statsCheckNum = (TextView)transStatsView.findViewById(R.id.TextTransactionCheck);
-			statsCheckNum.setText(entry_checknum);
-			TextView statsMemo = (TextView)transStatsView.findViewById(R.id.TextTransactionMemo);
-			statsMemo.setText(entry_memo);
+			TextView statsValue = (TextView)transStatsView.findViewById(R.id.transaction_value);
+			statsValue.setText("Value: " + value.getNumberFormat(locale));
+			TextView statsType = (TextView)transStatsView.findViewById(R.id.transaction_type);
+			statsType.setText("Type: " + entry_type);
+			TextView statsCategory = (TextView)transStatsView.findViewById(R.id.transaction_category);
+			statsCategory.setText("Category: " + entry_category);
+			TextView statsCheckNum = (TextView)transStatsView.findViewById(R.id.transaction_checknum);
+			statsCheckNum.setText("Check Num: " + entry_checknum);
+			TextView statsMemo = (TextView)transStatsView.findViewById(R.id.transaction_memo);
+			statsMemo.setText("Memo: " + entry_memo);
 			DateTime d = new DateTime();
 			d.setStringSQL(entry_date);
-			TextView statsDate = (TextView)transStatsView.findViewById(R.id.TextTransactionDate);
-			statsDate.setText(d.getReadableDate());
+			TextView statsDate = (TextView)transStatsView.findViewById(R.id.transaction_date);
+			statsDate.setText("Date: " + d.getReadableDate());
 			DateTime t = new DateTime();
 			t.setStringSQL(entry_time);
-			TextView statsTime = (TextView)transStatsView.findViewById(R.id.TextTransactionTime);
-			statsTime.setText(t.getReadableTime());
-			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.TextTransactionCleared);
-			statsCleared.setText(entry_cleared);
+			TextView statsTime = (TextView)transStatsView.findViewById(R.id.transaction_time);
+			statsTime.setText("Time: " + t.getReadableTime());
+			TextView statsCleared = (TextView)transStatsView.findViewById(R.id.transaction_cleared);
+			statsCleared.setText("Cleared: " + entry_cleared);
 
 			//c.close();
 			return alertDialogBuilder.create();

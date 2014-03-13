@@ -707,29 +707,69 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 				entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
 			}while(c.moveToNext());
 
-			LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-			View accountStatsView = li.inflate(R.layout.account_stats, null);
+			final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+			final View accountStatsView = li.inflate(R.layout.account_item, null);
 
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+
+			final Locale locale=getResources().getConfiguration().locale;
+			final Money balance = new Money(entry_balance);
+			
+			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 					this.getSherlockActivity());
 
 			alertDialogBuilder.setView(accountStatsView);
-			alertDialogBuilder.setTitle("View Account");
 			alertDialogBuilder.setCancelable(true);
 
+			//Change gradient
+			try{
+				LinearLayout l;
+				l=(LinearLayout)accountStatsView.findViewById(R.id.account_gradient);
+				//Older color to black gradient (0xFF00FF33,0xFF000000)
+				GradientDrawable defaultGradientPos = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {0xFF4ac925,0xFF4ac925});
+				GradientDrawable defaultGradientNeg = new GradientDrawable(
+						GradientDrawable.Orientation.BOTTOM_TOP,
+						new int[] {0xFFe00707,0xFFe00707});
+
+				if(useDefaults){
+					if(balance.isPositive(locale)){
+						l.setBackgroundDrawable(defaultGradientPos);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradientNeg);
+					}
+
+				}
+				else{
+					if(balance.isPositive(locale)){
+						l.setBackgroundDrawable(defaultGradientPos);
+					}
+					else{
+						l.setBackgroundDrawable(defaultGradientNeg);
+					}
+				}
+
+			}
+			catch(Exception e){
+				Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
+			}
+			
 			//Set Statistics
-			TextView statsName = (TextView)accountStatsView.findViewById(R.id.TextAccountName);
+			TextView statsName = (TextView)accountStatsView.findViewById(R.id.account_name);
 			statsName.setText(entry_name);
-			TextView statsValue = (TextView)accountStatsView.findViewById(R.id.TextAccountValue);
-			statsValue.setText(entry_balance);
+			TextView statsValue = (TextView)accountStatsView.findViewById(R.id.account_balance);
+			statsValue.setText("Balance: " + balance.getNumberFormat(locale));
 			DateTime d = new DateTime();
 			d.setStringSQL(entry_date);
-			TextView statsDate = (TextView)accountStatsView.findViewById(R.id.TextAccountDate);
-			statsDate.setText(d.getReadableDate());
+			TextView statsDate = (TextView)accountStatsView.findViewById(R.id.account_date);
+			statsDate.setText("Date: " + d.getReadableDate());
 			DateTime t = new DateTime();
 			t.setStringSQL(entry_time);
-			TextView statsTime = (TextView)accountStatsView.findViewById(R.id.TextAccountTime);
-			statsTime.setText(t.getReadableTime());
+			TextView statsTime = (TextView)accountStatsView.findViewById(R.id.account_time);
+			statsTime.setText("Time: " + t.getReadableTime());
 
 			c.close();
 			return alertDialogBuilder.create();

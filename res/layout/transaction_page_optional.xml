@@ -1,0 +1,89 @@
+<!--
+  Copyright 2013 Google Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/WizardPageContainer"
+    android:background="#FFFFFF" >
+
+    <TextView style="@style/WizardPageTitle" />
+
+    <ScrollView style="@style/FragmentInfo" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                style="@style/WizardFormLabel"
+                android:text="@string/checknum:" />
+
+            <EditText
+                android:id="@+id/transaction_checknum"
+                style="@style/WizardEditText"
+                android:layout_marginBottom="16dp"
+                android:hint="Check Number"
+                android:inputType="text" />
+
+            <TextView
+                style="@style/WizardFormLabel"
+                android:text="@string/memo:" />
+
+            <AutoCompleteTextView
+                android:id="@+id/transaction_memo"
+                style="@style/WizardEditText"
+                android:layout_marginBottom="16dp"
+                android:hint="Memo"
+                android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+                android:maxLength="200"
+                android:maxLines="2" >
+            </AutoCompleteTextView>
+
+            <TextView
+                style="@style/WizardFormLabel"
+                android:text="@string/date:" />
+
+            <Button
+                android:id="@+id/transaction_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="showDatePickerDialog"
+                android:text="Date" >
+            </Button>
+
+            <Button
+                android:id="@+id/transaction_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="showTimePickerDialog"
+                android:text="Time" >
+            </Button>
+
+            <TextView
+                style="@style/WizardFormLabel"
+                android:text="@string/cleared:" >
+            </TextView>
+
+            <CheckBox
+                android:id="@+id/transaction_cleared"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:checked="true" >
+            </CheckBox>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

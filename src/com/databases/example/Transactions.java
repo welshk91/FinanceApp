@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -27,21 +29,29 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -61,20 +71,25 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.wizardpager.wizard.WizardDialogFragment;
+import com.wizardpager.wizard.model.AbstractWizardModel;
+import com.wizardpager.wizard.model.ModelCallbacks;
+import com.wizardpager.wizard.model.Page;
+import com.wizardpager.wizard.model.PageList;
+import com.wizardpager.wizard.model.ReviewItem;
+import com.wizardpager.wizard.ui.PageFragmentCallbacks;
+import com.wizardpager.wizard.ui.StepPagerStrip;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	private static final int TRANS_LOADER = 987654321;
 	private static final int TRANS_SEARCH_LOADER = 98765;
 	private static final int TRANS_SUBCATEGORY_LOADER = 987;
 
+	private View myFragmentView;
+	
 	//Used to determine if fragment should show all transactions
 	private boolean showAllTransactions=false;
 
-	//Dialog for Adding Transaction
-	private static View promptsView;
-	private View myFragmentView;
-
-	private static Spinner tCategory;
 	private static Button tTime;
 	private static Button tDate;
 
@@ -97,7 +112,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static ArrayList<String> dropdownResults = new ArrayList<String>();
 
 	//Adapter for category spinner
-	private static SimpleCursorAdapter categorySpinnerAdapter = null;
+	private static SimpleCursorAdapter adapterCategory;
 
 	//ActionMode
 	protected Object mActionMode = null;
@@ -153,9 +168,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			}
 		});
 
+
 		//Set up a listener for changes in settings menu
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 		prefs.registerOnSharedPreferenceChangeListener(this);
+
+		adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[] {DatabaseHelper.SUBCATEGORY_NAME}, new int[] { android.R.id.text1 });
+		adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 		adapterTransactions = new UserItemAdapter(this.getActivity(), null);
 		lv.setAdapter(adapterTransactions);
@@ -251,12 +270,29 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			getLoaderManager().initLoader(TRANS_LOADER, b, this);
 		}
 
+		//Load the categories
+		getLoaderManager().initLoader(TRANS_SUBCATEGORY_LOADER, null, this);
 	}
 
 	//For Adding a Transaction
 	public void transactionAdd(){
-		DialogFragment newFragment = AddDialogFragment.newInstance();
-		newFragment.show(getChildFragmentManager(), "dialogAdd");
+		if(account_id==0){
+			Log.e("Transaction-AddDialog", "No account selected before attempting to add transaction...");
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+			alertDialogBuilder.setTitle("No Account Selected");
+			alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");
+			alertDialogBuilder.setNeutralButton("Okay", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					dialog.cancel();
+				}
+			});
+
+			alertDialogBuilder.create().show();
+		}
+		else{
+			DialogExample frag = DialogExample.newInstance(null);
+			frag.show(getChildFragmentManager(), "dialogAdd");
+		}
 	}//end of transactionAdd
 
 	//For Sorting Transactions
@@ -354,8 +390,16 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			DateTime time = new DateTime();
 			time.setStringSQL(hourOfDay + ":" + minute);
-			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			tTime.setText(time.getReadableTime());
+
+			if(tTime!=null){
+				tTime.setText(time.getReadableTime());
+			}
+
+			if(TransactionOptionalFragment.mPage!=null){
+				TransactionOptionalFragment.mPage.getData().putString(TransactionOptionalPage.TIME_DATA_KEY, time.getReadableTime());
+				TransactionOptionalFragment.mPage.notifyDataChanged();
+			}
+
 		}
 	}
 
@@ -383,8 +427,16 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 			DateTime date = new DateTime();
 			date.setStringSQL(year + "-" + (month+1) + "-" + day);
-			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			tDate.setText(date.getReadableDate());
+
+			if(tDate!=null){
+				tDate.setText(date.getReadableDate());
+			}
+
+			if(TransactionOptionalFragment.mPage!=null){
+				TransactionOptionalFragment.mPage.getData().putString(TransactionOptionalPage.DATE_DATA_KEY, date.getReadableDate());
+				TransactionOptionalFragment.mPage.notifyDataChanged();
+			}
+
 		}
 	}
 
@@ -863,7 +915,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 			final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-			
+
 			final Locale locale=getResources().getConfiguration().locale;
 			final Money value = new Money(entry_value);
 
@@ -906,7 +958,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			catch(Exception e){
 				Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 			}
-			
+
 			//Set Statistics
 			TextView statsName = (TextView)transStatsView.findViewById(R.id.transaction_name);
 			statsName.setText(entry_name);
@@ -932,341 +984,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			statsCleared.setText("Cleared: " + entry_cleared);
 
 			//c.close();
-			return alertDialogBuilder.create();
-		}
-	}
-
-	public static class EditDialogFragment extends SherlockDialogFragment {
-
-		public static EditDialogFragment newInstance(TransactionRecord record) {
-			EditDialogFragment frag = new EditDialogFragment();
-			Bundle args = new Bundle();
-			args.putInt("id", record.id);
-			args.putInt("acct_id", record.acctId);
-			args.putInt("plan_id", record.planId);
-			args.putString("name", record.name);
-			args.putString("value", record.value);
-			args.putString("type", record.type);
-			args.putString("category", record.category);
-			args.putString("checknum", record.checknum);
-			args.putString("memo", record.memo);
-			args.putString("date", record.date);
-			args.putString("time", record.time);
-			args.putString("cleared", record.cleared);
-			frag.setArguments(args);
-			return frag;
-		}
-
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			final int tID = getArguments().getInt("id");
-			final int aID = getArguments().getInt("acct_id");
-			final int pID = getArguments().getInt("plan_id");
-			final String name = getArguments().getString("name");
-			final String value = getArguments().getString("value");
-			final String type = getArguments().getString("type");
-			final String category = getArguments().getString("category");
-			final String checknum = getArguments().getString("checknum");
-			final String memo = getArguments().getString("memo");
-			final String date = getArguments().getString("date");
-			final String time = getArguments().getString("time");
-			final String cleared = getArguments().getString("cleared");
-
-			LayoutInflater li = LayoutInflater.from(getActivity());
-			promptsView = li.inflate(R.layout.transaction_add, null);
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-			alertDialogBuilder.setView(promptsView);
-			alertDialogBuilder.setTitle("Edit A Transaction");
-
-			//Set fields to old values
-			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-			final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-			final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-
-			tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-
-			final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-			final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
-			final Button tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			final Button tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-
-			//Set the adapter for memo's autocomplete
-			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
-			tMemo.setAdapter(dropdownAdapter);
-
-			//Add dictionary back to autocomplete
-			TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
-			tMemo.setKeyListener(input);
-
-			//Populate Category Spinner			
-			getLoaderManager().initLoader(TRANS_SUBCATEGORY_LOADER, null, ((Transactions) getParentFragment()));
-
-			tName.setText(name);
-			tValue.setText(value);
-			ArrayAdapter<String> myAdap = (ArrayAdapter<String>) tType.getAdapter();
-			int spinnerPosition = myAdap.getPosition(type);
-			tType.setSelection(spinnerPosition);
-
-			//Used to find correct category to select
-			for (int i = 0; i < tCategory.getCount(); i++) {
-				Cursor c = (Cursor) tCategory.getItemAtPosition(i);
-				String catName = c.getString(c.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
-				if (catName.contentEquals(category)) {
-					tCategory.setSelection(i);
-					break;
-				}
-			}
-
-			tCheckNum.setText(checknum);
-			tMemo.setText(memo);
-			tCleared.setChecked(Boolean.parseBoolean(cleared));
-			DateTime d = new DateTime();
-			d.setStringSQL(date);
-			tDate.setText(d.getReadableDate());
-			DateTime t = new DateTime();
-			t.setStringSQL(time);
-			tTime.setText(t.getReadableTime());
-
-			// set dialog message
-			alertDialogBuilder
-			.setCancelable(false)
-			.setPositiveButton("Save",
-					new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
-					//Needed to get category's name from DB-populated spinner
-					int categoryPosition = tCategory.getSelectedItemPosition();
-					Cursor cursorCategory = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-
-					String transactionName = tName.getText().toString().trim();
-					Money transactionValue = null;
-					String transactionType = tType.getSelectedItem().toString().trim();
-					String transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
-					String transactionCheckNum = tCheckNum.getText().toString().trim();
-					String transactionMemo = tMemo.getText().toString().trim();
-					String transactionCleared = tCleared.isChecked()+"";
-					DateTime transactionDate = new DateTime();
-					transactionDate.setStringReadable(tDate.getText().toString().trim());
-					DateTime transactionTime = new DateTime();
-					transactionTime.setStringReadable(tTime.getText().toString().trim());
-					Locale locale=getResources().getConfiguration().locale;
-
-					//Check to see if value is a number
-					boolean validValue=false;
-					try{
-						transactionValue = new Money(tValue.getText().toString().trim());
-						validValue=true;
-					}
-					catch(Exception e){
-						validValue=false;
-					}
-
-					try{
-						if(transactionName.length()>0){
-
-							if(!validValue){
-								transactionValue = new Money("0.00");
-							}
-
-							ContentValues transactionValues=new ContentValues();
-							transactionValues.put(DatabaseHelper.TRANS_ID, tID);
-							transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, aID);
-							transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, pID);
-							transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);
-							transactionValues.put(DatabaseHelper.TRANS_VALUE, transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put(DatabaseHelper.TRANS_TYPE, transactionType);
-							transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transactionCategory);
-							transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transactionCheckNum);
-							transactionValues.put(DatabaseHelper.TRANS_MEMO, transactionMemo);
-							transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
-							transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
-							transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
-							
-							//Update plan
-							getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+tID), transactionValues, DatabaseHelper.TRANS_ID+"="+tID, null);							
-						}
-
-						else{
-							Toast.makeText(getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
-						}
-
-					}
-					catch(Exception e){
-						Log.e("Transactions-EditDialog", "Couldn't edit transaction. Error e="+e);
-						Toast.makeText(getActivity(), "Error Editing Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-					}
-
-
-				}//end onClick "OK"
-			})
-			.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
-					dialog.cancel();
-				}
-			});
-
-			return alertDialogBuilder.create();
-
-		}
-	}
-
-	public static class AddDialogFragment extends SherlockDialogFragment {
-
-		public static AddDialogFragment newInstance() {
-			AddDialogFragment frag = new AddDialogFragment();
-			Bundle args = new Bundle();
-			frag.setArguments(args);
-			return frag;
-		}
-
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-			if(account_id==0){
-				Log.d("Transaction-AddDialog", "No account selected before attempting to add transaction...");
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-				alertDialogBuilder.setTitle("No Account Selected");
-				alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");
-				alertDialogBuilder.setNeutralButton("Okay", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						dialog.cancel();
-					}
-				});
-				return alertDialogBuilder.create();
-			}
-
-			// get transaction_add.xml view
-			LayoutInflater li = LayoutInflater.from(getActivity());
-			promptsView = li.inflate(R.layout.transaction_add, null);
-
-			final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
-			final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-			final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-			tCategory = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-			final EditText tCheckNum = (EditText)promptsView.findViewById(R.id.EditTransactionCheck);
-			final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
-			final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-
-			//Adapter for memo's autocomplete
-			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
-			tMemo.setAdapter(dropdownAdapter);
-
-			//Add dictionary back to autocomplete
-			TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
-			tMemo.setKeyListener(input);
-
-			final Calendar c = Calendar.getInstance();
-			DateTime date = new DateTime();
-			date.setCalendar(c);
-
-			tDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
-			tDate.setText(date.getReadableDate());
-
-			tTime = (Button)promptsView.findViewById(R.id.ButtonTransactionTime);
-			tTime.setText(date.getReadableTime());
-
-			//Populate Category Drop-down List
-			getLoaderManager().initLoader(TRANS_SUBCATEGORY_LOADER, null, ((Transactions) getParentFragment()));
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-
-			// set account_add.xml to AlertDialog builder
-			alertDialogBuilder.setView(promptsView);
-
-			//set Title
-			alertDialogBuilder.setTitle("Add A Transaction");
-
-			// set dialog message
-			alertDialogBuilder
-			.setCancelable(false)
-			.setPositiveButton("Add",
-					new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
-					//Needed to get category's name from DB-populated spinner
-					int categoryPosition = tCategory.getSelectedItemPosition();
-					Cursor cursor = (Cursor) categorySpinnerAdapter.getItem(categoryPosition);
-					String transactionName = tName.getText().toString().trim();
-					Money transactionValue = null;
-					String transactionType = tType.getSelectedItem().toString().trim();
-					String transactionCategory = null;
-					Locale locale=getResources().getConfiguration().locale;
-
-					try{
-						transactionCategory = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
-					}
-					catch(Exception e){
-						Log.e("Transaction-addDialog","No Category? Exception e=" + e);
-						dialog.cancel();
-						Toast.makeText(getActivity(), "Needs A Category \n\nUse The Side Menu To Create Categories", Toast.LENGTH_LONG).show();
-						return;
-					}
-
-					String transactionCheckNum = tCheckNum.getText().toString().trim();
-					String transactionMemo = tMemo.getText().toString().trim();
-					String transactionCleared = tCleared.isChecked()+"";
-
-					//Set Time
-					DateTime transactionDate = new DateTime();
-					transactionDate.setStringReadable(tDate.getText().toString().trim());
-					DateTime transactionTime = new DateTime();
-					transactionTime.setStringReadable(tTime.getText().toString().trim());
-
-					//Check to see if value is a number
-					boolean validValue=false;
-					try{
-						transactionValue = new Money(tValue.getText().toString().trim());
-						validValue=true;
-					}
-					catch(Exception e){
-						validValue=false;
-					}
-
-					try{
-						if (transactionName.length()>0) {
-
-							if(!validValue){
-								transactionValue = new Money("0.00");
-							}
-
-							ContentValues transactionValues=new ContentValues();
-							transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, account_id);
-							transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
-							transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);
-							transactionValues.put(DatabaseHelper.TRANS_VALUE, transactionValue.getBigDecimal(locale)+"");
-							transactionValues.put(DatabaseHelper.TRANS_TYPE, transactionType);
-							transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transactionCategory);
-							transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transactionCheckNum);
-							transactionValues.put(DatabaseHelper.TRANS_MEMO, transactionMemo);
-							transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
-							transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
-							transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
-
-							getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
-						} 
-
-						else {
-							Toast.makeText(getActivity(), "Needs a Name", Toast.LENGTH_LONG).show();
-						}
-					}
-					catch(Exception e){
-						Log.e("Transactions-AddDialog", "Couldn't add transaction. Error e="+e);
-						Toast.makeText(getActivity(), "Error Adding Transaction!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-					}
-
-				}//end onClick "OK"
-			})
-			.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog,int id) {
-					// CODE FOR "Cancel"
-					dialog.cancel();
-				}
-			});
-
 			return alertDialogBuilder.create();
 		}
 	}
@@ -1425,8 +1142,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			BigDecimal totalBalance = BigDecimal.ZERO;
 			Locale locale=getResources().getConfiguration().locale;
 
-			//Cursor doesn't seem to catch the first transaction using this loop if i add/edit a transaction
-			//and balance needs to be recalculated :/
 			data.moveToPosition(-1);
 			while(data.moveToNext()){
 				if(data.getString(typeColumn).equals("Deposit")){
@@ -1473,13 +1188,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 
 		case TRANS_SUBCATEGORY_LOADER:
-			String[] from = new String[] {DatabaseHelper.SUBCATEGORY_NAME}; 
-			int[] to = new int[] { android.R.id.text1 };
-
-			categorySpinnerAdapter = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, data, from, to);
-			categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			tCategory.setAdapter(categorySpinnerAdapter);
-
+			adapterCategory.swapCursor(data);
 			break;
 
 		default:
@@ -1506,6 +1215,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			break;
 
 		case TRANS_SUBCATEGORY_LOADER:
+			adapterCategory.swapCursor(null);
 			Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
 			break;
 
@@ -1558,8 +1268,33 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			case CONTEXT_MENU_EDIT:
 				for (int i = 0; i < selected.size(); i++){				
 					if (selected.valueAt(i)) {
-						DialogFragment newFragment = EditDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)));
-						newFragment.show(getChildFragmentManager(), "dialogEdit");
+						//DialogFragment newFragment = EditDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)));
+						//newFragment.show(getChildFragmentManager(), "dialogEdit");
+
+						final TransactionRecord record = adapterTransactions.getTransaction(selected.keyAt(i));
+
+						final Bundle bundle = new Bundle();
+
+						final Bundle bdl1 = new Bundle();
+						bdl1.putInt("id", record.id);
+						bdl1.putInt("acct_id", record.acctId);
+						bdl1.putInt("plan_id", record.planId);
+						bdl1.putString("name",record.name);
+						bdl1.putString("value",record.value);
+						bdl1.putString("type",record.type);
+						bdl1.putString("category",record.category);
+						bundle.putBundle("Transaction Info",bdl1);
+
+						final Bundle bdl2 = new Bundle();
+						bdl2.putString("checknum",record.checknum);
+						bdl2.putString("memo", record.memo);
+						bdl2.putString("date",record.date);
+						bdl2.putString("time",record.time);
+						bdl2.putString("cleared",record.cleared);
+						bundle.putBundle("Optional",bdl2);
+
+						final DialogExample frag = DialogExample.newInstance(bundle);
+						frag.show(getChildFragmentManager(), "dialogEdit");						
 					}
 				}
 
@@ -1602,6 +1337,568 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 		}
 
 		super.onDestroyView();
+	}
+
+	public static class DialogExample extends WizardDialogFragment{
+
+		private AbstractWizardModel mWizardModel = new AddWizardModel(getActivity());	
+
+		public static DialogExample newInstance(Bundle bundle) {
+			DialogExample frag = new DialogExample();
+			frag.setArguments(bundle);			
+			return frag;
+		}
+
+		//Set Style & Theme of Dialog
+		@SuppressLint("InlinedApi")
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			if(android.os.Build.VERSION.SDK_INT>14){
+				setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_Dialog);
+			}
+			else{
+				setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Dialog);
+			}
+
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+			View myFragmentView = inflater.inflate(R.layout.wizard, null, false);
+
+			ViewPager mPager = (ViewPager) myFragmentView.findViewById(R.id.pager);
+			mPager.setOffscreenPageLimit(5);
+			StepPagerStrip mStepPagerStrip = (StepPagerStrip) myFragmentView.findViewById(R.id.strip);
+			Button mNextButton = (Button) myFragmentView.findViewById(R.id.next_button);
+			Button mPrevButton = (Button) myFragmentView.findViewById(R.id.prev_button);
+			setControls(mPager, mStepPagerStrip, mNextButton, mPrevButton);
+
+			//Load Data into Wizard
+			final Bundle bundle = getArguments();
+			if(bundle!=null){
+				mWizardModel.load(bundle);
+			}
+
+			return myFragmentView;
+		}
+
+		//Create Wizard
+		@Override
+		public AbstractWizardModel onCreateModel() {
+			return mWizardModel;
+		}
+
+		//Method that runs after wizard is finished
+		@Override
+		public void onSubmit() {
+			final Bundle bundleInfo = mWizardModel.findByKey("Transaction Info").getData();
+			final Bundle bundleOptional = mWizardModel.findByKey("Optional").getData();
+			final Locale locale=getResources().getConfiguration().locale;
+
+			String value="";
+			final DateTime transactionDate = new DateTime();
+			transactionDate.setStringReadable(bundleOptional.getString(TransactionOptionalPage.DATE_DATA_KEY).trim());
+			final DateTime transactionTime = new DateTime();
+			transactionTime.setStringReadable(bundleOptional.getString(TransactionOptionalPage.TIME_DATA_KEY).trim());
+
+			//Check to see if value is a number
+			boolean validValue = false;
+			try{
+				Money transactionValue = new Money(bundleInfo.getString(TransactionInfoPage.VALUE_DATA_KEY).trim());
+				value = transactionValue.getBigDecimal(locale)+"";
+				validValue=true;
+			}
+			catch(Exception e){
+				validValue=false;
+				Toast.makeText(getActivity(), "Please enter a valid value", Toast.LENGTH_SHORT).show();
+			}
+
+			if(validValue){
+				getDialog().cancel();
+
+				if(getArguments()!=null){					
+					ContentValues transactionValues=new ContentValues();
+					transactionValues.put(DatabaseHelper.TRANS_ID, bundleInfo.getInt(TransactionInfoPage.ID_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, bundleInfo.getInt(TransactionInfoPage.ACCOUNT_ID_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, bundleInfo.getInt(TransactionInfoPage.PLAN_ID_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_NAME, bundleInfo.getString(TransactionInfoPage.NAME_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_VALUE, value);
+					transactionValues.put(DatabaseHelper.TRANS_TYPE, bundleInfo.getString(TransactionInfoPage.TYPE_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_CATEGORY, bundleInfo.getString(TransactionInfoPage.CATEGORY_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, bundleOptional.getString(TransactionOptionalPage.CHECKNUM_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_MEMO, bundleOptional.getString(TransactionOptionalPage.MEMO_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
+					transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
+					transactionValues.put(DatabaseHelper.TRANS_CLEARED, bundleOptional.getString(TransactionOptionalPage.CLEARED_DATA_KEY));
+					
+					getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+bundleInfo.getInt(TransactionInfoPage.ID_DATA_KEY)), transactionValues, DatabaseHelper.TRANS_ID+"="+bundleInfo.getInt(TransactionInfoPage.ID_DATA_KEY), null);
+				}
+				else{
+					ContentValues transactionValues=new ContentValues();
+					transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, account_id);
+					transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
+					transactionValues.put(DatabaseHelper.TRANS_NAME, bundleInfo.getString(TransactionInfoPage.NAME_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_VALUE, value);
+					transactionValues.put(DatabaseHelper.TRANS_TYPE, bundleInfo.getString(TransactionInfoPage.TYPE_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_CATEGORY, bundleInfo.getString(TransactionInfoPage.CATEGORY_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, bundleOptional.getString(TransactionOptionalPage.CHECKNUM_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_MEMO, bundleOptional.getString(TransactionOptionalPage.MEMO_DATA_KEY));
+					transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
+					transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
+					transactionValues.put(DatabaseHelper.TRANS_CLEARED, bundleOptional.getString(TransactionOptionalPage.CLEARED_DATA_KEY));
+
+					getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+				}
+				
+			}
+
+		}
+
+		//Allow back button to be used to go back a step in the wizard
+		@Override
+		public boolean useBackForPrevious() {
+			return true;
+		}
+
+	}
+
+	public static class AddWizardModel extends AbstractWizardModel {
+		public AddWizardModel(Context context) {
+			super(context);
+		}
+
+		@Override
+		protected PageList onNewRootPageList() {
+			return new PageList(
+
+					new TransactionInfoPage(this, "Transaction Info")
+					.setRequired(true),
+
+					new TransactionOptionalPage(this, "Optional")
+					);
+		}
+
+	}
+
+	public static class TransactionInfoFragment extends SherlockFragment {
+		private static final String ARG_KEY = "transaction_info_key";
+
+		private PageFragmentCallbacks mCallbacks;
+		private String mKey;
+		private TransactionInfoPage mPage;
+		private EditText mNameView;
+		private EditText mValueView;
+		private Spinner mTypeView;
+		private Spinner mCategoryView;
+
+		public static TransactionInfoFragment create(String key) {
+			Bundle args = new Bundle();
+			args.putString(ARG_KEY, key);
+
+			TransactionInfoFragment fragment = new TransactionInfoFragment();
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		public TransactionInfoFragment() {
+		}
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
+			Bundle args = getArguments();
+			mKey = args.getString(ARG_KEY);
+			mPage = (TransactionInfoPage) mCallbacks.onGetPage(mKey);
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+
+			View rootView = inflater.inflate(R.layout.transaction_page_info, container, false);
+			((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
+
+			mNameView = ((EditText) rootView.findViewById(R.id.transaction_name));
+			mNameView.setText(mPage.getData().getString(TransactionInfoPage.NAME_DATA_KEY));
+
+			mValueView = ((EditText) rootView.findViewById(R.id.transaction_value));
+			mValueView.setText(mPage.getData().getString(TransactionInfoPage.VALUE_DATA_KEY));
+
+			mTypeView = (Spinner) rootView.findViewById(R.id.spinner_transaction_type);
+			if(mPage.getData().getString(TransactionInfoPage.TYPE_DATA_KEY)==null || mPage.getData().getString(TransactionInfoPage.TYPE_DATA_KEY).equals("Withdraw")){
+				mTypeView.setSelection(0);				
+			}
+			else{
+				mTypeView.setSelection(1);
+			}
+
+			mCategoryView = (Spinner) rootView.findViewById(R.id.spinner_transaction_category);
+			mCategoryView.setAdapter(adapterCategory);
+
+			String category = mPage.getData().getString(TransactionInfoPage.CATEGORY_DATA_KEY); 
+			final int count = adapterCategory.getCount();
+			String catName;
+			Cursor cursor;
+
+			if(category!=null){
+				for (int i = 0; i < count; i++) {
+					cursor = (Cursor) mCategoryView.getItemAtPosition(i);
+					catName = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
+					if (catName.contentEquals(category)) {
+						mCategoryView.setSelection(i);
+						break;
+					}
+				}
+			}
+
+			return rootView;
+		}
+
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+
+			if (!(activity instanceof PageFragmentCallbacks)) {
+				mCallbacks = (PageFragmentCallbacks) getParentFragment();
+			}
+			else{
+				mCallbacks = (PageFragmentCallbacks) activity;
+			}
+		}
+
+		@Override
+		public void onDetach() {
+			super.onDetach();
+			mCallbacks = null;
+		}
+
+		@Override
+		public void onViewCreated(View view, Bundle savedInstanceState) {
+			super.onViewCreated(view, savedInstanceState);
+
+			mNameView.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void beforeTextChanged(CharSequence charSequence, int i, int i1,
+						int i2) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+				}
+
+				@Override
+				public void afterTextChanged(Editable editable) {
+					mPage.getData().putString(TransactionInfoPage.NAME_DATA_KEY,
+							(editable != null) ? editable.toString() : null);
+					mPage.notifyDataChanged();
+				}
+			});
+
+			mValueView.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void beforeTextChanged(CharSequence charSequence, int i, int i1,
+						int i2) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+				}
+
+				@Override
+				public void afterTextChanged(Editable editable) {
+					mPage.getData().putString(TransactionInfoPage.VALUE_DATA_KEY,
+							(editable != null) ? editable.toString() : null);
+					mPage.notifyDataChanged();
+				}
+			});
+
+			mTypeView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+					Object item = parent.getItemAtPosition(pos);
+					mPage.getData().putString(TransactionInfoPage.TYPE_DATA_KEY,item.toString());
+					mPage.notifyDataChanged();
+				}
+				@Override
+				public void onNothingSelected(AdapterView<?> parent) {
+				}
+			});
+
+			mCategoryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+					Cursor cursor = (Cursor) adapterCategory.getItem(pos);
+					String category = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
+
+					mPage.getData().putString(TransactionInfoPage.CATEGORY_DATA_KEY,category);			    	
+					mPage.notifyDataChanged();
+				}
+				@Override
+				public void onNothingSelected(AdapterView<?> parent) {
+				}
+			});
+
+		}
+
+		@Override
+		public void setMenuVisibility(boolean menuVisible) {
+			super.setMenuVisibility(menuVisible);
+
+			// In a future update to the support library, this should override setUserVisibleHint
+			// instead of setMenuVisibility.
+			if (mNameView != null) {
+				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+						Context.INPUT_METHOD_SERVICE);
+				if (!menuVisible) {
+					imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+				}
+			}
+		}
+	}
+
+	public static class TransactionOptionalFragment extends SherlockFragment {
+		private static final String ARG_KEY = "transaction_optional_key";
+
+		private PageFragmentCallbacks mCallbacks;
+		private String mKey;
+		private static TransactionOptionalPage mPage;
+		private EditText mCheckNumView;
+		private AutoCompleteTextView mMemoView;
+		private CheckBox mClearedView;
+
+		public static TransactionOptionalFragment create(String key) {
+			Bundle args = new Bundle();
+			args.putString(ARG_KEY, key);
+
+			TransactionOptionalFragment fragment = new TransactionOptionalFragment();
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		public TransactionOptionalFragment() {
+		}
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
+			Bundle args = getArguments();
+			mKey = args.getString(ARG_KEY);
+			mPage = (TransactionOptionalPage) mCallbacks.onGetPage(mKey);
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+
+			final Bundle data = mPage.getData();
+
+			View rootView = inflater.inflate(R.layout.transaction_page_optional, container, false);
+			((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
+
+			mCheckNumView = ((EditText) rootView.findViewById(R.id.transaction_checknum));
+			mCheckNumView.setText(data.getString(TransactionOptionalPage.CHECKNUM_DATA_KEY));
+
+			mMemoView = ((AutoCompleteTextView) rootView.findViewById(R.id.transaction_memo));
+			mMemoView.setText(data.getString(TransactionOptionalPage.MEMO_DATA_KEY));
+
+			//Adapter for memo's autocomplete
+			ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
+			mMemoView.setAdapter(dropdownAdapter);			
+
+			//Add dictionary back to autocomplete
+			TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+			mMemoView.setKeyListener(input);
+
+			tTime = (Button)rootView.findViewById(R.id.transaction_time);
+			tDate = (Button)rootView.findViewById(R.id.transaction_date);
+
+			if(data.getString(TransactionOptionalPage.DATE_DATA_KEY)!=null && data.getString(TransactionOptionalPage.DATE_DATA_KEY).length()>0){
+				final DateTime date = new DateTime();
+				date.setStringSQL(data.getString(TransactionOptionalPage.DATE_DATA_KEY));
+				tDate.setText(date.getReadableDate());
+				mPage.getData().putString(TransactionOptionalPage.DATE_DATA_KEY, date.getReadableDate());
+			}
+			if(data.getString(TransactionOptionalPage.TIME_DATA_KEY)!=null && data.getString(TransactionOptionalPage.TIME_DATA_KEY).length()>0){
+				final DateTime time = new DateTime();
+				time.setStringSQL(data.getString(TransactionOptionalPage.TIME_DATA_KEY));
+				tTime.setText(time.getReadableTime());
+				mPage.getData().putString(TransactionOptionalPage.TIME_DATA_KEY, time.getReadableTime());
+			}
+			else if(data.getString(TransactionOptionalPage.DATE_DATA_KEY)==null && data.getString(TransactionOptionalPage.TIME_DATA_KEY)==null){
+				final Calendar c = Calendar.getInstance();
+				final DateTime date = new DateTime();
+				date.setCalendar(c);				
+
+				tDate.setText(date.getReadableDate());
+				tTime.setText(date.getReadableTime());
+				mPage.getData().putString(TransactionOptionalPage.DATE_DATA_KEY, date.getReadableDate());
+				mPage.getData().putString(TransactionOptionalPage.TIME_DATA_KEY, date.getReadableTime());
+			}
+
+			mClearedView = (CheckBox) rootView.findViewById(R.id.transaction_cleared);
+			if(mPage.getData().getString(TransactionOptionalPage.CLEARED_DATA_KEY)!=null){				
+				mClearedView.setChecked(Boolean.parseBoolean(mPage.getData().getString(TransactionOptionalPage.CLEARED_DATA_KEY)));				
+			}
+			else{
+				mClearedView.setChecked(true);				
+				mPage.getData().putString(TransactionOptionalPage.CLEARED_DATA_KEY, "true");
+			}
+
+			return rootView;
+		}
+
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+
+			if (!(activity instanceof PageFragmentCallbacks)) {
+				mCallbacks = (PageFragmentCallbacks) getParentFragment();
+			}
+			else{
+				mCallbacks = (PageFragmentCallbacks) activity;
+			}
+		}
+
+		@Override
+		public void onDetach() {
+			super.onDetach();
+			mCallbacks = null;
+		}
+
+		@Override
+		public void onViewCreated(View view, Bundle savedInstanceState) {
+			super.onViewCreated(view, savedInstanceState);
+
+			mCheckNumView.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void beforeTextChanged(CharSequence charSequence, int i, int i1,
+						int i2) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+				}
+
+				@Override
+				public void afterTextChanged(Editable editable) {
+					mPage.getData().putString(TransactionOptionalPage.CHECKNUM_DATA_KEY,
+							(editable != null) ? editable.toString() : null);
+					mPage.notifyDataChanged();
+				}
+			});
+
+			mMemoView.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void beforeTextChanged(CharSequence charSequence, int i, int i1,
+						int i2) {
+				}
+
+				@Override
+				public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+				}
+
+				@Override
+				public void afterTextChanged(Editable editable) {
+					mPage.getData().putString(TransactionOptionalPage.MEMO_DATA_KEY,
+							(editable != null) ? editable.toString() : null);
+					mPage.notifyDataChanged();
+				}
+			});
+
+			mClearedView.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+				public void onCheckedChanged(CompoundButton buttonView,
+						boolean isChecked) {
+					if (mClearedView.isChecked()) {
+						mPage.getData().putString(TransactionOptionalPage.CLEARED_DATA_KEY, "true");
+					}
+					else
+					{
+						mPage.getData().putString(TransactionOptionalPage.CLEARED_DATA_KEY, "false");
+					}
+
+					mPage.notifyDataChanged();
+				}
+			});
+
+		}
+
+		@Override
+		public void setMenuVisibility(boolean menuVisible) {
+			super.setMenuVisibility(menuVisible);
+
+			// In a future update to the support library, this should override setUserVisibleHint
+			// instead of setMenuVisibility.
+			if (mCheckNumView != null) {
+				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+						Context.INPUT_METHOD_SERVICE);
+				if (!menuVisible) {
+					imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+				}
+			}
+		}
+	}
+
+	public static class TransactionInfoPage extends Page {
+		public static final String ID_DATA_KEY = "id";
+		public static final String ACCOUNT_ID_DATA_KEY = "acct_id";
+		public static final String PLAN_ID_DATA_KEY = "plan_id";
+
+		public static final String NAME_DATA_KEY = "name";
+		public static final String VALUE_DATA_KEY = "value";
+		public static final String TYPE_DATA_KEY = "type";
+		public static final String CATEGORY_DATA_KEY = "category";
+
+		public TransactionInfoPage(ModelCallbacks callbacks, String title) {
+			super(callbacks, title);
+		}
+
+		@Override
+		public Fragment createFragment() {
+			return TransactionInfoFragment.create(getKey());
+		}
+
+		@Override
+		public void getReviewItems(ArrayList<ReviewItem> dest) {        
+			dest.add(new ReviewItem("Name", mData.getString(NAME_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Value", mData.getString(VALUE_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Type", mData.getString(TYPE_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Category", mData.getString(CATEGORY_DATA_KEY), getKey(), -1));
+		}
+
+		@Override
+		public boolean isCompleted() {
+			return !TextUtils.isEmpty(mData.getString(NAME_DATA_KEY)) && !TextUtils.isEmpty(mData.getString(VALUE_DATA_KEY));
+		}   
+	}
+
+	public static class TransactionOptionalPage extends Page {
+		public static final String CHECKNUM_DATA_KEY = "checknum";
+		public static final String MEMO_DATA_KEY = "memo";
+		public static final String DATE_DATA_KEY = "date";
+		public static final String TIME_DATA_KEY = "time";
+		public static final String CLEARED_DATA_KEY = "cleared";
+
+		public TransactionOptionalPage(ModelCallbacks callbacks, String title) {
+			super(callbacks, title);
+		}
+
+		@Override
+		public Fragment createFragment() {
+			return TransactionOptionalFragment.create(getKey());
+		}
+
+		@Override
+		public void getReviewItems(ArrayList<ReviewItem> dest) {
+			dest.add(new ReviewItem("Check Number", mData.getString(CHECKNUM_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Memo", mData.getString(MEMO_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Date", mData.getString(DATE_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Time", mData.getString(TIME_DATA_KEY), getKey(), -1));
+			dest.add(new ReviewItem("Cleared", mData.getString(CLEARED_DATA_KEY), getKey(), -1));
+		}
 	}
 
 }//end Transactions

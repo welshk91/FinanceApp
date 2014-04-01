@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -18,26 +19,24 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -56,6 +55,14 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.widget.SearchView;
+import com.wizardpager.wizard.WizardDialogFragment;
+import com.wizardpager.wizard.model.AbstractWizardModel;
+import com.wizardpager.wizard.model.BranchPage;
+import com.wizardpager.wizard.model.CustomerInfoPage;
+import com.wizardpager.wizard.model.MultipleFixedChoicePage;
+import com.wizardpager.wizard.model.PageList;
+import com.wizardpager.wizard.model.SingleFixedChoicePage;
+import com.wizardpager.wizard.ui.StepPagerStrip;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PICKFILE_RESULT_CODE = 1;
@@ -88,19 +95,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		if (savedInstanceState != null) {
-	        currentAccount = savedInstanceState.getInt("currentAccount");
-	    }
-		
+			currentAccount = savedInstanceState.getInt("currentAccount");
+		}
+
 	}// end onCreate
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-	    savedInstanceState.putInt("currentAccount", currentAccount);
-	    super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putInt("currentAccount", currentAccount);
+		super.onSaveInstanceState(savedInstanceState);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 		myFragmentView = inflater.inflate(R.layout.accounts, null, false);
@@ -715,7 +722,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
 			final Locale locale=getResources().getConfiguration().locale;
 			final Money balance = new Money(entry_balance);
-			
+
 			final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 					this.getSherlockActivity());
 
@@ -756,7 +763,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 			catch(Exception e){
 				Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
 			}
-			
+
 			//Set Statistics
 			TextView statsName = (TextView)accountStatsView.findViewById(R.id.account_name);
 			statsName.setText(entry_name);

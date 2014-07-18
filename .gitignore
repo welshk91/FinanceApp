@@ -30,6 +30,10 @@ proguard/
 .classpath
 .project
 
+# Android Studio
+.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+
 # IDEA files
 *.iml
 *.ipr

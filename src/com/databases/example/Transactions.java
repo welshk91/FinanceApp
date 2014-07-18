@@ -86,7 +86,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 	private static final int TRANS_SUBCATEGORY_LOADER = 987;
 
 	private View myFragmentView;
-	
+
 	//Used to determine if fragment should show all transactions
 	private boolean showAllTransactions=false;
 
@@ -1383,6 +1383,21 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 			return myFragmentView;
 		}
 
+//		@Override
+//		public void onStart() {
+//			super.onStart();
+//
+//			// safety check
+//			if (getDialog() == null) {
+//				return;
+//			}
+//
+//			int dialogWidth = 500;
+//			int dialogHeight = 600;
+//
+//			getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
+//		}
+
 		//Create Wizard
 		@Override
 		public AbstractWizardModel onCreateModel() {
@@ -1431,7 +1446,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 					transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime.getSQLTime(locale));
 					transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
 					transactionValues.put(DatabaseHelper.TRANS_CLEARED, bundleOptional.getString(TransactionOptionalPage.CLEARED_DATA_KEY));
-					
+
 					getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI+"/"+bundleInfo.getInt(TransactionInfoPage.ID_DATA_KEY)), transactionValues, DatabaseHelper.TRANS_ID+"="+bundleInfo.getInt(TransactionInfoPage.ID_DATA_KEY), null);
 				}
 				else{
@@ -1450,7 +1465,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
 					getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
 				}
-				
+
 			}
 
 		}

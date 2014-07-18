@@ -1,0 +1,6 @@
+include ':cardsUILib'
+include ':colorPicker'
+include ':dropboxChooserSDK'
+include ':lockpattern'
+include ':wizardLib'
+include ':financeApp'

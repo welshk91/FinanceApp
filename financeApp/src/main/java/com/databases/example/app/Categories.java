@@ -2,7 +2,7 @@
  * Does everything from setting up the view to Add/Delete/Edit
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,6 +41,10 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import com.databases.example.R;
+import com.databases.example.data.DatabaseHelper;
+import com.databases.example.data.MyContentProvider;
+import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 

@@ -2,7 +2,7 @@
  * Everything appears to work. Just needs to be integrated with Checkbook screen
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.R;
+import com.databases.example.view.Drawer;
 
 import java.io.File;
 

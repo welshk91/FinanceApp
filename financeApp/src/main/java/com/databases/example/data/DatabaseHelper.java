@@ -3,7 +3,7 @@
  * more complex database operations like balances
  */
 
-package com.databases.example;
+package com.databases.example.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,66 +18,66 @@ import java.io.File;
 public class DatabaseHelper extends SQLiteOpenHelper{
 
     //Database Version
-    private static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 1;
 
     //Database Name
-    private static final String DATABASE_NAME = "dbFinance";
+    public static final String DATABASE_NAME = "dbFinance";
 
     //Table Names
-    protected static final String TABLE_ACCOUNTS = "tblAccounts";
-    protected static final String TABLE_TRANSACTIONS = "tblTrans";
-    protected static final String TABLE_PLANS = "tblPlanTrans";
-    protected static final String TABLE_CATEGORIES = "tblCategory";
-    protected static final String TABLE_SUBCATEGORIES = "tblSubCategory";
-    protected static final String TABLE_LINKS = "tblLinks";
-    protected static final String TABLE_NOTIFICATIONS = "tblNotifications";
+    public static final String TABLE_ACCOUNTS = "tblAccounts";
+    public static final String TABLE_TRANSACTIONS = "tblTrans";
+    public static final String TABLE_PLANS = "tblPlanTrans";
+    public static final String TABLE_CATEGORIES = "tblCategory";
+    public static final String TABLE_SUBCATEGORIES = "tblSubCategory";
+    public static final String TABLE_LINKS = "tblLinks";
+    public static final String TABLE_NOTIFICATIONS = "tblNotifications";
 
     //Column Names
-    protected static final String ACCOUNT_ID = "AcctID";
-    protected static final String ACCOUNT_NAME = "AcctName";
-    protected static final String ACCOUNT_BALANCE = "AcctBalance";
-    protected static final String ACCOUNT_TIME = "AcctTime";
-    protected static final String ACCOUNT_DATE = "AcctDate";
+    public static final String ACCOUNT_ID = "AcctID";
+    public static final String ACCOUNT_NAME = "AcctName";
+    public static final String ACCOUNT_BALANCE = "AcctBalance";
+    public static final String ACCOUNT_TIME = "AcctTime";
+    public static final String ACCOUNT_DATE = "AcctDate";
 
-    protected static final String TRANS_ID = "TransID";
-    protected static final String TRANS_ACCT_ID = "ToAcctID";
-    protected static final String TRANS_PLAN_ID = "ToPlanID";
-    protected static final String TRANS_NAME = "TransName";
-    protected static final String TRANS_VALUE = "TransValue";
-    protected static final String TRANS_TYPE = "TransType";
-    protected static final String TRANS_CATEGORY = "TransCategory";
-    protected static final String TRANS_CHECKNUM = "TransCheckNum";
-    protected static final String TRANS_MEMO = "TransMemo";
-    protected static final String TRANS_TIME = "TransTime";
-    protected static final String TRANS_DATE = "TransDate";
-    protected static final String TRANS_CLEARED = "TransCleared";
+    public static final String TRANS_ID = "TransID";
+    public static final String TRANS_ACCT_ID = "ToAcctID";
+    public static final String TRANS_PLAN_ID = "ToPlanID";
+    public static final String TRANS_NAME = "TransName";
+    public static final String TRANS_VALUE = "TransValue";
+    public static final String TRANS_TYPE = "TransType";
+    public static final String TRANS_CATEGORY = "TransCategory";
+    public static final String TRANS_CHECKNUM = "TransCheckNum";
+    public static final String TRANS_MEMO = "TransMemo";
+    public static final String TRANS_TIME = "TransTime";
+    public static final String TRANS_DATE = "TransDate";
+    public static final String TRANS_CLEARED = "TransCleared";
 
-    protected static final String PLAN_ID = "PlanID";
-    protected static final String PLAN_ACCT_ID = TRANS_ACCT_ID;
-    protected static final String PLAN_NAME = "PlanName";
-    protected static final String PLAN_VALUE = "PlanValue";
-    protected static final String PLAN_TYPE = "PlanType";
-    protected static final String PLAN_CATEGORY = "PlanCategory";
-    protected static final String PLAN_MEMO = "PlanMemo";
-    protected static final String PLAN_OFFSET = "PlanOffset";
-    protected static final String PLAN_RATE = "PlanRate";
-    protected static final String PLAN_SCHEDULED = "PlanScheduled";
-    protected static final String PLAN_NEXT = "PlanNext";
-    protected static final String PLAN_CLEARED = "PlanCleared";
+    public static final String PLAN_ID = "PlanID";
+    public static final String PLAN_ACCT_ID = TRANS_ACCT_ID;
+    public static final String PLAN_NAME = "PlanName";
+    public static final String PLAN_VALUE = "PlanValue";
+    public static final String PLAN_TYPE = "PlanType";
+    public static final String PLAN_CATEGORY = "PlanCategory";
+    public static final String PLAN_MEMO = "PlanMemo";
+    public static final String PLAN_OFFSET = "PlanOffset";
+    public static final String PLAN_RATE = "PlanRate";
+    public static final String PLAN_SCHEDULED = "PlanScheduled";
+    public static final String PLAN_NEXT = "PlanNext";
+    public static final String PLAN_CLEARED = "PlanCleared";
 
-    protected static final String CATEGORY_ID = "CatID";
-    protected static final String CATEGORY_NAME = "CatName";
-    protected static final String CATEGORY_NOTE = "CatNote";
+    public static final String CATEGORY_ID = "CatID";
+    public static final String CATEGORY_NAME = "CatName";
+    public static final String CATEGORY_NOTE = "CatNote";
 
-    protected static final String SUBCATEGORY_ID = "SubCatID";
-    protected static final String SUBCATEGORY_CAT_ID = "ToCatID";
-    protected static final String SUBCATEGORY_NAME = "SubCatName";
-    protected static final String SUBCATEGORY_NOTE = "SubCatNote";
+    public static final String SUBCATEGORY_ID = "SubCatID";
+    public static final String SUBCATEGORY_CAT_ID = "ToCatID";
+    public static final String SUBCATEGORY_NAME = "SubCatName";
+    public static final String SUBCATEGORY_NOTE = "SubCatNote";
 
-    protected static final String NOT_ID = "NotificationID";
-    protected static final String NOT_NAME = "NotificationName";
-    protected static final String NOT_VALUE = "NotificationValue";
-    protected static final String NOT_DATE = "NotificationDate";
+    public static final String NOT_ID = "NotificationID";
+    public static final String NOT_NAME = "NotificationName";
+    public static final String NOT_VALUE = "NotificationValue";
+    public static final String NOT_DATE = "NotificationDate";
 
     private Context context = null;
 

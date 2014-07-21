@@ -2,7 +2,7 @@
  * clicks the icon in the ActionBar
  */
 
-package com.databases.example;
+package com.databases.example.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.databases.example.R;
+import com.databases.example.app.Categories;
+import com.databases.example.app.Checkbook;
+import com.databases.example.app.Main;
+import com.databases.example.app.Options;
+import com.databases.example.app.Plans;
 
 //An Object Class used to handle the NavigationDrawer
 public class Drawer extends SherlockFragmentActivity{
@@ -148,7 +154,7 @@ public class Drawer extends SherlockFragmentActivity{
     }
 
     //Close/Open drawer
-    protected void toggle() {
+    public void toggle() {
         if (drawerLayout.isDrawerOpen(drawerListView)) {
             drawerLayout.closeDrawer(drawerListView);
         } else {

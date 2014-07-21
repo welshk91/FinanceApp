@@ -2,7 +2,7 @@
  * Mostly just formats monetary values
  */
 
-package com.databases.example;
+package com.databases.example.data;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

@@ -3,7 +3,7 @@
  * not this class. This class is just a simple parent Activity for the fragments
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -16,8 +16,9 @@ import android.view.View;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.databases.example.Transactions.DatePickerFragment;
-import com.databases.example.Transactions.TimePickerFragment;
+import com.databases.example.R;
+import com.databases.example.data.MyContentProvider;
+import com.databases.example.view.Drawer;
 
 public class Checkbook extends SherlockFragmentActivity {
 
@@ -121,13 +122,13 @@ public class Checkbook extends SherlockFragmentActivity {
 
     //Method for selecting a Time when adding a transaction
     public void showTimePickerDialog(View v){
-        DialogFragment newFragment = new TimePickerFragment();
+        DialogFragment newFragment = new Transactions.TimePickerFragment();
         newFragment.show(this.getSupportFragmentManager(), "timePicker");
     }
 
     //Method for selecting a Date when adding a transaction
     public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
+        DialogFragment newFragment = new Transactions.DatePickerFragment();
         newFragment.show(this.getSupportFragmentManager(), "datePicker");
     }
 

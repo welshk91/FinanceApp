@@ -1,4 +1,4 @@
-package com.databases.example;
+package com.databases.example.app;
 
 import android.content.Context;
 import android.content.Intent;

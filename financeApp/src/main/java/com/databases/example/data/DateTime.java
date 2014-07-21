@@ -2,7 +2,7 @@
  * Mostly just formats dates so that sqlite can sort by time
  */
 
-package com.databases.example;
+package com.databases.example.data;
 
 import android.util.Log;
 

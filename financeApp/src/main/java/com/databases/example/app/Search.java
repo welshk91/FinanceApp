@@ -4,7 +4,7 @@
  * not this class. This class is just a simple parent Activity for the fragments.
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +21,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.R;
+import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 

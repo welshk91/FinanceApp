@@ -2,7 +2,7 @@
  * Sets up the app and displays the cards notifying the user of important events
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +21,11 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.R;
+import com.databases.example.data.DatabaseHelper;
+import com.databases.example.data.DateTime;
+import com.databases.example.data.MyContentProvider;
+import com.databases.example.view.Drawer;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
@@ -35,9 +40,9 @@ import java.util.GregorianCalendar;
 public class Cards extends SherlockFragment {
     private Drawer mDrawerLayout;
     protected static CardUI mCardView;
-    protected static boolean accountChanged = false;
-    protected static boolean transactionChanged = false;
-    protected static boolean planChanged = false;
+    public static boolean accountChanged = false;
+    public static boolean transactionChanged = false;
+    public static boolean planChanged = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

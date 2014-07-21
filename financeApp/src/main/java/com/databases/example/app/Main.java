@@ -2,7 +2,7 @@
  * Sets up the app and displays the cards notifying the user of important events
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +15,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.R;
+import com.databases.example.view.Drawer;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 import group.pals.android.lib.ui.lockpattern.util.Settings;

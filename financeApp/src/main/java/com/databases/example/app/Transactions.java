@@ -2,7 +2,7 @@
  * Does everything from setting up the view to Add/Delete/Edit Transactions to calculating the balance
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -65,6 +65,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
+import com.databases.example.R;
+import com.databases.example.data.DatabaseHelper;
+import com.databases.example.data.DateTime;
+import com.databases.example.data.Money;
+import com.databases.example.data.MyContentProvider;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.ModelCallbacks;

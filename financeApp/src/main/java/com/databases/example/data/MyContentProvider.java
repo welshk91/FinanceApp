@@ -3,7 +3,7 @@
  * though can be used to expose information in the future if need be
  */
 
-package com.databases.example;
+package com.databases.example.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -11,6 +11,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
+import com.databases.example.app.Cards;
 
 public class MyContentProvider extends ContentProvider{
     private static DatabaseHelper dh = null;

@@ -4,7 +4,7 @@
  * to email
  */
 
-package com.databases.example;
+package com.databases.example.data;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

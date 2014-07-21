@@ -3,7 +3,7 @@
  * Complete: Dropbox Drop-In Chooser works
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.R;
+import com.databases.example.data.DatabaseHelper;
 import com.dropbox.chooser.android.DbxChooser;
 import com.dropbox.chooser.android.DbxChooser.Result;
 import com.dropbox.sync.android.DbxAccountManager;

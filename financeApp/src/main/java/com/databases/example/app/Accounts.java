@@ -2,7 +2,7 @@
  * Does everything from setting up the view to Add/Delete/Edit Accounts to calculating the balance
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -48,6 +48,11 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 import com.actionbarsherlock.widget.SearchView;
+import com.databases.example.data.DatabaseHelper;
+import com.databases.example.data.DateTime;
+import com.databases.example.data.Money;
+import com.databases.example.data.MyContentProvider;
+import com.databases.example.R;
 
 import java.math.BigDecimal;
 import java.util.Calendar;

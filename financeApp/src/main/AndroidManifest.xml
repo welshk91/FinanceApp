@@ -24,7 +24,7 @@
             android:name="android.app.default_searchable"
             android:value=".SearchMain" />
 
-        <receiver android:name=".PlanReceiver" >
+        <receiver android:name=".app.PlanReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" >
                 </action>
@@ -35,7 +35,7 @@
         </receiver>
 
         <activity
-            android:name=".Main"
+            android:name=".app.Main"
             android:configChanges="keyboardHidden"
             android:label="@string/app_name" >
             <intent-filter>
@@ -45,52 +45,52 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginHelper"
+            android:name=".data.LoginHelper"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Transparent" >
         </activity>
         <activity
-            android:name=".Checkbook"
+            android:name=".app.Checkbook"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
         </activity>
         <activity
-            android:name=".Options"
+            android:name=".app.Options"
             android:label="@string/app_name" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.databases.example.Main" />
         </activity>
         <activity
-            android:name=".Plans"
+            android:name=".app.Plans"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".SD"
-            android:label="@string/app_name" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.databases.example.Options" />
-        </activity>
-        <activity
-            android:name=".Dropbox"
+            android:name=".app.SD"
             android:label="@string/app_name" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.databases.example.Options" />
         </activity>
         <activity
-            android:name=".Categories"
+            android:name=".app.Dropbox"
+            android:label="@string/app_name" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.databases.example.Options" />
+        </activity>
+        <activity
+            android:name=".app.Categories"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".Links"
+            android:name=".app.Links"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".Search"
+            android:name=".app.Search"
             android:clearTaskOnLaunch="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
@@ -133,7 +133,7 @@
             android:label="Dropbox Sync" />
 
         <provider
-            android:name="com.databases.example.MyContentProvider"
+            android:name=".data.MyContentProvider"
             android:authorities="com.databases.example.provider"
             android:exported="false"
             android:multiprocess="true" >

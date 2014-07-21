@@ -2,7 +2,7 @@
  * Handles rescheduling previous plans if the user reboots the phone 
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -19,6 +19,12 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.databases.example.R;
+import com.databases.example.data.DatabaseHelper;
+import com.databases.example.data.DateTime;
+import com.databases.example.data.Money;
+import com.databases.example.data.MyContentProvider;
 
 import java.util.Calendar;
 import java.util.Date;

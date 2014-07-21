@@ -2,7 +2,7 @@
  * Handles options for Appearance, Behavior, Misc
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.databases.example.R;
+import com.databases.example.data.MyContentProvider;
 
 import java.util.List;
 

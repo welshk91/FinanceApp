@@ -3,7 +3,7 @@
  * Hands over the actual scheduling to PlanReceiver Class
  */
 
-package com.databases.example;
+package com.databases.example.app;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -56,6 +56,12 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import com.databases.example.R;
+import com.databases.example.data.DatabaseHelper;
+import com.databases.example.data.DateTime;
+import com.databases.example.data.Money;
+import com.databases.example.data.MyContentProvider;
+import com.databases.example.view.Drawer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

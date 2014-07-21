@@ -4,10 +4,8 @@
 
 package com.databases.example.app;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,16 +13,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
+import com.databases.example.data.MyCard;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.data.MyPlayCard;
 import com.databases.example.view.Drawer;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
@@ -436,75 +433,5 @@ public class Cards extends SherlockFragment {
             mCardView.refresh();
         }
     }
-
-    //MyCard Class
-    public class MyCard extends Card {
-        public MyCard(String title, String desc){
-            super(title, desc);
-        }
-
-        @Override
-        public View getCardContent(Context context) {
-            View v = LayoutInflater.from(context).inflate(R.layout.card_ex, null);
-            ((TextView) v.findViewById(R.id.title)).setText(title);
-            ((TextView) v.findViewById(R.id.description)).setText(desc);
-            return v;
-        }
-
-    }//End of MyCard Class
-
-    //MyImageCard Class
-    public class MyImageCard extends Card {
-        public MyImageCard(String title, int image){
-            super(title, image);
-        }
-
-        @Override
-        public View getCardContent(Context context) {
-            View v = LayoutInflater.from(context).inflate(R.layout.card_picture, null);
-
-            ((TextView) v.findViewById(R.id.title)).setText(title);
-            ((ImageView) v.findViewById(R.id.imageView1)).setImageResource(image);
-
-            return v;
-        }
-
-    }//End of MyImageCard
-
-
-    //MyPlayCard Class
-    public class MyPlayCard extends Card {
-        public MyPlayCard(String titlePlay, String description, String color,
-                          String titleColor, Boolean hasOverflow, Boolean isClickable) {
-            super(titlePlay, description, color, titleColor, hasOverflow,
-                    isClickable);
-        }
-
-        @Override
-        public View getCardContent(Context context) {
-            View v = LayoutInflater.from(context).inflate(R.layout.card_play, null);
-
-            ((TextView) v.findViewById(R.id.title)).setText(titlePlay);
-            ((TextView) v.findViewById(R.id.title)).setTextColor(Color
-                    .parseColor(titleColor));
-            ((TextView) v.findViewById(R.id.description)).setText(description);
-            ((ImageView) v.findViewById(R.id.stripe)).setBackgroundColor(Color
-                    .parseColor(color));
-
-            if (isClickable == true)
-                ((LinearLayout) v.findViewById(R.id.contentLayout))
-                        .setBackgroundResource(R.drawable.selectable_background_cardbank);
-
-            if (hasOverflow == true)
-                ((ImageView) v.findViewById(R.id.overflow))
-                        .setVisibility(View.VISIBLE);
-            else
-                ((ImageView) v.findViewById(R.id.overflow))
-                        .setVisibility(View.GONE);
-
-            return v;
-        }
-
-    }//End of MyPlayCard Class
 
 }// end Cards

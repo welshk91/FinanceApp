@@ -62,6 +62,7 @@ import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.view.Drawer;
+import com.databases.example.data.PlanRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -828,37 +829,6 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
         }
 
     }//end UserItem
-
-    //An Object Class used to hold the data of each transaction record
-    public static class PlanRecord {
-        protected String id;
-        protected String acctId;
-        protected String name;
-        protected String value;
-        protected String type;
-        protected String category;
-        protected String memo;
-        protected String offset;
-        protected String rate;
-        protected String next;
-        protected String scheduled;
-        protected String cleared;
-
-        public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
-            this.id = id;
-            this.acctId = acctId;
-            this.name = name;
-            this.value = value;
-            this.type = type;
-            this.category = category;
-            this.memo = memo;
-            this.offset = offset;
-            this.rate = rate;
-            this.next = next;
-            this.scheduled = scheduled;
-            this.cleared = cleared;
-        }
-    }
 
     //Class that handles view fragment
     public static class ViewDialogFragment extends SherlockDialogFragment {

@@ -45,6 +45,8 @@ import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.view.Drawer;
+import com.databases.example.data.CategoryRecord;
+import com.databases.example.data.SubCategoryRecord;
 
 import java.util.ArrayList;
 
@@ -641,35 +643,6 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
         TextView tvName;
         TextView tvCategory;
         TextView tvNote;
-    }
-
-    //An Object Class used to hold the data of each category record
-    public class CategoryRecord {
-        protected String id;
-        protected String name;
-        protected String note;
-
-        public CategoryRecord(String id, String name, String note) {
-            this.id = id;
-            this.name = name;
-            this.note = note;
-        }
-
-    }
-
-    //An Object Class used to hold the data of each sub-category record
-    public class SubCategoryRecord {
-        protected String id;
-        protected String catId;
-        protected String name;
-        protected String note;
-
-        public SubCategoryRecord(String id, String catId, String name, String note) {
-            this.id = id;
-            this.catId = catId;
-            this.name = name;
-            this.note = note;
-        }
     }
 
     //Class that handles view fragment

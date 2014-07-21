@@ -70,6 +70,7 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.data.TransactionRecord;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.ModelCallbacks;
@@ -838,37 +839,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
             return mSelectedItemsIds;
         }
 
-    }
-
-    //An Object Class used to hold the data of each transaction record
-    public class TransactionRecord {
-        protected int id;
-        protected int acctId;
-        protected int planId;
-        protected String name;
-        protected String value;
-        protected String type;
-        protected String category;
-        protected String checknum;
-        protected String memo;
-        protected String time;
-        protected String date;
-        protected String cleared;
-
-        public TransactionRecord(int id, int acctId, int planId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
-            this.id = id;
-            this.acctId = acctId;
-            this.planId = planId;
-            this.name = name;
-            this.value = value;
-            this.type = type;
-            this.category = category;
-            this.checknum = checknum;
-            this.memo = memo;
-            this.time = time;
-            this.date = date;
-            this.cleared = cleared;
-        }
     }
 
     public static class ViewDialogFragment extends SherlockDialogFragment {

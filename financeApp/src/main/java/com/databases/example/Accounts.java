@@ -290,10 +290,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
         String[] from = new String[] {DatabaseHelper.ACCOUNT_ID, "_id"};
         int[] to = new int[] { android.R.id.text1};
 
-        transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to);
+        transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to,0);
         transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to);
+        transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to,0);
         transferSpinnerAdapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
@@ -376,7 +376,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
         private Context context;
 
         public UserItemAdapter(Context context, Cursor accounts) {
-            super(context, accounts);
+            super(context, accounts,0);
             this.context = context;
             mSelectedItemsIds = new SparseBooleanArray();
         }

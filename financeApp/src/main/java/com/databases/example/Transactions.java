@@ -173,7 +173,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[] {DatabaseHelper.SUBCATEGORY_NAME}, new int[] { android.R.id.text1 });
+        adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[] {DatabaseHelper.SUBCATEGORY_NAME}, new int[] { android.R.id.text1 },0);
         adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         adapterTransactions = new UserItemAdapter(this.getActivity(), null);
@@ -442,7 +442,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
     public class UserItemAdapter extends CursorAdapter {
         public UserItemAdapter(Context context, Cursor transactions) {
-            super(context, transactions);
+            super(context, transactions,0);
             mSelectedItemsIds = new SparseBooleanArray();
         }
 

@@ -402,7 +402,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
         private Context context;
 
         public UserItemAdapter(Context context,Cursor plans) {
-            super(context, plans);
+            super(context, plans,0);
             this.context = context;
             mSelectedItemsIds = new SparseBooleanArray();
         }
@@ -1495,7 +1495,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                 String[] from = new String[] {DatabaseHelper.ACCOUNT_NAME, "_id"};
                 int[] to = new int[] { android.R.id.text1};
 
-                accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to);
+                accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to,0);
                 accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 accountSpinner.setAdapter(accountSpinnerAdapter);
                 Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
@@ -1505,7 +1505,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                 from = new String[] {DatabaseHelper.SUBCATEGORY_NAME};
                 to = new int[] { android.R.id.text1 };
 
-                categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to);
+                categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to,0);
                 categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 categorySpinner.setAdapter(categorySpinnerAdapter);
                 Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());

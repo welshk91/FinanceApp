@@ -1,4 +1,4 @@
-package com.databases.example.app;
+package com.databases.example.data;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.view.View;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
+import com.databases.example.app.Search;
 
 public class SearchWidget extends SherlockFragmentActivity{
     private Context context;

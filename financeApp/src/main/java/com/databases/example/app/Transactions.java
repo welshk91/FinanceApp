@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +27,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -70,7 +68,9 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.data.SearchWidget;
 import com.databases.example.data.TransactionRecord;
+import com.databases.example.view.TransactionsListViewAdapter;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.ModelCallbacks;
@@ -112,7 +112,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
     private final int CONTEXT_MENU_DELETE=7;
 
     //ListView Adapter
-    private static UserItemAdapter adapterTransactions = null;
+    private static TransactionsListViewAdapter adapterTransactions = null;
 
     //For Autocomplete
     private static ArrayList<String> dropdownResults = new ArrayList<String>();
@@ -182,7 +182,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
         adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[] {DatabaseHelper.SUBCATEGORY_NAME}, new int[] { android.R.id.text1 },0);
         adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        adapterTransactions = new UserItemAdapter(this.getActivity(), null);
+        adapterTransactions = new TransactionsListViewAdapter(this.getActivity(), null);
         lv.setAdapter(adapterTransactions);
 
         //Call Loaders to get data
@@ -444,401 +444,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
             }
 
         }
-    }
-
-    public class UserItemAdapter extends CursorAdapter {
-        public UserItemAdapter(Context context, Cursor transactions) {
-            super(context, transactions,0);
-            mSelectedItemsIds = new SparseBooleanArray();
-        }
-
-        public TransactionRecord getTransaction(long position){
-            final Cursor group = getCursor();
-
-            group.moveToPosition((int) position);
-            final int idColumn = group.getColumnIndex(DatabaseHelper.TRANS_ID);
-            final int acctIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID);
-            final int planIDColumn = group.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID);
-            final int nameColumn = group.getColumnIndex(DatabaseHelper.TRANS_NAME);
-            final int valueColumn = group.getColumnIndex(DatabaseHelper.TRANS_VALUE);
-            final int typeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TYPE);
-            final int categoryColumn = group.getColumnIndex(DatabaseHelper.TRANS_CATEGORY);
-            final int checknumColumn = group.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM);
-            final int memoColumn = group.getColumnIndex(DatabaseHelper.TRANS_MEMO);
-            final int timeColumn = group.getColumnIndex(DatabaseHelper.TRANS_TIME);
-            final int dateColumn = group.getColumnIndex(DatabaseHelper.TRANS_DATE);
-            final int clearedColumn = group.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
-
-            //int id = group.getInt(idColumn);
-            final int id = group.getInt(0);
-            final int acctId = group.getInt(acctIDColumn);
-            final int planId = group.getInt(planIDColumn);
-            final String name = group.getString(nameColumn);
-            final String value = group.getString(valueColumn);
-            final String type = group.getString(typeColumn);
-            final String category = group.getString(categoryColumn);
-            final String checknum = group.getString(checknumColumn);
-            final String memo = group.getString(memoColumn);
-            final String time = group.getString(timeColumn);
-            final String date = group.getString(dateColumn);
-            final String cleared = group.getString(clearedColumn);
-
-            final TransactionRecord record = new TransactionRecord(id, acctId, planId, name, value,type,category,checknum,memo,time,date,cleared);
-            return record;
-        }
-
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            View v = view;
-            Cursor user = cursor;
-
-            //For Custom View Properties
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
-
-            if (user != null) {
-                TextView tvName = (TextView) v.findViewById(R.id.transaction_name);
-                TextView tvValue = (TextView) v.findViewById(R.id.transaction_value);
-                TextView tvType = (TextView) v.findViewById(R.id.transaction_type);
-                TextView tvCategory = (TextView) v.findViewById(R.id.transaction_category);
-                TextView tvChecknum = (TextView) v.findViewById(R.id.transaction_checknum);
-                TextView tvMemo = (TextView) v.findViewById(R.id.transaction_memo);
-                TextView tvDate = (TextView) v.findViewById(R.id.transaction_date);
-                TextView tvTime = (TextView) v.findViewById(R.id.transaction_time);
-                TextView tvCleared = (TextView) v.findViewById(R.id.transaction_cleared);
-
-                int idColumn = user.getColumnIndex(DatabaseHelper.TRANS_ID);
-                int acctIDColumn = user.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID);
-                int planIDColumn = user.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID);
-                int nameColumn = user.getColumnIndex(DatabaseHelper.TRANS_NAME);
-                int valueColumn = user.getColumnIndex(DatabaseHelper.TRANS_VALUE);
-                int typeColumn = user.getColumnIndex(DatabaseHelper.TRANS_TYPE);
-                int categoryColumn = user.getColumnIndex(DatabaseHelper.TRANS_CATEGORY);
-                int checknumColumn = user.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM);
-                int memoColumn = user.getColumnIndex(DatabaseHelper.TRANS_MEMO);
-                int timeColumn = user.getColumnIndex(DatabaseHelper.TRANS_TIME);
-                int dateColumn = user.getColumnIndex(DatabaseHelper.TRANS_DATE);
-                int clearedColumn = user.getColumnIndex(DatabaseHelper.TRANS_CLEARED);
-
-                int id = user.getInt(0);
-                int acctId = user.getInt(acctIDColumn);
-                int planId = user.getInt(planIDColumn);
-                String name = user.getString(nameColumn);
-                Money value = new Money(user.getString(valueColumn));
-                String type = user.getString(typeColumn);
-                String category = user.getString(categoryColumn);
-                String checknum = user.getString(checknumColumn);
-                String memo = user.getString(memoColumn);
-                String time = user.getString(timeColumn);
-                String date = user.getString(dateColumn);
-                String cleared = user.getString(clearedColumn);
-                Locale locale=getResources().getConfiguration().locale;
-
-                //Change gradient
-                try{
-                    LinearLayout l;
-                    l=(LinearLayout)v.findViewById(R.id.transaction_gradient);
-                    GradientDrawable defaultGradientPos = new GradientDrawable(
-                            GradientDrawable.Orientation.BOTTOM_TOP,
-                            new int[] {0xFF4ac925,0xFF4ac925});
-
-                    GradientDrawable defaultGradientNeg = new GradientDrawable(
-                            GradientDrawable.Orientation.BOTTOM_TOP,
-                            new int[] {0xFFe00707,0xFFe00707});
-
-                    if(useDefaults){
-                        if(type.contains("Deposit")){
-                            l.setBackgroundDrawable(defaultGradientPos);
-                        }
-                        else{
-                            l.setBackgroundDrawable(defaultGradientNeg);
-                        }
-
-                    }
-                    else{
-                        if(type.contains("Deposit")){
-                            l.setBackgroundDrawable(defaultGradientPos);
-                        }
-                        else{
-                            l.setBackgroundDrawable(defaultGradientNeg);
-                        }
-                    }
-
-                }
-                catch(Exception e){
-                    Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
-                }
-
-                if (name != null) {
-                    tvName.setText(name);
-
-                    if(planId!=0){
-                        tvName.setTextColor(Color.parseColor("#FF9933"));
-                    }
-                    else{
-                        tvName.setTextColor(Color.parseColor("#000000"));
-                    }
-
-                }
-
-                if(value != null) {
-                    tvValue.setText("Value: " + value.getNumberFormat(locale));
-                }
-
-                if(type != null) {
-                    tvType.setText("Type: " + type );
-                }
-
-                if(category != null) {
-                    tvCategory.setText("Category: " + category );
-                }
-
-                if(checknum != null) {
-                    tvChecknum.setText("Check Num: " + checknum );
-                }
-
-                if(memo != null) {
-                    tvMemo.setText("Memo: " + memo );
-                }
-
-                if(date != null) {
-                    DateTime d = new DateTime();
-                    d.setStringSQL(date);
-                    tvDate.setText("Date: " + d.getReadableDate());
-                }
-
-                if(time != null) {
-                    DateTime t = new DateTime();
-                    t.setStringSQL(time);
-                    tvTime.setText("Time: " + t.getReadableTime());
-                }
-
-                if(cleared != null) {
-                    tvCleared.setText("Cleared: " + cleared );
-                }
-
-                v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
-            }
-
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = vi.inflate(R.layout.transaction_item, null);
-
-            LinearLayout l=(LinearLayout)v.findViewById(R.id.transaction_layout);
-            TextView tvName = (TextView)v.findViewById(R.id.transaction_name);
-            TextView tvValue = (TextView)v.findViewById(R.id.transaction_value);
-            TextView tvType = (TextView)v.findViewById(R.id.transaction_type);
-            TextView tvCategory = (TextView)v.findViewById(R.id.transaction_category);
-            TextView tvChecknum = (TextView)v.findViewById(R.id.transaction_checknum);
-            TextView tvMemo = (TextView)v.findViewById(R.id.transaction_memo);
-            TextView tvTime = (TextView)v.findViewById(R.id.transaction_time);
-            TextView tvDate = (TextView)v.findViewById(R.id.transaction_date);
-            TextView tvCleared = (TextView)v.findViewById(R.id.transaction_cleared);
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Transactions.this.getActivity());
-            boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
-
-            //Change Background Colors
-            try{
-                if(!useDefaults){
-                    int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#FFFFFF"));
-                    int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
-
-                    GradientDrawable defaultGradient = new GradientDrawable(
-                            GradientDrawable.Orientation.BOTTOM_TOP,
-                            new int[] {startColor,endColor});
-                    l.setBackgroundDrawable(defaultGradient);
-                }
-            }
-            catch(Exception e){
-                Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
-            }
-
-            try{
-                String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_nameSize), "24");
-
-                if(useDefaults){
-                    tvName.setTextSize(24);
-                }
-                else{
-                    tvName.setTextSize(Integer.parseInt(DefaultSize));
-                }
-
-            }
-            catch(Exception e){
-                Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-            }
-
-            try{
-                int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#222222"));
-
-                if(useDefaults){
-                    tvName.setTextColor(Color.parseColor("#222222"));
-                }
-                else{
-                    tvName.setTextColor(DefaultColor);
-                }
-
-            }
-            catch(Exception e){
-                Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
-            }
-
-            try{
-                String DefaultSize = prefs.getString(Transactions.this.getString(R.string.pref_key_transaction_fieldSize), "14");
-
-                if(useDefaults){
-                    tvValue.setTextSize(14);
-                    tvDate.setTextSize(14);
-                    tvTime.setTextSize(14);
-                    tvCategory.setTextSize(14);
-                    tvMemo.setTextSize(14);
-                    tvChecknum.setTextSize(14);
-                    tvCleared.setTextSize(14);
-                    tvType.setTextSize(14);
-                }
-                else{
-                    tvValue.setTextSize(Integer.parseInt(DefaultSize));
-                    tvType.setTextSize(Integer.parseInt(DefaultSize));
-                    tvCategory.setTextSize(Integer.parseInt(DefaultSize));
-                    tvChecknum.setTextSize(Integer.parseInt(DefaultSize));
-                    tvMemo.setTextSize(Integer.parseInt(DefaultSize));
-                    tvTime.setTextSize(Integer.parseInt(DefaultSize));
-                    tvDate.setTextSize(Integer.parseInt(DefaultSize));
-                    tvCleared.setTextSize(Integer.parseInt(DefaultSize));
-                }
-
-            }
-            catch(Exception e){
-                Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
-            }
-
-            try{
-                int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#000000"));
-
-                if(useDefaults){
-                    tvValue.setTextColor(Color.parseColor("#000000"));
-                    tvType.setTextColor(Color.parseColor("#000000"));
-                    tvCategory.setTextColor(Color.parseColor("#000000"));
-                    tvChecknum.setTextColor(Color.parseColor("#000000"));
-                    tvMemo.setTextColor(Color.parseColor("#000000"));
-                    tvTime.setTextColor(Color.parseColor("#000000"));
-                    tvDate.setTextColor(Color.parseColor("#000000"));
-                    tvCleared.setTextColor(Color.parseColor("#000000"));
-                }
-                else{
-                    tvValue.setTextColor(DefaultColor);
-                    tvType.setTextColor(DefaultColor);
-                    tvCategory.setTextColor(DefaultColor);
-                    tvChecknum.setTextColor(DefaultColor);
-                    tvMemo.setTextColor(DefaultColor);
-                    tvTime.setTextColor(DefaultColor);
-                    tvDate.setTextColor(DefaultColor);
-                    tvCleared.setTextColor(DefaultColor);
-                }
-
-            }
-            catch(Exception e){
-                Toast.makeText(Transactions.this.getActivity(), "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
-            }
-
-            if(useDefaults||prefs.getBoolean("checkbox_transaction_nameField", true)){
-                tvName.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvName.setVisibility(View.GONE);
-            }
-
-            if(useDefaults||prefs.getBoolean("checkbox_transaction_valueField", true)){
-                tvValue.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvValue.setVisibility(View.GONE);
-            }
-
-            if(prefs.getBoolean("checkbox_transaction_typeField", false) && !useDefaults){
-                tvType.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvType.setVisibility(View.GONE);
-            }
-
-            if(useDefaults||prefs.getBoolean("checkbox_transaction_categoryField", true)){
-                tvCategory.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvCategory.setVisibility(View.GONE);
-            }
-
-            if(prefs.getBoolean("checkbox_transaction_checknumField", false) && !useDefaults){
-                tvChecknum.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvChecknum.setVisibility(View.GONE);
-            }
-
-            if(prefs.getBoolean("checkbox_transaction_memoField", false) && !useDefaults){
-                tvMemo.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvMemo.setVisibility(View.GONE);
-            }
-
-            if(useDefaults||prefs.getBoolean("checkbox_transaction_dateField", true)){
-                tvDate.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvDate.setVisibility(View.GONE);
-            }
-
-            if(prefs.getBoolean("checkbox_transaction_timeField", false) && !useDefaults){
-                tvTime.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvTime.setVisibility(View.GONE);
-            }
-
-            if(prefs.getBoolean("checkbox_transaction_clearedField", false) && !useDefaults){
-                tvCleared.setVisibility(View.VISIBLE);
-            }
-            else{
-                tvCleared.setVisibility(View.GONE);
-            }
-
-            return v;
-        }
-
-        public void toggleSelection(int position)
-        {
-            selectView(position, !mSelectedItemsIds.get(position));
-        }
-
-        public void removeSelection() {
-            mSelectedItemsIds = new SparseBooleanArray();
-            notifyDataSetChanged();
-        }
-
-        public void selectView(int position, boolean value)
-        {
-            if(value)
-                mSelectedItemsIds.put(position, value);
-            else
-                mSelectedItemsIds.delete(position);
-
-            notifyDataSetChanged();
-        }
-
-        public int getSelectedCount() {
-            return mSelectedItemsIds.size();// mSelectedCount;
-        }
-
-        public SparseBooleanArray getSelectedIds() {
-            return mSelectedItemsIds;
-        }
-
     }
 
     public static class ViewDialogFragment extends SherlockDialogFragment {

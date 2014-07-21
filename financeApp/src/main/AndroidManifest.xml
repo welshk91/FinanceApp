@@ -24,7 +24,7 @@
             android:name="android.app.default_searchable"
             android:value=".SearchMain" />
 
-        <receiver android:name=".app.PlanReceiver" >
+        <receiver android:name=".data.PlanReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" >
                 </action>

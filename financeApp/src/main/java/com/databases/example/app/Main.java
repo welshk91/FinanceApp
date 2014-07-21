@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
+import com.databases.example.data.SearchWidget;
 import com.databases.example.view.Drawer;
 
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;

@@ -27,8 +27,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,25 +59,18 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     private static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
     //Constants for ContextMenu
-    final private int CONTEXT_MENU_VIEW=1;
-    final private int CONTEXT_MENU_EDIT=2;
-    final private int CONTEXT_MENU_DELETE=3;
-
-    //Spinners for transfers
-    private Cursor accountCursor = null;
-    public static Spinner transferSpinnerTo;
-    public static Spinner transferSpinnerFrom;
-    public static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
-    public static SimpleCursorAdapter transferSpinnerAdapterTo = null;
+    final private int CONTEXT_MENU_VIEW = 1;
+    final private int CONTEXT_MENU_EDIT = 2;
+    final private int CONTEXT_MENU_DELETE = 3;
 
     private View myFragmentView;
-    private static String sortOrder= "null";
+    private static String sortOrder = "null";
 
     private ListView lv = null;
-    private static AccountsListViewAdapter adapterAccounts = null;
+    public static AccountsListViewAdapter adapterAccounts = null;
 
     public static Object mActionMode = null;
-    public static int currentAccount=-1;
+    public static int currentAccount = -1;
 
     //Method called upon first creation
     @Override
@@ -99,54 +90,51 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.accounts, null, false);
-        lv = (ListView)myFragmentView.findViewById(R.id.account_list);
+        lv = (ListView) myFragmentView.findViewById(R.id.account_list);
 
         lv.setClickable(true);
         lv.setLongClickable(true);
 
         //Set Listener for regular mouse click
-        lv.setOnItemClickListener(new OnItemClickListener(){
+        lv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 
                 if (mActionMode != null) {
                     listItemChecked(position);
-                }
-
-                else{
+                } else {
                     int selectionRowID = (int) adapterAccounts.getItemId(position);
-                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(selectionRowID)), null, null, null, null);
+                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null);
 
                     //Just get the Account ID
                     c.moveToFirst();
-                    int	entry_id = c.getInt(0);
+                    int entry_id = c.getInt(0);
                     c.close();
 
                     View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
-                    if(checkbook_frame!=null){
+                    if (checkbook_frame != null) {
                         Bundle args = new Bundle();
-                        args.putInt("ID",entry_id);
+                        args.putInt("ID", entry_id);
 
                         //Add the fragment to the activity, pushing this transaction on to the back stack.
                         Transactions tran_frag = new Transactions();
                         tran_frag.setArguments(args);
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                         ft.replace(R.id.checkbook_frag_frame, tran_frag);
                         ft.addToBackStack(null);
                         ft.commit();
                         getFragmentManager().executePendingTransactions();
-                    }
-                    else{
+                    } else {
                         Bundle args = new Bundle();
                         args.putBoolean("showAll", false);
                         args.putBoolean("boolSearch", false);
-                        args.putInt("ID",entry_id);
+                        args.putInt("ID", entry_id);
 
-                        currentAccount=position;
+                        currentAccount = position;
 
                         //Add the fragment to the activity
                         //NOTE: Don't add custom animation, seems to mess with onLoaderReset
@@ -188,10 +176,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
         populate();
 
         //Arguments
-        Bundle bundle=getArguments();
+        Bundle bundle = getArguments();
 
         //bundle is empty if from search, so don't add extra menu options
-        if(bundle!=null){
+        if (bundle != null) {
             setHasOptionsMenu(true);
         }
 
@@ -201,65 +189,63 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     }
 
     //Used for ActionMode
-    public void listItemChecked(int position){
+    public void listItemChecked(int position) {
         adapterAccounts.toggleSelection(position);
         boolean hasCheckedItems = adapterAccounts.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null){
+        if (hasCheckedItems && mActionMode == null) {
             // there are some selected items, start the actionMode
             mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
-        }
-        else if (!hasCheckedItems && mActionMode != null){
+        } else if (!hasCheckedItems && mActionMode != null) {
             // there no selected items, finish the actionMode
             ((ActionMode) mActionMode).finish();
         }
 
-        if(mActionMode != null){
+        if (mActionMode != null) {
             ((ActionMode) mActionMode).invalidate();
-            ((ActionMode)mActionMode).setTitle(String.valueOf(adapterAccounts.getSelectedCount()));
+            ((ActionMode) mActionMode).setTitle(String.valueOf(adapterAccounts.getSelectedCount()));
         }
     }
 
     //Populate view with accounts
-    protected void populate(){
-        Bundle bundle=getArguments();
-        boolean searchFragment=true;
+    protected void populate() {
+        Bundle bundle = getArguments();
+        boolean searchFragment = true;
 
-        if(bundle!=null){
+        if (bundle != null) {
             searchFragment = bundle.getBoolean("boolSearch");
         }
 
         //Fragment is a search fragment
-        if(searchFragment){
+        if (searchFragment) {
 
             //Word being searched
             String query = getActivity().getIntent().getStringExtra("query");
 
-            try{
+            try {
                 Bundle b = new Bundle();
                 b.putBoolean("boolSearch", true);
                 b.putString("query", query);
-                Log.v("Accounts-populate","start search loader...");
+                Log.v("Accounts-populate", "start search loader...");
                 getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
-            }
-            catch(Exception e){
-                Log.e("Accounts-populate","Search Failed. Error e="+e);
-                Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Log.e("Accounts-populate", "Search Failed. Error e=" + e);
+                Toast.makeText(this.getActivity(), "Search Failed\n" + e, Toast.LENGTH_LONG).show();
             }
 
         }
 
         //Not A Search Fragment
-        else{
-            Log.v("Accounts-populate","start loader...");
+        else {
+            Log.v("Accounts-populate", "start loader...");
             getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
         }
 
     }
 
     //For Attaching to an Account
-    public void accountAttach(android.view.MenuItem item){
-        final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+    public void accountAttach(android.view.MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         final AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
 
         Intent intentLink = new Intent(this.getActivity(), Links.class);
@@ -269,38 +255,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     }
 
     //For Adding an Account
-    public void accountAdd(){
+    public void accountAdd() {
         DialogFragment newFragment = AccountAddFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogAdd");
     }
 
     //For Transferring from an Account
-    public void accountTransfer(){
+    public void accountTransfer() {
         DialogFragment newFragment = AccountTransferFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogTransfer");
     }
 
     //For Sorting Accounts
-    public void accountSort(){
+    public void accountSort() {
         DialogFragment newFragment = SortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogSort");
     }
-
-    //Method to get the list of accounts for transfer spinner
-    public void accountPopulate(){
-        String[] from = new String[] {DatabaseHelper.ACCOUNT_ID, "_id"};
-        int[] to = new int[] { android.R.id.text1};
-
-        transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to,0);
-        transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to,0);
-        transferSpinnerAdapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
-        transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
-
-    }//end of accountPopulate
 
     //For Menu
     @Override
@@ -312,13 +282,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
         menu.clear();
 
         //If you're in dual-pane mode
-        if(transaction_frame!=null){
+        if (transaction_frame != null) {
             MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
             menuSearch.setIcon(android.R.drawable.ic_menu_search);
             menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
             menuSearch.setActionView(new SearchView(getSherlockActivity().getSupportActionBar().getThemedContext()));
 
-            SearchWidget searchWidget = new SearchWidget(getActivity(),menuSearch.getActionView());
+            SearchWidget searchWidget = new SearchWidget(getActivity(), menuSearch.getActionView());
 
             SubMenu subMenu1 = menu.addSubMenu("Account");
             subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
@@ -328,10 +298,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
             MenuItem subMenu1Item = subMenu1.getItem();
             subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
-        else{
+        } else {
             inflater.inflate(R.layout.account_menu, menu);
-            SearchWidget searchWidget = new SearchWidget(getActivity(),menu.findItem(R.id.account_menu_search).getActionView());
+            SearchWidget searchWidget = new SearchWidget(getActivity(), menu.findItem(R.id.account_menu_search).getActionView());
         }
 
     }
@@ -352,7 +321,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                 return true;
 
             case R.id.account_menu_transfer:
-                accountTransfer();
+                if(adapterAccounts.getCount()<2){
+                    Toast.makeText(getActivity(), "Not Enough Accounts For Transfer \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    accountTransfer();
+                }
                 return true;
 
             case R.id.account_menu_sort:
@@ -366,7 +340,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if(!isDetached()){
+        if (!isDetached()) {
             Log.d("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
             //getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
             //getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
@@ -394,7 +368,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
             alertDialogBuilder.setTitle("Sort");
             alertDialogBuilder.setCancelable(true);
 
-            ListView sortOptions = (ListView)accountSortView.findViewById(R.id.sort_options);
+            ListView sortOptions = (ListView) accountSortView.findViewById(R.id.sort_options);
             sortOptions.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
@@ -414,12 +388,12 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
                         //Largest
                         case 2:
-                            sortOrder = "CAST ("+DatabaseHelper.ACCOUNT_BALANCE+" AS INTEGER)" + " DESC";
+                            sortOrder = "CAST (" + DatabaseHelper.ACCOUNT_BALANCE + " AS INTEGER)" + " DESC";
                             break;
 
                         //Smallest
                         case 3:
-                            sortOrder = "CAST ("+DatabaseHelper.ACCOUNT_BALANCE+" AS INTEGER)" + " ASC";
+                            sortOrder = "CAST (" + DatabaseHelper.ACCOUNT_BALANCE + " AS INTEGER)" + " ASC";
                             break;
 
                         //Alphabetical
@@ -433,7 +407,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                             break;
 
                         default:
-                            Log.e("Accounts-SortFragment","Unknown Sorting Option!");
+                            Log.e("Accounts-SortFragment", "Unknown Sorting Option!");
                             break;
 
                     }//end switch
@@ -453,24 +427,24 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
         Log.d("Accounts-onCreateLoader", "calling create loader...");
         switch (loaderID) {
             case ACCOUNTS_LOADER:
-                Log.v("Accounts-onCreateLoader","new loader created");
+                Log.v("Accounts-onCreateLoader", "new loader created");
                 return new CursorLoader(
-                        getActivity(),   	// Parent activity context
+                        getActivity(),    // Parent activity context
                         MyContentProvider.ACCOUNTS_URI,// Table to query
-                        null,     			// Projection to return
-                        null,            	// No selection clause
-                        null,            	// No selection arguments
+                        null,                // Projection to return
+                        null,                // No selection clause
+                        null,                // No selection arguments
                         sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
                 );
             case ACCOUNTS_SEARCH_LOADER:
                 String query = getActivity().getIntent().getStringExtra("query");
-                Log.v("Accounts-onCreateLoader","new loader (boolSearch "+ query + ") created");
+                Log.v("Accounts-onCreateLoader", "new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
-                        getActivity(),   	// Parent activity context
+                        getActivity(),    // Parent activity context
                         (Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
-                        null,     			// Projection to return
-                        null,            	// No selection clause
-                        null,            	// No selection arguments
+                        null,                // Projection to return
+                        null,                // No selection clause
+                        null,                // No selection arguments
                         sortOrder           // Default sort order
                 );
 
@@ -482,77 +456,75 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        TextView footerTV = (TextView)this.myFragmentView.findViewById(R.id.account_footer);
+        TextView footerTV = (TextView) this.myFragmentView.findViewById(R.id.account_footer);
 
-        switch(loader.getId()){
+        switch (loader.getId()) {
             case ACCOUNTS_LOADER:
                 adapterAccounts.swapCursor(data);
-                Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+                Log.v("Accounts-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 int balanceColumn = data.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
                 BigDecimal totalBalance = BigDecimal.ZERO;
-                Locale locale=getResources().getConfiguration().locale;
+                Locale locale = getResources().getConfiguration().locale;
 
                 data.moveToPosition(-1);
-                while(data.moveToNext()){
+                while (data.moveToNext()) {
                     totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));
                 }
 
-                try{
-                    TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
+                try {
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_noTransaction);
                     noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
                     lv.setEmptyView(noResult);
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
-                }
-                catch(Exception e){
-                    Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e="+e);
+                } catch (Exception e) {
+                    Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e=" + e);
                 }
 
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
                 adapterAccounts.swapCursor(data);
-                Log.v("Accounts-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+                Log.v("Accounts-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
-                try{
-                    TextView noResult = (TextView)myFragmentView.findViewById(R.id.account_noTransaction);
+                try {
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_noTransaction);
                     noResult.setText("No Accounts Found");
                     lv.setEmptyView(noResult);
 
                     footerTV.setText("Search Results");
-                }
-                catch(Exception e){
-                    Log.e("Accounts-onLoadFinished", "Error setting search TextView. e="+e);
+                } catch (Exception e) {
+                    Log.e("Accounts-onLoadFinished", "Error setting search TextView. e=" + e);
                 }
 
                 break;
 
             default:
-                Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+                Log.e("Accounts-onLoadFinished", "Error. Unknown loader (" + loader.getId());
                 break;
         }
 
-        if(!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()){
+        if (!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()) {
             getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        switch(loader.getId()){
+        switch (loader.getId()) {
             case ACCOUNTS_LOADER:
                 adapterAccounts.swapCursor(null);
-                Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Accounts-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
                 adapterAccounts.swapCursor(null);
-                Log.v("Accounts-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Accounts-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e("Accounts-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+                Log.e("Accounts-onLoadFinished", "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -588,7 +560,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
             switch (item.getItemId()) {
                 case CONTEXT_MENU_VIEW:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             //accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);
                             DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)).id);
@@ -599,7 +571,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                     mode.finish();
                     return true;
                 case CONTEXT_MENU_EDIT:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             //accountEdit(adapterAccounts.getAccount(selected.keyAt(i)));
                             DialogFragment newFragment = AccountEditFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
@@ -611,17 +583,17 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                     return true;
                 case CONTEXT_MENU_DELETE:
                     AccountRecord record;
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterAccounts.getAccount(selected.keyAt(i));
 
                             //Delete Account
                             Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
-                            getActivity().getContentResolver().delete(uri,DatabaseHelper.ACCOUNT_ID+"="+record.id, null);
+                            getActivity().getContentResolver().delete(uri, DatabaseHelper.ACCOUNT_ID + "=" + record.id, null);
 
                             //Delete All Transactions of that account
                             uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
-                            getActivity().getContentResolver().delete(uri,DatabaseHelper.TRANS_ACCT_ID+"="+record.id, null);
+                            getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ACCT_ID + "=" + record.id, null);
 
                             Toast.makeText(getActivity(), "Deleted Account:\n" + record.name, Toast.LENGTH_SHORT).show();
                         }
@@ -632,22 +604,22 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
                 default:
                     mode.finish();
-                    Log.e("Accounts-onActionItemClciked","ERROR. Clicked " + item);
+                    Log.e("Accounts-onActionItemClciked", "ERROR. Clicked " + item);
                     return false;
             }
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mActionMode=null;
+            mActionMode = null;
             adapterAccounts.removeSelection();
         }
     }
 
     @Override
     public void onDestroyView() {
-        if(mActionMode!=null){
-            ((ActionMode)mActionMode).finish();
+        if (mActionMode != null) {
+            ((ActionMode) mActionMode).finish();
         }
 
         super.onDestroyView();

@@ -601,7 +601,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                 if(account_id!=0){
                     ContentValues values = new ContentValues();
                     values.put(DatabaseHelper.ACCOUNT_BALANCE, totalBalance+"");
-                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+account_id), values,"AcctID ="+account_id, null);
+                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+account_id), values,DatabaseHelper.ACCOUNT_ID+"="+account_id, null);
                 }
 
                 break;

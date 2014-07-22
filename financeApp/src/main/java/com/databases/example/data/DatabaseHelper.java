@@ -385,7 +385,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get all accounts
     public Cursor getAccounts(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_ACCOUNTS, new String[]{ACCOUNT_ID + " as _id", ACCOUNT_NAME, ACCOUNT_BALANCE, ACCOUNT_TIME, ACCOUNT_DATE}, selection,
                 selectionArgs, null, null, sortOrder);
@@ -394,7 +394,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get single account
     public Cursor getAccount(String aID) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sqlCommand = "SELECT * FROM " + TABLE_ACCOUNTS +
@@ -406,7 +406,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get searched accounts
     public Cursor getSearchedAccounts(String query) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         //Command used to search
@@ -433,28 +433,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Delete account (and relating transactions if specified)
     public int deleteAccount(Uri uri, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = 0;
-        rowsDeleted = db.delete(TABLE_ACCOUNTS, whereClause, whereArgs);
-        return rowsDeleted;
+        return db.delete(TABLE_ACCOUNTS, whereClause, whereArgs);
     }
 
     //Add account
     public long addAccount(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(TABLE_ACCOUNTS, null, values);
-        return id;
+        return db.insert(TABLE_ACCOUNTS, null, values);
     }
 
     //Updates an account
     public int updateAccount(ContentValues values, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(TABLE_ACCOUNTS, values, whereClause, whereArgs);
-        return 0;
+        return db.update(TABLE_ACCOUNTS, values, whereClause, whereArgs);
     }
 
     //Get all transactions for an account
     public Cursor getTransactions(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_TRANSACTIONS, new String[]{TRANS_ID + " as _id", TRANS_ACCT_ID, TRANS_PLAN_ID, TRANS_NAME, TRANS_VALUE, TRANS_TYPE, TRANS_CATEGORY, TRANS_CHECKNUM, TRANS_MEMO, TRANS_TIME, TRANS_DATE, TRANS_CLEARED}, selection,
                 selectionArgs, null, null, sortOrder);
@@ -463,7 +459,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get single transaction
     public Cursor getTransaction(String tID) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sqlCommand = "SELECT * FROM " + TABLE_TRANSACTIONS +
@@ -475,7 +471,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get searched transactions
     public Cursor getSearchedTransactions(String query) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         //Command used to search
@@ -514,28 +510,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Delete transaction (and relating transactions if specified)
     public int deleteTransaction(Uri uri, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = 0;
-        rowsDeleted = db.delete(TABLE_TRANSACTIONS, whereClause, whereArgs);
-        return rowsDeleted;
+        return db.delete(TABLE_TRANSACTIONS, whereClause, whereArgs);
     }
 
     //Add transaction
     public long addTransaction(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(TABLE_TRANSACTIONS, null, values);
-        return id;
+        return db.insert(TABLE_TRANSACTIONS, null, values);
     }
 
     //Updates a transaction
     public int updateTransaction(ContentValues values, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(TABLE_TRANSACTIONS, values, whereClause, whereArgs);
-        return 0;
+        return db.update(TABLE_TRANSACTIONS, values, whereClause, whereArgs);
     }
 
     //Get all categories
     public Cursor getCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_CATEGORIES, new String[]{CATEGORY_ID + " as _id", CATEGORY_NAME, CATEGORY_NOTE}, selection,
                 selectionArgs, null, null, sortOrder);
@@ -544,7 +536,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get single category
     public Cursor getCategory(String cID) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sqlCommand = "SELECT * FROM " + TABLE_CATEGORIES +
@@ -557,28 +549,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Add category
     public long addCategory(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(TABLE_CATEGORIES, null, values);
-        return id;
+        return db.insert(TABLE_CATEGORIES, null, values);
     }
 
     //Delete category (and relating subcategories if specified)
     public int deleteCategory(Uri uri, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = 0;
-        rowsDeleted = db.delete(TABLE_CATEGORIES, whereClause, whereArgs);
-        return rowsDeleted;
+        return db.delete(TABLE_CATEGORIES, whereClause, whereArgs);
     }
 
     //Updates a category
     public int updateCategory(ContentValues values, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(TABLE_CATEGORIES, values, whereClause, whereArgs);
-        return 0;
+        return db.update(TABLE_CATEGORIES, values, whereClause, whereArgs);
     }
 
     //Get subcategories for a category
     public Cursor getSubCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_SUBCATEGORIES, new String[]{SUBCATEGORY_ID + " as _id", SUBCATEGORY_CAT_ID, SUBCATEGORY_NAME, SUBCATEGORY_NOTE}, selection,
                 selectionArgs, null, null, sortOrder);
@@ -587,7 +575,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get single subcategory
     public Cursor getSubCategory(String sID) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sqlCommand = "SELECT * FROM " + TABLE_SUBCATEGORIES +
@@ -600,28 +588,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Add subcategory (ID given)
     public long addSubCategory(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(TABLE_SUBCATEGORIES, null, values);
-        return id;
+        return db.insert(TABLE_SUBCATEGORIES, null, values);
     }
 
     //Delete subcategory
     public int deleteSubCategory(Uri uri, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = 0;
-        rowsDeleted = db.delete(TABLE_SUBCATEGORIES, whereClause, whereArgs);
-        return rowsDeleted;
+        return db.delete(TABLE_SUBCATEGORIES, whereClause, whereArgs);
     }
 
     //Updates a subcategory
     public int updateSubCategory(ContentValues values, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(TABLE_SUBCATEGORIES, values, whereClause, whereArgs);
-        return 0;
+        return db.update(TABLE_SUBCATEGORIES, values, whereClause, whereArgs);
     }
 
     //Get all planned transactions for all accounts
     public Cursor getPlans(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_PLANS, new String[]{PLAN_ID + " as _id", PLAN_ACCT_ID, PLAN_NAME, PLAN_VALUE, PLAN_TYPE, PLAN_CATEGORY, PLAN_MEMO, PLAN_OFFSET, PLAN_RATE, PLAN_NEXT, PLAN_SCHEDULED, PLAN_CLEARED}, selection,
                 selectionArgs, null, null, sortOrder);
@@ -630,7 +614,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get single planned transaction
     public Cursor getPlan(String pID) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sqlCommand = "SELECT * FROM " + TABLE_PLANS +
@@ -643,28 +627,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Add planned transaction (no ID)
     public long addPlan(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(TABLE_PLANS, null, values);
-        return id;
+        return db.insert(TABLE_PLANS, null, values);
     }
 
     //Delete planned transaction
     public int deletePlan(Uri uri, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = 0;
-        rowsDeleted = db.delete(TABLE_PLANS, whereClause, whereArgs);
-        return rowsDeleted;
+        return db.delete(TABLE_PLANS, whereClause, whereArgs);
     }
 
     //Updates a plan
     public int updatePlan(ContentValues values, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.update(TABLE_PLANS, values, whereClause, whereArgs);
-        return 0;
+        return db.update(TABLE_PLANS, values, whereClause, whereArgs);
     }
 
     //Get all notifications
     public Cursor getNotifications(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_NOTIFICATIONS, new String[]{NOT_ID + " as _id", NOT_NAME, NOT_VALUE, NOT_DATE}, selection,
                 selectionArgs, null, null, sortOrder);
@@ -673,7 +653,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Get single notification
     public Cursor getNotification(String nID) {
-        Cursor cursor = null;
+        Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sqlCommand = "SELECT * FROM " + TABLE_NOTIFICATIONS +
@@ -686,16 +666,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Add planned transaction (no ID)
     public long addNotification(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = db.insert(TABLE_NOTIFICATIONS, null, values);
-        return id;
+        return db.insert(TABLE_NOTIFICATIONS, null, values);
     }
 
     //Delete planned transaction
     public int deleteNotification(Uri uri, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = 0;
-        rowsDeleted = db.delete(TABLE_NOTIFICATIONS, whereClause, whereArgs);
-        return rowsDeleted;
+        return db.delete(TABLE_NOTIFICATIONS, whereClause, whereArgs);
     }
 
 }//End DatabaseHelper

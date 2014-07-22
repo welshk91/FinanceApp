@@ -44,10 +44,9 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
-import com.databases.example.view.AccountAddFragment;
-import com.databases.example.view.AccountEditFragment;
 import com.databases.example.view.AccountTransferFragment;
 import com.databases.example.view.AccountViewFragment;
+import com.databases.example.view.AccountWizard;
 import com.databases.example.view.AccountsListViewAdapter;
 
 import java.math.BigDecimal;
@@ -256,7 +255,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     //For Adding an Account
     public void accountAdd() {
-        DialogFragment newFragment = AccountAddFragment.newInstance();
+        AccountWizard newFragment = AccountWizard.newInstance(null);
         newFragment.show(getChildFragmentManager(), "dialogAdd");
     }
 
@@ -573,8 +572,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                 case CONTEXT_MENU_EDIT:
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
-                            //accountEdit(adapterAccounts.getAccount(selected.keyAt(i)));
-                            DialogFragment newFragment = AccountEditFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
+                            final AccountRecord record = adapterAccounts.getAccount(selected.keyAt(i));
+
+                            final Bundle bundle = new Bundle();
+
+                            final Bundle bdl1 = new Bundle();
+                            bdl1.putString("id", record.id);
+                            bdl1.putString("name",record.name);
+                            bdl1.putString("balance",record.balance);
+                            bdl1.putString("time",record.time);
+                            bdl1.putString("date",record.date);
+                            bundle.putBundle("Account Info",bdl1);
+
+                            AccountWizard newFragment = AccountWizard.newInstance(bundle);
                             newFragment.show(getChildFragmentManager(), "dialogEdit");
                         }
                     }

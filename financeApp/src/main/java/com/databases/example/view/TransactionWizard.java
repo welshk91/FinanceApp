@@ -29,7 +29,7 @@ import com.wizardpager.wizard.ui.StepPagerStrip;
 import java.util.Locale;
 
 public class TransactionWizard extends WizardDialogFragment{
-    private AbstractWizardModel mWizardModel = new AddWizardModel(getActivity());
+    private AbstractWizardModel mWizardModel = new TransactionWizardModel(getActivity());
 
     public static TransactionWizard newInstance(Bundle bundle) {
         TransactionWizard frag = new TransactionWizard();
@@ -165,8 +165,8 @@ public class TransactionWizard extends WizardDialogFragment{
     }
 }
 
-class AddWizardModel extends AbstractWizardModel {
-    public AddWizardModel(Context context) {
+class TransactionWizardModel extends AbstractWizardModel {
+    public TransactionWizardModel(Context context) {
         super(context);
     }
 

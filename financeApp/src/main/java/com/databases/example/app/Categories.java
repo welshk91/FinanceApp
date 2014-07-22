@@ -4,10 +4,6 @@
 
 package com.databases.example.app;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
@@ -22,38 +18,35 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
-import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.databases.example.R;
-import com.databases.example.data.CategoryRecord;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
-import com.databases.example.data.SubCategoryRecord;
 import com.databases.example.view.CategoriesListViewAdapter;
+import com.databases.example.view.CategoryAddFragment;
+import com.databases.example.view.CategoryEditFragment;
+import com.databases.example.view.CategoryViewFragment;
 import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 
 public class Categories extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener,LoaderManager.LoaderCallbacks<Cursor>{
-    private static final int CATEGORIES_LOADER = 8675309;
-    private static final int SUBCATEGORIES_LOADER = 867;
+    public static final int CATEGORIES_LOADER = 8675309;
+    public static final int SUBCATEGORIES_LOADER = 867;
 
     //NavigationDrawer
     private Drawer drawer;
 
     private ExpandableListView lvCategory = null;
-    private static CategoriesListViewAdapter adapterCategory = null;
+    public static CategoriesListViewAdapter adapterCategory = null;
 
     //Constants for ContextMenu (Category)
     private final int CONTEXT_MENU_CATEGORY_ADD=1;
@@ -115,13 +108,13 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
             int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
             int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
 
-            DialogFragment newFragment = AddDialogFragment.newInstance(groupPos,childPos);
+            DialogFragment newFragment = CategoryAddFragment.newInstance(groupPos, childPos);
             newFragment.show(getSupportFragmentManager(), "dialogAdd");
 
         }
         //CategoryAdd
         else{
-            DialogFragment newFragment = AddDialogFragment.newInstance();
+            DialogFragment newFragment = CategoryAddFragment.newInstance();
             newFragment.show(getSupportFragmentManager(), "dialogAdd");
         }
 
@@ -167,7 +160,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
         final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
         final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
-        DialogFragment newFragment = EditDialogFragment.newInstance(groupPos,childPos,type);
+        DialogFragment newFragment = CategoryEditFragment.newInstance(groupPos, childPos, type);
         newFragment.show(getSupportFragmentManager(), "dialogEdit");
     }
 
@@ -178,7 +171,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
         final int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
         final int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
-        DialogFragment newFragment = ViewDialogFragment.newInstance(groupPos,childPos,type);
+        DialogFragment newFragment = CategoryViewFragment.newInstance(groupPos, childPos, type);
         newFragment.show(getSupportFragmentManager(), "dialogView");
     }
 
@@ -300,249 +293,6 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         //Toast.makeText(this, "Options Just Changed: Categories.Java", Toast.LENGTH_SHORT).show();
         //categoryPopulate();
-    }
-
-    //Class that handles view fragment
-    public static class ViewDialogFragment extends SherlockDialogFragment {
-        public static ViewDialogFragment newInstance(int gPos, int cPos,int t) {
-            ViewDialogFragment frag = new ViewDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("group", gPos);
-            args.putInt("child", cPos);
-            args.putInt("type", t);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final int type = getArguments().getInt("type");
-            final int groupPos = getArguments().getInt("group");
-            final int childPos = getArguments().getInt("child");
-
-            final LayoutInflater li = LayoutInflater.from(this.getActivity());
-
-            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setCancelable(true);
-
-            if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-                final View categoryStatsView = li.inflate(R.layout.subcategory_item, null);
-                alertDialogBuilder.setView(categoryStatsView);
-
-                SubCategoryRecord record = adapterCategory.getSubCategory(groupPos, childPos);
-
-                //Set Statistics
-                TextView statsName = (TextView)categoryStatsView.findViewById(R.id.subcategory_name);
-                statsName.setText(record.name);
-                TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.subcategory_parent);
-                statsValue.setText(record.catId);
-                TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.subcategory_note);
-                statsDate.setText(record.note);
-            }
-            else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-                final View categoryStatsView = li.inflate(R.layout.category_item, null);
-                alertDialogBuilder.setView(categoryStatsView);
-
-                CategoryRecord record = adapterCategory.getCategory(groupPos);
-
-                //Set Statistics
-                TextView statsName = (TextView)categoryStatsView.findViewById(R.id.category_name);
-                statsName.setText(record.name);
-                TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.category_note);
-                statsDate.setText(record.note);
-            }
-
-            return alertDialogBuilder.create();
-        }
-
-    }
-
-    //Class that handles edit fragment
-    public static class EditDialogFragment extends SherlockDialogFragment {
-        public static EditDialogFragment newInstance(int gPos, int cPos,int t) {
-            EditDialogFragment frag = new EditDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("group", gPos);
-            args.putInt("child", cPos);
-            args.putInt("type", t);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater li = LayoutInflater.from(this.getActivity());
-            final View categoryEditView = li.inflate(R.layout.category_add, null);
-
-            final int type = getArguments().getInt("type");
-            final int groupPos = getArguments().getInt("group");
-            final int childPos = getArguments().getInt("child");
-
-            SubCategoryRecord subrecord = null;
-            CategoryRecord record = null;
-
-            final EditText editName = (EditText)categoryEditView.findViewById(R.id.EditCategoryName);
-            final EditText editNote = (EditText)categoryEditView.findViewById(R.id.EditCategoryNote);
-
-            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
-
-            if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-                subrecord = adapterCategory.getSubCategory(groupPos, childPos);
-                alertDialogBuilder.setTitle("Editing " + subrecord.name);
-                editName.setText(subrecord.name);
-                editNote.setText(subrecord.note);
-            }
-            else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-                record = adapterCategory.getCategory(groupPos);
-                alertDialogBuilder.setTitle("Editing " + record.name);
-                editName.setText(record.name);
-                editNote.setText(record.note);
-            }
-
-            alertDialogBuilder.setView(categoryEditView);
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("Done",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            String newName = editName.getText().toString().trim();
-                            String newNote = editNote.getText().toString().trim();
-
-                            try{
-                                if(type==ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-                                    SubCategoryRecord oldRecord = adapterCategory.getSubCategory(groupPos, childPos);
-
-                                    ContentValues subcategoryValues=new ContentValues();
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_ID,oldRecord.id);
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID,oldRecord.catId);
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,newName);
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,newNote);
-                                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI+"/"+oldRecord.id), subcategoryValues,DatabaseHelper.SUBCATEGORY_ID+" = "+oldRecord.id,null);
-                                    ((Categories) getActivity()).subcategoryPopulate(oldRecord.id);
-                                }
-                                else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
-                                    CategoryRecord oldRecord = adapterCategory.getCategory(groupPos);
-
-                                    ContentValues categoryValues=new ContentValues();
-                                    categoryValues.put(DatabaseHelper.CATEGORY_ID,oldRecord.id);
-                                    categoryValues.put(DatabaseHelper.CATEGORY_NAME,newName);
-                                    categoryValues.put(DatabaseHelper.CATEGORY_NOTE,newNote);
-                                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI+"/"+oldRecord.id), categoryValues,DatabaseHelper.CATEGORY_ID+" = "+oldRecord.id,null);
-                                    ((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
-                                }
-                            }
-                            catch(Exception e){
-                                Log.e("Categories-EditDialog", "Error editing Categories");
-                            }
-
-                        }
-                    })
-                    .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            dialog.cancel();
-                        }
-                    });
-
-            return alertDialogBuilder.create();
-        }
-
-    }
-
-    //Class that handles add fragment
-    public static class AddDialogFragment extends SherlockDialogFragment {
-
-        public static AddDialogFragment newInstance() {
-            AddDialogFragment frag = new AddDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            return frag;
-        }
-
-        public static AddDialogFragment newInstance(int gPos, int cPos) {
-            AddDialogFragment frag = new AddDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("group", gPos);
-            args.putInt("child", cPos);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            boolean isCategory = true;
-            String itemID = "0";
-            CategoryRecord catRecord;
-
-            if(!this.getArguments().isEmpty()){
-                isCategory = false;
-                int groupPos = getArguments().getInt("group");
-                int childPos = getArguments().getInt("child");
-                catRecord = adapterCategory.getCategory(groupPos);
-                itemID = catRecord.id;
-                //Log.e("categoryAdd", "itemID: " + catRecord.id);
-            }
-
-            final boolean isCat = isCategory;
-            final String catID = itemID;
-
-            LayoutInflater li = LayoutInflater.from(this.getActivity());
-            final View categoryAddView = li.inflate(R.layout.category_add, null);
-
-            final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-            final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
-            alertDialogBuilder.setView(categoryAddView);
-
-            //Set title
-            if(isCat){
-                alertDialogBuilder.setTitle("Create A Category");
-            }
-            else{
-                alertDialogBuilder.setTitle("Create A SubCategory");
-            }
-
-            //Set dialog message
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("Add",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            String name = editName.getText().toString().trim();
-                            String note = editNote.getText().toString().trim();
-
-                            try{
-                                //Add a category
-                                if(isCat){
-                                    ContentValues categoryValues=new ContentValues();
-                                    categoryValues.put(DatabaseHelper.CATEGORY_NAME,name);
-                                    categoryValues.put(DatabaseHelper.CATEGORY_NOTE,note);
-                                    getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-                                    ((Categories) getActivity()).getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, (Categories) getActivity());
-                                }
-                                //Add a subcategory
-                                else{
-                                    ContentValues subcategoryValues=new ContentValues();
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID,catID);
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,name);
-                                    subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,note);
-                                    getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-                                    ((Categories) getActivity()).subcategoryPopulate(catID);
-
-                                }
-
-                            }
-                            catch(Exception e){
-                                Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
-                            }
-                        }
-                    })
-                    .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            dialog.cancel();
-                        }
-                    });
-
-            return alertDialogBuilder.create();
-        }
     }
 
     @Override

@@ -6,13 +6,10 @@ package com.databases.example.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,8 +26,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -48,14 +43,16 @@ import com.actionbarsherlock.widget.SearchView;
 import com.databases.example.R;
 import com.databases.example.data.AccountRecord;
 import com.databases.example.data.DatabaseHelper;
-import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
+import com.databases.example.view.AccountAddFragment;
+import com.databases.example.view.AccountEditFragment;
+import com.databases.example.view.AccountTransferFragment;
+import com.databases.example.view.AccountViewFragment;
 import com.databases.example.view.AccountsListViewAdapter;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Locale;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -70,10 +67,10 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     //Spinners for transfers
     private Cursor accountCursor = null;
-    private static Spinner transferSpinnerTo;
-    private static Spinner transferSpinnerFrom;
-    private static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
-    private static SimpleCursorAdapter transferSpinnerAdapterTo = null;
+    public static Spinner transferSpinnerTo;
+    public static Spinner transferSpinnerFrom;
+    public static SimpleCursorAdapter transferSpinnerAdapterFrom = null;
+    public static SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
     private View myFragmentView;
     private static String sortOrder= "null";
@@ -273,13 +270,13 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     //For Adding an Account
     public void accountAdd(){
-        DialogFragment newFragment = AddDialogFragment.newInstance();
+        DialogFragment newFragment = AccountAddFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogAdd");
     }
 
     //For Transferring from an Account
     public void accountTransfer(){
-        DialogFragment newFragment = TransferDialogFragment.newInstance();
+        DialogFragment newFragment = AccountTransferFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogTransfer");
     }
 
@@ -373,518 +370,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
             Log.d("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
             //getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
             //getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
-        }
-    }
-
-    //Class that handles view fragment
-    public static class ViewDialogFragment extends SherlockDialogFragment {
-
-        public static ViewDialogFragment newInstance(String id) {
-            ViewDialogFragment frag = new ViewDialogFragment();
-            Bundle args = new Bundle();
-            args.putString("id", id);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final String ID = getArguments().getString("id");
-            final Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+(ID)), null, null, null, null);
-
-            int entry_id = 0;
-            String entry_name = null;
-            String entry_balance = null;
-            String entry_time = null;
-            String entry_date = null;
-
-            c.moveToFirst();
-            do{
-                entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
-                entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                entry_balance = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE));
-                entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
-                entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
-            }while(c.moveToNext());
-
-            final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-            final View accountStatsView = li.inflate(R.layout.account_item, null);
-
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
-
-            final Locale locale=getResources().getConfiguration().locale;
-            final Money balance = new Money(entry_balance);
-
-            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                    this.getSherlockActivity());
-
-            alertDialogBuilder.setView(accountStatsView);
-            alertDialogBuilder.setCancelable(true);
-
-            //Change gradient
-            try{
-                LinearLayout l;
-                l=(LinearLayout)accountStatsView.findViewById(R.id.account_gradient);
-                //Older color to black gradient (0xFF00FF33,0xFF000000)
-                GradientDrawable defaultGradientPos = new GradientDrawable(
-                        GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {0xFF4ac925,0xFF4ac925});
-                GradientDrawable defaultGradientNeg = new GradientDrawable(
-                        GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {0xFFe00707,0xFFe00707});
-
-                if(useDefaults){
-                    if(balance.isPositive(locale)){
-                        l.setBackgroundDrawable(defaultGradientPos);
-                    }
-                    else{
-                        l.setBackgroundDrawable(defaultGradientNeg);
-                    }
-
-                }
-                else{
-                    if(balance.isPositive(locale)){
-                        l.setBackgroundDrawable(defaultGradientPos);
-                    }
-                    else{
-                        l.setBackgroundDrawable(defaultGradientNeg);
-                    }
-                }
-
-            }
-            catch(Exception e){
-                Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
-            }
-
-            //Set Statistics
-            TextView statsName = (TextView)accountStatsView.findViewById(R.id.account_name);
-            statsName.setText(entry_name);
-            TextView statsValue = (TextView)accountStatsView.findViewById(R.id.account_balance);
-            statsValue.setText("Balance: " + balance.getNumberFormat(locale));
-            DateTime d = new DateTime();
-            d.setStringSQL(entry_date);
-            TextView statsDate = (TextView)accountStatsView.findViewById(R.id.account_date);
-            statsDate.setText("Date: " + d.getReadableDate());
-            DateTime t = new DateTime();
-            t.setStringSQL(entry_time);
-            TextView statsTime = (TextView)accountStatsView.findViewById(R.id.account_time);
-            statsTime.setText("Time: " + t.getReadableTime());
-
-            c.close();
-            return alertDialogBuilder.create();
-        }
-
-    }
-
-    //Class that handles edit fragment
-    public static class EditDialogFragment extends SherlockDialogFragment {
-
-        public static EditDialogFragment newInstance(AccountRecord record) {
-            EditDialogFragment frag = new EditDialogFragment();
-            Bundle args = new Bundle();
-            args.putString("id", record.id);
-            args.putString("name", record.name);
-            args.putString("balance", record.balance);
-            args.putString("date", record.date);
-            args.putString("time", record.time);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final String ID = getArguments().getString("id");
-            final String name = getArguments().getString("name");
-            final String balance = getArguments().getString("balance");
-
-            LayoutInflater li = LayoutInflater.from(getActivity());
-            final View promptsView = li.inflate(R.layout.account_add, null);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setView(promptsView);
-            alertDialogBuilder.setTitle("Edit An Account");
-
-            //Add the previous info into the fields, remove unnecessary fields
-            final EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-            final EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
-            TextView aBalanceText = (TextView)promptsView.findViewById(R.id.BalanceTexts);
-            aName.setText(name);
-            aBalance.setVisibility(View.GONE);
-            aBalanceText.setVisibility(View.GONE);
-
-            // set dialog message
-            alertDialogBuilder
-                    .setCancelable(false)
-                    .setPositiveButton("Save",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    String accountName = null;
-                                    String accountBalance = null;
-                                    final Calendar c = Calendar.getInstance();
-                                    Locale locale=getResources().getConfiguration().locale;
-                                    DateTime accountDate = new DateTime();
-                                    accountDate.setDate(c.getTime());
-
-                                    accountName = aName.getText().toString().trim();
-                                    accountBalance = balance.trim();
-
-                                    try{
-                                        ContentValues accountValues=new ContentValues();
-                                        accountValues.put(DatabaseHelper.ACCOUNT_ID,ID);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_NAME,accountName);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,accountBalance);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_TIME,accountDate.getSQLTime(locale));
-                                        accountValues.put(DatabaseHelper.ACCOUNT_DATE,accountDate.getSQLDate(locale));
-
-                                        //Update plan
-                                        getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+ID), accountValues, DatabaseHelper.ACCOUNT_ID+"="+ID, null);
-                                    }
-                                    catch(Exception e){
-                                        Toast.makeText(getActivity(), "Error Editing Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }//end onClick "OK"
-                            })
-                    .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-            return alertDialogBuilder.create();
-        }
-    }
-
-    //Class that handles add fragment
-    public static class AddDialogFragment extends SherlockDialogFragment {
-
-        public static AddDialogFragment newInstance() {
-            AddDialogFragment frag = new AddDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater li = LayoutInflater.from(getActivity());
-            final View promptsView = li.inflate(R.layout.account_add, null);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setView(promptsView);
-            alertDialogBuilder.setTitle("Add An Account");
-
-            //Set dialog message
-            alertDialogBuilder
-                    .setCancelable(false)
-                    .setPositiveButton("Save",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    final Calendar cal = Calendar.getInstance();
-
-                                    String accountName = null;
-                                    Locale locale=getResources().getConfiguration().locale;
-                                    DateTime accountDate = new DateTime();
-                                    accountDate.setDate(cal.getTime());
-
-                                    //Variables for adding the account
-                                    EditText aName = (EditText) promptsView.findViewById(R.id.EditAccountName);
-                                    EditText aBalance = (EditText) promptsView.findViewById(R.id.EditAccountBalance);
-                                    accountName = aName.getText().toString().trim();
-                                    Money accountBalance = new Money(aBalance.getText().toString().trim());
-
-                                    //Variables for adding Starting Balance transaction
-                                    final String transactionName = "STARTING BALANCE";
-                                    final String transactionPlanId = "0";
-                                    Money transactionValue=null;
-                                    final String transactionCategory = "STARTING BALANCE";
-                                    final String transactionCheckNum = "None";
-                                    final String transactionMemo = "This is an automatically generated transaction created when you add an account";
-                                    final String transactionTime = accountDate.getSQLTime(locale);
-                                    final String transactionDate = accountDate.getSQLDate(locale);
-                                    final String transactionCleared = "true";
-                                    String transactionType = "Unknown";
-
-                                    //Check Value to see if it's valid
-                                    try{
-                                        transactionValue = new Money(Float.parseFloat(accountBalance.getBigDecimal(locale)+""));
-                                    }
-                                    catch(Exception e){
-                                        transactionValue = new Money("0.00");
-                                        accountBalance = new Money("0.00");
-                                    }
-
-                                    try{
-                                        if(accountBalance.isPositive(locale)){
-                                            transactionType = "Deposit";
-                                        }
-                                        else{
-                                            transactionType = "Withdraw";
-                                            transactionValue = new Money (transactionValue.getBigDecimal(locale).multiply(new BigDecimal(-1)));
-                                        }
-                                    }
-                                    catch(Exception e){
-                                        Toast.makeText(getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    try{
-                                        if (accountName.length()>0) {
-
-                                            ContentValues accountValues=new ContentValues();
-                                            accountValues.put(DatabaseHelper.ACCOUNT_NAME,accountName);
-                                            accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,accountBalance.getBigDecimal(locale)+"");
-                                            accountValues.put(DatabaseHelper.ACCOUNT_TIME,accountDate.getSQLTime(locale));
-                                            accountValues.put(DatabaseHelper.ACCOUNT_DATE,accountDate.getSQLDate(locale));
-
-                                            //Insert values into accounts table
-                                            Uri u = getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
-
-                                            ContentValues transactionValues=new ContentValues();
-                                            transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(u.getLastPathSegment()));
-                                            transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, transactionPlanId);
-                                            transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);
-                                            transactionValues.put(DatabaseHelper.TRANS_VALUE, transactionValue.getBigDecimal(locale)+"");
-                                            transactionValues.put(DatabaseHelper.TRANS_TYPE, transactionType);
-                                            transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transactionCategory);
-                                            transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transactionCheckNum);
-                                            transactionValues.put(DatabaseHelper.TRANS_MEMO, transactionMemo);
-                                            transactionValues.put(DatabaseHelper.TRANS_TIME, transactionTime);
-                                            transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate);
-                                            transactionValues.put(DatabaseHelper.TRANS_CLEARED, transactionCleared);
-
-                                            //Insert values into accounts table
-                                            getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
-                                        }
-
-                                        else {
-                                            Toast.makeText(getActivity(), "Needs a Name", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Accounts-AddDialog", "Exception e="+e);
-                                        Toast.makeText(getActivity(), "Error Adding Account!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }//end onClick "OK"
-                            })
-                    .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-            return alertDialogBuilder.create();
-        }
-    }
-
-    //Class that handles transfers fragment
-    public static class TransferDialogFragment extends SherlockDialogFragment {
-
-        public static TransferDialogFragment newInstance() {
-            TransferDialogFragment frag = new TransferDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final LayoutInflater li = LayoutInflater.from(getActivity());
-            final View promptsView = li.inflate(R.layout.account_transfer, null);
-            final EditText tAmount = (EditText) promptsView.findViewById(R.id.EditAccountAmount);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setView(promptsView);
-            alertDialogBuilder.setTitle("Transfer Money");
-
-            transferSpinnerFrom = (Spinner)promptsView.findViewById(R.id.SpinnerAccountFrom);
-            transferSpinnerTo = (Spinner)promptsView.findViewById(R.id.SpinnerAccountTo);
-
-            //Populate Account Drop-down List
-            ((Accounts) getParentFragment()).accountPopulate();
-
-            //Set dialog message
-            alertDialogBuilder
-                    .setCancelable(false)
-                    .setPositiveButton("Transfer",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-
-                                    //Needed to get account's name from DB-populated spinner
-                                    int accountPosition1 = transferSpinnerFrom.getSelectedItemPosition();
-                                    Cursor cursorAccount1 = (Cursor) transferSpinnerAdapterFrom.getItem(accountPosition1);
-
-                                    int accountPosition2 = transferSpinnerTo.getSelectedItemPosition();
-                                    Cursor cursorAccount2 = (Cursor) transferSpinnerAdapterTo.getItem(accountPosition2);
-
-                                    String transferAmount = tAmount.getText().toString().trim();
-                                    String transferFrom = null;
-                                    String transferTo = null;
-                                    String transferToID = null;
-                                    String transferFromID = null;
-
-                                    try{
-                                        transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                        transferFromID = cursorAccount1.getString(cursorAccount1.getColumnIndex("_id"));
-                                        transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                        transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Account-transferDialog","No Accounts? Exception e=" + e);
-                                        dialog.cancel();
-                                        Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-
-                                    Log.d("Account-Transfer", "From:"+transferFrom + " To:"+transferTo + " Amount:" + transferAmount);
-
-                                    //Transfer From
-                                    final Calendar cal = Calendar.getInstance();
-                                    Locale locale=getResources().getConfiguration().locale;
-                                    DateTime transferDate = new DateTime();
-                                    transferDate.setDate(cal.getTime());
-
-                                    float tAmount;
-                                    final String transferName = "TRANSFER";
-                                    final String transferPlanId = "0";
-                                    final String transferCategory = "TRANSFER";
-                                    final String transferCheckNum = "None";
-                                    final String transferMemo = "This is an automatically generated transaction created when you transfer money";
-                                    final String transferCleared = "true";
-                                    String transferType = "Withdraw";
-
-                                    //Check Value to see if it's valid
-                                    try{
-                                        tAmount = Float.parseFloat(transferAmount);
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Accounts-transfer", "Invalid amount? Error e="+e);
-                                        return;
-                                    }
-
-                                    ContentValues transferValues=new ContentValues();
-
-                                    try{
-                                        transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferFromID);
-                                        transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
-                                        transferValues.put(DatabaseHelper.TRANS_NAME, transferName);
-                                        transferValues.put(DatabaseHelper.TRANS_VALUE, tAmount);
-                                        transferValues.put(DatabaseHelper.TRANS_TYPE, transferType);
-                                        transferValues.put(DatabaseHelper.TRANS_CATEGORY, transferCategory);
-                                        transferValues.put(DatabaseHelper.TRANS_CHECKNUM, transferCheckNum);
-                                        transferValues.put(DatabaseHelper.TRANS_MEMO, transferMemo);
-                                        transferValues.put(DatabaseHelper.TRANS_TIME, transferDate.getSQLTime(locale));
-                                        transferValues.put(DatabaseHelper.TRANS_DATE, transferDate.getSQLDate(locale));
-                                        transferValues.put(DatabaseHelper.TRANS_CLEARED, transferCleared);
-
-                                        //Insert values into transaction table
-                                        getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferValues);
-
-                                        //Update Account Info
-                                        ContentValues accountValues=new ContentValues();
-
-                                        Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferFromID), null, null, null, null);
-
-                                        int entry_id = 0;
-                                        String entry_name = null;
-                                        String entry_balance = null;
-                                        String entry_time = null;
-                                        String entry_date = null;
-
-                                        c.moveToFirst();
-                                        do{
-                                            entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
-                                            entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                            entry_balance = Float.parseFloat(c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE)))-tAmount+"";
-                                            entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
-                                            entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
-                                        }while(c.moveToNext());
-
-                                        accountValues.put(DatabaseHelper.ACCOUNT_ID,entry_id);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_NAME,entry_name);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,entry_balance);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_TIME,entry_time);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_DATE,entry_date);
-
-                                        getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferFromID), accountValues,DatabaseHelper.ACCOUNT_ID+"="+transferFromID, null);
-                                        c.close();
-
-                                    } catch(Exception e){
-                                        Log.e("Accounts-transferDialog", "Transfer From failed. Exception e="+e);
-                                        Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-
-                                    //Transfer To
-                                    transferType = "Deposit";
-
-                                    try{
-                                        transferValues.clear();
-                                        transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferToID);
-                                        transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
-                                        transferValues.put(DatabaseHelper.TRANS_NAME, transferName);
-                                        transferValues.put(DatabaseHelper.TRANS_VALUE, tAmount);
-                                        transferValues.put(DatabaseHelper.TRANS_TYPE, transferType);
-                                        transferValues.put(DatabaseHelper.TRANS_CATEGORY, transferCategory);
-                                        transferValues.put(DatabaseHelper.TRANS_CHECKNUM, transferCheckNum);
-                                        transferValues.put(DatabaseHelper.TRANS_MEMO, transferMemo);
-                                        transferValues.put(DatabaseHelper.TRANS_TIME, transferDate.getSQLTime(locale));
-                                        transferValues.put(DatabaseHelper.TRANS_DATE, transferDate.getSQLDate(locale));
-                                        transferValues.put(DatabaseHelper.TRANS_CLEARED, transferCleared);
-
-                                        //Insert values into transaction table
-                                        getActivity().getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transferValues);
-
-                                        //Update Account Info
-                                        ContentValues accountValues=new ContentValues();
-
-                                        Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), null, null, null, null);
-
-                                        int entry_id = 0;
-                                        String entry_name = null;
-                                        String entry_balance = null;
-                                        String entry_time = null;
-                                        String entry_date = null;
-
-                                        c.moveToFirst();
-                                        do{
-                                            entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
-                                            entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                            entry_balance = Float.parseFloat(c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE)))+tAmount+"";
-                                            entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
-                                            entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
-                                        }while(c.moveToNext());
-
-                                        accountValues.put(DatabaseHelper.ACCOUNT_ID,entry_id);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_NAME,entry_name);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE,entry_balance);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_TIME,entry_time);
-                                        accountValues.put(DatabaseHelper.ACCOUNT_DATE,entry_date);
-
-                                        getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+transferToID), accountValues,DatabaseHelper.ACCOUNT_ID+"="+transferToID, null);
-                                        c.close();
-
-                                    } catch(Exception e){
-                                        Log.e("Accounts-transferDialog", "Transfer To failed. Exception e="+e);
-                                        Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-
-                                }//end onClick "OK"
-                            })
-                    .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
-                                    // CODE FOR "Cancel"
-                                    dialog.cancel();
-                                }
-                            });
-
-            return alertDialogBuilder.create();
         }
     }
 
@@ -1106,7 +591,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                     for (int i = 0; i < selected.size(); i++){
                         if (selected.valueAt(i)) {
                             //accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);
-                            DialogFragment newFragment = ViewDialogFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)).id);
+                            DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)).id);
                             newFragment.show(getChildFragmentManager(), "dialogView");
                         }
                     }
@@ -1117,7 +602,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                     for (int i = 0; i < selected.size(); i++){
                         if (selected.valueAt(i)) {
                             //accountEdit(adapterAccounts.getAccount(selected.keyAt(i)));
-                            DialogFragment newFragment = EditDialogFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
+                            DialogFragment newFragment = AccountEditFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
                             newFragment.show(getChildFragmentManager(), "dialogEdit");
                         }
                     }

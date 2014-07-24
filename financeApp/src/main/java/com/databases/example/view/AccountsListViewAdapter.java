@@ -24,15 +24,15 @@ import com.databases.example.data.Money;
 
 import java.util.Locale;
 
-public class AccountsListViewAdapter extends CursorAdapter{
-    public SparseBooleanArray mSelectedItemsIds;
+public class AccountsListViewAdapter extends CursorAdapter {
+    private SparseBooleanArray mSelectedItemsIds;
 
     public AccountsListViewAdapter(Context context, Cursor accounts) {
-        super(context, accounts,0);
+        super(context, accounts, 0);
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public AccountRecord getAccount(long position){
+    public AccountRecord getAccount(long position) {
         final Cursor group = getCursor();
 
         group.moveToPosition((int) position);
@@ -47,13 +47,11 @@ public class AccountsListViewAdapter extends CursorAdapter{
         final String time = group.getString(TimeColumn);
         final String date = group.getString(DateColumn);
 
-        final AccountRecord record = new AccountRecord(id, name, balance, time, date);
-        return record;
+        return new AccountRecord(id, name, balance, time, date);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        View v = view;
         Cursor user = getCursor();
 
         //For Custom View Properties
@@ -61,10 +59,10 @@ public class AccountsListViewAdapter extends CursorAdapter{
         boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
 
         if (user != null) {
-            TextView tvName = (TextView) v.findViewById(R.id.account_name);
-            TextView tvBalance = (TextView) v.findViewById(R.id.account_balance);
-            TextView tvDate = (TextView) v.findViewById(R.id.account_date);
-            TextView tvTime = (TextView) v.findViewById(R.id.account_time);
+            TextView tvName = (TextView) view.findViewById(R.id.account_name);
+            TextView tvBalance = (TextView) view.findViewById(R.id.account_balance);
+            TextView tvDate = (TextView) view.findViewById(R.id.account_date);
+            TextView tvTime = (TextView) view.findViewById(R.id.account_time);
 
             int NameColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_NAME);
             int BalanceColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
@@ -76,40 +74,36 @@ public class AccountsListViewAdapter extends CursorAdapter{
             Money balance = new Money(user.getString(BalanceColumn));
             String time = user.getString(TimeColumn);
             String date = user.getString(DateColumn);
-            Locale locale=context.getResources().getConfiguration().locale;
+            Locale locale = context.getResources().getConfiguration().locale;
 
             //Change gradient
-            try{
+            try {
                 LinearLayout l;
-                l=(LinearLayout)v.findViewById(R.id.account_gradient);
+                l = (LinearLayout) view.findViewById(R.id.account_gradient);
                 //Older color to black gradient (0xFF00FF33,0xFF000000)
                 GradientDrawable defaultGradientPos = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {0xFF4ac925,0xFF4ac925});
+                        new int[]{0xFF4ac925, 0xFF4ac925});
                 GradientDrawable defaultGradientNeg = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {0xFFe00707,0xFFe00707});
+                        new int[]{0xFFe00707, 0xFFe00707});
 
-                if(useDefaults){
-                    if(balance.isPositive(locale)){
+                if (useDefaults) {
+                    if (balance.isPositive(locale)) {
                         l.setBackgroundDrawable(defaultGradientPos);
-                    }
-                    else{
+                    } else {
                         l.setBackgroundDrawable(defaultGradientNeg);
                     }
 
-                }
-                else{
-                    if(balance.isPositive(locale)){
+                } else {
+                    if (balance.isPositive(locale)) {
                         l.setBackgroundDrawable(defaultGradientPos);
-                    }
-                    else{
+                    } else {
                         l.setBackgroundDrawable(defaultGradientNeg);
                     }
                 }
 
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(context, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
             }
 
@@ -117,31 +111,28 @@ public class AccountsListViewAdapter extends CursorAdapter{
                 tvName.setText(name);
             }
 
-            if(balance != null) {
+            if (balance != null) {
                 tvBalance.setText("Balance: " + balance.getNumberFormat(locale));
             }
 
-            if(date != null) {
+            if (date != null) {
                 DateTime d = new DateTime();
                 d.setStringSQL(date);
                 tvDate.setText("Date: " + d.getReadableDate());
             }
 
-            if(time != null) {
+            if (time != null) {
                 DateTime t = new DateTime();
                 t.setStringSQL(time);
                 tvTime.setText("Time: " + t.getReadableTime());
             }
 
-            if(user.getPosition()==Accounts.currentAccount && Accounts.mActionMode==null){
-                v.setBackgroundColor(0x7734B5E4);
-            }
-
-            else if(mSelectedItemsIds.get(user.getPosition())){
-                v.setBackgroundColor(0x9934B5E4);
-            }
-            else{
-                v.setBackgroundColor(Color.TRANSPARENT);
+            if (user.getPosition() == Accounts.currentAccount && Accounts.mActionMode == null) {
+                view.setBackgroundColor(0x7734B5E4);
+            } else if (mSelectedItemsIds.get(user.getPosition())) {
+                view.setBackgroundColor(0x9934B5E4);
+            } else {
+                view.setBackgroundColor(Color.TRANSPARENT);
             }
         }
 
@@ -152,134 +143,121 @@ public class AccountsListViewAdapter extends CursorAdapter{
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.account_item, parent, false);
 
-        TextView tvName = (TextView)v.findViewById(R.id.account_name);
-        TextView tvBalance = (TextView)v.findViewById(R.id.account_balance);
-        TextView tvTime = (TextView)v.findViewById(R.id.account_time);
-        TextView tvDate = (TextView)v.findViewById(R.id.account_date);
+        TextView tvName = (TextView) v.findViewById(R.id.account_name);
+        TextView tvBalance = (TextView) v.findViewById(R.id.account_balance);
+        TextView tvTime = (TextView) v.findViewById(R.id.account_time);
+        TextView tvDate = (TextView) v.findViewById(R.id.account_date);
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
 
         //Change Background Colors
-        try{
-            if(!useDefaults){
+        try {
+            if (!useDefaults) {
                 LinearLayout l;
-                l=(LinearLayout)v.findViewById(R.id.account_layout);
+                l = (LinearLayout) v.findViewById(R.id.account_layout);
                 int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#FFFFFF"));
                 int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {startColor,endColor});
+                        new int[]{startColor, endColor});
                 l.setBackgroundDrawable(defaultGradient);
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
         }
 
         //Change Size of main field
-        try{
+        try {
             String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "24");
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvName.setTextSize(24);
-            }
-            else{
+            } else {
                 tvName.setTextSize(Integer.parseInt(DefaultSize));
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#222222"));
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvName.setTextColor(Color.parseColor("#222222"));
-            }
-            else{
+            } else {
                 tvName.setTextColor(DefaultColor);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_fieldSize), "14");
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvBalance.setTextSize(14);
                 tvDate.setTextSize(14);
                 tvTime.setTextSize(14);
-            }
-            else{
+            } else {
                 tvBalance.setTextSize(Integer.parseInt(DefaultSize));
                 tvDate.setTextSize(Integer.parseInt(DefaultSize));
                 tvTime.setTextSize(Integer.parseInt(DefaultSize));
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#000000"));
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvBalance.setTextColor(Color.parseColor("#000000"));
                 tvDate.setTextColor(Color.parseColor("#000000"));
                 tvTime.setTextColor(Color.parseColor("#000000"));
-            }
-            else{
+            } else {
                 tvBalance.setTextColor(DefaultColor);
                 tvDate.setTextColor(DefaultColor);
                 tvTime.setTextColor(DefaultColor);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
         }
 
         //For User-Defined Field Visibility
-        if(useDefaults||prefs.getBoolean("checkbox_account_nameField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_account_nameField", true)) {
             tvName.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvName.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_account_balanceField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_account_balanceField", true)) {
             tvBalance.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvBalance.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_account_dateField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_account_dateField", true)) {
             tvDate.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvDate.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_account_timeField", false) && !useDefaults){
+        if (prefs.getBoolean("checkbox_account_timeField", false) && !useDefaults) {
             tvTime.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvTime.setVisibility(View.GONE);
         }
 
         return v;
     }
 
-    public void toggleSelection(int position){
+    public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
 
@@ -288,7 +266,7 @@ public class AccountsListViewAdapter extends CursorAdapter{
         notifyDataSetChanged();
     }
 
-    public void selectView(int position, boolean value) {
+    private void selectView(int position, boolean value) {
         if (value)
             mSelectedItemsIds.put(position, value);
         else

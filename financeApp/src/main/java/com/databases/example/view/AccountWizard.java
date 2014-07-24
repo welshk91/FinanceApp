@@ -25,8 +25,8 @@ import com.wizardpager.wizard.ui.StepPagerStrip;
 
 import java.util.Locale;
 
-public class AccountWizard extends WizardDialogFragment{
-    private AbstractWizardModel mWizardModel = new AccountWizardModel(getActivity());
+public class AccountWizard extends WizardDialogFragment {
+    private final AbstractWizardModel mWizardModel = new AccountWizardModel(getActivity());
 
     public static AccountWizard newInstance(Bundle bundle) {
         AccountWizard frag = new AccountWizard();
@@ -39,17 +39,16 @@ public class AccountWizard extends WizardDialogFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(android.os.Build.VERSION.SDK_INT>14){
+        if (android.os.Build.VERSION.SDK_INT > 14) {
             setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_Dialog);
-        }
-        else{
+        } else {
             setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Dialog);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        View myFragmentView = inflater.inflate(R.layout.wizard, null, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View myFragmentView = inflater.inflate(R.layout.wizard, container, false);
 
         ViewPager mPager = (ViewPager) myFragmentView.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(5);
@@ -60,7 +59,7 @@ public class AccountWizard extends WizardDialogFragment{
 
         //Load Data into Wizard
         final Bundle bundle = getArguments();
-        if(bundle!=null){
+        if (bundle != null) {
             mWizardModel.load(bundle);
         }
 
@@ -92,41 +91,39 @@ public class AccountWizard extends WizardDialogFragment{
     @Override
     public void onSubmit() {
         final Bundle bundleInfo = mWizardModel.findByKey("Account Info").getData();
-        final Locale locale=getResources().getConfiguration().locale;
+        final Locale locale = getResources().getConfiguration().locale;
 
-        String balance="";
+        String balance = "";
 
         //Check to see if balance is a number
-        boolean validValue = false;
-        try{
+        boolean validValue;
+        try {
             Money accountBalance = new Money(bundleInfo.getString(AccountWizardInfoPage.BALANCE_DATA_KEY).trim());
-            balance = accountBalance.getBigDecimal(locale)+"";
-            validValue=true;
-        }
-        catch(Exception e){
-            validValue=false;
+            balance = accountBalance.getBigDecimal(locale) + "";
+            validValue = true;
+        } catch (Exception e) {
+            validValue = false;
             Toast.makeText(getActivity(), "Please enter a valid balance", Toast.LENGTH_SHORT).show();
         }
 
-        if(validValue){
+        if (validValue) {
             getDialog().cancel();
 
-            if(getArguments()!=null){
-                ContentValues accountValues=new ContentValues();
+            if (getArguments() != null) {
+                ContentValues accountValues = new ContentValues();
                 accountValues.put(DatabaseHelper.ACCOUNT_ID, bundleInfo.getInt(AccountWizardInfoPage.ID_DATA_KEY));
                 accountValues.put(DatabaseHelper.ACCOUNT_NAME, bundleInfo.getString(AccountWizardInfoPage.NAME_DATA_KEY));
                 accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, balance);
                 accountValues.put(DatabaseHelper.ACCOUNT_TIME, bundleInfo.getString(AccountWizardInfoPage.TIME_DATA_KEY));
                 accountValues.put(DatabaseHelper.ACCOUNT_DATE, bundleInfo.getString(AccountWizardInfoPage.DATE_DATA_KEY));
 
-                getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + bundleInfo.getInt(AccountWizardInfoPage.ID_DATA_KEY)), accountValues, DatabaseHelper.ACCOUNT_ID+"="+bundleInfo.getInt(AccountWizardInfoPage.ID_DATA_KEY), null);
-            }
-            else{
+                getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + bundleInfo.getInt(AccountWizardInfoPage.ID_DATA_KEY)), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + bundleInfo.getInt(AccountWizardInfoPage.ID_DATA_KEY), null);
+            } else {
 
                 //Variables for adding Starting Balance transaction
                 final String transactionName = "STARTING BALANCE";
                 final String transactionPlanId = "0";
-                String transactionValue=balance;
+                String transactionValue = balance;
                 final String transactionCategory = "STARTING BALANCE";
                 final String transactionCheckNum = "None";
                 final String transactionMemo = "This is an automatically generated transaction created when you add an account";
@@ -135,20 +132,18 @@ public class AccountWizard extends WizardDialogFragment{
                 final String transactionCleared = "true";
                 String transactionType = "Unknown";
 
-                try{
-                    if(Float.parseFloat(transactionValue)>0){
+                try {
+                    if (Float.parseFloat(transactionValue) > 0) {
                         transactionType = "Deposit";
-                    }
-                    else{
+                    } else {
                         transactionType = "Withdraw";
-                        transactionValue = (Float.parseFloat(transactionValue)*-1) + "";
+                        transactionValue = (Float.parseFloat(transactionValue) * -1) + "";
                     }
-                }
-                catch(Exception e){
+                } catch (Exception e) {
                     Toast.makeText(getActivity(), "Error\nWas balance a valid format?", Toast.LENGTH_SHORT).show();
                 }
 
-                ContentValues accountValues=new ContentValues();
+                ContentValues accountValues = new ContentValues();
                 accountValues.put(DatabaseHelper.ACCOUNT_NAME, bundleInfo.getString(AccountWizardInfoPage.NAME_DATA_KEY));
                 accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, balance);
                 accountValues.put(DatabaseHelper.ACCOUNT_TIME, bundleInfo.getString(AccountWizardInfoPage.TIME_DATA_KEY));
@@ -156,7 +151,7 @@ public class AccountWizard extends WizardDialogFragment{
 
                 Uri u = getActivity().getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
 
-                ContentValues transactionValues=new ContentValues();
+                ContentValues transactionValues = new ContentValues();
                 transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(u.getLastPathSegment()));
                 transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, transactionPlanId);
                 transactionValues.put(DatabaseHelper.TRANS_NAME, transactionName);

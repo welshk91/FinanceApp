@@ -28,8 +28,8 @@ import com.wizardpager.wizard.ui.StepPagerStrip;
 
 import java.util.Locale;
 
-public class TransactionWizard extends WizardDialogFragment{
-    private AbstractWizardModel mWizardModel = new TransactionWizardModel(getActivity());
+public class TransactionWizard extends WizardDialogFragment {
+    private final AbstractWizardModel mWizardModel = new TransactionWizardModel(getActivity());
 
     public static TransactionWizard newInstance(Bundle bundle) {
         TransactionWizard frag = new TransactionWizard();
@@ -42,18 +42,17 @@ public class TransactionWizard extends WizardDialogFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(android.os.Build.VERSION.SDK_INT>14){
+        if (android.os.Build.VERSION.SDK_INT > 14) {
             setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_Dialog);
-        }
-        else{
+        } else {
             setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Dialog);
         }
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        View myFragmentView = inflater.inflate(R.layout.wizard, null, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View myFragmentView = inflater.inflate(R.layout.wizard, container, false);
 
         ViewPager mPager = (ViewPager) myFragmentView.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(5);
@@ -64,7 +63,7 @@ public class TransactionWizard extends WizardDialogFragment{
 
         //Load Data into Wizard
         final Bundle bundle = getArguments();
-        if(bundle!=null){
+        if (bundle != null) {
             mWizardModel.load(bundle);
         }
 
@@ -97,31 +96,30 @@ public class TransactionWizard extends WizardDialogFragment{
     public void onSubmit() {
         final Bundle bundleInfo = mWizardModel.findByKey("Transaction Info").getData();
         final Bundle bundleOptional = mWizardModel.findByKey("Optional").getData();
-        final Locale locale=getResources().getConfiguration().locale;
+        final Locale locale = getResources().getConfiguration().locale;
 
-        String value="";
+        String value = "";
         final DateTime transactionDate = new DateTime();
         transactionDate.setStringReadable(bundleOptional.getString(TransactionWizardOptionalPage.DATE_DATA_KEY).trim());
         final DateTime transactionTime = new DateTime();
         transactionTime.setStringReadable(bundleOptional.getString(TransactionWizardOptionalPage.TIME_DATA_KEY).trim());
 
         //Check to see if value is a number
-        boolean validValue = false;
-        try{
+        boolean validValue;
+        try {
             Money transactionValue = new Money(bundleInfo.getString(TransactionWizardInfoPage.VALUE_DATA_KEY).trim());
-            value = transactionValue.getBigDecimal(locale)+"";
-            validValue=true;
-        }
-        catch(Exception e){
-            validValue=false;
+            value = transactionValue.getBigDecimal(locale) + "";
+            validValue = true;
+        } catch (Exception e) {
+            validValue = false;
             Toast.makeText(getActivity(), "Please enter a valid value", Toast.LENGTH_SHORT).show();
         }
 
-        if(validValue){
+        if (validValue) {
             getDialog().cancel();
 
-            if(getArguments()!=null){
-                ContentValues transactionValues=new ContentValues();
+            if (getArguments() != null) {
+                ContentValues transactionValues = new ContentValues();
                 transactionValues.put(DatabaseHelper.TRANS_ID, bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY));
                 transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, bundleInfo.getInt(TransactionWizardInfoPage.ACCOUNT_ID_DATA_KEY));
                 transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, bundleInfo.getInt(TransactionWizardInfoPage.PLAN_ID_DATA_KEY));
@@ -135,10 +133,9 @@ public class TransactionWizard extends WizardDialogFragment{
                 transactionValues.put(DatabaseHelper.TRANS_DATE, transactionDate.getSQLDate(locale));
                 transactionValues.put(DatabaseHelper.TRANS_CLEARED, bundleOptional.getString(TransactionWizardOptionalPage.CLEARED_DATA_KEY));
 
-                getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY)), transactionValues, DatabaseHelper.TRANS_ID+"="+bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY), null);
-            }
-            else{
-                ContentValues transactionValues=new ContentValues();
+                getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY)), transactionValues, DatabaseHelper.TRANS_ID + "=" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY), null);
+            } else {
+                ContentValues transactionValues = new ContentValues();
                 transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Transactions.account_id);
                 transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
                 transactionValues.put(DatabaseHelper.TRANS_NAME, bundleInfo.getString(TransactionWizardInfoPage.NAME_DATA_KEY));

@@ -40,18 +40,18 @@ public class TransactionViewFragment extends SherlockDialogFragment {
         int entry_id = 0;
         int entry_acctId = 0;
         int entry_planId = 0;
-        String entry_name = null;
-        String entry_value = null;
-        String entry_type = null;
-        String entry_category = null;
-        String entry_checknum = null;
-        String entry_memo = null;
-        String entry_time = null;
-        String entry_date = null;
-        String entry_cleared = null;
+        String entry_name;
+        String entry_value;
+        String entry_type;
+        String entry_category;
+        String entry_checknum;
+        String entry_memo;
+        String entry_time;
+        String entry_date;
+        String entry_cleared;
 
         c.moveToFirst();
-        do{
+        do {
             entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_ID));
             entry_acctId = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID));
             entry_planId = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID));
@@ -64,7 +64,7 @@ public class TransactionViewFragment extends SherlockDialogFragment {
             entry_time = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_TIME));
             entry_date = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_DATE));
             entry_cleared = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CLEARED));
-        }while(c.moveToNext());
+        } while (c.moveToNext());
 
         final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
         final View transStatsView = li.inflate(R.layout.transaction_item, null);
@@ -72,7 +72,7 @@ public class TransactionViewFragment extends SherlockDialogFragment {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
 
-        final Locale locale=getResources().getConfiguration().locale;
+        final Locale locale = getResources().getConfiguration().locale;
         final Money value = new Money(entry_value);
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
@@ -81,62 +81,58 @@ public class TransactionViewFragment extends SherlockDialogFragment {
         alertDialogBuilder.setCancelable(true);
 
         //Change gradient
-        try{
+        try {
             LinearLayout l;
-            l=(LinearLayout)transStatsView.findViewById(R.id.transaction_gradient);
+            l = (LinearLayout) transStatsView.findViewById(R.id.transaction_gradient);
             GradientDrawable defaultGradientPos = new GradientDrawable(
                     GradientDrawable.Orientation.BOTTOM_TOP,
-                    new int[] {0xFF4ac925,0xFF4ac925});
+                    new int[]{0xFF4ac925, 0xFF4ac925});
 
             GradientDrawable defaultGradientNeg = new GradientDrawable(
                     GradientDrawable.Orientation.BOTTOM_TOP,
-                    new int[] {0xFFe00707,0xFFe00707});
+                    new int[]{0xFFe00707, 0xFFe00707});
 
-            if(useDefaults){
-                if(entry_type.contains("Deposit")){
+            if (useDefaults) {
+                if (entry_type.contains("Deposit")) {
                     l.setBackgroundDrawable(defaultGradientPos);
-                }
-                else{
+                } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
                 }
 
-            }
-            else{
-                if(entry_type.contains("Deposit")){
+            } else {
+                if (entry_type.contains("Deposit")) {
                     l.setBackgroundDrawable(defaultGradientPos);
-                }
-                else{
+                } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
                 }
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
         }
 
         //Set Statistics
-        TextView statsName = (TextView)transStatsView.findViewById(R.id.transaction_name);
+        TextView statsName = (TextView) transStatsView.findViewById(R.id.transaction_name);
         statsName.setText(entry_name);
-        TextView statsValue = (TextView)transStatsView.findViewById(R.id.transaction_value);
+        TextView statsValue = (TextView) transStatsView.findViewById(R.id.transaction_value);
         statsValue.setText("Value: " + value.getNumberFormat(locale));
-        TextView statsType = (TextView)transStatsView.findViewById(R.id.transaction_type);
+        TextView statsType = (TextView) transStatsView.findViewById(R.id.transaction_type);
         statsType.setText("Type: " + entry_type);
-        TextView statsCategory = (TextView)transStatsView.findViewById(R.id.transaction_category);
+        TextView statsCategory = (TextView) transStatsView.findViewById(R.id.transaction_category);
         statsCategory.setText("Category: " + entry_category);
-        TextView statsCheckNum = (TextView)transStatsView.findViewById(R.id.transaction_checknum);
+        TextView statsCheckNum = (TextView) transStatsView.findViewById(R.id.transaction_checknum);
         statsCheckNum.setText("Check Num: " + entry_checknum);
-        TextView statsMemo = (TextView)transStatsView.findViewById(R.id.transaction_memo);
+        TextView statsMemo = (TextView) transStatsView.findViewById(R.id.transaction_memo);
         statsMemo.setText("Memo: " + entry_memo);
         DateTime d = new DateTime();
         d.setStringSQL(entry_date);
-        TextView statsDate = (TextView)transStatsView.findViewById(R.id.transaction_date);
+        TextView statsDate = (TextView) transStatsView.findViewById(R.id.transaction_date);
         statsDate.setText("Date: " + d.getReadableDate());
         DateTime t = new DateTime();
         t.setStringSQL(entry_time);
-        TextView statsTime = (TextView)transStatsView.findViewById(R.id.transaction_time);
+        TextView statsTime = (TextView) transStatsView.findViewById(R.id.transaction_time);
         statsTime.setText("Time: " + t.getReadableTime());
-        TextView statsCleared = (TextView)transStatsView.findViewById(R.id.transaction_cleared);
+        TextView statsCleared = (TextView) transStatsView.findViewById(R.id.transaction_cleared);
         statsCleared.setText("Cleared: " + entry_cleared);
 
         //c.close();

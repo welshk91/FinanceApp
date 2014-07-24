@@ -27,7 +27,6 @@ import java.util.Locale;
 
 //Class that handles transfers fragment
 public class AccountTransferFragment extends SherlockDialogFragment {
-    private Cursor accountCursor = null;
     private Spinner transferSpinnerTo;
     private Spinner transferSpinnerFrom;
     private SimpleCursorAdapter transferSpinnerAdapterFrom = null;
@@ -71,10 +70,10 @@ public class AccountTransferFragment extends SherlockDialogFragment {
                                 Cursor cursorAccount2 = (Cursor) transferSpinnerAdapterTo.getItem(accountPosition2);
 
                                 String transferAmount = tAmount.getText().toString().trim();
-                                String transferFrom = null;
-                                String transferTo = null;
-                                String transferToID = null;
-                                String transferFromID = null;
+                                String transferFrom;
+                                String transferTo;
+                                String transferToID;
+                                String transferFromID;
 
                                 try {
                                     transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
@@ -136,11 +135,11 @@ public class AccountTransferFragment extends SherlockDialogFragment {
 
                                     Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + transferFromID), null, null, null, null);
 
-                                    int entry_id = 0;
-                                    String entry_name = null;
-                                    String entry_balance = null;
-                                    String entry_time = null;
-                                    String entry_date = null;
+                                    int entry_id;
+                                    String entry_name;
+                                    String entry_balance;
+                                    String entry_time;
+                                    String entry_date;
 
                                     c.moveToFirst();
                                     do {
@@ -191,11 +190,11 @@ public class AccountTransferFragment extends SherlockDialogFragment {
 
                                     Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + transferToID), null, null, null, null);
 
-                                    int entry_id = 0;
-                                    String entry_name = null;
-                                    String entry_balance = null;
-                                    String entry_time = null;
-                                    String entry_date = null;
+                                    int entry_id;
+                                    String entry_name;
+                                    String entry_balance;
+                                    String entry_time;
+                                    String entry_date;
 
                                     c.moveToFirst();
                                     do {
@@ -218,7 +217,6 @@ public class AccountTransferFragment extends SherlockDialogFragment {
                                 } catch (Exception e) {
                                     Log.e("Accounts-transferDialog", "Transfer To failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
-                                    return;
                                 }
 
                             }//end onClick "OK"
@@ -237,11 +235,11 @@ public class AccountTransferFragment extends SherlockDialogFragment {
     }
 
     //Method to get the list of accounts for transfer spinner
-    public void accountPopulate() {
+    private void accountPopulate() {
         String[] from = new String[]{DatabaseHelper.ACCOUNT_NAME};
         int[] to = new int[]{android.R.id.text1};
 
-        accountCursor = Accounts.adapterAccounts.getCursor();
+        Cursor accountCursor = Accounts.adapterAccounts.getCursor();
 
         transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to, 0);
         transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

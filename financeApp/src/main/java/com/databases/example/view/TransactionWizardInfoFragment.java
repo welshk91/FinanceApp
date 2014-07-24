@@ -42,7 +42,7 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
         return fragment;
     }
 
-    public TransactionWizardInfoFragment() {
+    private TransactionWizardInfoFragment() {
     }
 
     @Override
@@ -68,10 +68,9 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
         mValueView.setText(mPage.getData().getString(TransactionWizardInfoPage.VALUE_DATA_KEY));
 
         mTypeView = (Spinner) rootView.findViewById(R.id.spinner_transaction_type);
-        if(mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY)==null || mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY).equals("Withdraw")){
+        if (mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY) == null || mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY).equals("Withdraw")) {
             mTypeView.setSelection(0);
-        }
-        else{
+        } else {
             mTypeView.setSelection(1);
         }
 
@@ -83,7 +82,7 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
         String catName;
         Cursor cursor;
 
-        if(category!=null){
+        if (category != null) {
             for (int i = 0; i < count; i++) {
                 cursor = (Cursor) mCategoryView.getItemAtPosition(i);
                 catName = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
@@ -103,8 +102,7 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
 
         if (!(activity instanceof PageFragmentCallbacks)) {
             mCallbacks = (PageFragmentCallbacks) getParentFragment();
-        }
-        else{
+        } else {
             mCallbacks = (PageFragmentCallbacks) activity;
         }
     }
@@ -159,9 +157,10 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Object item = parent.getItemAtPosition(pos);
-                mPage.getData().putString(TransactionWizardInfoPage.TYPE_DATA_KEY,item.toString());
+                mPage.getData().putString(TransactionWizardInfoPage.TYPE_DATA_KEY, item.toString());
                 mPage.notifyDataChanged();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -173,9 +172,10 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
                 Cursor cursor = (Cursor) Transactions.adapterCategory.getItem(pos);
                 String category = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 
-                mPage.getData().putString(TransactionWizardInfoPage.CATEGORY_DATA_KEY,category);
+                mPage.getData().putString(TransactionWizardInfoPage.CATEGORY_DATA_KEY, category);
                 mPage.notifyDataChanged();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }

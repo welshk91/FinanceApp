@@ -25,11 +25,9 @@ public class AccountWizardInfoFragment extends SherlockFragment {
     private static final String ARG_KEY = "account_info_key";
 
     private PageFragmentCallbacks mCallbacks;
-    private String mKey;
     private AccountWizardInfoPage mPage;
     private EditText mNameView;
     private EditText mBalanceView;
-    private Bundle args;
 
     public static AccountWizardInfoFragment create(String key) {
         Bundle bundle = new Bundle();
@@ -40,15 +38,15 @@ public class AccountWizardInfoFragment extends SherlockFragment {
         return fragment;
     }
 
-    public AccountWizardInfoFragment() {
+    private AccountWizardInfoFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        args = getArguments();
-        mKey = args.getString(ARG_KEY);
+        Bundle args = getArguments();
+        String mKey = args.getString(ARG_KEY);
         mPage = (AccountWizardInfoPage) mCallbacks.onGetPage(mKey);
     }
 
@@ -69,8 +67,7 @@ public class AccountWizardInfoFragment extends SherlockFragment {
             mBalanceView.setVisibility(View.VISIBLE);
             TextView balanceLabel = (TextView) rootView.findViewById(R.id.label_balance);
             balanceLabel.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             mBalanceView.setVisibility(View.GONE);
             TextView balanceLabel = (TextView) rootView.findViewById(R.id.label_balance);
             balanceLabel.setVisibility(View.GONE);

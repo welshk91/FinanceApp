@@ -24,7 +24,7 @@ import com.databases.example.data.MyContentProvider;
 import java.util.Locale;
 
 //Class that handles view fragment
-public class AccountViewFragment extends SherlockDialogFragment{
+public class AccountViewFragment extends SherlockDialogFragment {
 
     public static AccountViewFragment newInstance(String id) {
         AccountViewFragment frag = new AccountViewFragment();
@@ -40,19 +40,19 @@ public class AccountViewFragment extends SherlockDialogFragment{
         final Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (ID)), null, null, null, null);
 
         int entry_id = 0;
-        String entry_name = null;
-        String entry_balance = null;
-        String entry_time = null;
-        String entry_date = null;
+        String entry_name;
+        String entry_balance;
+        String entry_time;
+        String entry_date;
 
         c.moveToFirst();
-        do{
+        do {
             entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
             entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
             entry_balance = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE));
             entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
             entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
-        }while(c.moveToNext());
+        } while (c.moveToNext());
 
         final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
         final View accountStatsView = li.inflate(R.layout.account_item, null);
@@ -60,7 +60,7 @@ public class AccountViewFragment extends SherlockDialogFragment{
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
 
-        final Locale locale=getResources().getConfiguration().locale;
+        final Locale locale = getResources().getConfiguration().locale;
         final Money balance = new Money(entry_balance);
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
@@ -70,52 +70,48 @@ public class AccountViewFragment extends SherlockDialogFragment{
         alertDialogBuilder.setCancelable(true);
 
         //Change gradient
-        try{
+        try {
             LinearLayout l;
-            l=(LinearLayout)accountStatsView.findViewById(R.id.account_gradient);
+            l = (LinearLayout) accountStatsView.findViewById(R.id.account_gradient);
             //Older color to black gradient (0xFF00FF33,0xFF000000)
             GradientDrawable defaultGradientPos = new GradientDrawable(
                     GradientDrawable.Orientation.BOTTOM_TOP,
-                    new int[] {0xFF4ac925,0xFF4ac925});
+                    new int[]{0xFF4ac925, 0xFF4ac925});
             GradientDrawable defaultGradientNeg = new GradientDrawable(
                     GradientDrawable.Orientation.BOTTOM_TOP,
-                    new int[] {0xFFe00707,0xFFe00707});
+                    new int[]{0xFFe00707, 0xFFe00707});
 
-            if(useDefaults){
-                if(balance.isPositive(locale)){
+            if (useDefaults) {
+                if (balance.isPositive(locale)) {
                     l.setBackgroundDrawable(defaultGradientPos);
-                }
-                else{
+                } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
                 }
 
-            }
-            else{
-                if(balance.isPositive(locale)){
+            } else {
+                if (balance.isPositive(locale)) {
                     l.setBackgroundDrawable(defaultGradientPos);
-                }
-                else{
+                } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
                 }
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getActivity(), "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
         }
 
         //Set Statistics
-        TextView statsName = (TextView)accountStatsView.findViewById(R.id.account_name);
+        TextView statsName = (TextView) accountStatsView.findViewById(R.id.account_name);
         statsName.setText(entry_name);
-        TextView statsValue = (TextView)accountStatsView.findViewById(R.id.account_balance);
+        TextView statsValue = (TextView) accountStatsView.findViewById(R.id.account_balance);
         statsValue.setText("Balance: " + balance.getNumberFormat(locale));
         DateTime d = new DateTime();
         d.setStringSQL(entry_date);
-        TextView statsDate = (TextView)accountStatsView.findViewById(R.id.account_date);
+        TextView statsDate = (TextView) accountStatsView.findViewById(R.id.account_date);
         statsDate.setText("Date: " + d.getReadableDate());
         DateTime t = new DateTime();
         t.setStringSQL(entry_time);
-        TextView statsTime = (TextView)accountStatsView.findViewById(R.id.account_time);
+        TextView statsTime = (TextView) accountStatsView.findViewById(R.id.account_time);
         statsTime.setText("Time: " + t.getReadableTime());
 
         c.close();

@@ -31,7 +31,6 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
     private static final String ARG_KEY = "transaction_optional_key";
 
     private PageFragmentCallbacks mCallbacks;
-    private String mKey;
     public static TransactionWizardOptionalPage mPage;
     private EditText mCheckNumView;
     private AutoCompleteTextView mMemoView;
@@ -46,7 +45,7 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
         return fragment;
     }
 
-    public TransactionWizardOptionalFragment() {
+    private TransactionWizardOptionalFragment() {
     }
 
     @Override
@@ -54,7 +53,7 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
         super.onCreate(savedInstanceState);
 
         Bundle args = getArguments();
-        mKey = args.getString(ARG_KEY);
+        String mKey = args.getString(ARG_KEY);
         mPage = (TransactionWizardOptionalPage) mCallbacks.onGetPage(mKey);
     }
 
@@ -81,22 +80,21 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
         TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
         mMemoView.setKeyListener(input);
 
-        Transactions.tTime = (Button)rootView.findViewById(R.id.transaction_time);
-        Transactions.tDate = (Button)rootView.findViewById(R.id.transaction_date);
+        Transactions.tTime = (Button) rootView.findViewById(R.id.transaction_time);
+        Transactions.tDate = (Button) rootView.findViewById(R.id.transaction_date);
 
-        if(data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY)!=null && data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY).length()>0){
+        if (data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY) != null && data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY).length() > 0) {
             final DateTime date = new DateTime();
             date.setStringSQL(data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY));
             Transactions.tDate.setText(date.getReadableDate());
             mPage.getData().putString(TransactionWizardOptionalPage.DATE_DATA_KEY, date.getReadableDate());
         }
-        if(data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY)!=null && data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY).length()>0){
+        if (data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY) != null && data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY).length() > 0) {
             final DateTime time = new DateTime();
             time.setStringSQL(data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY));
             Transactions.tTime.setText(time.getReadableTime());
             mPage.getData().putString(TransactionWizardOptionalPage.TIME_DATA_KEY, time.getReadableTime());
-        }
-        else if(data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY)==null && data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY)==null){
+        } else if (data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY) == null && data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY) == null) {
             final Calendar c = Calendar.getInstance();
             final DateTime date = new DateTime();
             date.setCalendar(c);
@@ -108,10 +106,9 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
         }
 
         mClearedView = (CheckBox) rootView.findViewById(R.id.transaction_cleared);
-        if(mPage.getData().getString(TransactionWizardOptionalPage.CLEARED_DATA_KEY)!=null){
+        if (mPage.getData().getString(TransactionWizardOptionalPage.CLEARED_DATA_KEY) != null) {
             mClearedView.setChecked(Boolean.parseBoolean(mPage.getData().getString(TransactionWizardOptionalPage.CLEARED_DATA_KEY)));
-        }
-        else{
+        } else {
             mClearedView.setChecked(true);
             mPage.getData().putString(TransactionWizardOptionalPage.CLEARED_DATA_KEY, "true");
         }
@@ -125,8 +122,7 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
 
         if (!(activity instanceof PageFragmentCallbacks)) {
             mCallbacks = (PageFragmentCallbacks) getParentFragment();
-        }
-        else{
+        } else {
             mCallbacks = (PageFragmentCallbacks) activity;
         }
     }
@@ -183,9 +179,7 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
                                          boolean isChecked) {
                 if (mClearedView.isChecked()) {
                     mPage.getData().putString(TransactionWizardOptionalPage.CLEARED_DATA_KEY, "true");
-                }
-                else
-                {
+                } else {
                     mPage.getData().putString(TransactionWizardOptionalPage.CLEARED_DATA_KEY, "false");
                 }
 

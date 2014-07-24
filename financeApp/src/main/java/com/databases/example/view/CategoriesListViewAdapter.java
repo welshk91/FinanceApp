@@ -24,16 +24,16 @@ import java.util.ArrayList;
 
 public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
     private Cursor category;
-    private ArrayList<Cursor> subcategory;
-    private Context context;
+    private final ArrayList<Cursor> subcategory;
+    private final Context context;
 
     public CategoriesListViewAdapter(Context context, int textViewResourceId, Cursor cats, ArrayList<Cursor> subcats) {
         this.context = context;
-        this.subcategory=subcats;
+        this.subcategory = subcats;
     }
 
     //My method for getting a Category Record at a certain position
-    public CategoryRecord getCategory(long id){
+    public CategoryRecord getCategory(long id) {
         Cursor group = category;
 
         group.moveToPosition((int) id);
@@ -44,12 +44,11 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         String itemName = group.getString(NameColumn);
         String itemNote = group.getString(NoteColumn);
 
-        CategoryRecord record = new CategoryRecord(itemId, itemName, itemNote);
-        return record;
+        return new CategoryRecord(itemId, itemName, itemNote);
     }
 
     //My method for getting a Category Record at a certain position
-    public SubCategoryRecord getSubCategory(int groupId, int childId){
+    public SubCategoryRecord getSubCategory(int groupId, int childId) {
         Cursor group = subcategory.get(groupId);
 
         group.moveToPosition(childId);
@@ -63,10 +62,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         String itemSubname = group.getString(NameColumn);
         String itemNote = group.getString(NoteColumn);
 
-        SubCategoryRecord record = new SubCategoryRecord(itemId, itemTo_id, itemSubname, itemNote);
-        //group.close();
-
-        return record;
+        return new SubCategoryRecord(itemId, itemTo_id, itemSubname, itemNote);
     }
 
     @Override
@@ -81,66 +77,60 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_category", true);
 
         if (v == null) {
-            LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.category_item, null);
+            LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = vi.inflate(R.layout.category_item, parent);
 
             viewHolder = new CategoryViewHolder();
             viewHolder.tvName = (TextView) v.findViewById(R.id.category_name);
             viewHolder.tvNote = (TextView) v.findViewById(R.id.category_note);
 
             v.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (CategoryViewHolder) v.getTag();
         }
 
         //Change Background Colors
-        try{
-            if(!useDefaults){
+        try {
+            if (!useDefaults) {
                 LinearLayout l;
-                l=(LinearLayout)v.findViewById(R.id.category_layout);
+                l = (LinearLayout) v.findViewById(R.id.category_layout);
                 int startColor = prefs.getInt("key_category_startBackgroundColor", Color.parseColor("#FFFFFF"));
                 int endColor = prefs.getInt("key_category_endBackgroundColor", Color.parseColor("#FFFFFF"));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {startColor,endColor});
+                        new int[]{startColor, endColor});
                 l.setBackgroundDrawable(defaultGradient);
             }
 
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
         }
 
         //Change Size/Color of main field
-        try{
+        try {
             String DefaultSize = prefs.getString(context.getString(R.string.pref_key_category_nameSize), "24");
 
-            if(useDefaults){
+            if (useDefaults) {
                 viewHolder.tvName.setTextSize(24);
-            }
-            else{
+            } else {
                 viewHolder.tvName.setTextSize(Integer.parseInt(DefaultSize));
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             int DefaultColor = prefs.getInt("key_category_nameColor", Color.parseColor("#222222"));
 
-            if(useDefaults){
+            if (useDefaults) {
                 viewHolder.tvName.setTextColor(Color.parseColor("#222222"));
-            }
-            else{
+            } else {
                 viewHolder.tvName.setTextColor(DefaultColor);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
@@ -154,19 +144,17 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         //Log.d("getGroupView", "Found Category: " + itemName);
 
         //For User-Defined Field Visibility
-        if(useDefaults||prefs.getBoolean("checkbox_category_nameField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_category_nameField", true)) {
             viewHolder.tvName.setVisibility(View.VISIBLE);
             viewHolder.tvName.setText(itemName);
-        }
-        else{
+        } else {
             viewHolder.tvName.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_category_noteField", false) && !useDefaults && itemNote!=null){
+        if (prefs.getBoolean("checkbox_category_noteField", false) && !useDefaults && itemNote != null) {
             viewHolder.tvNote.setVisibility(View.VISIBLE);
             viewHolder.tvNote.setText(itemNote);
-        }
-        else{
+        } else {
             viewHolder.tvNote.setVisibility(View.GONE);
         }
 
@@ -205,65 +193,58 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_subcategory", true);
 
         if (v == null) {
-            LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.subcategory_item, null);
+            LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = vi.inflate(R.layout.subcategory_item, parent);
 
             viewHolder = new SubCategoryViewHolder();
             viewHolder.tvName = (TextView) v.findViewById(R.id.subcategory_name);
             viewHolder.tvNote = (TextView) v.findViewById(R.id.subcategory_note);
             viewHolder.tvCategory = (TextView) v.findViewById(R.id.subcategory_parent);
             v.setTag(viewHolder);
-        }
-
-        else {
+        } else {
             viewHolder = (SubCategoryViewHolder) v.getTag();
         }
 
         //Change Background Colors
-        try{
-            if(!useDefaults){
+        try {
+            if (!useDefaults) {
                 LinearLayout l;
-                l=(LinearLayout)v.findViewById(R.id.subcategory_item_layout);
+                l = (LinearLayout) v.findViewById(R.id.subcategory_item_layout);
                 int startColor = prefs.getInt("key_subcategory_startBackgroundColor", Color.parseColor("#FFFFFF"));
                 int endColor = prefs.getInt("key_subcategory_endBackgroundColor", Color.parseColor("#FFFFFF"));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {startColor,endColor});
+                        new int[]{startColor, endColor});
                 l.setBackgroundDrawable(defaultGradient);
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
         }
 
         //Change Size/color of main field
-        try{
+        try {
             String DefaultSize = prefs.getString(context.getString(R.string.pref_key_subcategory_nameSize), "24");
 
-            if(useDefaults){
+            if (useDefaults) {
                 viewHolder.tvName.setTextSize(24);
-            }
-            else{
+            } else {
                 viewHolder.tvName.setTextSize(Integer.parseInt(DefaultSize));
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             int DefaultColor = prefs.getInt("key_subcategory_nameColor", Color.parseColor("#000000"));
 
-            if(useDefaults){
+            if (useDefaults) {
                 viewHolder.tvName.setTextColor(Color.parseColor("#000000"));
-            }
-            else{
+            } else {
                 viewHolder.tvName.setTextColor(DefaultColor);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
@@ -278,18 +259,16 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         String itemNote = user.getString(NoteColumn);
         //Log.d("getChildView", "Found SubCategory: " + itemSubname);
 
-        if(useDefaults||prefs.getBoolean("checkbox_subcategory_nameField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_subcategory_nameField", true)) {
             viewHolder.tvName.setVisibility(View.VISIBLE);
             viewHolder.tvName.setText(itemSubname);
-        }
-        else{
+        } else {
             viewHolder.tvName.setVisibility(View.GONE);
         }
-        if(prefs.getBoolean("checkbox_subcategory_noteField", false) && !useDefaults && itemNote!=null){
+        if (prefs.getBoolean("checkbox_subcategory_noteField", false) && !useDefaults && itemNote != null) {
             viewHolder.tvNote.setVisibility(View.VISIBLE);
             viewHolder.tvNote.setText(itemNote);
-        }
-        else{
+        } else {
             viewHolder.tvNote.setVisibility(View.GONE);
         }
 
@@ -311,7 +290,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        if(category==null){
+        if (category == null) {
             return 0;
         }
 
@@ -335,12 +314,12 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void swapCategoryCursor(Cursor data){
-        category=data;
+    public void swapCategoryCursor(Cursor data) {
+        category = data;
         notifyDataSetChanged();
     }
 
-    public void swapSubCategoryCursor(Cursor data){
+    public void swapSubCategoryCursor(Cursor data) {
         Log.e("Categories-swapSubCategoryCursor", "Cursor data=" + data + " data size=" + data.getCount());
         subcategory.add(data);
     }
@@ -348,13 +327,13 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 }
 
 //ViewHolder for Categories
-class CategoryViewHolder{
+class CategoryViewHolder {
     TextView tvName;
     TextView tvNote;
 }
 
 //ViewHolder for SubCategories
-class SubCategoryViewHolder{
+class SubCategoryViewHolder {
     TextView tvName;
     TextView tvCategory;
     TextView tvNote;

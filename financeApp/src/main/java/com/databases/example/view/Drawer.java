@@ -26,23 +26,21 @@ import com.databases.example.app.Options;
 import com.databases.example.app.Plans;
 
 //An Object Class used to handle the NavigationDrawer
-public class Drawer extends SherlockFragmentActivity{
-    private Context context;
-    private DrawerLayout drawerLayout;
-    private ListView drawerListView;
-    private String[] drawerItems;
+public class Drawer extends SherlockFragmentActivity {
+    private final Context context;
+    private final DrawerLayout drawerLayout;
+    private final ListView drawerListView;
 
-    private static MyAdapter adapterDrawer = null;
-    private ActionBarDrawerToggle drawerToggle;
+    private final ActionBarDrawerToggle drawerToggle;
 
     public Drawer(final Context context) {
-        this.context=context;
+        this.context = context;
         drawerLayout = (DrawerLayout) ((SherlockFragmentActivity) context).findViewById(R.id.drawer_layout);
         drawerListView = (ListView) ((SherlockFragmentActivity) context).findViewById(R.id.drawer);
 
-        drawerItems = context.getResources().getStringArray(R.array.drawer_items);
+        String[] drawerItems = context.getResources().getStringArray(R.array.drawer_items);
 
-        adapterDrawer = new MyAdapter(context, drawerItems);
+        MyAdapter adapterDrawer = new MyAdapter(context, drawerItems);
         drawerListView.setAdapter(adapterDrawer);
         drawerListView.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -83,7 +81,7 @@ public class Drawer extends SherlockFragmentActivity{
                     Log.d("SliderMenu", "Home Listener Fired");
                     Drawer.this.toggle();
                     Intent intentHome = new Intent(context, Main.class);
-                    intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentHome);
                     break;
 
@@ -91,7 +89,7 @@ public class Drawer extends SherlockFragmentActivity{
                     Log.d("SliderMenu", "Checkbook Listener Fired");
                     Drawer.this.toggle();
                     Intent intentCheckbook = new Intent(context, Checkbook.class);
-                    intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentCheckbook);
                     break;
 
@@ -99,7 +97,7 @@ public class Drawer extends SherlockFragmentActivity{
                     Log.d("SliderMenu", "Categories Listener Fired");
                     Drawer.this.toggle();
                     Intent intentCategories = new Intent(context, Categories.class);
-                    intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentCategories);
                     break;
 
@@ -107,7 +105,7 @@ public class Drawer extends SherlockFragmentActivity{
                     Log.d("SliderMenu", "Plans Listener Fired");
                     Drawer.this.toggle();
                     Intent intentPlans = new Intent(context, Plans.class);
-                    intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentPlans);
                     break;
 
@@ -144,7 +142,7 @@ public class Drawer extends SherlockFragmentActivity{
         }
     }
 
-    public ActionBarDrawerToggle getDrawerToggle(){
+    public ActionBarDrawerToggle getDrawerToggle() {
         return drawerToggle;
     }
 
@@ -163,9 +161,9 @@ public class Drawer extends SherlockFragmentActivity{
     }
 
     //ArrayAdapter with a custom getView
-    public class MyAdapter  extends ArrayAdapter<String> {
-        Context context;
-        private String[] names;
+    public class MyAdapter extends ArrayAdapter<String> {
+        final Context context;
+        private final String[] names;
 
         public MyAdapter(Context context, String[] drawerItems) {
             super(context, R.layout.drawer_item, drawerItems);
@@ -174,7 +172,7 @@ public class Drawer extends SherlockFragmentActivity{
         }
 
         @Override
-        public int getViewTypeCount(){
+        public int getViewTypeCount() {
             return 2;
         }
 
@@ -188,7 +186,7 @@ public class Drawer extends SherlockFragmentActivity{
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.drawer_item, parent, false);
 
-            TextView itemName = (TextView)rowView.findViewById(R.id.drawer_item_name);
+            TextView itemName = (TextView) rowView.findViewById(R.id.drawer_item_name);
             itemName.setText(names[position]);
 
             switch (position) {

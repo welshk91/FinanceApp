@@ -40,7 +40,7 @@ public class CategoryAddFragment extends SherlockDialogFragment {
         String itemID = "0";
         CategoryRecord catRecord;
 
-        if(!this.getArguments().isEmpty()){
+        if (!this.getArguments().isEmpty()) {
             isCategory = false;
             int groupPos = getArguments().getInt("group");
             int childPos = getArguments().getInt("child");
@@ -55,56 +55,54 @@ public class CategoryAddFragment extends SherlockDialogFragment {
         LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View categoryAddView = li.inflate(R.layout.category_add, null);
 
-        final EditText editName = (EditText)categoryAddView.findViewById(R.id.EditCategoryName);
-        final EditText editNote = (EditText)categoryAddView.findViewById(R.id.EditCategoryNote);
+        final EditText editName = (EditText) categoryAddView.findViewById(R.id.EditCategoryName);
+        final EditText editNote = (EditText) categoryAddView.findViewById(R.id.EditCategoryNote);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
         alertDialogBuilder.setView(categoryAddView);
 
         //Set title
-        if(isCat){
+        if (isCat) {
             alertDialogBuilder.setTitle("Create A Category");
-        }
-        else{
+        } else {
             alertDialogBuilder.setTitle("Create A SubCategory");
         }
 
         //Set dialog message
         alertDialogBuilder
                 .setCancelable(true)
-                .setPositiveButton("Add",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         String name = editName.getText().toString().trim();
                         String note = editNote.getText().toString().trim();
 
-                        try{
+                        try {
                             //Add a category
-                            if(isCat){
-                                ContentValues categoryValues=new ContentValues();
-                                categoryValues.put(DatabaseHelper.CATEGORY_NAME,name);
-                                categoryValues.put(DatabaseHelper.CATEGORY_NOTE,note);
+                            if (isCat) {
+                                ContentValues categoryValues = new ContentValues();
+                                categoryValues.put(DatabaseHelper.CATEGORY_NAME, name);
+                                categoryValues.put(DatabaseHelper.CATEGORY_NOTE, note);
                                 getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-                                ((Categories) getActivity()).getSupportLoaderManager().restartLoader(Categories.CATEGORIES_LOADER, null, (Categories) getActivity());
+                                getActivity().getSupportLoaderManager().restartLoader(Categories.CATEGORIES_LOADER, null, (Categories) getActivity());
                             }
                             //Add a subcategory
-                            else{
-                                ContentValues subcategoryValues=new ContentValues();
-                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID,catID);
-                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME,name);
-                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE,note);
+                            else {
+                                ContentValues subcategoryValues = new ContentValues();
+                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, catID);
+                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, name);
+                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, note);
                                 getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
                                 ((Categories) getActivity()).subcategoryPopulate(catID);
 
                             }
 
-                        }
-                        catch(Exception e){
+                        } catch (Exception e) {
                             Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
                         }
                     }
                 })
-                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });

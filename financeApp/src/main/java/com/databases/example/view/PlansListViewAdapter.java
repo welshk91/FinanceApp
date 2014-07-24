@@ -23,15 +23,15 @@ import com.databases.example.data.PlanRecord;
 
 import java.util.Locale;
 
-public class PlansListViewAdapter extends CursorAdapter{
-    public SparseBooleanArray mSelectedItemsIds;
+public class PlansListViewAdapter extends CursorAdapter {
+    private SparseBooleanArray mSelectedItemsIds;
 
     public PlansListViewAdapter(Context context, Cursor plans) {
-        super(context, plans,0);
+        super(context, plans, 0);
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public PlanRecord getPlan(long position){
+    public PlanRecord getPlan(long position) {
         final Cursor group = getCursor();
 
         group.moveToPosition((int) position);
@@ -61,13 +61,11 @@ public class PlansListViewAdapter extends CursorAdapter{
         final String scheduled = group.getString(columnScheduled);
         final String cleared = group.getString(columnCleared);
 
-        final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
-        return record;
+        return new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        View v = view;
         Cursor user = getCursor();
 
         //For Custom View Properties
@@ -75,17 +73,17 @@ public class PlansListViewAdapter extends CursorAdapter{
         boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
 
         if (user != null) {
-            TextView tvName = (TextView) v.findViewById(R.id.plan_name);
-            TextView tvAccount = (TextView) v.findViewById(R.id.plan_account);
-            TextView tvValue = (TextView) v.findViewById(R.id.plan_value);
-            TextView tvType = (TextView) v.findViewById(R.id.plan_type);
-            TextView tvCategory = (TextView) v.findViewById(R.id.plan_category);
-            TextView tvMemo = (TextView) v.findViewById(R.id.plan_memo);
-            TextView tvOffset = (TextView) v.findViewById(R.id.plan_offset);
-            TextView tvRate = (TextView) v.findViewById(R.id.plan_rate);
-            TextView tvNext = (TextView) v.findViewById(R.id.plan_next);
-            TextView tvScheduled = (TextView) v.findViewById(R.id.plan_scheduled);
-            TextView tvCleared = (TextView) v.findViewById(R.id.plan_cleared);
+            TextView tvName = (TextView) view.findViewById(R.id.plan_name);
+            TextView tvAccount = (TextView) view.findViewById(R.id.plan_account);
+            TextView tvValue = (TextView) view.findViewById(R.id.plan_value);
+            TextView tvType = (TextView) view.findViewById(R.id.plan_type);
+            TextView tvCategory = (TextView) view.findViewById(R.id.plan_category);
+            TextView tvMemo = (TextView) view.findViewById(R.id.plan_memo);
+            TextView tvOffset = (TextView) view.findViewById(R.id.plan_offset);
+            TextView tvRate = (TextView) view.findViewById(R.id.plan_rate);
+            TextView tvNext = (TextView) view.findViewById(R.id.plan_next);
+            TextView tvScheduled = (TextView) view.findViewById(R.id.plan_scheduled);
+            TextView tvCleared = (TextView) view.findViewById(R.id.plan_cleared);
 
             final int columnID = user.getColumnIndex(DatabaseHelper.PLAN_ID);
             final int columnToID = user.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
@@ -113,40 +111,36 @@ public class PlansListViewAdapter extends CursorAdapter{
             String scheduled = user.getString(columnScheduled);
             String cleared = user.getString(columnCleared);
 
-            Locale locale=context.getResources().getConfiguration().locale;
+            Locale locale = context.getResources().getConfiguration().locale;
 
             //Change gradient
-            try{
+            try {
                 LinearLayout l;
-                l=(LinearLayout)v.findViewById(R.id.plan_gradient);
+                l = (LinearLayout) view.findViewById(R.id.plan_gradient);
                 GradientDrawable defaultGradientPos = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {0xFF4ac925,0xFF4ac925});
+                        new int[]{0xFF4ac925, 0xFF4ac925});
 
                 GradientDrawable defaultGradientNeg = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {0xFFe00707,0xFFe00707});
+                        new int[]{0xFFe00707, 0xFFe00707});
 
-                if(useDefaults){
-                    if(type.contains("Deposit")){
+                if (useDefaults) {
+                    if (type.contains("Deposit")) {
                         l.setBackgroundDrawable(defaultGradientPos);
-                    }
-                    else{
+                    } else {
                         l.setBackgroundDrawable(defaultGradientNeg);
                     }
 
-                }
-                else{
-                    if(type.contains("Deposit")){
+                } else {
+                    if (type.contains("Deposit")) {
                         l.setBackgroundDrawable(defaultGradientPos);
-                    }
-                    else{
+                    } else {
                         l.setBackgroundDrawable(defaultGradientNeg);
                     }
                 }
 
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(context, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
             }
 
@@ -188,14 +182,13 @@ public class PlansListViewAdapter extends CursorAdapter{
                 tvCleared.setText("Cleared: " + cleared);
             }
 
-            if(scheduled.equals("false")){
-                v.setAlpha(.5f);
-            }
-            else{
-                v.setAlpha(1.0f);
+            if (scheduled.equals("false")) {
+                view.setAlpha(.5f);
+            } else {
+                view.setAlpha(1.0f);
             }
 
-            v.setBackgroundColor(mSelectedItemsIds.get(user.getPosition())? 0x9934B5E4: Color.TRANSPARENT);
+            view.setBackgroundColor(mSelectedItemsIds.get(user.getPosition()) ? 0x9934B5E4 : Color.TRANSPARENT);
         }
 
     }
@@ -205,75 +198,70 @@ public class PlansListViewAdapter extends CursorAdapter{
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.plan_item, parent, false);
 
-        TextView tvName=(TextView)v.findViewById(R.id.plan_name);
-        TextView tvAccount=(TextView)v.findViewById(R.id.plan_account);
-        TextView tvValue=(TextView)v.findViewById(R.id.plan_value);
-        TextView tvType=(TextView)v.findViewById(R.id.plan_type);
-        TextView tvCategory=(TextView)v.findViewById(R.id.plan_category);
-        TextView tvMemo=(TextView)v.findViewById(R.id.plan_memo);
-        TextView tvOffset=(TextView)v.findViewById(R.id.plan_offset);
-        TextView tvRate=(TextView)v.findViewById(R.id.plan_rate);
-        TextView tvNext=(TextView)v.findViewById(R.id.plan_next);
-        TextView tvScheduled=(TextView)v.findViewById(R.id.plan_scheduled);
-        TextView tvCleared=(TextView)v.findViewById(R.id.plan_cleared);
+        TextView tvName = (TextView) v.findViewById(R.id.plan_name);
+        TextView tvAccount = (TextView) v.findViewById(R.id.plan_account);
+        TextView tvValue = (TextView) v.findViewById(R.id.plan_value);
+        TextView tvType = (TextView) v.findViewById(R.id.plan_type);
+        TextView tvCategory = (TextView) v.findViewById(R.id.plan_category);
+        TextView tvMemo = (TextView) v.findViewById(R.id.plan_memo);
+        TextView tvOffset = (TextView) v.findViewById(R.id.plan_offset);
+        TextView tvRate = (TextView) v.findViewById(R.id.plan_rate);
+        TextView tvNext = (TextView) v.findViewById(R.id.plan_next);
+        TextView tvScheduled = (TextView) v.findViewById(R.id.plan_scheduled);
+        TextView tvCleared = (TextView) v.findViewById(R.id.plan_cleared);
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
 
         //Change Background Colors
-        try{
-            if(!useDefaults){
+        try {
+            if (!useDefaults) {
                 LinearLayout l;
-                l=(LinearLayout)v.findViewById(R.id.plan_layout);
+                l = (LinearLayout) v.findViewById(R.id.plan_layout);
                 int startColor = prefs.getInt("key_plan_startBackgroundColor", Color.parseColor("#FFFFFF"));
                 int endColor = prefs.getInt("key_plan_endBackgroundColor", Color.parseColor("#FFFFFF"));
                 GradientDrawable customGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
-                        new int[] {startColor,endColor});
+                        new int[]{startColor, endColor});
                 l.setBackgroundDrawable(customGradient);
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Background Color", Toast.LENGTH_SHORT).show();
         }
 
         //Change Size of main field
-        try{
+        try {
             String customSize = prefs.getString(context.getString(R.string.pref_key_plan_nameSize), "24");
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvName.setTextSize(24);
-            }
-            else{
+            } else {
                 tvName.setTextSize(Integer.parseInt(customSize));
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             int customColor = prefs.getInt("key_plan_nameColor", Color.parseColor("#222222"));
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvName.setTextColor(Color.parseColor("#222222"));
-            }
-            else{
+            } else {
                 tvName.setTextColor(customColor);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             String defaultSize = prefs.getString(context.getString(R.string.pref_key_plan_fieldSize), "14");
             int customSize = Integer.parseInt(defaultSize);
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvAccount.setTextSize(14);
                 tvValue.setTextSize(14);
                 tvType.setTextSize(14);
@@ -284,8 +272,7 @@ public class PlansListViewAdapter extends CursorAdapter{
                 tvNext.setTextSize(14);
                 tvScheduled.setTextSize(14);
                 tvCleared.setTextSize(14);
-            }
-            else{
+            } else {
                 tvAccount.setTextSize(customSize);
                 tvValue.setTextSize(customSize);
                 tvType.setTextSize(customSize);
@@ -298,15 +285,14 @@ public class PlansListViewAdapter extends CursorAdapter{
                 tvCleared.setTextSize(customSize);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
         }
 
-        try{
+        try {
             int DefaultColor = prefs.getInt("key_plan_fieldColor", Color.parseColor("#000000"));
 
-            if(useDefaults){
+            if (useDefaults) {
                 tvAccount.setTextColor(Color.parseColor("#000000"));
                 tvValue.setTextColor(Color.parseColor("#000000"));
                 tvType.setTextColor(Color.parseColor("#000000"));
@@ -317,8 +303,7 @@ public class PlansListViewAdapter extends CursorAdapter{
                 tvNext.setTextColor(Color.parseColor("#000000"));
                 tvScheduled.setTextColor(Color.parseColor("#000000"));
                 tvCleared.setTextColor(Color.parseColor("#000000"));
-            }
-            else{
+            } else {
                 tvAccount.setTextColor(DefaultColor);
                 tvValue.setTextColor(DefaultColor);
                 tvType.setTextColor(DefaultColor);
@@ -331,94 +316,81 @@ public class PlansListViewAdapter extends CursorAdapter{
                 tvCleared.setTextColor(DefaultColor);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Could Not Set Custom Field Color", Toast.LENGTH_SHORT).show();
         }
 
         //For User-Defined Field Visibility
-        if(useDefaults||prefs.getBoolean("checkbox_plan_nameField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_plan_nameField", true)) {
             tvName.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvName.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_plan_accountField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_plan_accountField", true)) {
             tvAccount.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvAccount.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_plan_valueField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_plan_valueField", true)) {
             tvValue.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvValue.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_plan_typeField", false) && !useDefaults){
+        if (prefs.getBoolean("checkbox_plan_typeField", false) && !useDefaults) {
             tvType.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvType.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_plan_categoryField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_plan_categoryField", true)) {
             tvCategory.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvCategory.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_plan_memoField", false) && !useDefaults){
+        if (prefs.getBoolean("checkbox_plan_memoField", false) && !useDefaults) {
             tvMemo.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvMemo.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_plan_offsetField", false) && !useDefaults){
+        if (prefs.getBoolean("checkbox_plan_offsetField", false) && !useDefaults) {
             tvOffset.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvOffset.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_plan_rateField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_plan_rateField", true)) {
             tvRate.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvRate.setVisibility(View.GONE);
         }
 
-        if(useDefaults||prefs.getBoolean("checkbox_plan_nextField", true)){
+        if (useDefaults || prefs.getBoolean("checkbox_plan_nextField", true)) {
             tvNext.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvNext.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_plan_scheduledField", false) && !useDefaults){
+        if (prefs.getBoolean("checkbox_plan_scheduledField", false) && !useDefaults) {
             tvScheduled.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvScheduled.setVisibility(View.GONE);
         }
 
-        if(prefs.getBoolean("checkbox_plan_clearedField", false) && !useDefaults){
+        if (prefs.getBoolean("checkbox_plan_clearedField", false) && !useDefaults) {
             tvCleared.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             tvCleared.setVisibility(View.GONE);
         }
 
         return v;
     }
 
-    public void toggleSelection(int position)
-    {
+    public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
 
@@ -427,9 +399,8 @@ public class PlansListViewAdapter extends CursorAdapter{
         notifyDataSetChanged();
     }
 
-    public void selectView(int position, boolean value)
-    {
-        if(value)
+    private void selectView(int position, boolean value) {
+        if (value)
             mSelectedItemsIds.put(position, value);
         else
             mSelectedItemsIds.delete(position);

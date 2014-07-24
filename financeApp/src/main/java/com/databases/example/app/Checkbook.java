@@ -36,8 +36,8 @@ public class Checkbook extends SherlockFragmentActivity {
         //NavigationDrawer
         drawer = new Drawer(this);
 
-        if(savedInstanceState!=null){
-            Log.e("Checkbook","SavedState");
+        if (savedInstanceState != null) {
+            Log.e("Checkbook", "SavedState");
             return;
         }
 
@@ -48,7 +48,7 @@ public class Checkbook extends SherlockFragmentActivity {
         if (getIntent().getExtras() != null) {
             Bundle b = getIntent().getExtras();
 
-            if(b.getBoolean("fromNotification")){
+            if (b.getBoolean("fromNotification")) {
                 clearNotifications();
             }
         }
@@ -68,17 +68,16 @@ public class Checkbook extends SherlockFragmentActivity {
         transaction_frag.setArguments(argsTran);
         account_frag.setArguments(argsAccount);
 
-        if(checkbook_frame==null){
-            Log.d("Checkbook-onCreate","Mode:dualpane");
+        if (checkbook_frame == null) {
+            Log.d("Checkbook-onCreate", "Mode:dualpane");
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.account_frag_frame, account_frag,"account_frag_tag")
+                    .replace(R.id.account_frag_frame, account_frag, "account_frag_tag")
                     .replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag")
                     .commit();
-        }
-        else{
-            Log.d("Checkbook-onCreate","Mode:singlepane");
+        } else {
+            Log.d("Checkbook-onCreate", "Mode:singlepane");
             getSupportFragmentManager().beginTransaction().
-                    replace(R.id.checkbook_frag_frame, account_frag,"account_frag_tag").commit();
+                    replace(R.id.checkbook_frag_frame, account_frag, "account_frag_tag").commit();
         }
 
         getSupportFragmentManager().executePendingTransactions();
@@ -94,7 +93,7 @@ public class Checkbook extends SherlockFragmentActivity {
         if (getIntent().getExtras() != null) {
             Bundle b = getIntent().getExtras();
 
-            if(b.getBoolean("fromNotification")){
+            if (b.getBoolean("fromNotification")) {
                 clearNotifications();
             }
         }
@@ -114,14 +113,14 @@ public class Checkbook extends SherlockFragmentActivity {
     }
 
     //Method for clearing notifications if they were clicked on
-    public void clearNotifications(){
-        Log.v("Checkbook","Clearing notifications...");
+    private void clearNotifications() {
+        Log.v("Checkbook", "Clearing notifications...");
         Uri uri = Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/" + 0);
-        getContentResolver().delete(uri, null,null);
+        getContentResolver().delete(uri, null, null);
     }
 
     //Method for selecting a Time when adding a transaction
-    public void showTimePickerDialog(View v){
+    public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new Transactions.TimePickerFragment();
         newFragment.show(this.getSupportFragmentManager(), "timePicker");
     }

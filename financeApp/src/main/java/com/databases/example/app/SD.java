@@ -78,7 +78,6 @@ public class SD extends SherlockFragmentActivity{
                     Toast.makeText(this, "Please install a file manager", Toast.LENGTH_LONG).show();
                 } catch(Exception e){
                     Log.e("SD-sdRestore", "Error e = "+e);
-                    return;
                 }
 
             }
@@ -242,7 +241,7 @@ public class SD extends SherlockFragmentActivity{
     }
 
     //Method finds path name, both from gallery or file manager
-    public String getPath(Uri uri) {
+    private String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         String linkFilePath;

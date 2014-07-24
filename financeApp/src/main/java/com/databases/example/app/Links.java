@@ -35,7 +35,7 @@ import com.databases.example.view.Drawer;
 
 import java.io.File;
 
-public class Links extends SherlockFragmentActivity{
+public class Links extends SherlockFragmentActivity {
     private final static int PICKFILE_RESULT_CODE = 1;
     private final static int PICKCONTACT_RESULT_CODE = 2;
 
@@ -56,7 +56,7 @@ public class Links extends SherlockFragmentActivity{
     private static Intent intent = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.links);
         setTitle("Attachments");
@@ -67,33 +67,32 @@ public class Links extends SherlockFragmentActivity{
     }//end onCreate
 
     //Method for when you click the Add button
-    public void linkAdd(View v){
+    public void linkAdd(View v) {
         DialogFragment newFragment = AttachDialogFragment.newInstance();
         newFragment.show(getSupportFragmentManager(), "dialogAttach");
     }//end of linkAdd
 
     //Method for when you click the View button
-    public void linkView(View v){
-        try{
-            Intent intent= new Intent();
+    public void linkView(View v) {
+        try {
+            Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
 
             File file = new File(getPath(lastLink.getData()));
 
             MimeTypeMap mime = MimeTypeMap.getSingleton();
-            String ext = file.getName().substring(file.getName().indexOf(".")+1);
+            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
             String type = mime.getMimeTypeFromExtension(ext);
             intent.setDataAndType(Uri.fromFile(file), type);
 
             try {
                 startActivityForResult(Intent.createChooser(intent, "Open with..."), PICKFILE_RESULT_CODE);
             } catch (android.content.ActivityNotFoundException e) {
-                Log.e("Links-linkView","No App for this type of file. Error e="+e);
+                Log.e("Links-linkView", "No App for this type of file. Error e=" + e);
                 Toast.makeText(this, "Could not find an app for this type of file.", Toast.LENGTH_SHORT).show();
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             //Most likely caused by not picking a pile first (NullPointer)
             Log.e("Links-linkView", "Error e=" + e);
             Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
@@ -102,38 +101,37 @@ public class Links extends SherlockFragmentActivity{
     }//end of linkView
 
     //Method for when you click the View button
-    public void linkDone(View v){
+    public void linkDone(View v) {
 
         Log.e("Links-linkDone", "linkFilePath=" + linkFilePath);
         Log.e("Links-linkDone", "AcctID=" + getIntent().getExtras().getString("AcctID"));
         Log.e("Links-linkDone", "AcctName=" + getIntent().getExtras().getString("AcctName"));
 
         Intent returnIntent = new Intent();
-        setResult(RESULT_OK,returnIntent);
+        setResult(RESULT_OK, returnIntent);
         finish();
     }//end of linkView
 
     //Method called after picking a file
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        try{
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
             switch (requestCode) {
                 case PICKFILE_RESULT_CODE:
-                    if(resultCode==RESULT_OK){
+                    if (resultCode == RESULT_OK) {
                         linkFilePath = null;
                         linkFilePath = getPath(data.getData());
                         lastLink = data;
 
-                        TextView currentLink = (TextView)findViewById(R.id.TextViewCurrentLink);
+                        TextView currentLink = (TextView) findViewById(R.id.TextViewCurrentLink);
                         currentLink.setText("Current Attachment : " + linkFilePath);
 
                         //Set thumbnail
                         ImageView image = (ImageView) findViewById(R.id.imageView1);
 
-                        try{
+                        try {
                             image.setImageURI(lastLink.getData());
-                        }
-                        catch(Exception e){
+                        } catch (Exception e) {
                             //Most likely caused by not picking a file first (NullPointer)
                             Log.e("Links-onActivityResult", "Error e=" + e);
                         }
@@ -142,19 +140,18 @@ public class Links extends SherlockFragmentActivity{
                     break;
 
                 case PICKCONTACT_RESULT_CODE:
-                    if(resultCode==RESULT_OK){
+                    if (resultCode == RESULT_OK) {
                         getContactInfo(data);
-                        Log.e("Links-onActivityResult","contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
+                        Log.e("Links-onActivityResult", "contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
 
-                        TextView currentLink = (TextView)findViewById(R.id.TextViewCurrentLink);
+                        TextView currentLink = (TextView) findViewById(R.id.TextViewCurrentLink);
                         currentLink.setText("Current Attachment : " + contactName);
 
                         ImageView image = (ImageView) findViewById(R.id.imageView1);
 
-                        try{
+                        try {
                             image.setImageURI(contactPhoto);
-                        }
-                        catch(Exception e){
+                        } catch (Exception e) {
                             Log.e("Links-onActivityResult", "Error e=" + e);
                         }
 
@@ -163,24 +160,22 @@ public class Links extends SherlockFragmentActivity{
 
             }
 
-        }
-        catch(Exception e){
-            Log.e("Links-onActivityResult","Error e=" + e);
+        } catch (Exception e) {
+            Log.e("Links-onActivityResult", "Error e=" + e);
             Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
         }
     }//end of onActivityResult
 
     //Method finds path name, both from gallery or file manager
-    public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+    private String getPath(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
 
-        if(cursor != null){
+        if (cursor != null) {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             linkFilePath = cursor.getString(column_index);
-        }
-        else{
+        } else {
             linkFilePath = uri.getPath();
         }
 
@@ -188,9 +183,8 @@ public class Links extends SherlockFragmentActivity{
     }
 
     //Method to grab contact info
-    protected void getContactInfo(Intent intent)
-    {
-        Cursor cursor =  managedQuery(intent.getData(), null, null, null, null);
+    private void getContactInfo(Intent intent) {
+        Cursor cursor = managedQuery(intent.getData(), null, null, null, null);
 
         cursor.moveToFirst();
         contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -201,29 +195,26 @@ public class Links extends SherlockFragmentActivity{
         if (hasPhone.equalsIgnoreCase("1"))
             hasPhone = "true";
         else
-            hasPhone = "false" ;
+            hasPhone = "false";
 
-        if (Boolean.parseBoolean(hasPhone))
-        {
-            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ contactId,null, null);
-            while (phones.moveToNext())
-            {
+        if (Boolean.parseBoolean(hasPhone)) {
+            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+            while (phones.moveToNext()) {
                 contactPhone = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             }
             phones.close();
         }
 
         // Find Email Addresses
-        Cursor emails = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId,null, null);
-        while (emails.moveToNext())
-        {
+        Cursor emails = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId, null, null);
+        while (emails.moveToNext()) {
             contactEmail = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
         }
         emails.close();
         cursor.close();
 
         //Get contact picture
-        Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,contactId);
+        Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
         contactPhoto = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
     }//end getContactInfo
@@ -249,7 +240,7 @@ public class Links extends SherlockFragmentActivity{
             alertDialogBuilder
                     .setCancelable(true);
 
-            ListView linkTypes = (ListView)linkChooser.findViewById(R.id.linkchooser_types);
+            ListView linkTypes = (ListView) linkChooser.findViewById(R.id.linkchooser_types);
             linkTypes.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
@@ -286,7 +277,7 @@ public class Links extends SherlockFragmentActivity{
                         //Contact
                         case 4:
                             intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                            getActivity().startActivityForResult(intent,PICKCONTACT_RESULT_CODE);
+                            getActivity().startActivityForResult(intent, PICKCONTACT_RESULT_CODE);
 
                             getDialog().cancel();
                             return;
@@ -299,14 +290,12 @@ public class Links extends SherlockFragmentActivity{
 
                     }//end switch
 
-                    try{
-                        getActivity().startActivityForResult(intent,PICKFILE_RESULT_CODE);
-                    }
-                    catch(ActivityNotFoundException e){
+                    try {
+                        getActivity().startActivityForResult(intent, PICKFILE_RESULT_CODE);
+                    } catch (ActivityNotFoundException e) {
                         Log.e("Links-onItemClick", "Error e=" + e);
                         Toast.makeText(getActivity(), "No Program Found", Toast.LENGTH_SHORT).show();
-                    }
-                    catch(Exception e){
+                    } catch (Exception e) {
                         Log.e("Links-onItemClick", "Error e=" + e);
                     }
 

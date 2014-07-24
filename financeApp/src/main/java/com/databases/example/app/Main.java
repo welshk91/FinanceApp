@@ -33,7 +33,7 @@ public class Main extends SherlockFragmentActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
         boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
 
-        if(lockEnabled){
+        if (lockEnabled) {
             confirmPattern();
         }
 
@@ -43,7 +43,7 @@ public class Main extends SherlockFragmentActivity {
         Cards cards_frag = new Cards();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.card_frame, cards_frag,"cards_tag").commit();
+                .replace(R.id.card_frame, cards_frag, "cards_tag").commit();
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
@@ -57,7 +57,7 @@ public class Main extends SherlockFragmentActivity {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.layout.main_menu, menu);
-        SearchWidget searchWidget = new SearchWidget(this,menu.findItem(R.id.main_menu_search).getActionView());
+        new SearchWidget(this, menu.findItem(R.id.main_menu_search).getActionView());
         return true;
     }
 
@@ -73,8 +73,8 @@ public class Main extends SherlockFragmentActivity {
     }
 
     //Confirm Lockscreen
-    public void confirmPattern(){
-        if(Settings.Security.getPattern(this)!=null){
+    private void confirmPattern() {
+        if (Settings.Security.getPattern(this) != null) {
             //Log.d("Main", "valueOf getPattern="+String.valueOf(Settings.Security.getPattern(this)));
             //Log.d("Main", "getPattern="+String.valueOf(Settings.Security.getPattern(this)));
 
@@ -82,8 +82,7 @@ public class Main extends SherlockFragmentActivity {
             //Intent intentForget = new Intent(this, LoginHelper.class);
             //intent.putExtra(LockPatternActivity.EXTRA_INTENT_ACTIVITY_FORGOT_PATTERN, intentForget);
             startActivityForResult(intent, LOCKSCREEN_SIGNIN);
-        }
-        else{
+        } else {
             Toast.makeText(Main.this, "Cannot Use Lockscreen\nNo Pattern Set Yet", Toast.LENGTH_LONG).show();
         }
     }
@@ -112,10 +111,9 @@ public class Main extends SherlockFragmentActivity {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
                         boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
 
-                        if(!lockEnabled){
+                        if (!lockEnabled) {
                             Toast.makeText(Main.this, "Sign In\nReset", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
+                        } else {
                             Toast.makeText(Main.this, "Sign In\nForgotten", Toast.LENGTH_SHORT).show();
                         }
 

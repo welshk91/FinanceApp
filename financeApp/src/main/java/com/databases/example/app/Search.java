@@ -32,8 +32,6 @@ import java.util.ArrayList;
  */
 
 public class Search extends SherlockFragmentActivity {
-    //The word being searched
-    private String query;
 
     //NavigationDrawer
     private Drawer drawer;
@@ -51,16 +49,16 @@ public class Search extends SherlockFragmentActivity {
     }
 
     private void handleIntent(Intent intent) {
-        query = intent.getStringExtra("query");
+        String query = intent.getStringExtra("query");
         setTitle("Search <" + query + ">");
         makeView();
     }
 
     //Method that handles setting up the Tabs
-    public void makeView(){
+    private void makeView() {
         setContentView(R.layout.search);
 
-        ViewPager mViewPager = (ViewPager)findViewById(R.id.search_pager);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.search_pager);
         mViewPager.setOffscreenPageLimit(2);
 
         MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
@@ -74,7 +72,7 @@ public class Search extends SherlockFragmentActivity {
     }
 
     public static class MyPagerAdapter extends FragmentStatePagerAdapter
-            implements ViewPager.OnPageChangeListener{
+            implements ViewPager.OnPageChangeListener {
 
         private final Context mContext;
         private final ViewPager mPager;
@@ -106,7 +104,7 @@ public class Search extends SherlockFragmentActivity {
         }
 
         //Removes tab at certain position (zero-based)
-        public void removeTab(ViewPager pager, int position,MyPagerAdapter adapter){
+        public void removeTab(ViewPager pager, int position, MyPagerAdapter adapter) {
             mTabs.remove(position);
             adapter.notifyDataSetChanged();
         }
@@ -128,7 +126,7 @@ public class Search extends SherlockFragmentActivity {
         }
 
         @Override
-        public CharSequence getPageTitle(int position){
+        public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
                     return "Accounts";
@@ -165,9 +163,9 @@ public class Search extends SherlockFragmentActivity {
 
         //Allows for multiple pages
         @Override
-        public float getPageWidth(int position){
+        public float getPageWidth(int position) {
             //To have two pages, return .5
-            return(1f);
+            return (1f);
         }
 
     }//end mypageadapter

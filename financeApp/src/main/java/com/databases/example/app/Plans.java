@@ -69,7 +69,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class Plans extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
+public class Plans extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
     private static final int PLAN_LOADER = 5882300;
@@ -88,27 +88,25 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
     private static Spinner accountSpinner;
 
     //Constants for ContextMenu
-    private final int ACTION_MODE_VIEW=1;
-    private final int ACTION_MODE_EDIT=2;
-    private final int ACTION_MODE_DELETE=3;
-    private final int ACTION_MODE_TOGGLE=4;
+    private final int ACTION_MODE_VIEW = 1;
+    private final int ACTION_MODE_EDIT = 2;
+    private final int ACTION_MODE_DELETE = 3;
+    private final int ACTION_MODE_TOGGLE = 4;
 
     //Dialog for Adding Transaction
     private static View promptsView;
 
     private static Button pDate;
     private PlansListViewAdapter adapterPlans;
-    private ListView lvPlans;
 
     //ActionMode
-    protected Object mActionMode = null;
-    private SparseBooleanArray mSelectedItemsIds;
+    private Object mActionMode = null;
 
     //For Memo autocomplete
-    private static ArrayList<String> dropdownResults = new ArrayList<String>();
+    private static final ArrayList<String> dropdownResults = new ArrayList<String>();
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.plans);
@@ -117,20 +115,19 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
         //NavigationDrawer
         drawer = new Drawer(this);
 
-        lvPlans = (ListView)this.findViewById(R.id.plans_list);
+        ListView lvPlans = (ListView) this.findViewById(R.id.plans_list);
 
         //Turn clicks on
         lvPlans.setClickable(true);
         lvPlans.setLongClickable(true);
 
         //Set Listener for regular mouse click
-        lvPlans.setOnItemClickListener(new OnItemClickListener(){
+        lvPlans.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                 if (mActionMode != null) {
                     listItemChecked(position);
-                }
-                else{
+                } else {
                     //Stuff for clicking...
                 }
             }// end onItemClick
@@ -156,7 +153,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        TextView noResult = (TextView)findViewById(R.id.plans_noPlans);
+        TextView noResult = (TextView) findViewById(R.id.plans_noPlans);
         lvPlans.setEmptyView(noResult);
 
         adapterPlans = new PlansListViewAdapter(this, null);
@@ -167,70 +164,68 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
     }//end onCreate
 
     //Used for ActionMode
-    public void listItemChecked(int position){
+    private void listItemChecked(int position) {
         adapterPlans.toggleSelection(position);
         boolean hasCheckedItems = adapterPlans.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null){
+        if (hasCheckedItems && mActionMode == null) {
             mActionMode = this.startActionMode(new MyActionMode());
-        }
-        else if (!hasCheckedItems && mActionMode != null){
+        } else if (!hasCheckedItems && mActionMode != null) {
             ((ActionMode) mActionMode).finish();
         }
 
-        if(mActionMode != null){
+        if (mActionMode != null) {
             ((ActionMode) mActionMode).invalidate();
-            ((ActionMode)mActionMode).setTitle(String.valueOf(adapterPlans.getSelectedCount()));
+            ((ActionMode) mActionMode).setTitle(String.valueOf(adapterPlans.getSelectedCount()));
         }
     }
 
     //For Scheduling a Transaction
-    public void planAdd(){
+    private void planAdd() {
         DialogFragment newFragment = AddDialogFragment.newInstance();
         newFragment.show(getSupportFragmentManager(), "dialogAdd");
     }//end of planAdd
 
     private void schedule(PlanRecord plan) {
-        PlanRecord record = plan;
         Date d = null;
 
         try {
             DateTime test = new DateTime();
-            test.setStringSQL(record.offset);
+            test.setStringSQL(plan.offset);
             d = test.getYearMonthDay();
-        }catch (java.text.ParseException e) {
-            Log.e("Plans-schedule", "Couldn't schedule " + record.name + "\n e:"+e);
+        } catch (java.text.ParseException e) {
+            Log.e("Plans-schedule", "Couldn't schedule " + plan.name + "\n e:" + e);
         }
 
-        Log.d("Plans-schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+        Log.d("Plans-schedule", "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
-        Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
+        Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
         Log.d("Plans-schedule", "FirstRun:" + firstRun);
 
         Intent intent = new Intent(this, PlanReceiver.class);
-        intent.putExtra("plan_id", record.id);
-        intent.putExtra("plan_acct_id",record.acctId);
-        intent.putExtra("plan_name",record.name);
-        intent.putExtra("plan_value",record.value);
-        intent.putExtra("plan_type",record.type);
-        intent.putExtra("plan_category",record.category);
-        intent.putExtra("plan_memo",record.memo);
-        intent.putExtra("plan_offset",record.offset);
-        intent.putExtra("plan_rate",record.rate);
-        intent.putExtra("plan_cleared",record.cleared);
+        intent.putExtra("plan_id", plan.id);
+        intent.putExtra("plan_acct_id", plan.acctId);
+        intent.putExtra("plan_name", plan.name);
+        intent.putExtra("plan_value", plan.value);
+        intent.putExtra("plan_type", plan.type);
+        intent.putExtra("plan_category", plan.category);
+        intent.putExtra("plan_memo", plan.memo);
+        intent.putExtra("plan_offset", plan.offset);
+        intent.putExtra("plan_rate", plan.rate);
+        intent.putExtra("plan_cleared", plan.cleared);
 
         //Parse Rate (token 0 is amount, token 1 is type)
-        String phrase = record.rate;
+        String phrase = plan.rate;
         String delims = "[ ]+";
         String[] tokens = phrase.split(delims);
 
-        final PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        final Locale locale=getResources().getConfiguration().locale;
+        final Locale locale = getResources().getConfiguration().locale;
         final DateTime nextRun = new DateTime();
 
-        if(tokens[1].contains("Days")){
+        if (tokens[1].contains("Days")) {
             Log.d("Plans-schedule", "Days");
 
             //If Starting Time is in the past, fire off next day(s)
@@ -245,11 +240,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
             ContentValues planValues = new ContentValues();
             planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
 
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
-        }
-        else if(tokens[1].contains("Weeks")){
+            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
+        } else if (tokens[1].contains("Weeks")) {
             Log.d("Plans-schedule", "Weeks");
 
             //If Starting Time is in the past, fire off next week(s)
@@ -264,11 +258,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
             ContentValues planValues = new ContentValues();
             planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
 
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
-        }
-        else if(tokens[1].contains("Months")){
+            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY) * 7, sender);
+        } else if (tokens[1].contains("Months")) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(cal.getTimeInMillis());
             cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
@@ -285,33 +278,30 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
             ContentValues planValues = new ContentValues();
             planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
-        }
-        else{
+        } else {
             Log.e("Plans-schedule", "Could not set alarm; Something wrong with the rate");
         }
 
     }
 
     private void cancelPlan(PlanRecord plan) {
-        PlanRecord record = plan;
-
         Intent intent = new Intent(this, PlanReceiver.class);
-        intent.putExtra("plan_id", record.id);
-        intent.putExtra("plan_acct_id",record.acctId);
-        intent.putExtra("plan_name",record.name);
-        intent.putExtra("plan_value",record.value);
-        intent.putExtra("plan_type",record.type);
-        intent.putExtra("plan_category",record.category);
-        intent.putExtra("plan_memo",record.memo);
-        intent.putExtra("plan_offset",record.offset);
-        intent.putExtra("plan_rate",record.rate);
-        intent.putExtra("plan_cleared",record.cleared);
+        intent.putExtra("plan_id", plan.id);
+        intent.putExtra("plan_acct_id", plan.acctId);
+        intent.putExtra("plan_name", plan.name);
+        intent.putExtra("plan_value", plan.value);
+        intent.putExtra("plan_type", plan.type);
+        intent.putExtra("plan_category", plan.category);
+        intent.putExtra("plan_memo", plan.memo);
+        intent.putExtra("plan_offset", plan.offset);
+        intent.putExtra("plan_rate", plan.rate);
+        intent.putExtra("plan_cleared", plan.cleared);
 
         // In reality, you would want to have a static variable for the request code instead of 192837
-        PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get the AlarmManager service
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -336,7 +326,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
         menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
 
-        SearchWidget searchWidget = new SearchWidget(this,menuSearch.getActionView());
+        new SearchWidget(this, menuSearch.getActionView());
 
         //Add
         MenuItem subMenu1Item = menu.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
@@ -389,7 +379,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
             SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
 
             int year = Integer.parseInt(dateFormatYear.format(cal.getTime()));
-            int month = Integer.parseInt(dateFormatMonth.format(cal.getTime()))-1;
+            int month = Integer.parseInt(dateFormatMonth.format(cal.getTime())) - 1;
             int day = Integer.parseInt(dateFormatDay.format(cal.getTime()));
 
             return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -397,7 +387,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             DateTime date = new DateTime();
-            date.setStringSQL(year + "-" + (month+1) + "-" + day);
+            date.setStringSQL(year + "-" + (month + 1) + "-" + day);
             pDate.setText(date.getReadableDate());
 
         }
@@ -419,17 +409,17 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
             final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
             final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-            final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-            categorySpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-            accountSpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_account);
-            final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+            final Spinner tType = (Spinner) promptsView.findViewById(R.id.spinner_transaction_type);
+            categorySpinner = (Spinner) promptsView.findViewById(R.id.spinner_transaction_category);
+            accountSpinner = (Spinner) promptsView.findViewById(R.id.spinner_transaction_account);
+            final AutoCompleteTextView tMemo = (AutoCompleteTextView) promptsView.findViewById(R.id.EditTransactionMemo);
             final EditText tRate = (EditText) promptsView.findViewById(R.id.EditRate);
-            final Spinner rateSpinner = (Spinner)promptsView.findViewById(R.id.spinner_rate_type);
-            final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
+            final Spinner rateSpinner = (Spinner) promptsView.findViewById(R.id.spinner_rate_type);
+            final CheckBox tCleared = (CheckBox) promptsView.findViewById(R.id.CheckTransactionCleared);
 
             final Calendar c = Calendar.getInstance();
 
-            pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+            pDate = (Button) promptsView.findViewById(R.id.ButtonTransactionDate);
             //pDate.setText(dateFormat.format(c.getTime()));
             DateTime d = new DateTime();
             d.setCalendar(c);
@@ -462,19 +452,19 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                     .setCancelable(false)
                     .setPositiveButton("Add",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     //Variables for the transaction Table
-                                    String transactionAccountID = null;
-                                    String transactionAccount = null;
-                                    String transactionName = null;
-                                    Money transactionValue = null;
-                                    String transactionType = null;
-                                    String transactionCategory = null;
-                                    String transactionMemo = null;
+                                    String transactionAccountID;
+                                    String transactionAccount;
+                                    String transactionName;
+                                    Money transactionValue;
+                                    String transactionType;
+                                    String transactionCategory;
+                                    String transactionMemo;
                                     DateTime transactionOffset = new DateTime();
-                                    String transactionRate = null;
-                                    String transactionCleared = null;
-                                    Locale locale=getResources().getConfiguration().locale;
+                                    String transactionRate;
+                                    String transactionCleared;
+                                    Locale locale = getResources().getConfiguration().locale;
 
                                     //Needed to get category's name from DB-populated spinner
                                     int categoryPosition = categorySpinner.getSelectedItemPosition();
@@ -485,11 +475,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                                     Cursor cursorAccount = (Cursor) accountSpinnerAdapter.getItem(accountPosition);
 
                                     transactionName = tName.getText().toString().trim();
-                                    try{
+                                    try {
                                         transactionValue = new Money(tValue.getText().toString().trim());
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Plans-Add","Invalid Value? Exception e:" + e);
+                                    } catch (Exception e) {
+                                        Log.e("Plans-Add", "Invalid Value? Exception e:" + e);
                                         dialog.cancel();
                                         Toast.makeText(getSherlockActivity(), "Invalid Value", Toast.LENGTH_LONG).show();
                                         return;
@@ -497,25 +486,23 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
                                     transactionType = tType.getSelectedItem().toString().trim();
 
-                                    try{
+                                    try {
                                         transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
                                         transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
-                                    }
-                                    catch(Exception e){
+                                    } catch (Exception e) {
                                         //Usually caused if no account exists
-                                        Log.e("Plans-Add","No Account? Exception e:" + e);
+                                        Log.e("Plans-Add", "No Account? Exception e:" + e);
                                         dialog.cancel();
                                         Toast.makeText(getSherlockActivity(), "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
                                         return;
                                     }
 
-                                    try{
+                                    try {
                                         //	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
                                         transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
-                                    }
-                                    catch(Exception e){
+                                    } catch (Exception e) {
                                         //Usually caused if no category exists
-                                        Log.e("Plans-Add","No Category? Exception e:" + e);
+                                        Log.e("Plans-Add", "No Category? Exception e:" + e);
                                         dialog.cancel();
                                         Toast.makeText(getSherlockActivity(), "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
                                         return;
@@ -527,27 +514,26 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                                     transactionOffset.setStringReadable(pDate.getText().toString().trim());
 
                                     transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
-                                    transactionCleared = tCleared.isChecked()+"";
+                                    transactionCleared = tCleared.isChecked() + "";
 
                                     //Check to see if value is a number
-                                    boolean validRate=false;
-                                    try{
+                                    boolean validRate;
+                                    try {
                                         Integer.parseInt(tRate.getText().toString().trim());
-                                        validRate=true;
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Plans-Add","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
-                                        validRate=false;
+                                        validRate = true;
+                                    } catch (Exception e) {
+                                        Log.e("Plans-Add", "Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
+                                        validRate = false;
                                     }
 
-                                    try{
-                                        if (transactionName.length()>0 && validRate) {
+                                    try {
+                                        if (transactionName.length() > 0 && validRate) {
                                             Log.d("Plans-Add", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
                                             ContentValues transactionValues = new ContentValues();
                                             transactionValues.put(DatabaseHelper.PLAN_ACCT_ID, transactionAccountID);
                                             transactionValues.put(DatabaseHelper.PLAN_NAME, transactionName);
-                                            transactionValues.put(DatabaseHelper.PLAN_VALUE, transactionValue.getBigDecimal(locale)+"");
+                                            transactionValues.put(DatabaseHelper.PLAN_VALUE, transactionValue.getBigDecimal(locale) + "");
                                             transactionValues.put(DatabaseHelper.PLAN_TYPE, transactionType);
                                             transactionValues.put(DatabaseHelper.PLAN_CATEGORY, transactionCategory);
                                             transactionValues.put(DatabaseHelper.PLAN_MEMO, transactionMemo);
@@ -559,28 +545,27 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
                                             Uri u = getSherlockActivity().getContentResolver().insert(MyContentProvider.PLANS_URI, transactionValues);
 
-                                            PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "", "true", transactionCleared);
+                                            PlanRecord record = new PlanRecord(u.getLastPathSegment(), transactionAccountID, transactionName, transactionValue.getBigDecimal(locale) + "", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "", "true", transactionCleared);
                                             ((Plans) getSherlockActivity()).schedule(record);
-                                        }
-
-                                        else {
+                                        } else {
                                             Toast.makeText(getSherlockActivity(), "Plans need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
                                         }
-                                    }
-                                    catch(Exception e){
+                                    } catch (Exception e) {
                                         Log.e("Plans-Add", "e = " + e);
                                         Toast.makeText(getSherlockActivity(), "Error Adding Plan!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }//end onClick "OK"
-                            })
+                            }
+                    )
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     // CODE FOR "Cancel"
                                     dialog.cancel();
                                 }
-                            });
+                            }
+                    );
 
             return alertDialogBuilder.create();
         }
@@ -629,14 +614,14 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
             final EditText tName = (EditText) promptsView.findViewById(R.id.EditTransactionName);
             final EditText tValue = (EditText) promptsView.findViewById(R.id.EditTransactionValue);
-            final Spinner tType = (Spinner)promptsView.findViewById(R.id.spinner_transaction_type);
-            categorySpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_category);
-            accountSpinner = (Spinner)promptsView.findViewById(R.id.spinner_transaction_account);
-            final AutoCompleteTextView tMemo = (AutoCompleteTextView)promptsView.findViewById(R.id.EditTransactionMemo);
+            final Spinner tType = (Spinner) promptsView.findViewById(R.id.spinner_transaction_type);
+            categorySpinner = (Spinner) promptsView.findViewById(R.id.spinner_transaction_category);
+            accountSpinner = (Spinner) promptsView.findViewById(R.id.spinner_transaction_account);
+            final AutoCompleteTextView tMemo = (AutoCompleteTextView) promptsView.findViewById(R.id.EditTransactionMemo);
             final EditText tRate = (EditText) promptsView.findViewById(R.id.EditRate);
-            final Spinner rateSpinner = (Spinner)promptsView.findViewById(R.id.spinner_rate_type);
-            final CheckBox tCleared = (CheckBox)promptsView.findViewById(R.id.CheckTransactionCleared);
-            pDate = (Button)promptsView.findViewById(R.id.ButtonTransactionDate);
+            final Spinner rateSpinner = (Spinner) promptsView.findViewById(R.id.spinner_rate_type);
+            final CheckBox tCleared = (CheckBox) promptsView.findViewById(R.id.CheckTransactionCleared);
+            pDate = (Button) promptsView.findViewById(R.id.ButtonTransactionDate);
 
             //Adapter for memo's autocomplete
             ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getSherlockActivity(), android.R.layout.simple_dropdown_item_1line, dropdownResults);
@@ -684,9 +669,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
             pDate.setText(d.getReadableDate());
 
             //Parse Rate (token 0 is amount, token 1 is type)
-            String phrase = rate;
-            String delims = "[ ]+";
-            String[] tokens = phrase.split(delims);
+            String[] tokens = rate.split("[ ]+");
 
             tRate.setText(tokens[0]);
 
@@ -709,19 +692,19 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                     .setCancelable(false)
                     .setPositiveButton("Add",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     //Variables for the transaction Table
-                                    String transactionAccountID = null;
-                                    String transactionAccount = null;
-                                    String transactionName = null;
-                                    Money transactionValue = null;
-                                    String transactionType = null;
-                                    String transactionCategory = null;
-                                    String transactionMemo = null;
+                                    String transactionAccountID;
+                                    String transactionAccount;
+                                    String transactionName;
+                                    Money transactionValue;
+                                    String transactionType;
+                                    String transactionCategory;
+                                    String transactionMemo;
                                     DateTime transactionOffset = new DateTime();
-                                    String transactionRate = null;
-                                    String transactionCleared = null;
-                                    Locale locale=getResources().getConfiguration().locale;
+                                    String transactionRate;
+                                    String transactionCleared;
+                                    Locale locale = getResources().getConfiguration().locale;
 
                                     //Needed to get category's name from DB-populated spinner
                                     int categoryPosition = categorySpinner.getSelectedItemPosition();
@@ -733,11 +716,10 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
                                     transactionName = tName.getText().toString().trim();
 
-                                    try{
+                                    try {
                                         transactionValue = new Money(tValue.getText().toString().trim());
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Plans-Edit","Invalid Value? Exception e:" + e);
+                                    } catch (Exception e) {
+                                        Log.e("Plans-Edit", "Invalid Value? Exception e:" + e);
                                         dialog.cancel();
                                         Toast.makeText(getSherlockActivity(), "Invalid Value", Toast.LENGTH_LONG).show();
                                         return;
@@ -746,25 +728,23 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
                                     transactionType = tType.getSelectedItem().toString().trim();
 
-                                    try{
+                                    try {
                                         transactionAccount = cursorAccount.getString(cursorAccount.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
                                         transactionAccountID = cursorAccount.getString(cursorAccount.getColumnIndex("_id"));
-                                    }
-                                    catch(Exception e){
+                                    } catch (Exception e) {
                                         //Usually caused if no account exists
-                                        Log.e("Plans-Edit","No Account? Exception e:" + e);
+                                        Log.e("Plans-Edit", "No Account? Exception e:" + e);
                                         dialog.cancel();
                                         Toast.makeText(getSherlockActivity(), "Needs An Account \n\nUse The Side Menu->Checkbook To Create Accounts", Toast.LENGTH_LONG).show();
                                         return;
                                     }
 
-                                    try{
+                                    try {
                                         //	transactionCategoryID = cursorCategory.getString(cursorCategory.getColumnIndex("ToCatId"));
                                         transactionCategory = cursorCategory.getString(cursorCategory.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
-                                    }
-                                    catch(Exception e){
+                                    } catch (Exception e) {
                                         //Usually caused if no category exists
-                                        Log.e("Plans-Edit","No Category? Exception e:" + e);
+                                        Log.e("Plans-Edit", "No Category? Exception e:" + e);
                                         dialog.cancel();
                                         Toast.makeText(getSherlockActivity(), "Needs A Category \n\nUse The Side Menu->Categories To Create Categories", Toast.LENGTH_LONG).show();
                                         return;
@@ -775,28 +755,27 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                                     //Set Time
                                     transactionOffset.setStringReadable(pDate.getText().toString().trim());
                                     transactionRate = tRate.getText().toString().trim() + " " + rateSpinner.getSelectedItem().toString().trim();
-                                    transactionCleared = tCleared.isChecked()+"";
+                                    transactionCleared = tCleared.isChecked() + "";
 
                                     //Check to see if value is a number
-                                    boolean validRate=false;
-                                    try{
+                                    boolean validRate;
+                                    try {
                                         Integer.parseInt(tRate.getText().toString().trim());
-                                        validRate=true;
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Plans-Edit","Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
-                                        validRate=false;
+                                        validRate = true;
+                                    } catch (Exception e) {
+                                        Log.e("Plans-Edit", "Rate not valid; Edit Text rate=" + tRate.getText().toString().trim());
+                                        validRate = false;
                                     }
 
-                                    try{
-                                        if (transactionName.length()>0 && validRate) {
+                                    try {
+                                        if (transactionName.length() > 0 && validRate) {
                                             Log.d("Plans-Edit", transactionAccountID + transactionAccount + transactionName + transactionValue + transactionType + transactionCategory + transactionMemo + transactionOffset + transactionRate + transactionCleared);
 
-                                            ContentValues transactionValues=new ContentValues();
+                                            ContentValues transactionValues = new ContentValues();
                                             transactionValues.put(DatabaseHelper.PLAN_ID, ID);
                                             transactionValues.put(DatabaseHelper.PLAN_ACCT_ID, transactionAccountID);
                                             transactionValues.put(DatabaseHelper.PLAN_NAME, transactionName);
-                                            transactionValues.put(DatabaseHelper.PLAN_VALUE, transactionValue.getBigDecimal(locale)+"");
+                                            transactionValues.put(DatabaseHelper.PLAN_VALUE, transactionValue.getBigDecimal(locale) + "");
                                             transactionValues.put(DatabaseHelper.PLAN_TYPE, transactionType);
                                             transactionValues.put(DatabaseHelper.PLAN_CATEGORY, transactionCategory);
                                             transactionValues.put(DatabaseHelper.PLAN_MEMO, transactionMemo);
@@ -810,30 +789,29 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                                             ((Plans) getSherlockActivity()).cancelPlan(oldRecord);
 
                                             //Update plan
-                                            getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+ID), transactionValues, DatabaseHelper.PLAN_ID+"="+ID, null);
+                                            getSherlockActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + ID), transactionValues, DatabaseHelper.PLAN_ID + "=" + ID, null);
 
                                             //Reschedule plan
-                                            final PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale)+"", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "", "true", transactionCleared);
+                                            final PlanRecord record = new PlanRecord(ID, transactionAccountID, transactionName, transactionValue.getBigDecimal(locale) + "", transactionType, transactionCategory, transactionMemo, transactionOffset.getSQLDate(locale), transactionRate, "", "true", transactionCleared);
                                             ((Plans) getSherlockActivity()).schedule(record);
-                                        }
-
-                                        else {
+                                        } else {
                                             Toast.makeText(getSherlockActivity(), "Plans need a Name, Value, and Rate", Toast.LENGTH_LONG).show();
                                         }
-                                    }
-                                    catch(Exception e){
-                                        Log.e("Plans-Edit", "e = "+e);
+                                    } catch (Exception e) {
+                                        Log.e("Plans-Edit", "e = " + e);
                                         Toast.makeText(getSherlockActivity(), "Error Adding Plan!\nDid you enter valid input? ", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }//end onClick "OK"
-                            })
+                            }
+                    )
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                 }
-                            });
+                            }
+                    );
 
             return alertDialogBuilder.create();
         }
@@ -855,49 +833,48 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
         switch (loaderID) {
             case PLAN_LOADER:
-                if(bundle!=null && bundle.getBoolean("boolSearch")){
+                if (bundle != null && bundle.getBoolean("boolSearch")) {
                     //Log.v("Plans-onCreateLoader","new loader (boolSearch "+ query + ") created");
                     String query = this.getIntent().getStringExtra("query");
                     return new CursorLoader(
-                            this,   	// Parent activity context
+                            this,    // Parent activity context
                             (Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query
-                            null,     			// Projection to return
-                            null,            	// No selection clause
-                            null,            	// No selection arguments
-                            null             	// Default sort order
+                            null,                // Projection to return
+                            null,                // No selection clause
+                            null,                // No selection arguments
+                            null                // Default sort order
                     );
-                }
-                else{
-                    Log.v("Plans-onCreateLoader","new loader created");
+                } else {
+                    Log.v("Plans-onCreateLoader", "new loader created");
                     return new CursorLoader(
-                            this,   	// Parent activity context
+                            this,    // Parent activity context
                             MyContentProvider.PLANS_URI,// Table to query
-                            null,     			// Projection to return
-                            null,            	// No selection clause
-                            null,            	// No selection arguments
-                            null             	// Default sort order
+                            null,                // Projection to return
+                            null,                // No selection clause
+                            null,                // No selection arguments
+                            null                // Default sort order
                     );
                 }
 
             case PLAN_ACCOUNT_LOADER:
-                Log.v("Plans-onCreateLoader","new plan loader created");
+                Log.v("Plans-onCreateLoader", "new plan loader created");
                 return new CursorLoader(
-                        this,   	// Parent activity context
+                        this,    // Parent activity context
                         MyContentProvider.ACCOUNTS_URI,// Table to query
-                        null,     			// Projection to return
-                        null,            	// No selection clause
-                        null,            	// No selection arguments
+                        null,                // Projection to return
+                        null,                // No selection clause
+                        null,                // No selection arguments
                         null           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
                 );
 
             case PLAN_SUBCATEGORY_LOADER:
-                Log.v("Plans-onCreateLoader","new category loader created");
+                Log.v("Plans-onCreateLoader", "new category loader created");
                 return new CursorLoader(
-                        this,   	// Parent activity context
+                        this,    // Parent activity context
                         MyContentProvider.SUBCATEGORIES_URI,// Table to query
-                        null,     			// Projection to return
-                        null,            	// No selection clause
-                        null,            	// No selection arguments
+                        null,                // Projection to return
+                        null,                // No selection clause
+                        null,                // No selection arguments
                         null           // Default sort order
                 );
 
@@ -909,56 +886,56 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch(loader.getId()){
+        switch (loader.getId()) {
             case PLAN_LOADER:
                 adapterPlans.swapCursor(data);
-                Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+                Log.v("Plans-onLoadFinished", "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             case PLAN_ACCOUNT_LOADER:
-                String[] from = new String[] {DatabaseHelper.ACCOUNT_NAME, "_id"};
-                int[] to = new int[] { android.R.id.text1};
+                String[] from = new String[]{DatabaseHelper.ACCOUNT_NAME, "_id"};
+                int[] to = new int[]{android.R.id.text1};
 
-                accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to,0);
+                accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to, 0);
                 accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 accountSpinner.setAdapter(accountSpinnerAdapter);
-                Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+                Log.v("Plans-onLoadFinished", "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             case PLAN_SUBCATEGORY_LOADER:
-                from = new String[] {DatabaseHelper.SUBCATEGORY_NAME};
-                to = new int[] { android.R.id.text1 };
+                from = new String[]{DatabaseHelper.SUBCATEGORY_NAME};
+                to = new int[]{android.R.id.text1};
 
-                categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to,0);
+                categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to, 0);
                 categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 categorySpinner.setAdapter(categorySpinnerAdapter);
-                Log.v("Plans-onLoadFinished", "load done. loader="+loader + " data="+data + " data size="+data.getCount());
+                Log.v("Plans-onLoadFinished", "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             default:
-                Log.v("Plans-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+                Log.v("Plans-onLoadFinished", "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        switch(loader.getId()){
+        switch (loader.getId()) {
             case PLAN_LOADER:
                 adapterPlans.swapCursor(null);
-                Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Plans-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             case PLAN_ACCOUNT_LOADER:
-                Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Plans-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             case PLAN_SUBCATEGORY_LOADER:
-                Log.v("Plans-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Plans-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e("Plans-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+                Log.e("Plans-onLoadFinished", "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -998,7 +975,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
             switch (item.getItemId()) {
                 case ACTION_MODE_VIEW:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             DialogFragment newFragment = PlanViewFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);
                             newFragment.show(getSupportFragmentManager(), "dialogView");
@@ -1008,7 +985,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                     mode.finish();
                     return true;
                 case ACTION_MODE_EDIT:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             DialogFragment newFragment = EditDialogFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)));
                             newFragment.show(getSupportFragmentManager(), "dialogEdit");
@@ -1018,12 +995,12 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                     mode.finish();
                     return true;
                 case ACTION_MODE_DELETE:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterPlans.getPlan(selected.keyAt(i));
 
                             Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
-                            getContentResolver().delete(uri, DatabaseHelper.PLAN_ID+"="+record.id, null);
+                            getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
 
                             Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
 
@@ -1038,45 +1015,44 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
                 case ACTION_MODE_TOGGLE:
                     Intent intent;
                     AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterPlans.getPlan(selected.keyAt(i));
 
                             intent = new Intent(Plans.this, PlanReceiver.class);
                             intent.putExtra("plan_id", record.id);
-                            intent.putExtra("plan_acct_id",record.acctId);
-                            intent.putExtra("plan_name",record.name);
-                            intent.putExtra("plan_value",record.value);
-                            intent.putExtra("plan_type",record.type);
-                            intent.putExtra("plan_category",record.category);
-                            intent.putExtra("plan_memo",record.memo);
-                            intent.putExtra("plan_offset",record.offset);
-                            intent.putExtra("plan_rate",record.rate);
-                            intent.putExtra("plan_next",record.next);
-                            intent.putExtra("plan_scheduled",record.scheduled);
-                            intent.putExtra("plan_cleared",record.cleared);
+                            intent.putExtra("plan_acct_id", record.acctId);
+                            intent.putExtra("plan_name", record.name);
+                            intent.putExtra("plan_value", record.value);
+                            intent.putExtra("plan_type", record.type);
+                            intent.putExtra("plan_category", record.category);
+                            intent.putExtra("plan_memo", record.memo);
+                            intent.putExtra("plan_offset", record.offset);
+                            intent.putExtra("plan_rate", record.rate);
+                            intent.putExtra("plan_next", record.next);
+                            intent.putExtra("plan_scheduled", record.scheduled);
+                            intent.putExtra("plan_cleared", record.cleared);
 
                             PendingIntent sender = PendingIntent.getBroadcast(Plans.this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                             try {
-                                if(record.scheduled.equals("true")){
+                                if (record.scheduled.equals("true")) {
                                     am.cancel(sender);
 
-                                    ContentValues transactionValues=new ContentValues();
+                                    ContentValues transactionValues = new ContentValues();
                                     transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "false");
-                                    getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), transactionValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+                                    getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id), transactionValues, DatabaseHelper.PLAN_ID + "=" + record.id, null);
 
-                                    Toast.makeText(Plans.this, "Canceled plan:\n"+record.name, Toast.LENGTH_SHORT).show();
-                                }
-                                else{
+                                    Toast.makeText(Plans.this, "Canceled plan:\n" + record.name, Toast.LENGTH_SHORT).show();
+                                } else {
                                     schedule(record);
 
-                                    ContentValues transactionValues=new ContentValues();
+                                    ContentValues transactionValues = new ContentValues();
                                     transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "true");
-                                    getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), transactionValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+                                    getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id), transactionValues, DatabaseHelper.PLAN_ID + "=" + record.id, null);
                                 }
                             } catch (Exception e) {
-                                Toast.makeText(Plans.this, "Error toggling plan \n"+record.name, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Plans.this, "Error toggling plan \n" + record.name, Toast.LENGTH_SHORT).show();
                                 Log.e("Plans-schedule", "Error toggling a plan. " + e.toString());
                             }
                         }
@@ -1087,22 +1063,22 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
                 default:
                     mode.finish();
-                    Log.e("Plans-onActionItemClciked","ERROR. Clicked " + item);
+                    Log.e("Plans-onActionItemClciked", "ERROR. Clicked " + item);
                     return false;
             }
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mActionMode=null;
+            mActionMode = null;
             adapterPlans.removeSelection();
         }
     }
 
     @Override
     public void onDestroy() {
-        if(mActionMode!=null){
-            ((ActionMode)mActionMode).finish();
+        if (mActionMode != null) {
+            ((ActionMode) mActionMode).finish();
         }
 
         super.onDestroy();

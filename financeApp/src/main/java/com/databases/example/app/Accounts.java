@@ -90,7 +90,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        myFragmentView = inflater.inflate(R.layout.accounts, null, false);
+        myFragmentView = inflater.inflate(R.layout.accounts, container, false);
         lv = (ListView) myFragmentView.findViewById(R.id.account_list);
 
         lv.setClickable(true);
@@ -188,7 +188,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     }
 
     //Used for ActionMode
-    public void listItemChecked(int position) {
+    private void listItemChecked(int position) {
         adapterAccounts.toggleSelection(position);
         boolean hasCheckedItems = adapterAccounts.getSelectedCount() > 0;
 
@@ -207,7 +207,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     }
 
     //Populate view with accounts
-    protected void populate() {
+    private void populate() {
         Bundle bundle = getArguments();
         boolean searchFragment = true;
 
@@ -254,19 +254,19 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     }
 
     //For Adding an Account
-    public void accountAdd() {
+    private void accountAdd() {
         AccountWizard newFragment = AccountWizard.newInstance(null);
         newFragment.show(getChildFragmentManager(), "dialogAdd");
     }
 
     //For Transferring from an Account
-    public void accountTransfer() {
+    private void accountTransfer() {
         DialogFragment newFragment = AccountTransferFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogTransfer");
     }
 
     //For Sorting Accounts
-    public void accountSort() {
+    private void accountSort() {
         DialogFragment newFragment = SortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogSort");
     }
@@ -287,7 +287,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
             menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
             menuSearch.setActionView(new SearchView(getSherlockActivity().getSupportActionBar().getThemedContext()));
 
-            SearchWidget searchWidget = new SearchWidget(getActivity(), menuSearch.getActionView());
+            //Create SearchWidget
+            new SearchWidget(getActivity(), menuSearch.getActionView());
 
             SubMenu subMenu1 = menu.addSubMenu("Account");
             subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
@@ -299,7 +300,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
             subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         } else {
             inflater.inflate(R.layout.account_menu, menu);
-            SearchWidget searchWidget = new SearchWidget(getActivity(), menu.findItem(R.id.account_menu_search).getActionView());
+
+            //Create SearchWidget
+            new SearchWidget(getActivity(), menu.findItem(R.id.account_menu_search).getActionView());
         }
 
     }
@@ -320,10 +323,9 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                 return true;
 
             case R.id.account_menu_transfer:
-                if(adapterAccounts.getCount()<2){
+                if (adapterAccounts.getCount() < 2) {
                     Toast.makeText(getActivity(), "Not Enough Accounts For Transfer \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
-                }
-                else {
+                } else {
                     accountTransfer();
                 }
                 return true;
@@ -578,11 +580,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
                             final Bundle bdl1 = new Bundle();
                             bdl1.putString("id", record.id);
-                            bdl1.putString("name",record.name);
-                            bdl1.putString("balance",record.balance);
-                            bdl1.putString("time",record.time);
-                            bdl1.putString("date",record.date);
-                            bundle.putBundle("Account Info",bdl1);
+                            bdl1.putString("name", record.name);
+                            bdl1.putString("balance", record.balance);
+                            bdl1.putString("time", record.time);
+                            bdl1.putString("date", record.date);
+                            bundle.putBundle("Account Info", bdl1);
 
                             AccountWizard newFragment = AccountWizard.newInstance(bundle);
                             newFragment.show(getChildFragmentManager(), "dialogEdit");

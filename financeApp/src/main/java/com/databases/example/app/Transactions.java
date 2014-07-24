@@ -63,7 +63,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
+public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final int TRANS_LOADER = 987654321;
     private static final int TRANS_SEARCH_LOADER = 98765;
     private static final int TRANS_SUBCATEGORY_LOADER = 987;
@@ -71,25 +71,25 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
     private View myFragmentView;
 
     //Used to determine if fragment should show all transactions
-    private boolean showAllTransactions=false;
+    private boolean showAllTransactions = false;
 
     public static Button tTime;
     public static Button tDate;
 
     //ID of account transaction belongs to
-    public static int account_id=0;
+    public static int account_id = 0;
 
     private static String sortOrder = "null";
 
     private ListView lv = null;
 
     //Constants for ContextMenu
-    private final int CONTEXT_MENU_VIEW=5;
-    private final int CONTEXT_MENU_EDIT=6;
-    private final int CONTEXT_MENU_DELETE=7;
+    private final int CONTEXT_MENU_VIEW = 5;
+    private final int CONTEXT_MENU_EDIT = 6;
+    private final int CONTEXT_MENU_DELETE = 7;
 
     //ListView Adapter
-    public static TransactionsListViewAdapter adapterTransactions = null;
+    private static TransactionsListViewAdapter adapterTransactions = null;
 
     //For Autocomplete
     public static ArrayList<String> dropdownResults = new ArrayList<String>();
@@ -98,35 +98,34 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
     public static SimpleCursorAdapter adapterCategory;
 
     //ActionMode
-    protected Object mActionMode = null;
-    private SparseBooleanArray mSelectedItemsIds;
+    private Object mActionMode = null;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        account_id=0;
+        account_id = 0;
     }//end onCreate
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        myFragmentView = inflater.inflate(R.layout.transactions, null, false);
-        lv = (ListView)myFragmentView.findViewById(R.id.transaction_list);
+        myFragmentView = inflater.inflate(R.layout.transactions, container, false);
+        lv = (ListView) myFragmentView.findViewById(R.id.transaction_list);
 
         //Turn clicks on
         lv.setClickable(true);
         lv.setLongClickable(true);
 
         //Set Listener for regular mouse click
-        lv.setOnItemClickListener(new OnItemClickListener(){
+        lv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> l, View v, int position, long id) {
                 if (mActionMode != null) {
                     listItemChecked(position);
-                }
-                else{
+                } else {
                     int selectionRowID = (int) adapterTransactions.getItemId(position);
                     String item = adapterTransactions.getTransaction(position).name;
 
@@ -156,7 +155,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[] {DatabaseHelper.SUBCATEGORY_NAME}, new int[] { android.R.id.text1 },0);
+        adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[]{DatabaseHelper.SUBCATEGORY_NAME}, new int[]{android.R.id.text1}, 0);
         adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         adapterTransactions = new TransactionsListViewAdapter(this.getActivity(), null);
@@ -166,10 +165,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
         populate();
 
         //Arguments
-        Bundle bundle=getArguments();
+        Bundle bundle = getArguments();
 
         //bundle is empty if from search, so don't add extra menu options
-        if(bundle!=null){
+        if (bundle != null) {
             setHasOptionsMenu(true);
         }
 
@@ -179,77 +178,62 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
     }
 
     //Used for ActionMode
-    public void listItemChecked(int position){
+    private void listItemChecked(int position) {
         adapterTransactions.toggleSelection(position);
         boolean hasCheckedItems = adapterTransactions.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null){
+        if (hasCheckedItems && mActionMode == null) {
             mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
-        }
-        else if (!hasCheckedItems && mActionMode != null){
+        } else if (!hasCheckedItems && mActionMode != null) {
             ((ActionMode) mActionMode).finish();
         }
 
-        if(mActionMode != null){
+        if (mActionMode != null) {
             ((ActionMode) mActionMode).invalidate();
-            ((ActionMode)mActionMode).setTitle(String.valueOf(adapterTransactions.getSelectedCount()));
+            ((ActionMode) mActionMode).setTitle(String.valueOf(adapterTransactions.getSelectedCount()));
         }
     }
 
     //Populate view with all the transactions of selected account
-    protected void populate(){
-        Bundle bundle=getArguments();
-        boolean searchFragment=true;
+    private void populate() {
+        Bundle bundle = getArguments();
+        boolean searchFragment = true;
 
-        if(bundle!=null){
-            if(bundle.getBoolean("showAll")){
-                showAllTransactions = true;
-            }
-            else{
-                showAllTransactions = false;
-            }
+        if (bundle != null) {
+            showAllTransactions = bundle.getBoolean("showAll");
+            searchFragment = bundle.getBoolean("boolSearch");
 
-            if(bundle.getBoolean("boolSearch")){
-                searchFragment = true;
-            }
-            else{
-                searchFragment = false;
-            }
-
-            if(!showAllTransactions && !searchFragment){
+            if (!showAllTransactions && !searchFragment) {
                 account_id = bundle.getInt("ID");
             }
 
-            Log.v("Transactions-populate","searchFragment="+searchFragment+"\nshowAllTransactions="+showAllTransactions+"\nAccount_id="+account_id);
+            Log.v("Transactions-populate", "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account_id);
         }
 
-        if(showAllTransactions){
+        if (showAllTransactions) {
             Bundle b = new Bundle();
             b.putBoolean("boolShowAll", true);
-            Log.v("Transactions-populate","start loader (all transactions)...");
+            Log.v("Transactions-populate", "start loader (all transactions)...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
-        }
-        else if(searchFragment){
+        } else if (searchFragment) {
             String query = getActivity().getIntent().getStringExtra("query");
 
-            try{
+            try {
                 Bundle b = new Bundle();
                 b.putBoolean("boolSearch", true);
                 b.putString("query", query);
-                Log.v("Transactions-populate","start search loader...");
+                Log.v("Transactions-populate", "start search loader...");
                 getLoaderManager().initLoader(TRANS_SEARCH_LOADER, b, this);
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Log.e("Transactions-populate", "Search Failed. Error e=" + e);
-                Toast.makeText(this.getActivity(), "Search Failed\n"+e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.getActivity(), "Search Failed\n" + e, Toast.LENGTH_SHORT).show();
                 //return;
             }
 
-        }
-        else{
+        } else {
             Bundle b = new Bundle();
             b.putInt("aID", account_id);
-            Log.v("Transactions-populate","start loader ("+DatabaseHelper.TRANS_ACCT_ID+"="+ account_id + ")...");
+            Log.v("Transactions-populate", "start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account_id + ")...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         }
 
@@ -258,31 +242,31 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
     }
 
     //For Adding a Transaction
-    public void transactionAdd(){
-        if(account_id==0){
+    private void transactionAdd() {
+        if (account_id == 0) {
             Log.e("Transaction-AddDialog", "No account selected before attempting to add transaction...");
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
             alertDialogBuilder.setTitle("No Account Selected");
             alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");
             alertDialogBuilder.setNeutralButton("Okay", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog,int id) {
+                public void onClick(DialogInterface dialog, int id) {
                     dialog.cancel();
                 }
             });
 
             alertDialogBuilder.create().show();
-        }
-        else{
+        } else {
             TransactionWizard frag = TransactionWizard.newInstance(null);
             frag.show(getChildFragmentManager(), "dialogAdd");
         }
     }//end of transactionAdd
 
     //For Sorting Transactions
-    public void transactionSort(){
+    private void transactionSort() {
         DialogFragment newFragment = SortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogSort");
     }
+
     //For Menu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -290,7 +274,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
         View account_frame = getActivity().findViewById(R.id.account_frag_frame);
 
-        if(account_frame!=null){
+        if (account_frame != null) {
             SubMenu subMMenuTransaction = menu.addSubMenu("Transaction");
             subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
             subMMenuTransaction.add(com.actionbarsherlock.view.Menu.NONE, R.id.transaction_menu_schedule, com.actionbarsherlock.view.Menu.NONE, "Schedule");
@@ -298,11 +282,10 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
             MenuItem subMenu1Item = subMMenuTransaction.getItem();
             subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
-        else{
+        } else {
             menu.clear();
             inflater.inflate(R.layout.transaction_menu, menu);
-            SearchWidget searchWidget = new SearchWidget(getSherlockActivity(),menu.findItem(R.id.transaction_menu_search).getActionView());
+            new SearchWidget(getSherlockActivity(), menu.findItem(R.id.transaction_menu_search).getActionView());
         }
 
     }
@@ -339,14 +322,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.e("Transactions-onSharedPreferenceChanged","Options Changed");
-        if(!isDetached()){
-            Log.e("Transactions-onSharedPreferenceChanged","Transaction is attached");
+        Log.e("Transactions-onSharedPreferenceChanged", "Options Changed");
+        if (!isDetached()) {
+            Log.e("Transactions-onSharedPreferenceChanged", "Transaction is attached");
             //Toast.makeText(this.getActivity(), "Transaction is attached", Toast.LENGTH_SHORT).show();
             //populate();
-        }
-        else{
-            Log.e("Transactions-onSharedPreferenceChanged","Transaction is detached");
+        } else {
+            Log.e("Transactions-onSharedPreferenceChanged", "Transaction is detached");
             //Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();
         }
     }
@@ -374,11 +356,11 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
             DateTime time = new DateTime();
             time.setStringSQL(hourOfDay + ":" + minute);
 
-            if(tTime!=null){
+            if (tTime != null) {
                 tTime.setText(time.getReadableTime());
             }
 
-            if(TransactionWizardOptionalFragment.mPage!=null){
+            if (TransactionWizardOptionalFragment.mPage != null) {
                 TransactionWizardOptionalFragment.mPage.getData().putString(TransactionWizardOptionalPage.TIME_DATA_KEY, time.getReadableTime());
                 TransactionWizardOptionalFragment.mPage.notifyDataChanged();
             }
@@ -400,7 +382,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
             SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
 
             int year = Integer.parseInt(dateFormatYear.format(cal.getTime()));
-            int month = Integer.parseInt(dateFormatMonth.format(cal.getTime()))-1;
+            int month = Integer.parseInt(dateFormatMonth.format(cal.getTime())) - 1;
             int day = Integer.parseInt(dateFormatDay.format(cal.getTime()));
 
             // Create a new instance of DatePickerDialog and return it
@@ -409,13 +391,13 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             DateTime date = new DateTime();
-            date.setStringSQL(year + "-" + (month+1) + "-" + day);
+            date.setStringSQL(year + "-" + (month + 1) + "-" + day);
 
-            if(tDate!=null){
+            if (tDate != null) {
                 tDate.setText(date.getReadableDate());
             }
 
-            if(TransactionWizardOptionalFragment.mPage!=null){
+            if (TransactionWizardOptionalFragment.mPage != null) {
                 TransactionWizardOptionalFragment.mPage.getData().putString(TransactionWizardOptionalPage.DATE_DATA_KEY, date.getReadableDate());
                 TransactionWizardOptionalFragment.mPage.notifyDataChanged();
             }
@@ -444,7 +426,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
             alertDialogBuilder.setTitle("Sort");
             alertDialogBuilder.setCancelable(true);
 
-            ListView sortOptions = (ListView)transactionSortView.findViewById(R.id.sort_options);
+            ListView sortOptions = (ListView) transactionSortView.findViewById(R.id.sort_options);
             sortOptions.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
@@ -463,12 +445,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
                         //Largest
                         case 2:
-                            sortOrder = DatabaseHelper.TRANS_TYPE+" ASC, CAST ("+DatabaseHelper.TRANS_VALUE+" AS INTEGER)" + " DESC";
+                            sortOrder = DatabaseHelper.TRANS_TYPE + " ASC, CAST (" + DatabaseHelper.TRANS_VALUE + " AS INTEGER)" + " DESC";
                             break;
 
                         //Smallest
                         case 3:
-                            sortOrder = DatabaseHelper.TRANS_TYPE+" ASC, CAST ("+DatabaseHelper.TRANS_VALUE+" AS INTEGER)" + " ASC";
+                            sortOrder = DatabaseHelper.TRANS_TYPE + " ASC, CAST (" + DatabaseHelper.TRANS_VALUE + " AS INTEGER)" + " ASC";
                             break;
 
                         //Category
@@ -492,7 +474,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                             break;
 
                         default:
-                            Log.e("Transactions-SortFragment","Unknown Sorting Option!");
+                            Log.e("Transactions-SortFragment", "Unknown Sorting Option!");
                             break;
 
                     }//end switch
@@ -511,49 +493,48 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
         switch (loaderID) {
             case TRANS_LOADER:
-                if(bundle!=null && bundle.getBoolean("boolShowAll")){
-                    Log.v("Transactions-onCreateLoader","new loader (ShowAll) created");
+                if (bundle != null && bundle.getBoolean("boolShowAll")) {
+                    Log.v("Transactions-onCreateLoader", "new loader (ShowAll) created");
                     return new CursorLoader(
-                            getActivity(),   	// Parent activity context
+                            getActivity(),    // Parent activity context
                             MyContentProvider.TRANSACTIONS_URI,// Table to query
-                            null,     			// Projection to return
-                            null,            	// No selection clause
-                            null,            	// No selection arguments
-                            sortOrder          	// Default sort order
+                            null,                // Projection to return
+                            null,                // No selection clause
+                            null,                // No selection arguments
+                            sortOrder            // Default sort order
                     );
-                }
-                else{
-                    String selection = DatabaseHelper.TRANS_ACCT_ID+"=" + account_id;
-                    Log.v("Transactions-onCreateLoader","new loader created");
+                } else {
+                    String selection = DatabaseHelper.TRANS_ACCT_ID + "=" + account_id;
+                    Log.v("Transactions-onCreateLoader", "new loader created");
                     return new CursorLoader(
-                            getActivity(),   			// Parent activity context
+                            getActivity(),            // Parent activity context
                             MyContentProvider.TRANSACTIONS_URI,// Table to query
-                            null,     					// Projection to return
-                            selection,					// No selection clause
-                            null,						// No selection arguments
-                            sortOrder             		// Default sort order
+                            null,                        // Projection to return
+                            selection,                    // No selection clause
+                            null,                        // No selection arguments
+                            sortOrder                    // Default sort order
                     );
                 }
             case TRANS_SEARCH_LOADER:
                 String query = getActivity().getIntent().getStringExtra("query");
-                Log.v("Transactions-onCreateLoader","new loader (boolSearch "+ query + ") created");
+                Log.v("Transactions-onCreateLoader", "new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
-                        getActivity(),   	// Parent activity context
+                        getActivity(),    // Parent activity context
                         (Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/SEARCH/" + query)),// Table to query
-                        null,     			// Projection to return
-                        null,            	// No selection clause
-                        null,            	// No selection arguments
+                        null,                // Projection to return
+                        null,                // No selection clause
+                        null,                // No selection arguments
                         sortOrder           // Default sort order
                 );
 
             case TRANS_SUBCATEGORY_LOADER:
-                Log.v("Transactions-onCreateLoader","new category loader created");
+                Log.v("Transactions-onCreateLoader", "new category loader created");
                 return new CursorLoader(
-                        getActivity(),   	// Parent activity context
+                        getActivity(),    // Parent activity context
                         MyContentProvider.SUBCATEGORIES_URI,// Table to query
-                        null,     			// Projection to return
-                        null,            	// No selection clause
-                        null,            	// No selection arguments
+                        null,                // Projection to return
+                        null,                // No selection clause
+                        null,                // No selection arguments
                         sortOrder           // Default sort order
                 );
 
@@ -565,60 +546,57 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        TextView footerTV = (TextView)this.myFragmentView.findViewById(R.id.transaction_footer);
+        TextView footerTV = (TextView) this.myFragmentView.findViewById(R.id.transaction_footer);
 
-        switch(loader.getId()){
+        switch (loader.getId()) {
             case TRANS_LOADER:
                 adapterTransactions.swapCursor(data);
-                Log.v("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+                Log.v("Transactions-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 final int valueColumn = data.getColumnIndex(DatabaseHelper.TRANS_VALUE);
                 final int typeColumn = data.getColumnIndex(DatabaseHelper.TRANS_TYPE);
                 BigDecimal totalBalance = BigDecimal.ZERO;
-                Locale locale=getResources().getConfiguration().locale;
+                Locale locale = getResources().getConfiguration().locale;
 
                 data.moveToPosition(-1);
-                while(data.moveToNext()){
-                    if(data.getString(typeColumn).equals("Deposit")){
+                while (data.moveToNext()) {
+                    if (data.getString(typeColumn).equals("Deposit")) {
                         totalBalance = totalBalance.add(new Money(data.getString(valueColumn)).getBigDecimal(locale));
-                    }
-                    else{
+                    } else {
                         totalBalance = totalBalance.subtract(new Money(data.getString(valueColumn)).getBigDecimal(locale));
                     }
                 }
 
-                try{
-                    TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
+                try {
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_noTransaction);
                     lv.setEmptyView(noResult);
                     noResult.setText("No Transactions\n\n To Add A Transaction, Please Use The ActionBar On The Top");
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
-                }
-                catch(Exception e){
-                    Log.e("Transactions-onLoadFinished", "Error setting balance TextView. e="+e);
+                } catch (Exception e) {
+                    Log.e("Transactions-onLoadFinished", "Error setting balance TextView. e=" + e);
                 }
 
-                if(account_id!=0){
+                if (account_id != 0) {
                     ContentValues values = new ContentValues();
-                    values.put(DatabaseHelper.ACCOUNT_BALANCE, totalBalance+"");
-                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI+"/"+account_id), values,DatabaseHelper.ACCOUNT_ID+"="+account_id, null);
+                    values.put(DatabaseHelper.ACCOUNT_BALANCE, totalBalance + "");
+                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + account_id), values, DatabaseHelper.ACCOUNT_ID + "=" + account_id, null);
                 }
 
                 break;
 
             case TRANS_SEARCH_LOADER:
                 adapterTransactions.swapCursor(data);
-                Log.v("Transactions-onLoadFinished", "loader finished. loader="+loader.getId() + " data="+data + " data size="+data.getCount());
+                Log.v("Transactions-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
-                try{
-                    TextView noResult = (TextView)myFragmentView.findViewById(R.id.transaction_noTransaction);
+                try {
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_noTransaction);
                     lv.setEmptyView(noResult);
                     noResult.setText("No Transactions Found");
 
                     footerTV.setText("Search Results");
-                }
-                catch(Exception e){
-                    Log.e("Transactions-onLoadFinished", "Error setting search TextView. e="+e);
+                } catch (Exception e) {
+                    Log.e("Transactions-onLoadFinished", "Error setting search TextView. e=" + e);
                 }
                 break;
 
@@ -627,35 +605,35 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                 break;
 
             default:
-                Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+                Log.e("Transactions-onLoadFinished", "Error. Unknown loader (" + loader.getId());
                 break;
         }
 
-        if(!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()){
+        if (!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()) {
             getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        switch(loader.getId()){
+        switch (loader.getId()) {
             case TRANS_LOADER:
                 adapterTransactions.swapCursor(null);
-                Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Transactions-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             case TRANS_SEARCH_LOADER:
                 adapterTransactions.swapCursor(null);
-                Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Transactions-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             case TRANS_SUBCATEGORY_LOADER:
                 adapterCategory.swapCursor(null);
-                Log.v("Transactions-onLoaderReset", "loader reset. loader="+loader.getId());
+                Log.v("Transactions-onLoaderReset", "loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e("Transactions-onLoadFinished", "Error. Unknown loader ("+loader.getId());
+                Log.e("Transactions-onLoadFinished", "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -691,7 +669,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
             switch (item.getItemId()) {
                 case CONTEXT_MENU_VIEW:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             DialogFragment newFragment = TransactionViewFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)).id);
                             newFragment.show(getChildFragmentManager(), "dialogView");
@@ -701,7 +679,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                     mode.finish();
                     return true;
                 case CONTEXT_MENU_EDIT:
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             //DialogFragment newFragment = EditDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)));
                             //newFragment.show(getChildFragmentManager(), "dialogEdit");
@@ -714,19 +692,19 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                             bdl1.putInt("id", record.id);
                             bdl1.putInt("acct_id", record.acctId);
                             bdl1.putInt("plan_id", record.planId);
-                            bdl1.putString("name",record.name);
-                            bdl1.putString("value",record.value);
-                            bdl1.putString("type",record.type);
-                            bdl1.putString("category",record.category);
-                            bundle.putBundle("Transaction Info",bdl1);
+                            bdl1.putString("name", record.name);
+                            bdl1.putString("value", record.value);
+                            bdl1.putString("type", record.type);
+                            bdl1.putString("category", record.category);
+                            bundle.putBundle("Transaction Info", bdl1);
 
                             final Bundle bdl2 = new Bundle();
-                            bdl2.putString("checknum",record.checknum);
+                            bdl2.putString("checknum", record.checknum);
                             bdl2.putString("memo", record.memo);
-                            bdl2.putString("date",record.date);
-                            bdl2.putString("time",record.time);
-                            bdl2.putString("cleared",record.cleared);
-                            bundle.putBundle("Optional",bdl2);
+                            bdl2.putString("date", record.date);
+                            bdl2.putString("time", record.time);
+                            bdl2.putString("cleared", record.cleared);
+                            bundle.putBundle("Optional", bdl2);
 
                             final TransactionWizard frag = TransactionWizard.newInstance(bundle);
                             frag.show(getChildFragmentManager(), "dialogEdit");
@@ -737,12 +715,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                     return true;
                 case CONTEXT_MENU_DELETE:
                     TransactionRecord record;
-                    for (int i = 0; i < selected.size(); i++){
+                    for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterTransactions.getTransaction(selected.keyAt(i));
 
                             Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
-                            getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID+"="+record.id, null);
+                            getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID + "=" + record.id, null);
 
                             Toast.makeText(getActivity(), "Deleted Transaction:\n" + record.name, Toast.LENGTH_SHORT).show();
                         }
@@ -753,22 +731,22 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
                 default:
                     mode.finish();
-                    Log.e("Transactions-onActionItemClciked","ERROR. Clicked " + item);
+                    Log.e("Transactions-onActionItemClciked", "ERROR. Clicked " + item);
                     return false;
             }
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mActionMode=null;
+            mActionMode = null;
             adapterTransactions.removeSelection();
         }
     }
 
     @Override
     public void onDestroyView() {
-        if(mActionMode!=null){
-            ((ActionMode)mActionMode).finish();
+        if (mActionMode != null) {
+            ((ActionMode) mActionMode).finish();
         }
 
         super.onDestroyView();

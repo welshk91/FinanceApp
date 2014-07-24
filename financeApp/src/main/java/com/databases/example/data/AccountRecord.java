@@ -3,11 +3,11 @@ package com.databases.example.data;
 //An Object Class used to hold the data of each account record
 public class AccountRecord {
 
-    public String id;
-    public String name;
-    public String balance;
-    public String date;
-    public String time;
+    public final String id;
+    public final String name;
+    public final String balance;
+    public final String date;
+    public final String time;
 
     public AccountRecord(String id, String name, String balance, String date, String time) {
         this.id = id;

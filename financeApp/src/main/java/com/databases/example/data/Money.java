@@ -12,40 +12,38 @@ import java.util.Locale;
 
 import static java.math.BigDecimal.ZERO;
 
-public class Money{
-    protected String value;
-    private static int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
+public class Money {
+    private final String value;
+    private static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
 
-    public Money(String value){
-        this.value=value;
+    public Money(String value) {
+        this.value = value;
     }
 
-    public Money(float value){
-        this.value=value+"";
+    public Money(float value) {
+        this.value = value + "";
     }
 
-    public Money(BigDecimal value){
-        this.value=value+"";
+    public Money(BigDecimal value) {
+        this.value = value + "";
     }
 
-    public BigDecimal getBigDecimal(Locale locale){
-        BigDecimal result = new BigDecimal(value).setScale(Currency.getInstance(locale).getDefaultFractionDigits(), ROUNDING_MODE);
-        return result;
+    public BigDecimal getBigDecimal(Locale locale) {
+        return new BigDecimal(value).setScale(Currency.getInstance(locale).getDefaultFractionDigits(), ROUNDING_MODE);
     }
 
-    public String getNumberFormat(Locale locale){
+    public String getNumberFormat(Locale locale) {
         BigDecimal result = this.getBigDecimal(locale);
-        DecimalFormat formatter = (DecimalFormat)NumberFormat.getCurrencyInstance();
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance();
         String symbol = formatter.getCurrency().getSymbol();
-        formatter.setNegativePrefix(symbol+"-");
+        formatter.setNegativePrefix(symbol + "-");
         formatter.setNegativeSuffix("");
-        String nf = formatter.format(result);
-        return nf;
+        return formatter.format(result);
     }
 
-    public boolean isPositive(Locale locale){
+    public boolean isPositive(Locale locale) {
         BigDecimal result = new BigDecimal(value).setScale(Currency.getInstance(locale).getDefaultFractionDigits(), ROUNDING_MODE);
-        return result.compareTo(ZERO)>=0;
+        return result.compareTo(ZERO) >= 0;
     }
 
 //	double result = 50.00 + 5.45 - 30.67;

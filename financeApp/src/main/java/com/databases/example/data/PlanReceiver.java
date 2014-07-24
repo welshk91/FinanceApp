@@ -28,8 +28,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class PlanReceiver extends BroadcastReceiver{
-    final int NOTIFICATION_ID = 0123456;
+public class PlanReceiver extends BroadcastReceiver {
+    private final int NOTIFICATION_ID = 0123456;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -38,8 +38,7 @@ public class PlanReceiver extends BroadcastReceiver{
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Log.d("PlanReceiver-onReceive", "Notified of boot");
             reschedulePlans(context);
-        }
-        else{
+        } else {
             String name = bundle.getString("plan_name");
             Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
 
@@ -57,9 +56,9 @@ public class PlanReceiver extends BroadcastReceiver{
                 String plan_scheduled = bundle.getString("plan_scheduled");
                 String plan_cleared = bundle.getString("plan_cleared");
 
-                PlanRecord record = new PlanRecord(plan_id,plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
+                PlanRecord record = new PlanRecord(plan_id, plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
 
-                transactionAdd(record,context);
+                transactionAdd(record, context);
 
                 notify(context, bundle);
             } catch (Exception e) {
@@ -73,13 +72,13 @@ public class PlanReceiver extends BroadcastReceiver{
     }
 
     //For Adding a Transaction
-    public void transactionAdd(PlanRecord plan, Context context){
+    private void transactionAdd(PlanRecord plan, Context context) {
         final Calendar cal = Calendar.getInstance();
-        Locale locale=null;
+        Locale locale = context.getResources().getConfiguration().locale;
         DateTime date = new DateTime();
         date.setCalendar(cal);
 
-        ContentValues transactionValues=new ContentValues();
+        ContentValues transactionValues = new ContentValues();
         transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, plan.acctId);
         transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, plan.id);
         transactionValues.put(DatabaseHelper.TRANS_NAME, plan.name);
@@ -97,18 +96,18 @@ public class PlanReceiver extends BroadcastReceiver{
 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void notify(Context context, Bundle bundle) {
+    private void notify(Context context, Bundle bundle) {
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        int notificationCount=0;
+        int notificationCount = 0;
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 
         String plan_name = bundle.getString("plan_name");
         String plan_value = bundle.getString("plan_value");
 
         //Intent fired when notification is clicked on
-        Intent intent = new Intent(context,Checkbook.class);
+        Intent intent = new Intent(context, Checkbook.class);
         intent.putExtra("fromNotification", true);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Get today's readable date
         DateTime today = new DateTime();
@@ -120,12 +119,12 @@ public class PlanReceiver extends BroadcastReceiver{
 
         //Add current notification to database of notifications
         ContentValues notificationValues = new ContentValues();
-        notificationValues.put(DatabaseHelper.NOT_NAME,plan_name);
-        notificationValues.put(DatabaseHelper.NOT_VALUE,plan_value);
-        notificationValues.put(DatabaseHelper.NOT_DATE,today.getSQLDate(context.getResources().getConfiguration().locale));
+        notificationValues.put(DatabaseHelper.NOT_NAME, plan_name);
+        notificationValues.put(DatabaseHelper.NOT_VALUE, plan_value);
+        notificationValues.put(DatabaseHelper.NOT_DATE, today.getSQLDate(context.getResources().getConfiguration().locale));
         context.getContentResolver().insert(MyContentProvider.NOTIFICATIONS_URI, notificationValues);
 
-        NotificationCompat.Builder  mBuilder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setContentTitle("Plan " + plan_name + " Occured");
         mBuilder.setContentText(value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
         mBuilder.setSmallIcon(R.drawable.ic_launcher);
@@ -134,9 +133,9 @@ public class PlanReceiver extends BroadcastReceiver{
 
         //Inbox Style
         inboxStyle.setBigContentTitle("Plans:");
-        Cursor notifications = context.getContentResolver().query(Uri.parse(MyContentProvider.NOTIFICATIONS_URI+"/"), null, null, null, null);
+        Cursor notifications = context.getContentResolver().query(Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/"), null, null, null, null);
 
-        while (notifications.moveToNext()){
+        while (notifications.moveToNext()) {
             notificationCount++;
             String notification_name = notifications.getString(1);
             String notification_value = notifications.getString(2);
@@ -147,12 +146,12 @@ public class PlanReceiver extends BroadcastReceiver{
             inboxStyle.addLine(notification_name + ": " + notification_value + " " + date.getReadableDate());
         }
 
-        if(notificationCount>1){
+        if (notificationCount > 1) {
             mBuilder.setNumber(notificationCount);
         }
 
-        if(notificationCount>7){
-            inboxStyle.setSummaryText("+" + (notificationCount-7) + " more");
+        if (notificationCount > 7) {
+            inboxStyle.setSummaryText("+" + (notificationCount - 7) + " more");
         }
         mBuilder.setStyle(inboxStyle);
 
@@ -160,8 +159,8 @@ public class PlanReceiver extends BroadcastReceiver{
     }
 
     //Method that remakes the planned transaction
-    public void reschedulePlans(Context context){
-        Cursor cursorPlans = context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI+"/"), null, null, null, null);
+    private void reschedulePlans(Context context) {
+        Cursor cursorPlans = context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI + "/"), null, null, null, null);
 
         //startManagingCursor(cursorPlans);
         int columnID = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ID);
@@ -177,87 +176,73 @@ public class PlanReceiver extends BroadcastReceiver{
         int columnScheduled = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
         int columnCleared = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
-        cursorPlans.moveToFirst();
-        if (cursorPlans != null) {
-            if (cursorPlans.isFirst()) {
-                do {
+        while (cursorPlans.moveToNext()) {
+            String id = cursorPlans.getString(0);
+            String to_id = cursorPlans.getString(columnToID);
+            String name = cursorPlans.getString(columnName);
+            String value = cursorPlans.getString(columnValue);
+            String type = cursorPlans.getString(columnType);
+            String category = cursorPlans.getString(columnCategory);
+            String memo = cursorPlans.getString(columnMemo);
+            String offset = cursorPlans.getString(columnOffset);
+            String rate = cursorPlans.getString(columnRate);
+            String next = cursorPlans.getString(columnNext);
+            String scheduled = cursorPlans.getString(columnScheduled);
+            String cleared = cursorPlans.getString(columnCleared);
 
-                    String id = cursorPlans.getString(0);
-                    String to_id = cursorPlans.getString(columnToID);
-                    String name = cursorPlans.getString(columnName);
-                    String value = cursorPlans.getString(columnValue);
-                    String type = cursorPlans.getString(columnType);
-                    String category = cursorPlans.getString(columnCategory);
-                    String memo = cursorPlans.getString(columnMemo);
-                    String offset = cursorPlans.getString(columnOffset);
-                    String rate = cursorPlans.getString(columnRate);
-                    String next = cursorPlans.getString(columnNext);
-                    String scheduled = cursorPlans.getString(columnScheduled);
-                    String cleared = cursorPlans.getString(columnCleared);
-
-                    /****RESET ALARMS HERE****/
-                    Log.d("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
-                    final PlanRecord record = new PlanRecord(id,to_id,name,value,type,category,memo,offset,rate,next,scheduled,cleared);
-                    schedule(record,context);
-
-                } while (cursorPlans.moveToNext());
-            }
-
-            else {
-                //No Results Found
-                Log.d("PlanReceiver-reschedulePlans", "No Plans to reschedule");
-            }
+            /****RESET ALARMS HERE****/
+            Log.d("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
+            final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
+            schedule(record, context);
         }
 
     }
 
     //Re-Hash of the schedule method of Plans.java
     private void schedule(PlanRecord plan, Context context) {
-        PlanRecord record = plan;
         Date d = null;
 
         try {
             DateTime test = new DateTime();
-            test.setStringSQL(record.offset);
+            test.setStringSQL(plan.offset);
             d = test.getYearMonthDay();
-        }catch (java.text.ParseException e) {
-            Log.e("PlanReceiver-schedule", "Couldn't schedule " + record.name + "\n e:"+e);
+        } catch (java.text.ParseException e) {
+            Log.e("PlanReceiver-schedule", "Couldn't schedule " + plan.name + "\n e:" + e);
             e.printStackTrace();
         }
 
-        Log.e("PlanReceiver-schedule", "d.year=" + (d.getYear()+1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+        Log.e("PlanReceiver-schedule", "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
-        Calendar firstRun = new GregorianCalendar(d.getYear()+1900,d.getMonth(),d.getDate());
+        Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
         Log.e("PlanReceiver-schedule", "FirstRun:" + firstRun);
 
         Intent intent = new Intent(context, PlanReceiver.class);
-        intent.putExtra("plan_id", record.id);
-        intent.putExtra("plan_acct_id",record.acctId);
-        intent.putExtra("plan_name",record.name);
-        intent.putExtra("plan_value",record.value);
-        intent.putExtra("plan_type",record.type);
-        intent.putExtra("plan_category",record.category);
-        intent.putExtra("plan_memo",record.memo);
-        intent.putExtra("plan_offset",record.offset);
-        intent.putExtra("plan_rate",record.rate);
-        intent.putExtra("plan_next",record.next);
-        intent.putExtra("plan_scheduled",record.scheduled);
-        intent.putExtra("plan_cleared",record.cleared);
+        intent.putExtra("plan_id", plan.id);
+        intent.putExtra("plan_acct_id", plan.acctId);
+        intent.putExtra("plan_name", plan.name);
+        intent.putExtra("plan_value", plan.value);
+        intent.putExtra("plan_type", plan.type);
+        intent.putExtra("plan_category", plan.category);
+        intent.putExtra("plan_memo", plan.memo);
+        intent.putExtra("plan_offset", plan.offset);
+        intent.putExtra("plan_rate", plan.rate);
+        intent.putExtra("plan_next", plan.next);
+        intent.putExtra("plan_scheduled", plan.scheduled);
+        intent.putExtra("plan_cleared", plan.cleared);
 
         //Parse Rate (token 0 is amount, token 1 is type)
-        final String phrase = record.rate;
-        final String delims = "[ ]+";
-        final String[] tokens = phrase.split(delims);
+        final String phrase = plan.rate;
+        final String[] tokens = phrase.split("[ ]+");
 
-        final PendingIntent sender = PendingIntent.getBroadcast(context, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent sender = PendingIntent.getBroadcast(context, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Get the AlarmManager service
-        final AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        final Locale locale=context.getResources().getConfiguration().locale;
+        final Locale locale = context.getResources().getConfiguration().locale;
         final DateTime nextRun = new DateTime();
 
-        if(tokens[1].contains("Days")){
+        if (tokens[1].contains("Days")) {
             Log.d("PlanReceiver-schedule", "Days");
 
             //If Starting Time is in the past, fire off next day(s)
@@ -271,11 +256,10 @@ public class PlanReceiver extends BroadcastReceiver{
 
             ContentValues planValues = new ContentValues();
             planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
 
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY), sender);
-        }
-        else if(tokens[1].contains("Weeks")){
+            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
+        } else if (tokens[1].contains("Weeks")) {
             Log.d("PlanReceiver-schedule", "Weeks");
 
             //If Starting Time is in the past, fire off next week(s)
@@ -289,11 +273,10 @@ public class PlanReceiver extends BroadcastReceiver{
 
             ContentValues planValues = new ContentValues();
             planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
 
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0])*AlarmManager.INTERVAL_DAY)*7, sender);
-        }
-        else if(tokens[1].contains("Months")){
+            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY) * 7, sender);
+        } else if (tokens[1].contains("Months")) {
             Log.d("PlanReceiver-schedule", "Months");
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(cal.getTimeInMillis());
@@ -310,44 +293,13 @@ public class PlanReceiver extends BroadcastReceiver{
 
             ContentValues planValues = new ContentValues();
             planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI+"/"+record.id), planValues, DatabaseHelper.PLAN_ID+"="+record.id, null);
+            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
-        }
-        else{
+        } else {
             Log.e("PlanReceiver-schedule", "Could not set alarm; Something wrong with the rate");
         }
 
-    }
-
-    public class PlanRecord {
-        protected String id;
-        protected String acctId;
-        protected String name;
-        protected String value;
-        protected String type;
-        protected String category;
-        protected String memo;
-        protected String offset;
-        protected String rate;
-        protected String next;
-        protected String scheduled;
-        protected String cleared;
-
-        public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
-            this.id = id;
-            this.acctId = acctId;
-            this.name = name;
-            this.value = value;
-            this.type = type;
-            this.category = category;
-            this.memo = memo;
-            this.offset = offset;
-            this.rate = rate;
-            this.next = next;
-            this.scheduled = scheduled;
-            this.cleared = cleared;
-        }
     }
 
 }//end of PlanReceiver

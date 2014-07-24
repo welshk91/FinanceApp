@@ -12,15 +12,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateTime{
-    protected Date dateSQL;
-    protected Date dateReadable;
+public class DateTime {
+    private Date dateSQL;
+    private Date dateReadable;
 
-    protected String stringSQL;
-    protected String stringReadable;
+    private String stringSQL;
+    private String stringReadable;
 
-    protected Date date;
-    protected Calendar cal;
+    private Date date;
+    private Calendar cal;
 
     //Time Format to use for user (01:42 PM)
     private final static SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
@@ -34,73 +34,65 @@ public class DateTime{
     //Date Format to use for sql
     private final static SimpleDateFormat dateSQLFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public DateTime(){
+    public DateTime() {
     }
 
-    public void setDateSQL(Date dateSQL){
-        this.dateSQL=dateSQL;
+    public void setDateSQL(Date dateSQL) {
+        this.dateSQL = dateSQL;
     }
 
-    public void setDateReadable(Date dateReadable){
-        this.dateReadable=dateReadable;
+    public void setDateReadable(Date dateReadable) {
+        this.dateReadable = dateReadable;
     }
 
-    public void setStringSQL(String stringSQL){
-        this.stringSQL=stringSQL;
+    public void setStringSQL(String stringSQL) {
+        this.stringSQL = stringSQL;
     }
 
-    public void setStringReadable(String stringReadable){
-        this.stringReadable=stringReadable;
+    public void setStringReadable(String stringReadable) {
+        this.stringReadable = stringReadable;
     }
 
-    public void setDate(Date date){
-        this.date=date;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public void setCalendar(Calendar cal){
-        this.cal=cal;
+    public void setCalendar(Calendar cal) {
+        this.cal = cal;
     }
 
-    public String getReadableDate(){
+    public String getReadableDate() {
         String newDate = null;
 
-        if(stringReadable!=null){
+        if (stringReadable != null) {
             return stringReadable;
-        }
-
-        else if(cal!=null){
+        } else if (cal != null) {
             return dateFormat.format(cal.getTime());
-        }
-
-        else{
+        } else {
             try {
                 Date oldDate = dateSQLFormat.parse(stringSQL);
                 newDate = dateFormat.format(oldDate);
             } catch (Exception e) {
-                Log.e("DateTime-getReadableDate","Error parsing readable date("+stringSQL+")!");
+                Log.e("DateTime-getReadableDate", "Error parsing readable date(" + stringSQL + ")!");
                 e.printStackTrace();
             }
             return newDate;
         }
     }
 
-    public String getReadableTime(){
+    public String getReadableTime() {
         String newTime = null;
 
-        if(stringReadable!=null){
+        if (stringReadable != null) {
             return stringReadable;
-        }
-
-        else if(cal!=null){
+        } else if (cal != null) {
             return timeFormat.format(cal.getTime());
-        }
-
-        else{
+        } else {
             try {
                 Date oldTime = timeSQLFormat.parse(stringSQL);
                 newTime = timeFormat.format(oldTime);
             } catch (Exception e) {
-                Log.e("DateTime-getReadableTime","Error parsing readable time("+stringSQL+")!");
+                Log.e("DateTime-getReadableTime", "Error parsing readable time(" + stringSQL + ")!");
                 e.printStackTrace();
             }
 
@@ -108,26 +100,20 @@ public class DateTime{
         }
     }
 
-    public String getSQLDate(Locale l){
-        if(stringSQL!=null){
+    public String getSQLDate(Locale l) {
+        if (stringSQL != null) {
             return stringSQL;
-        }
-
-        else if(cal!=null){
+        } else if (cal != null) {
             return dateSQLFormat.format(cal.getTime());
-        }
-
-        else if(date!=null){
-            String d = dateSQLFormat.format(date);
-            return d;
-        }
-        else{
+        } else if (date != null) {
+            return dateSQLFormat.format(date);
+        } else {
             String newDate = null;
             try {
                 Date oldDate = dateFormat.parse(stringReadable);
                 newDate = dateSQLFormat.format(oldDate);
             } catch (ParseException e) {
-                Log.e("DateTime-getSQLDate","Error parsing date("+stringReadable+")!");
+                Log.e("DateTime-getSQLDate", "Error parsing date(" + stringReadable + ")!");
                 e.printStackTrace();
             }
 
@@ -135,26 +121,20 @@ public class DateTime{
         }
     }
 
-    public String getSQLTime(Locale l){
-        if(stringSQL!=null){
+    public String getSQLTime(Locale l) {
+        if (stringSQL != null) {
             return stringSQL;
-        }
-
-        else if(cal!=null){
+        } else if (cal != null) {
             return timeSQLFormat.format(cal.getTime());
-        }
-
-        else if(date!=null){
-            String t = timeSQLFormat.format(date);
-            return t;
-        }
-        else{
+        } else if (date != null) {
+            return timeSQLFormat.format(date);
+        } else {
             String newTime = null;
             try {
                 Date oldTime = timeFormat.parse(stringReadable);
                 newTime = timeSQLFormat.format(oldTime);
             } catch (ParseException e) {
-                Log.e("DateTime-getSQLTime","Error parsing date("+stringReadable+")!");
+                Log.e("DateTime-getSQLTime", "Error parsing date(" + stringReadable + ")!");
                 e.printStackTrace();
             }
 
@@ -162,7 +142,7 @@ public class DateTime{
         }
     }
 
-    public Date getYearMonthDay() throws ParseException{
+    public Date getYearMonthDay() throws ParseException {
         return dateSQLFormat.parse(stringSQL);
     }
 

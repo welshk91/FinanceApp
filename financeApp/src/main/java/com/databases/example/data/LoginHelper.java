@@ -23,27 +23,27 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import group.pals.android.lib.ui.lockpattern.util.Settings;
 
-public class LoginHelper extends SherlockFragmentActivity{
+public class LoginHelper extends SherlockFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fireDialog();
     }
 
-    public void fireDialog(){
+    private void fireDialog() {
         DialogFragment newFragment = EmailDialogFragment.newInstance();
         newFragment.setCancelable(false);
         newFragment.show(getSupportFragmentManager(), "dialogEmail");
     }
 
-    public void emailCode(){
+    private void emailCode() {
         Toast.makeText(this, "emailing...", Toast.LENGTH_SHORT).show();
         EmailTask runner = new EmailTask();
         runner.execute();
         enterCode();
     }
 
-    public void enterCode(){
+    private void enterCode() {
         DialogFragment newFragment = VerifyDialogFragment.newInstance();
         newFragment.setCancelable(false);
         newFragment.show(getSupportFragmentManager(), "dialogVerify");
@@ -68,18 +68,20 @@ public class LoginHelper extends SherlockFragmentActivity{
             alertDialogBuilder
                     .setPositiveButton("Email",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                     ((LoginHelper) getActivity()).emailCode();
                                 }
-                            })
+                            }
+                    )
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                     System.exit(0);
                                 }
-                            });
+                            }
+                    );
 
             return alertDialogBuilder.create();
         }
@@ -104,7 +106,7 @@ public class LoginHelper extends SherlockFragmentActivity{
             alertDialogBuilder
                     .setPositiveButton("Enter",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
 
                                     //if code = pattern
@@ -118,34 +120,36 @@ public class LoginHelper extends SherlockFragmentActivity{
                                     System.exit(0);
 
                                 }
-                            })
+                            }
+                    )
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                                public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                     System.exit(0);
                                 }
-                            });
+                            }
+                    );
 
             return alertDialogBuilder.create();
         }
     }
 
-    public class EmailTask extends AsyncTask<Void,Integer, Long> {
+    private class EmailTask extends AsyncTask<Void, Integer, Long> {
         @Override
         protected Long doInBackground(Void... params) {
 
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("message/rfc822");
-            i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"welshk91@gmail.com"});
+            i.putExtra(Intent.EXTRA_EMAIL, new String[]{"welshk91@gmail.com"});
             i.putExtra(Intent.EXTRA_SUBJECT, "This is the subject of the email");
-            i.putExtra(Intent.EXTRA_TEXT   , "This is the body of the email");
+            i.putExtra(Intent.EXTRA_TEXT, "This is the body of the email");
 
             try {
                 startActivity(Intent.createChooser(i, "Send mail..."));
                 Log.d("LoginHelper-EmailTask", "Successfully emailed pattern");
             } catch (android.content.ActivityNotFoundException e) {
-                Log.e("LoginHelper-EmailTask","No Email clieant found? Error e="+e);
+                Log.e("LoginHelper-EmailTask", "No Email clieant found? Error e=" + e);
                 Toast.makeText(getParent(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
             }
 

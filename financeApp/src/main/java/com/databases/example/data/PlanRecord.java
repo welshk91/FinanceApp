@@ -2,18 +2,18 @@ package com.databases.example.data;
 
 //An Object Class used to hold the data of each transaction record
 public class PlanRecord {
-    public String id;
-    public String acctId;
-    public String name;
-    public String value;
-    public String type;
-    public String category;
-    public String memo;
-    public String offset;
-    public String rate;
-    public String next;
-    public String scheduled;
-    public String cleared;
+    public final String id;
+    public final String acctId;
+    public final String name;
+    public final String value;
+    public final String type;
+    public final String category;
+    public final String memo;
+    public final String offset;
+    public final String rate;
+    public final String next;
+    public final String scheduled;
+    public final String cleared;
 
     public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
         this.id = id;
@@ -29,7 +29,6 @@ public class PlanRecord {
         this.scheduled = scheduled;
         this.cleared = cleared;
     }
-
 
 
 }

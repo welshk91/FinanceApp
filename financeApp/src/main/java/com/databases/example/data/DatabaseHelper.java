@@ -18,19 +18,19 @@ import java.io.File;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Database Version
-    public static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 1;
 
     //Database Name
-    public static final String DATABASE_NAME = "dbFinance";
+    private static final String DATABASE_NAME = "dbFinance";
 
     //Table Names
-    public static final String TABLE_ACCOUNTS = "tblAccounts";
-    public static final String TABLE_TRANSACTIONS = "tblTrans";
-    public static final String TABLE_PLANS = "tblPlanTrans";
-    public static final String TABLE_CATEGORIES = "tblCategory";
-    public static final String TABLE_SUBCATEGORIES = "tblSubCategory";
-    public static final String TABLE_LINKS = "tblLinks";
-    public static final String TABLE_NOTIFICATIONS = "tblNotifications";
+    private static final String TABLE_ACCOUNTS = "tblAccounts";
+    private static final String TABLE_TRANSACTIONS = "tblTrans";
+    private static final String TABLE_PLANS = "tblPlanTrans";
+    private static final String TABLE_CATEGORIES = "tblCategory";
+    private static final String TABLE_SUBCATEGORIES = "tblSubCategory";
+    private static final String TABLE_LINKS = "tblLinks";
+    private static final String TABLE_NOTIFICATIONS = "tblNotifications";
 
     //Column Names
     public static final String ACCOUNT_ID = "_id";
@@ -130,17 +130,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         addDefaultCategories(db);
     }
 
-    public int deleteDatabase() {
+    public boolean deleteDatabase() {
         Log.d("DatabaseHelper-deleteDatabase", "Deleting database...");
 
         try {
-            context.deleteDatabase(DATABASE_NAME);
-            return 1;
+            return context.deleteDatabase(DATABASE_NAME);
         } catch (Exception e) {
             Log.e("DatabaseHelper-deleteDatabase", "Couldn't delete database. Error e=" + e);
         }
 
-        return 0;
+        return false;
     }
 
     @Override
@@ -157,7 +156,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Adds some basic default categories
-    public void addDefaultCategories(SQLiteDatabase db) {
+    private void addDefaultCategories(SQLiteDatabase db) {
         Log.d("DatabaseHelper-onCreate", "Adding Default Categories...");
 
         //Default

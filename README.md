@@ -5,15 +5,13 @@ A simple app to handle transactions on the go. Originally designed as a knockoff
 
 Screen Shots
 --------------------------------------
-![Home](Screenshots/Phone/Screenshots/Home/Main_framed.png)
-![NavDrawer](Screenshots/Phone/Screenshots/Home/NavigationDrawer_framed.png)
-![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts_framed.png)
-![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Transfer_framed.png)
-![Categories](Screenshots/Phone/Screenshots/Categories/Categories_framed.png)
-![Plans](Screenshots/Phone/Screenshots/Plans/Plans-AddingPlan_framed.png)
-![Searching](Screenshots/Phone/Screenshots/Searching/Searching_framed.png)
-![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance-Accounts_framed.png)
-![Lockscreen](Screenshots/Phone/Screenshots/Options/Options-Lockscreen-SetPattern_framed.png)
+![Home](Screenshots/Phone/Screenshots/Home/Main_framed.png?raw=true)
+![NavDrawer](Screenshots/Phone/Screenshots/Home/NavigationDrawer_framed.png?raw=true)
+![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts_framed.png?raw=true)
+![Categories](Screenshots/Phone/Screenshots/Categories/Categories_framed.png?raw=true)
+![Plans](Screenshots/Phone/Screenshots/Plans/Plans-AddingPlan_framed.png?raw=true)
+![Searching](Screenshots/Phone/Screenshots/Searching/Searching_framed.png?raw=true)
+![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance-Accounts_framed.png?raw=true)
 
 Usage
 --------------------------------------

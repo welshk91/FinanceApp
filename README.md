@@ -19,18 +19,17 @@ There is currently no license I'm releasing this code under (subject to change).
 
 Known Issues
 --------------------------------------
-* Need to refresh cards when plans/transactions/accounts are changed
 * Options navigates "up" awkwardly
 
 Things To Do
 --------------------------------------
 * Complete work on Dropbox sync and add Dropbox 'Saver' Drop-In (when it becomes available)
 * Add Archieve support (ie keep balance when making back ups)
-* Password/Pattern, warning of liability. Add encryption and email for recovery?
+* Add warning of liability to Pattern. Add encryption and possibly email for recovery?
 * Make the Attachment code available
 * Add custom search suggestions
 * PDF Reports
-* Improve First-Time Run (use third party library to draw attention to objects, add default categories, wizard in the beginning for database syncing, ...)
+* Improve First-Time Run (use third party library to draw attention to objects, wizard in the beginning for database importing/syncing, ...)
 * Export/Import oxf (Make sure to support required fields)
 * Improve look (icons, default colors, slide menu, big notifications)
 * Encrypt entire database (SQLCipher)
@@ -38,25 +37,22 @@ Things To Do
 
 Optimizations
 --------------------------------------
-* Condense size (Clean up imports, delete useless variables,...)
-* Fix Scopes (Global Variables,...) and code clean-up
+* Condense size (Clean up imports, delete useless variables/assets,...)
 * Optimize layouts for performance
 * Cut Down on inflating views (costly operation)
 * Make sure to use View Holder for ListView performance
+* Make ListView only show a few entries, load new entries when needed (Endless listview)
 * Let ContentProvider handle the cursors if possible
 * Index Database Tables properly
 * Make Virtual Tables for Searching
 * Update third-party libraries and support library
 * Use ASyncTask/threads for when you do heavy operations (don't do the operations on the UI)
-* Make ListView only show a few entries, load new entries when needed (Endless listview)
-* Make sure any SQL Joins are small (older sql_lite versions struggle with it)
 
 
 Notes to Self
 --------------------------------------
 * Need more spinners, less typing
 * What should happen when a user clicks on a search result?
-* Possibly 'hide' advance options in add dialogs, 'expand' for more options
 * Link a contact (own table?)
 * Possibly a payee field, own table. Can avoid if description is dropdown.
 
@@ -80,7 +76,7 @@ Third-Party Libraries Used
 * [Android Lock Pattern](https://code.google.com/p/android-lockpattern/)
 * [ColorPickerPreference](https://github.com/attenzione/android-ColorPickerPreference) by Sergey Margaritov
 * [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide
-* Soon: [Wizard Pager](https://github.com/romannurik/Android-WizardPager) by Roman Nurik
+* [Wizard Pager](https://github.com/romannurik/Android-WizardPager) by Roman Nurik, [Wizard Pager fork](https://github.com/welshk91/Android-WizardPager) by Kevin Welsh
 * Soon: [Showcase View](https://github.com/Espiandev/ShowcaseView) by Alex Curran
 * Soon: [ChartView](https://github.com/nadavfima/ChartView/) by nadavfima
 

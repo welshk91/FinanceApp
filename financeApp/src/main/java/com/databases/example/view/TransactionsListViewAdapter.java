@@ -195,7 +195,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = vi.inflate(R.layout.transaction_item, parent);
+        View v = vi.inflate(R.layout.transaction_item, null);
 
         LinearLayout l = (LinearLayout) v.findViewById(R.id.transaction_layout);
         TextView tvName = (TextView) v.findViewById(R.id.transaction_name);

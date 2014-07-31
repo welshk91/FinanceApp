@@ -3,7 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
-    android:drawableLeft="@drawable/slidingmenu_exit"
     android:drawablePadding="12dp"
     android:fontFamily="sans-serif-light"
     android:gravity="center_vertical"

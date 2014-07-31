@@ -6,6 +6,6 @@
     android:layout_gravity="start"
     android:background="#F8F8F8"
     android:choiceMode="singleChoice"
-    android:fadeScrollbars="true" >
+    android:fadeScrollbars="true">
 
 </ListView>

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.databases.example.R;
+import com.databases.example.data.AccountRecord;
 import com.databases.example.data.AccountWizardInfoPage;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
@@ -28,9 +29,23 @@ import java.util.Locale;
 public class AccountWizard extends WizardDialogFragment {
     private final AbstractWizardModel mWizardModel = new AccountWizardModel(getActivity());
 
-    public static AccountWizard newInstance(Bundle bundle) {
+    public static AccountWizard newInstance(AccountRecord record) {
         AccountWizard frag = new AccountWizard();
-        frag.setArguments(bundle);
+
+        if (record != null) {
+            final Bundle bundle = new Bundle();
+
+            final Bundle bdl1 = new Bundle();
+            bdl1.putString("id", record.id);
+            bdl1.putString("name", record.name);
+            bdl1.putString("balance", record.balance);
+            bdl1.putString("time", record.time);
+            bdl1.putString("date", record.date);
+            bundle.putBundle("Account Info", bdl1);
+
+            frag.setArguments(bundle);
+        }
+
         return frag;
     }
 

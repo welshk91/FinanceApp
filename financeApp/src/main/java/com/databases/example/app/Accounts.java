@@ -575,18 +575,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             final AccountRecord record = adapterAccounts.getAccount(selected.keyAt(i));
-
-                            final Bundle bundle = new Bundle();
-
-                            final Bundle bdl1 = new Bundle();
-                            bdl1.putString("id", record.id);
-                            bdl1.putString("name", record.name);
-                            bdl1.putString("balance", record.balance);
-                            bdl1.putString("time", record.time);
-                            bdl1.putString("date", record.date);
-                            bundle.putBundle("Account Info", bdl1);
-
-                            AccountWizard newFragment = AccountWizard.newInstance(bundle);
+                            AccountWizard newFragment = AccountWizard.newInstance(record);
                             newFragment.show(getChildFragmentManager(), "dialogEdit");
                         }
                     }

@@ -681,32 +681,8 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
                 case CONTEXT_MENU_EDIT:
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
-                            //DialogFragment newFragment = EditDialogFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)));
-                            //newFragment.show(getChildFragmentManager(), "dialogEdit");
-
                             final TransactionRecord record = adapterTransactions.getTransaction(selected.keyAt(i));
-
-                            final Bundle bundle = new Bundle();
-
-                            final Bundle bdl1 = new Bundle();
-                            bdl1.putInt("id", record.id);
-                            bdl1.putInt("acct_id", record.acctId);
-                            bdl1.putInt("plan_id", record.planId);
-                            bdl1.putString("name", record.name);
-                            bdl1.putString("value", record.value);
-                            bdl1.putString("type", record.type);
-                            bdl1.putString("category", record.category);
-                            bundle.putBundle("Transaction Info", bdl1);
-
-                            final Bundle bdl2 = new Bundle();
-                            bdl2.putString("checknum", record.checknum);
-                            bdl2.putString("memo", record.memo);
-                            bdl2.putString("date", record.date);
-                            bdl2.putString("time", record.time);
-                            bdl2.putString("cleared", record.cleared);
-                            bundle.putBundle("Optional", bdl2);
-
-                            final TransactionWizard frag = TransactionWizard.newInstance(bundle);
+                            final TransactionWizard frag = TransactionWizard.newInstance(record);
                             frag.show(getChildFragmentManager(), "dialogEdit");
                         }
                     }

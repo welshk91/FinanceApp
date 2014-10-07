@@ -37,7 +37,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -52,9 +51,10 @@ import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
 import com.databases.example.data.TransactionRecord;
 import com.databases.example.data.TransactionWizardOptionalPage;
-import com.databases.example.view.TransactionWizardOptionalFragment;
+import com.databases.example.view.TransactionSortDialogFragment;
 import com.databases.example.view.TransactionViewFragment;
 import com.databases.example.view.TransactionWizard;
+import com.databases.example.view.TransactionWizardOptionalFragment;
 import com.databases.example.view.TransactionsListViewAdapter;
 
 import java.math.BigDecimal;
@@ -64,9 +64,9 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class Transactions extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
-    private static final int TRANS_LOADER = 987654321;
-    private static final int TRANS_SEARCH_LOADER = 98765;
-    private static final int TRANS_SUBCATEGORY_LOADER = 987;
+    public static final int TRANS_LOADER = 987654321;
+    public static final int TRANS_SEARCH_LOADER = 98765;
+    public static final int TRANS_SUBCATEGORY_LOADER = 987;
 
     private View myFragmentView;
 
@@ -78,8 +78,6 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
     //ID of account transaction belongs to
     public static int account_id = 0;
-
-    private static String sortOrder = "null";
 
     private ListView lv = null;
 
@@ -263,7 +261,7 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
 
     //For Sorting Transactions
     private void transactionSort() {
-        DialogFragment newFragment = SortDialogFragment.newInstance();
+        DialogFragment newFragment = TransactionSortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogSort");
     }
 
@@ -405,91 +403,12 @@ public class Transactions extends SherlockFragment implements OnSharedPreference
         }
     }
 
-    //Class that handles sort dialog
-    public static class SortDialogFragment extends SherlockDialogFragment {
-
-        public static SortDialogFragment newInstance() {
-            SortDialogFragment frag = new SortDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-            View transactionSortView = li.inflate(R.layout.sort_transactions, null);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
-
-            alertDialogBuilder.setView(transactionSortView);
-            alertDialogBuilder.setTitle("Sort");
-            alertDialogBuilder.setCancelable(true);
-
-            ListView sortOptions = (ListView) transactionSortView.findViewById(R.id.sort_options);
-            sortOptions.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-
-                    switch (position) {
-                        //Newest
-                        case 0:
-                            sortOrder = DatabaseHelper.TRANS_DATE + " DESC, " + DatabaseHelper.TRANS_TIME + " DESC";
-                            break;
-
-                        //Oldest
-                        case 1:
-                            sortOrder = DatabaseHelper.TRANS_DATE + " ASC, " + DatabaseHelper.TRANS_TIME + " ASC";
-                            break;
-
-                        //Largest
-                        case 2:
-                            sortOrder = DatabaseHelper.TRANS_TYPE + " ASC, CAST (" + DatabaseHelper.TRANS_VALUE + " AS INTEGER)" + " DESC";
-                            break;
-
-                        //Smallest
-                        case 3:
-                            sortOrder = DatabaseHelper.TRANS_TYPE + " ASC, CAST (" + DatabaseHelper.TRANS_VALUE + " AS INTEGER)" + " ASC";
-                            break;
-
-                        //Category
-                        case 4:
-                            sortOrder = DatabaseHelper.TRANS_CATEGORY + " ASC";
-                            break;
-
-                        //Type
-                        case 5:
-                            sortOrder = DatabaseHelper.TRANS_TYPE + " ASC";
-                            break;
-
-                        //Alphabetical
-                        case 6:
-                            sortOrder = DatabaseHelper.TRANS_NAME + " ASC";
-                            break;
-
-                        //None
-                        case 7:
-                            sortOrder = null;
-                            break;
-
-                        default:
-                            Log.e("Transactions-SortFragment", "Unknown Sorting Option!");
-                            break;
-
-                    }//end switch
-
-                    getDialog().cancel();
-                }
-            });
-
-            return alertDialogBuilder.create();
-        }
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
         getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+
+        String sortOrder = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+                .getString(getString(R.string.pref_key_transaction_sort), null);
 
         switch (loaderID) {
             case TRANS_LOADER:

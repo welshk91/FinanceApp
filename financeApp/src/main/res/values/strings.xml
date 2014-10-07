@@ -29,8 +29,10 @@
     <string name="cleared:">CLEARED:</string>
     <string name="drawer_open">Drawer is open</string>
     <string name="drawer_closed">Drawer is closed</string>
+    <string name="pref_key_account_sort">key_account_sort</string>
     <string name="pref_key_account_nameSize">key_account_nameSize</string>
     <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
+    <string name="pref_key_transaction_sort">key_transaction_sort</string>
     <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
     <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
     <string name="pref_key_plan_nameSize">key_plan_nameSize</string>

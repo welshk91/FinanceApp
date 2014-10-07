@@ -4,8 +4,6 @@
 
 package com.databases.example.app;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -30,7 +28,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -44,6 +41,7 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
+import com.databases.example.view.AccountSortDialogFragment;
 import com.databases.example.view.AccountTransferFragment;
 import com.databases.example.view.AccountViewFragment;
 import com.databases.example.view.AccountWizard;
@@ -54,8 +52,8 @@ import java.util.Locale;
 
 public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final int PICKFILE_RESULT_CODE = 1;
-    private static final int ACCOUNTS_LOADER = 123456789;
-    private static final int ACCOUNTS_SEARCH_LOADER = 12345;
+    public static final int ACCOUNTS_LOADER = 123456789;
+    public static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
     //Constants for ContextMenu
     final private int CONTEXT_MENU_VIEW = 1;
@@ -63,7 +61,6 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     final private int CONTEXT_MENU_DELETE = 3;
 
     private View myFragmentView;
-    private static String sortOrder = "null";
 
     private ListView lv = null;
     public static AccountsListViewAdapter adapterAccounts = null;
@@ -267,7 +264,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     //For Sorting Accounts
     private void accountSort() {
-        DialogFragment newFragment = SortDialogFragment.newInstance();
+        DialogFragment newFragment = AccountSortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), "dialogSort");
     }
 
@@ -348,82 +345,11 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
         }
     }
 
-    //Class that handles sort dialog
-    public static class SortDialogFragment extends SherlockDialogFragment {
-
-        public static SortDialogFragment newInstance() {
-            SortDialogFragment frag = new SortDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
-            View accountSortView = li.inflate(R.layout.sort_accounts, null);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
-
-            alertDialogBuilder.setView(accountSortView);
-            alertDialogBuilder.setTitle("Sort");
-            alertDialogBuilder.setCancelable(true);
-
-            ListView sortOptions = (ListView) accountSortView.findViewById(R.id.sort_options);
-            sortOptions.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-
-                    switch (position) {
-                        //Newest
-                        case 0:
-                            sortOrder = DatabaseHelper.ACCOUNT_DATE + " DESC, " + DatabaseHelper.ACCOUNT_TIME + " DESC";
-                            break;
-
-                        //Oldest
-                        case 1:
-                            //TODO Fix date so it can be sorted
-                            sortOrder = DatabaseHelper.ACCOUNT_DATE + " ASC, " + DatabaseHelper.ACCOUNT_TIME + " ASC";
-                            break;
-
-                        //Largest
-                        case 2:
-                            sortOrder = "CAST (" + DatabaseHelper.ACCOUNT_BALANCE + " AS INTEGER)" + " DESC";
-                            break;
-
-                        //Smallest
-                        case 3:
-                            sortOrder = "CAST (" + DatabaseHelper.ACCOUNT_BALANCE + " AS INTEGER)" + " ASC";
-                            break;
-
-                        //Alphabetical
-                        case 4:
-                            sortOrder = DatabaseHelper.ACCOUNT_NAME + " ASC";
-                            break;
-
-                        //None
-                        case 5:
-                            sortOrder = null;
-                            break;
-
-                        default:
-                            Log.e("Accounts-SortFragment", "Unknown Sorting Option!");
-                            break;
-
-                    }//end switch
-
-                    getDialog().cancel();
-                }
-            });
-
-            return alertDialogBuilder.create();
-        }
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
         getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+        String sortOrder = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+                .getString(getString(R.string.pref_key_account_sort), null);
 
         Log.d("Accounts-onCreateLoader", "calling create loader...");
         switch (loaderID) {

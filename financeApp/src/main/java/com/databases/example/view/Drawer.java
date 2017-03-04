@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.databases.example.R;
 import com.databases.example.app.Categories;
 import com.databases.example.app.Checkbook;
@@ -26,7 +26,7 @@ import com.databases.example.app.Options;
 import com.databases.example.app.Plans;
 
 //An Object Class used to handle the NavigationDrawer
-public class Drawer extends SherlockFragmentActivity {
+public class Drawer extends AppCompatActivity {
     private final Context context;
     private final DrawerLayout drawerLayout;
     private final ListView drawerListView;
@@ -35,8 +35,8 @@ public class Drawer extends SherlockFragmentActivity {
 
     public Drawer(final Context context) {
         this.context = context;
-        drawerLayout = (DrawerLayout) ((SherlockFragmentActivity) context).findViewById(R.id.drawer_layout);
-        drawerListView = (ListView) ((SherlockFragmentActivity) context).findViewById(R.id.drawer);
+        drawerLayout = (DrawerLayout) ((AppCompatActivity) context).findViewById(R.id.drawer_layout);
+        drawerListView = (ListView) ((AppCompatActivity) context).findViewById(R.id.drawer);
 
         String[] drawerItems = context.getResources().getStringArray(R.array.drawer_items);
 
@@ -45,7 +45,7 @@ public class Drawer extends SherlockFragmentActivity {
         drawerListView.setOnItemClickListener(new DrawerItemClickListener());
 
         drawerToggle = new ActionBarDrawerToggle(
-                (SherlockFragmentActivity) context,
+                (AppCompatActivity) context,
                 drawerLayout,
                 R.drawable.ic_navigation_drawer,
                 R.string.drawer_open,
@@ -67,8 +67,8 @@ public class Drawer extends SherlockFragmentActivity {
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
-        ((SherlockFragmentActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
-        ((SherlockFragmentActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }//end constructor
 

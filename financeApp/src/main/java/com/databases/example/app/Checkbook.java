@@ -10,17 +10,17 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.databases.example.R;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.view.Drawer;
 
-public class Checkbook extends SherlockFragmentActivity {
+public class Checkbook extends AppCompatActivity {
 
     //NavigationDrawer
     private Drawer drawer;
@@ -28,7 +28,7 @@ public class Checkbook extends SherlockFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.checkbook);
         setTitle("Checkbook");

@@ -22,8 +22,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,11 +41,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
@@ -61,7 +62,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class Plans extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class Plans extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
     private static final int PLAN_LOADER = 5882300;
@@ -310,15 +311,15 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
         super.onCreateOptionsMenu(menu);
 
         //Show Search
-        MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+        MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "Search");
         menuSearch.setIcon(android.R.drawable.ic_menu_search);
         menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
 
-        new SearchWidget(this, menuSearch.getActionView());
+        new SearchWidget(this, (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.account_menu_search)));
 
         //Add
-        MenuItem subMenu1Item = menu.add(com.actionbarsherlock.view.Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, com.actionbarsherlock.view.Menu.NONE, "Add");
+        MenuItem subMenu1Item = menu.add(Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, Menu.NONE, "Add");
         subMenu1Item.setIcon(android.R.drawable.ic_menu_add);
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -344,7 +345,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.d("Plans-onSharedPreferenceChanged", "Options changed. Requery");
+        Log.d(getClass().getSimpleName(), "Options changed. Requery");
         //getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
         //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
     }
@@ -634,7 +635,7 @@ public class Plans extends SherlockFragmentActivity implements OnSharedPreferenc
 
                 default:
                     mode.finish();
-                    Log.e("Plans-onActionItemClciked", "ERROR. Clicked " + item);
+                    Log.e(getClass().getSimpleName(), "ERROR. Clicked " + item);
                     return false;
             }
         }

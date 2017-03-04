@@ -9,12 +9,14 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
 import com.databases.example.data.SearchWidget;
 import com.databases.example.view.Drawer;
@@ -22,7 +24,7 @@ import com.databases.example.view.Drawer;
 import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
 import group.pals.android.lib.ui.lockpattern.util.Settings;
 
-public class Main extends SherlockFragmentActivity {
+public class Main extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
     private Drawer drawer;
 
@@ -55,9 +57,9 @@ public class Main extends SherlockFragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.layout.main_menu, menu);
-        new SearchWidget(this, menu.findItem(R.id.main_menu_search).getActionView());
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        new SearchWidget(this, (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.main_menu_search)));
         return true;
     }
 

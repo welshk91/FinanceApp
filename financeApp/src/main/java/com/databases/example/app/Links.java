@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
@@ -27,15 +29,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
 import com.databases.example.view.Drawer;
 
 import java.io.File;
 
-public class Links extends SherlockFragmentActivity {
+public class Links extends AppCompatActivity {
     private final static int PICKFILE_RESULT_CODE = 1;
     private final static int PICKCONTACT_RESULT_CODE = 2;
 
@@ -219,7 +218,7 @@ public class Links extends SherlockFragmentActivity {
 
     }//end getContactInfo
 
-    public static class AttachDialogFragment extends SherlockDialogFragment {
+    public static class AttachDialogFragment extends DialogFragment {
 
         public static AttachDialogFragment newInstance() {
             AttachDialogFragment frag = new AttachDialogFragment();

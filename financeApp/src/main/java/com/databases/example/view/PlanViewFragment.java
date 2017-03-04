@@ -8,13 +8,13 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
@@ -23,7 +23,7 @@ import com.databases.example.data.MyContentProvider;
 
 import java.util.Locale;
 
-public class PlanViewFragment extends SherlockDialogFragment {
+public class PlanViewFragment extends DialogFragment {
     public static PlanViewFragment newInstance(String id) {
         PlanViewFragment frag = new PlanViewFragment();
         Bundle args = new Bundle();
@@ -66,7 +66,7 @@ public class PlanViewFragment extends SherlockDialogFragment {
             entry_cleared = cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CLEARED));
         } while (cursor.moveToNext());
 
-        final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+        final LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View planStatsView = li.inflate(R.layout.plan_item, null);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -75,7 +75,7 @@ public class PlanViewFragment extends SherlockDialogFragment {
         final Locale locale = getResources().getConfiguration().locale;
         final Money value = new Money(entry_value);
 
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
         alertDialogBuilder.setView(planStatsView);
         alertDialogBuilder.setCancelable(true);
 

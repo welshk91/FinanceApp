@@ -72,7 +72,6 @@ Attachments Not Working
 
 Third-Party Libraries Used
 ------------------------------------------
-* [ActionBarSherlock](http://actionbarsherlock.com/) by Jake Wharton
 * [Android Lock Pattern](https://code.google.com/p/android-lockpattern/)
 * [ColorPickerPreference](https://github.com/attenzione/android-ColorPickerPreference) by Sergey Margaritov
 * [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide

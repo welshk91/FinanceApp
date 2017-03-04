@@ -6,13 +6,13 @@ import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.app.Accounts;
 import com.databases.example.data.DatabaseHelper;
@@ -20,7 +20,7 @@ import com.databases.example.data.DatabaseHelper;
 /**
  * Created by kev on 10/6/14.
  */
-public class AccountSortDialogFragment extends SherlockDialogFragment {
+public class AccountSortDialogFragment extends DialogFragment {
     public static AccountSortDialogFragment newInstance() {
         AccountSortDialogFragment frag = new AccountSortDialogFragment();
         Bundle args = new Bundle();
@@ -30,12 +30,12 @@ public class AccountSortDialogFragment extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+        LayoutInflater li = LayoutInflater.from(this.getActivity());
         View accountSortView = li.inflate(R.layout.sort_accounts, null);
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getSherlockActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
         alertDialogBuilder.setView(accountSortView);
         alertDialogBuilder.setTitle("Sort");

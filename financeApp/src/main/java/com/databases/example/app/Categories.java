@@ -15,17 +15,18 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
@@ -38,7 +39,7 @@ import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 
-public class Categories extends SherlockFragmentActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class Categories extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final int CATEGORIES_LOADER = 8675309;
     public static final int SUBCATEGORIES_LOADER = 867;
 
@@ -131,7 +132,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
             getContentResolver().delete(uri, DatabaseHelper.SUBCATEGORY_ID + "=" + subcategoryID, null);
 
-            Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
+            Log.d(getClass().getSimpleName(), "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             String categoryID = adapterCategory.getCategory(groupPos).id;
 
@@ -143,7 +144,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
             uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + 0);
             getContentResolver().delete(uri, DatabaseHelper.SUBCATEGORY_CAT_ID + "=" + categoryID, null);
 
-            Log.d("Categories-categoryDelete", "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
+            Log.d(getClass().getSimpleName(), "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
         }
 
         getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, this);
@@ -178,15 +179,15 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
         super.onCreateOptionsMenu(menu);
 
         //Show Search
-        MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+        MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "Search");
         menuSearch.setIcon(android.R.drawable.ic_menu_search);
         menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
 
-        new SearchWidget(this, menuSearch.getActionView());
+        new SearchWidget(this, (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.account_menu_search)));
 
         //Show Add Icon
-        MenuItem menuAdd = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
+        MenuItem menuAdd = menu.add(Menu.NONE, R.id.account_menu_add, Menu.NONE, "Add");
         menuAdd.setIcon(android.R.drawable.ic_menu_add);
         menuAdd.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -238,7 +239,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
                 break;
 
             default:
-                Log.e("Categories-onCreateContextMenu", "Context Menu type is not child or group");
+                Log.e(getClass().getSimpleName(), "Context Menu type is not child or group");
                 break;
         }
 
@@ -278,7 +279,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
                 return true;
 
             default:
-                Log.e("Categories-onContextItemSelected", "Context Menu type is not child or group");
+                Log.e(getClass().getSimpleName(), "Context Menu type is not child or group");
                 break;
         }
 
@@ -306,10 +307,10 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
-        Log.d("Categories-onCreateLoader", "calling create loader...");
+        Log.d(getClass().getSimpleName(), "calling create loader...");
         switch (loaderID) {
             case CATEGORIES_LOADER:
-                Log.v("Categories-onCreateLoader", "new category loader created");
+                Log.v(getClass().getSimpleName(), "new category loader created");
                 return new CursorLoader(
                         this,    // Parent activity context
                         MyContentProvider.CATEGORIES_URI,// Table to query
@@ -320,7 +321,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
                 );
 
             case SUBCATEGORIES_LOADER:
-                Log.v("Categories-onCreateLoader", "new subcategory loader created");
+                Log.v(getClass().getSimpleName(), "new subcategory loader created");
                 String selection = DatabaseHelper.SUBCATEGORY_CAT_ID + "=" + bundle.getString("id");
                 return new CursorLoader(
                         this,    // Parent activity context
@@ -332,7 +333,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
                 );
 
             default:
-                Log.e("Categories-onCreateLoader", "Not a valid CursorLoader ID");
+                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -342,7 +343,7 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
         switch (loader.getId()) {
             case CATEGORIES_LOADER:
                 adapterCategory.swapCategoryCursor(data);
-                Log.v("Categories-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 data.moveToPosition(-1);
                 while (data.moveToNext()) {
@@ -356,11 +357,11 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
 
             case SUBCATEGORIES_LOADER:
                 adapterCategory.swapSubCategoryCursor(data);
-                Log.v("Categories-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
                 break;
 
             default:
-                Log.e("Categories-onLoadFinished", "Error. Unknown loader (" + loader.getId());
+                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -370,16 +371,16 @@ public class Categories extends SherlockFragmentActivity implements OnSharedPref
         switch (loader.getId()) {
             case CATEGORIES_LOADER:
                 adapterCategory.swapCategoryCursor(null);
-                Log.v("Categories-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             case SUBCATEGORIES_LOADER:
                 adapterCategory.swapSubCategoryCursor(null);
-                Log.v("Categories-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e("Categories-onLoadFinished", "Error. Unknown loader (" + loader.getId());
+                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }

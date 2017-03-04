@@ -18,15 +18,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 
@@ -35,7 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-public class SD extends SherlockFragmentActivity{
+public class SD extends AppCompatActivity{
     private final static String DEFAULT_BACKUP_DIR = "/WelshFinanceBackUps";
     private final static int PICKFILE_RESULT_CODE = 123;
 
@@ -101,7 +100,7 @@ public class SD extends SherlockFragmentActivity{
         newFragment.show(getSupportFragmentManager(), "dialogBackup");
     }
 
-    public static class BackupDialogFragment extends SherlockDialogFragment {
+    public static class BackupDialogFragment extends DialogFragment {
 
         public static BackupDialogFragment newInstance(String customBackupDir) {
             BackupDialogFragment frag = new BackupDialogFragment();

@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/account_menu_search"
-        android:actionViewClass="com.actionbarsherlock.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
-        android:showAsAction="always|collapseActionView"
-        android:title="Search"/>
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 
     <item
         android:id="@+id/account_menu_add"
         android:icon="@android:drawable/ic_menu_add"
-        android:showAsAction="ifRoom"
-        android:title="Add"/>
+        android:title="Add"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/account_menu_transfer"
         android:icon="@android:drawable/ic_popup_sync"
-        android:title="Transfer"/>
+        android:title="Transfer" />
 
     <item
         android:id="@+id/account_menu_sort"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Sort"/>
+        android:title="Sort" />
 
     <item
         android:id="@+id/account_menu_unknown"
         android:icon="@android:drawable/ic_menu_more"
-        android:title="Unknown"/>
+        android:title="Unknown" />
 
 </menu>

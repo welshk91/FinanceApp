@@ -8,13 +8,13 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
@@ -24,7 +24,7 @@ import com.databases.example.data.MyContentProvider;
 import java.util.Locale;
 
 //Class that handles view fragment
-public class AccountViewFragment extends SherlockDialogFragment {
+public class AccountViewFragment extends DialogFragment {
 
     public static AccountViewFragment newInstance(String id) {
         AccountViewFragment frag = new AccountViewFragment();
@@ -54,7 +54,7 @@ public class AccountViewFragment extends SherlockDialogFragment {
             entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
         } while (c.moveToNext());
 
-        final LayoutInflater li = LayoutInflater.from(this.getSherlockActivity());
+        final LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View accountStatsView = li.inflate(R.layout.account_item, null);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -64,7 +64,7 @@ public class AccountViewFragment extends SherlockDialogFragment {
         final Money balance = new Money(entry_balance);
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                this.getSherlockActivity());
+                this.getActivity());
 
         alertDialogBuilder.setView(accountStatsView);
         alertDialogBuilder.setCancelable(true);

@@ -3,18 +3,18 @@ package com.databases.example.view;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.app.Categories;
 import com.databases.example.data.CategoryRecord;
 import com.databases.example.data.SubCategoryRecord;
 
-public class CategoryViewFragment extends SherlockDialogFragment {
+public class CategoryViewFragment extends DialogFragment {
     public static CategoryViewFragment newInstance(int gPos, int cPos,int t) {
         CategoryViewFragment frag = new CategoryViewFragment();
         Bundle args = new Bundle();

@@ -5,19 +5,19 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.app.Categories;
 import com.databases.example.data.CategoryRecord;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 
-public class CategoryAddFragment extends SherlockDialogFragment {
+public class CategoryAddFragment extends DialogFragment {
     public static CategoryAddFragment newInstance() {
         CategoryAddFragment frag = new CategoryAddFragment();
         Bundle args = new Bundle();

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -16,7 +17,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.databases.example.R;
 import com.databases.example.app.Plans;
 import com.databases.example.data.DatabaseHelper;
@@ -26,7 +26,7 @@ import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
 import java.util.Calendar;
 
-public class PlanWizardInfo2Fragment extends SherlockFragment {
+public class PlanWizardInfo2Fragment extends Fragment {
     private static final String ARG_KEY = "plan_info2_key";
 
     private PageFragmentCallbacks mCallbacks;
@@ -45,7 +45,7 @@ public class PlanWizardInfo2Fragment extends SherlockFragment {
         return fragment;
     }
 
-    private PlanWizardInfo2Fragment() {
+    public PlanWizardInfo2Fragment() {
     }
 
     @Override

@@ -15,15 +15,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import group.pals.android.lib.ui.lockpattern.util.Settings;
 
-public class LoginHelper extends SherlockFragmentActivity {
+public class LoginHelper extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +48,7 @@ public class LoginHelper extends SherlockFragmentActivity {
     }
 
     //Class that handles dialog for user to confirm email
-    public static class EmailDialogFragment extends SherlockDialogFragment {
+    public static class EmailDialogFragment extends DialogFragment {
 
         public static EmailDialogFragment newInstance() {
             EmailDialogFragment frag = new EmailDialogFragment();
@@ -88,7 +86,7 @@ public class LoginHelper extends SherlockFragmentActivity {
     }
 
     //Class that handles confirming the code that was emailed
-    public static class VerifyDialogFragment extends SherlockDialogFragment {
+    public static class VerifyDialogFragment extends DialogFragment {
 
         public static VerifyDialogFragment newInstance() {
             VerifyDialogFragment frag = new VerifyDialogFragment();

@@ -3,6 +3,7 @@ package com.databases.example.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
@@ -16,14 +17,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.databases.example.R;
 import com.databases.example.app.Plans;
 import com.databases.example.data.PlanWizardOptionalPage;
 import com.databases.example.data.TransactionWizardOptionalPage;
 import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
-public class PlanWizardOptionalFragment extends SherlockFragment {
+public class PlanWizardOptionalFragment extends Fragment {
     private static final String ARG_KEY = "plan_optional_key";
 
     private PageFragmentCallbacks mCallbacks;
@@ -40,7 +40,7 @@ public class PlanWizardOptionalFragment extends SherlockFragment {
         return fragment;
     }
 
-    private PlanWizardOptionalFragment() {
+    public PlanWizardOptionalFragment() {
     }
 
     @Override

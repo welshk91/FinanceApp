@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.app.Accounts;
 import com.databases.example.data.DatabaseHelper;
@@ -26,7 +26,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 //Class that handles transfers fragment
-public class AccountTransferFragment extends SherlockDialogFragment {
+public class AccountTransferFragment extends DialogFragment {
     private Spinner transferSpinnerTo;
     private Spinner transferSpinnerFrom;
     private SimpleCursorAdapter transferSpinnerAdapterFrom = null;

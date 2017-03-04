@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,14 +16,13 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.databases.example.R;
 import com.databases.example.app.Transactions;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.TransactionWizardInfoPage;
 import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
-public class TransactionWizardInfoFragment extends SherlockFragment {
+public class TransactionWizardInfoFragment extends Fragment {
     private static final String ARG_KEY = "transaction_info_key";
 
     private PageFragmentCallbacks mCallbacks;
@@ -42,7 +42,7 @@ public class TransactionWizardInfoFragment extends SherlockFragment {
         return fragment;
     }
 
-    private TransactionWizardInfoFragment() {
+    public TransactionWizardInfoFragment() {
     }
 
     @Override

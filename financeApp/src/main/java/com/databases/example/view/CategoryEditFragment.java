@@ -6,13 +6,13 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.databases.example.R;
 import com.databases.example.app.Categories;
 import com.databases.example.data.CategoryRecord;
@@ -20,7 +20,7 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SubCategoryRecord;
 
-public class CategoryEditFragment extends SherlockDialogFragment {
+public class CategoryEditFragment extends DialogFragment {
     public static CategoryEditFragment newInstance(int gPos, int cPos, int t) {
         CategoryEditFragment frag = new CategoryEditFragment();
         Bundle args = new Bundle();

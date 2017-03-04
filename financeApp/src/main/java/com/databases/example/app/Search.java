@@ -12,15 +12,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
 import com.databases.example.view.Drawer;
 
@@ -31,7 +30,7 @@ import java.util.ArrayList;
  * Look at Dictionary example for reference (Virtual Tables)
  */
 
-public class Search extends SherlockFragmentActivity {
+public class Search extends AppCompatActivity {
 
     //NavigationDrawer
     private Drawer drawer;
@@ -88,7 +87,7 @@ public class Search extends SherlockFragmentActivity {
             }
         }
 
-        public MyPagerAdapter(FragmentActivity activity, ViewPager pager) {
+        public MyPagerAdapter(AppCompatActivity activity, ViewPager pager) {
 
             super(activity.getSupportFragmentManager());
             mContext = activity;
@@ -174,8 +173,8 @@ public class Search extends SherlockFragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.layout.search_menu, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu, menu);
         //SearchWidget searchWidget = new SearchWidget(this, menu.findItem(R.id.search_menu_search).getActionView());
         return true;
     }

@@ -3,6 +3,7 @@ package com.databases.example.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
@@ -18,7 +19,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.databases.example.R;
 import com.databases.example.app.Transactions;
 import com.databases.example.data.DateTime;
@@ -27,7 +27,7 @@ import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
 import java.util.Calendar;
 
-public class TransactionWizardOptionalFragment extends SherlockFragment {
+public class TransactionWizardOptionalFragment extends Fragment {
     private static final String ARG_KEY = "transaction_optional_key";
 
     private PageFragmentCallbacks mCallbacks;
@@ -45,7 +45,7 @@ public class TransactionWizardOptionalFragment extends SherlockFragment {
         return fragment;
     }
 
-    private TransactionWizardOptionalFragment() {
+    public TransactionWizardOptionalFragment() {
     }
 
     @Override

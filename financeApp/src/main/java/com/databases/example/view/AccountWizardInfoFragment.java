@@ -3,6 +3,7 @@ package com.databases.example.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -12,7 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.databases.example.R;
 import com.databases.example.data.AccountWizardInfoPage;
 import com.databases.example.data.DateTime;
@@ -21,7 +21,7 @@ import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class AccountWizardInfoFragment extends SherlockFragment {
+public class AccountWizardInfoFragment extends Fragment {
     private static final String ARG_KEY = "account_info_key";
 
     private PageFragmentCallbacks mCallbacks;
@@ -38,7 +38,7 @@ public class AccountWizardInfoFragment extends SherlockFragment {
         return fragment;
     }
 
-    private AccountWizardInfoFragment() {
+    public AccountWizardInfoFragment() {
     }
 
     @Override

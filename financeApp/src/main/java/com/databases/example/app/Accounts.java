@@ -12,13 +12,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,13 +37,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
-import com.actionbarsherlock.widget.SearchView;
 import com.databases.example.R;
 import com.databases.example.data.AccountRecord;
 import com.databases.example.data.DatabaseHelper;
@@ -50,7 +52,7 @@ import com.databases.example.view.AccountsListViewAdapter;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-public class Accounts extends SherlockFragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class Accounts extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final int PICKFILE_RESULT_CODE = 1;
     public static final int ACCOUNTS_LOADER = 123456789;
     public static final int ACCOUNTS_SEARCH_LOADER = 12345;
@@ -95,57 +97,57 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
         //Set Listener for regular mouse click
         lv.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                                      @Override
+                                      public void onItemClick(AdapterView<?> l, View v, int position, long id) {
 
-                if (mActionMode != null) {
-                    listItemChecked(position);
-                } else {
-                    int selectionRowID = (int) adapterAccounts.getItemId(position);
-                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null);
+                                          if (mActionMode != null) {
+                                              listItemChecked(position);
+                                          } else {
+                                              int selectionRowID = (int) adapterAccounts.getItemId(position);
+                                              Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null);
 
-                    //Just get the Account ID
-                    c.moveToFirst();
-                    int entry_id = c.getInt(0);
-                    c.close();
+                                              //Just get the Account ID
+                                              c.moveToFirst();
+                                              int entry_id = c.getInt(0);
+                                              c.close();
 
-                    View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+                                              View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
-                    if (checkbook_frame != null) {
-                        Bundle args = new Bundle();
-                        args.putInt("ID", entry_id);
+                                              if (checkbook_frame != null) {
+                                                  Bundle args = new Bundle();
+                                                  args.putInt("ID", entry_id);
 
-                        //Add the fragment to the activity, pushing this transaction on to the back stack.
-                        Transactions tran_frag = new Transactions();
-                        tran_frag.setArguments(args);
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                        ft.replace(R.id.checkbook_frag_frame, tran_frag);
-                        ft.addToBackStack(null);
-                        ft.commit();
-                        getFragmentManager().executePendingTransactions();
-                    } else {
-                        Bundle args = new Bundle();
-                        args.putBoolean("showAll", false);
-                        args.putBoolean("boolSearch", false);
-                        args.putInt("ID", entry_id);
+                                                  //Add the fragment to the activity, pushing this transaction on to the back stack.
+                                                  Transactions tran_frag = new Transactions();
+                                                  tran_frag.setArguments(args);
+                                                  FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                                  ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                                                  ft.replace(R.id.checkbook_frag_frame, tran_frag);
+                                                  ft.addToBackStack(null);
+                                                  ft.commit();
+                                                  getFragmentManager().executePendingTransactions();
+                                              } else {
+                                                  Bundle args = new Bundle();
+                                                  args.putBoolean("showAll", false);
+                                                  args.putBoolean("boolSearch", false);
+                                                  args.putInt("ID", entry_id);
 
-                        currentAccount = position;
+                                                  currentAccount = position;
 
-                        //Add the fragment to the activity
-                        //NOTE: Don't add custom animation, seems to mess with onLoaderReset
-                        Transactions tran_frag = new Transactions();
-                        tran_frag.setArguments(args);
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                        ft.replace(R.id.transaction_frag_frame, tran_frag);
-                        ft.commit();
-                        getFragmentManager().executePendingTransactions();
-                    }
-                }
-            }// end onItemClick
+                                                  //Add the fragment to the activity
+                                                  //NOTE: Don't add custom animation, seems to mess with onLoaderReset
+                                                  Transactions tran_frag = new Transactions();
+                                                  tran_frag.setArguments(args);
+                                                  FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                                  //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                                                  ft.replace(R.id.transaction_frag_frame, tran_frag);
+                                                  ft.commit();
+                                                  getFragmentManager().executePendingTransactions();
+                                              }
+                                          }
+                                      }// end onItemClick
 
-        }//end onItemClickListener
+                                  }//end onItemClickListener
         );//end setOnItemClickListener
 
         lv.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -191,7 +193,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
         if (hasCheckedItems && mActionMode == null) {
             // there are some selected items, start the actionMode
-            mActionMode = getSherlockActivity().startActionMode(new MyActionMode());
+            mActionMode = getActivity().startActionMode(new MyActionMode());
         } else if (!hasCheckedItems && mActionMode != null) {
             // there no selected items, finish the actionMode
             ((ActionMode) mActionMode).finish();
@@ -279,27 +281,27 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
         //If you're in dual-pane mode
         if (transaction_frame != null) {
-            MenuItem menuSearch = menu.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_search, com.actionbarsherlock.view.Menu.NONE, "Search");
+            MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "Search");
             menuSearch.setIcon(android.R.drawable.ic_menu_search);
             menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-            menuSearch.setActionView(new SearchView(getSherlockActivity().getSupportActionBar().getThemedContext()));
+            menuSearch.setActionView(new SearchView(((AppCompatActivity) getActivity()).getSupportActionBar().getThemedContext()));
 
             //Create SearchWidget
-            new SearchWidget(getActivity(), menuSearch.getActionView());
+            new SearchWidget(getActivity(), (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.account_menu_search)));
 
             SubMenu subMenu1 = menu.addSubMenu("Account");
-            subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_add, com.actionbarsherlock.view.Menu.NONE, "Add");
-            subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_transfer, com.actionbarsherlock.view.Menu.NONE, "Transfer");
-            subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_sort, com.actionbarsherlock.view.Menu.NONE, "Sort");
-            subMenu1.add(com.actionbarsherlock.view.Menu.NONE, R.id.account_menu_unknown, com.actionbarsherlock.view.Menu.NONE, "Unknown");
+            subMenu1.add(Menu.NONE, R.id.account_menu_add, Menu.NONE, "Add");
+            subMenu1.add(Menu.NONE, R.id.account_menu_transfer, Menu.NONE, "Transfer");
+            subMenu1.add(Menu.NONE, R.id.account_menu_sort, Menu.NONE, "Sort");
+            subMenu1.add(Menu.NONE, R.id.account_menu_unknown, Menu.NONE, "Unknown");
 
             MenuItem subMenu1Item = subMenu1.getItem();
             subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         } else {
-            inflater.inflate(R.layout.account_menu, menu);
+            inflater.inflate(R.menu.account_menu, menu);
 
             //Create SearchWidget
-            new SearchWidget(getActivity(), menu.findItem(R.id.account_menu_search).getActionView());
+            new SearchWidget(getActivity(), (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.account_menu_search)));
         }
 
     }
@@ -339,7 +341,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (!isDetached()) {
-            Log.d("Accounts-onSharedPreferenceChanged", "Options changed. Requery");
+            Log.d(getClass().getSimpleName(), "Options changed. Requery");
             //getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
             //getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
         }
@@ -347,8 +349,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
-        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-        String sortOrder = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity())
+        getActivity().setProgressBarIndeterminateVisibility(true);
+        String sortOrder = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getString(getString(R.string.pref_key_account_sort), null);
 
         Log.d("Accounts-onCreateLoader", "calling create loader...");
@@ -432,8 +434,8 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
                 break;
         }
 
-        if (!getSherlockActivity().getSupportLoaderManager().hasRunningLoaders()) {
-            getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+        if (!getActivity().getSupportLoaderManager().hasRunningLoaders()) {
+            getActivity().setProgressBarIndeterminateVisibility(false);
         }
     }
 
@@ -531,7 +533,7 @@ public class Accounts extends SherlockFragment implements OnSharedPreferenceChan
 
                 default:
                     mode.finish();
-                    Log.e("Accounts-onActionItemClciked", "ERROR. Clicked " + item);
+                    Log.e(getClass().getSimpleName(), "ERROR. Clicked " + item);
                     return false;
             }
         }

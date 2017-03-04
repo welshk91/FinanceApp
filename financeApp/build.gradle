@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 23
     buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.databases.example"
         minSdkVersion 14
-        targetSdkVersion 20
+        targetSdkVersion 23
         versionCode 1
         versionName "Alpha"
     }
@@ -21,8 +21,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:20.0.0'
-    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:23.0.0'
+    compile 'com.android.support:appcompat-v7:23.0.0'
     compile project(':colorPicker')
     compile project(':cardsUILib')
     compile project(':lockpattern')

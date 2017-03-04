@@ -2,29 +2,26 @@ package com.databases.example.data;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.View;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.widget.SearchView;
-import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.databases.example.app.Search;
 
-public class SearchWidget extends SherlockFragmentActivity {
-    public SearchWidget(final Context context, final View abSearch) {
-        final SearchView searchView = (SearchView) abSearch;
+public class SearchWidget {
+    public SearchWidget(final Context context, final SearchView abSearch) {
+        final SearchView searchView = abSearch;
         searchView.setQueryHint("Search!");
 
-        searchView.setOnQueryTextListener(new OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.v("SearchWidget-onQueryTextChange", "newText=" + newText);
+                Log.v(getClass().getSimpleName(), "newText=" + newText);
                 return false;
             }
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d("SearchWidget-onQueryTextSubmit", "query=" + query);
+                Log.d(getClass().getSimpleName(), "query=" + query);
 
                 searchView.clearFocus();
                 Intent intentSearch = new Intent(context, Search.class);
@@ -34,7 +31,5 @@ public class SearchWidget extends SherlockFragmentActivity {
                 return true;
             }
         });
-
     }
-
 }

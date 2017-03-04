@@ -8,14 +8,14 @@ package com.databases.example.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.dropbox.chooser.android.DbxChooser;
@@ -33,7 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-public class Dropbox extends SherlockFragmentActivity {
+public class Dropbox extends AppCompatActivity {
     private DbxAccountManager dbAccountManager;
     private static final int REQUEST_LINK_TO_DBX = 100;
     private static final int DBX_CHOOSER_REQUEST = 200;
@@ -177,24 +177,24 @@ public class Dropbox extends SherlockFragmentActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_LINK_TO_DBX) {
-            if (resultCode == SherlockFragmentActivity.RESULT_OK) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
                 dropboxStatus();
-                Log.d("Dropbox-onActivityResult", "Logged In/Out Successfully To Dropbox");
+                Log.d(getClass().getSimpleName(), "Logged In/Out Successfully To Dropbox");
 
             } else {
                 //Link failed or was cancelled by the user.
-                Log.e("Dropbox-onActivityResult", "Result FAILED. Cant use dropbox");
+                Log.e(getClass().getSimpleName(), "Result FAILED. Cant use dropbox");
             }
         }
 
         if (requestCode == DBX_CHOOSER_REQUEST) {
-            if (resultCode == SherlockFragmentActivity.RESULT_OK) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
                 DbxChooser.Result result = new DbxChooser.Result(data);
-                Log.d("Dropbox-onActivityResult", "Link to selected file: " + result.getLink());
+                Log.d(getClass().getSimpleName(), "Link to selected file: " + result.getLink());
                 dropboxRestore(result);
             } else {
                 // Failed or was cancelled by the user.
-                Log.d("Dropbox-onActivityResult", "Dropbox Chooser: Failed or Canceled");
+                Log.d(getClass().getSimpleName(), "Dropbox Chooser: Failed or Canceled");
                 Toast.makeText(this, "Failed or canceled", Toast.LENGTH_LONG).show();
             }
         } else {

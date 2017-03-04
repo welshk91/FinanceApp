@@ -3,9 +3,9 @@ package com.databases.example.view;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,8 +94,8 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.category_layout);
-                int startColor = prefs.getInt("key_category_startBackgroundColor", Color.parseColor("#FFFFFF"));
-                int endColor = prefs.getInt("key_category_endBackgroundColor", Color.parseColor("#FFFFFF"));
+                int startColor = prefs.getInt("key_category_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt("key_category_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -122,10 +122,10 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_category_nameColor", Color.parseColor("#222222"));
+            int DefaultColor = prefs.getInt("key_category_nameColor", ContextCompat.getColor(context, R.color.categories_main_category_default));
 
             if (useDefaults) {
-                viewHolder.tvName.setTextColor(Color.parseColor("#222222"));
+                viewHolder.tvName.setTextColor(ContextCompat.getColor(context, R.color.categories_main_category_default));
             } else {
                 viewHolder.tvName.setTextColor(DefaultColor);
             }
@@ -210,8 +210,8 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.subcategory_item_layout);
-                int startColor = prefs.getInt("key_subcategory_startBackgroundColor", Color.parseColor("#FFFFFF"));
-                int endColor = prefs.getInt("key_subcategory_endBackgroundColor", Color.parseColor("#FFFFFF"));
+                int startColor = prefs.getInt("key_subcategory_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt("key_subcategory_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -236,10 +236,10 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_subcategory_nameColor", Color.parseColor("#000000"));
+            int DefaultColor = prefs.getInt("key_subcategory_nameColor", ContextCompat.getColor(context, R.color.categories_subcategory_default));
 
             if (useDefaults) {
-                viewHolder.tvName.setTextColor(Color.parseColor("#000000"));
+                viewHolder.tvName.setTextColor(ContextCompat.getColor(context, R.color.categories_subcategory_default));
             } else {
                 viewHolder.tvName.setTextColor(DefaultColor);
             }

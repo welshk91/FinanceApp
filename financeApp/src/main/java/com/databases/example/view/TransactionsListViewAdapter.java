@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,9 +145,9 @@ public class TransactionsListViewAdapter extends CursorAdapter {
                 tvName.setText(name);
 
                 if (planId != 0) {
-                    tvName.setTextColor(Color.parseColor("#FF9933"));
+                    tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_plans_yes));
                 } else {
-                    tvName.setTextColor(Color.parseColor("#000000"));
+                    tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_plans_no));
                 }
 
             }
@@ -214,8 +215,8 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         //Change Background Colors
         try {
             if (!useDefaults) {
-                int startColor = prefs.getInt("key_transaction_startBackgroundColor", Color.parseColor("#FFFFFF"));
-                int endColor = prefs.getInt("key_transaction_endBackgroundColor", Color.parseColor("#FFFFFF"));
+                int startColor = prefs.getInt("key_transaction_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt("key_transaction_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
 
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
@@ -240,10 +241,10 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_transaction_nameColor", Color.parseColor("#222222"));
+            int DefaultColor = prefs.getInt("key_transaction_nameColor", ContextCompat.getColor(context, R.color.transaction_title_default));
 
             if (useDefaults) {
-                tvName.setTextColor(Color.parseColor("#222222"));
+                tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_title_default));
             } else {
                 tvName.setTextColor(DefaultColor);
             }
@@ -280,17 +281,17 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_transaction_fieldColor", Color.parseColor("#000000"));
+            int DefaultColor = prefs.getInt("key_transaction_fieldColor", ContextCompat.getColor(context, R.color.transaction_details_default));
 
             if (useDefaults) {
-                tvValue.setTextColor(Color.parseColor("#000000"));
-                tvType.setTextColor(Color.parseColor("#000000"));
-                tvCategory.setTextColor(Color.parseColor("#000000"));
-                tvChecknum.setTextColor(Color.parseColor("#000000"));
-                tvMemo.setTextColor(Color.parseColor("#000000"));
-                tvTime.setTextColor(Color.parseColor("#000000"));
-                tvDate.setTextColor(Color.parseColor("#000000"));
-                tvCleared.setTextColor(Color.parseColor("#000000"));
+                tvValue.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvType.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvCategory.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvChecknum.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvMemo.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvTime.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvDate.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
+                tvCleared.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
             } else {
                 tvValue.setTextColor(DefaultColor);
                 tvType.setTextColor(DefaultColor);

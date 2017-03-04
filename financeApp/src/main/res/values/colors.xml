@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedResources">
+    <!--Theme Colors -->
+
+    <color name="primary">@color/light_blue</color>
+    <color name="primary_dark">@color/sky_blue</color>
+    <color name="accent">@color/pink</color>
+    <color name="text_light">@color/white</color>
+    <color name="text_darker">#222222</color>
+    <color name="text_darkest">@color/black</color>
+    <color name="text_shadow">#99000000</color>
+
+    <color name="gradient_start">#00000000</color>
+    <color name="gradient_middle">#66000000</color>
+    <color name="gradient_end">#BB000000</color>
+
+    <color name="radial_gradient_start">#00000000</color>
+    <color name="radial_gradient_start_middle">#22000000</color>
+    <color name="radial_gradient_middle">#44000000</color>
+    <color name="radial_gradient_middle_end">#66000000</color>
+    <color name="radial_gradient_end">#AA000000</color>
+
+    <!--Widget Colors -->
+    <color name="toolbar">@color/dracula_green</color>
+
+    <color name="home_category_name">@color/google_white</color>
+    <color name="selector_name">@color/google_white</color>
+
+    <color name="heart">#d20000</color>
+    <color name="empty_heart">#ffffff</color>
+    <color name="club_des_chefs_watermark">#F7F4F9</color>
+    <color name="app_icon_1">#3b373D</color>
+    <color name="app_icon_2">#F7F4F9</color>
+
+    <!--Usual Colors -->
+    <color name="opaque_white">#ffffffff</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="blue">#0000FF</color>
+    <color name="green">#009933</color>
+    <color name="pink">#da3172</color>
+    <color name="purple">#9900CC</color>
+    <color name="red">#FF3300</color>
+    <color name="orange">#FF6600</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="grey">#ff707070</color>
+
+    <color name="light_grey">#cfcfcf</color>
+    <color name="light_brown">#d6d3ca</color>
+    <color name="light_blue">#66CCFF</color>
+    <color name="light_orange">#AAFF6600</color>
+
+    <!--Dracula IDE Colors -->
+    <color name="dracula_purple">#9876AA</color>
+    <color name="dracula_blue">#6897BB</color>
+    <color name="dracula_green">#6A8759</color>
+    <color name="dracula_yellow">#BBB529</color>
+    <color name="dracula_red">#FF6B68</color>
+    <color name="dracula_white">#BBBBBB</color>
+    <color name="dracula_black">#282828</color>
+
+    <!--Fancy Colors -->
+    <color name="sky_blue">#3399FF</color>
+    <color name="google_white">#F8F8F8</color>
+    <color name="blazing_purple">#7734B5</color>
+    <color name="faded_primary">#7766CCFF</color>
+    <color name="recipe_gray">#231F20</color>
+    <color name="windowBackground">#000000</color>
+    <!--<color name="background_material_dark">#fc0000</color>-->
+
+
+    <!--Default Colors-->
+    <color name="account_title_default">@color/text_darker</color>
+    <color name="account_details_default">@color/text_darkest</color>
+
+    <color name="transaction_title_default">@color/text_darker</color>
+    <color name="transaction_details_default">@color/text_darkest</color>
+    <color name="transaction_plans_yes">#FF9933</color>
+    <color name="transaction_plans_no">@color/text_darkest</color>
+
+    <color name="plans_title_default">@color/text_darker</color>
+    <color name="plans_details_default">@color/text_darkest</color>
+
+    <color name="categories_main_category_default">@color/text_darker</color>
+    <color name="categories_subcategory_default">@color/text_darkest</color>
+
+</resources>

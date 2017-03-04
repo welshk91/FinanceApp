@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -219,8 +220,8 @@ public class PlansListViewAdapter extends CursorAdapter {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.plan_layout);
-                int startColor = prefs.getInt("key_plan_startBackgroundColor", Color.parseColor("#FFFFFF"));
-                int endColor = prefs.getInt("key_plan_endBackgroundColor", Color.parseColor("#FFFFFF"));
+                int startColor = prefs.getInt("key_plan_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt("key_plan_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
                 GradientDrawable customGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -245,10 +246,10 @@ public class PlansListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int customColor = prefs.getInt("key_plan_nameColor", Color.parseColor("#222222"));
+            int customColor = prefs.getInt("key_plan_nameColor", ContextCompat.getColor(context, R.color.plans_title_default));
 
             if (useDefaults) {
-                tvName.setTextColor(Color.parseColor("#222222"));
+                tvName.setTextColor(ContextCompat.getColor(context, R.color.plans_title_default));
             } else {
                 tvName.setTextColor(customColor);
             }
@@ -290,19 +291,19 @@ public class PlansListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_plan_fieldColor", Color.parseColor("#000000"));
+            int DefaultColor = prefs.getInt("key_plan_fieldColor", ContextCompat.getColor(context, R.color.plans_details_default));
 
             if (useDefaults) {
-                tvAccount.setTextColor(Color.parseColor("#000000"));
-                tvValue.setTextColor(Color.parseColor("#000000"));
-                tvType.setTextColor(Color.parseColor("#000000"));
-                tvCategory.setTextColor(Color.parseColor("#000000"));
-                tvMemo.setTextColor(Color.parseColor("#000000"));
-                tvOffset.setTextColor(Color.parseColor("#000000"));
-                tvRate.setTextColor(Color.parseColor("#000000"));
-                tvNext.setTextColor(Color.parseColor("#000000"));
-                tvScheduled.setTextColor(Color.parseColor("#000000"));
-                tvCleared.setTextColor(Color.parseColor("#000000"));
+                tvAccount.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvValue.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvType.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvCategory.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvMemo.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvOffset.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvRate.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvNext.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvScheduled.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
+                tvCleared.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
             } else {
                 tvAccount.setTextColor(DefaultColor);
                 tvValue.setTextColor(DefaultColor);

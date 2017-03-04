@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,8 +158,8 @@ public class AccountsListViewAdapter extends CursorAdapter {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.account_layout);
-                int startColor = prefs.getInt("key_account_startBackgroundColor", Color.parseColor("#FFFFFF"));
-                int endColor = prefs.getInt("key_account_endBackgroundColor", Color.parseColor("#FFFFFF"));
+                int startColor = prefs.getInt("key_account_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt("key_account_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -183,10 +184,10 @@ public class AccountsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_account_nameColor", Color.parseColor("#222222"));
+            int DefaultColor = prefs.getInt("key_account_nameColor", ContextCompat.getColor(context, R.color.account_title_default));
 
             if (useDefaults) {
-                tvName.setTextColor(Color.parseColor("#222222"));
+                tvName.setTextColor(ContextCompat.getColor(context, R.color.account_title_default));
             } else {
                 tvName.setTextColor(DefaultColor);
             }
@@ -213,12 +214,12 @@ public class AccountsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_account_fieldColor", Color.parseColor("#000000"));
+            int DefaultColor = prefs.getInt("key_account_fieldColor", ContextCompat.getColor(context, R.color.account_details_default));
 
             if (useDefaults) {
-                tvBalance.setTextColor(Color.parseColor("#000000"));
-                tvDate.setTextColor(Color.parseColor("#000000"));
-                tvTime.setTextColor(Color.parseColor("#000000"));
+                tvBalance.setTextColor(ContextCompat.getColor(context, R.color.account_details_default));
+                tvDate.setTextColor(ContextCompat.getColor(context, R.color.account_details_default));
+                tvTime.setTextColor(ContextCompat.getColor(context, R.color.account_details_default));
             } else {
                 tvBalance.setTextColor(DefaultColor);
                 tvDate.setTextColor(DefaultColor);

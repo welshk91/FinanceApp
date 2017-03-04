@@ -1,10 +1,10 @@
 FinanceApp
-================
+==========
 
-A simple app to handle transactions on the go. Originally designed as a knockoff of ["Checkbook"](https://play.google.com/store/apps/details?id=com.tts.checkbookenhanced#?t=W251bGwsMSwxLDIxMiwiY29tLnR0cy5jaGVja2Jvb2tlbmhhbmNlZCJd) by Digital Life Solutions, it has since evolved to attempt to follow the Google Android Design Guidelines better (Holo Design, ActionBar, Fragments, ...). 
+A simple app to handle transactions on the go. Originally designed as a knockoff of ["Checkbook"](https://play.google.com/store/apps/details?id=com.tts.checkbookenhanced#?t=W251bGwsMSwxLDIxMiwiY29tLnR0cy5jaGVja2Jvb2tlbmhhbmNlZCJd) by Digital Life Solutions, it has since evolved to attempt to follow the Google Android Design Guidelines better (Material Design, ToolBar, Fragments, ...).
 
 Screen Shots
---------------------------------------
+------------
 ![Home](Screenshots/Phone/Screenshots/Home/Main_framed.png?raw=true)
 ![NavDrawer](Screenshots/Phone/Screenshots/Home/NavigationDrawer_framed.png?raw=true)
 ![Checkbook](Screenshots/Phone/Screenshots/Checkbook/Checkbook-Accounts_framed.png?raw=true)
@@ -14,33 +14,37 @@ Screen Shots
 ![Options](Screenshots/Phone/Screenshots/Options/Options-Appearance-Accounts_framed.png?raw=true)
 
 Usage
---------------------------------------
+-----
 There is currently no license I'm releasing this code under (subject to change). Feel free to use it in whatever way you see fit. 
 
 Known Issues
---------------------------------------
+------------
 * Options navigates "up" awkwardly
 * Wizard text is now white? Was black recently...
 
 Things To Do
---------------------------------------
+------------
+* Move EditTexts to TextInputLayout/TextInputEditText
+* Move ListViews to RecyclerViews
+* Fabric integration
+* Realm database
 * Google Cloud back up (using Google Account?)
 * Add Archive support (ie keep balance when making back ups)
 * Add warning of liability to Pattern. Add encryption and possibly email for recovery?
 * Make the Attachment code available
 * Add custom search suggestions
-* PDF Reports
+* PDF/XML/HTML Reports
 * Improve First-Time Run (use third party library to draw attention to objects, wizard in the beginning for database importing/syncing, ...)
 * Export/Import oxf (Make sure to support required fields)
-* Improve look (icons, default colors, slide menu, big notifications)
+* Improve look (icons, animations, fonts, default colors, slide menu, big notifications)
 * Encrypt entire database (SQLCipher)
+* Improve Preferences code
 
 
 Optimizations
---------------------------------------
-* Condense size (Clean up imports, delete useless variables/assets,...)
+-------------
+* Condense size (Clean up, delete useless assets, ProGuard,...)
 * Optimize layouts for performance
-* Cut Down on inflating views (costly operation)
 * Make sure to use View Holder for ListView performance
 * Make ListView only show a few entries, load new entries when needed (Endless listview)
 * Let ContentProvider handle the cursors if possible
@@ -51,7 +55,7 @@ Optimizations
 
 
 Notes to Self
---------------------------------------
+-------------
 * Need more spinners, less typing
 * What should happen when a user clicks on a search result?
 * Link a contact (own table?)
@@ -59,7 +63,7 @@ Notes to Self
 
 
 Attachments
----------------------------------------
+-----------
 Supported
 - Pictures
 - Music (mp3,wav)
@@ -72,7 +76,7 @@ Attachments Not Working
 - .avi files (found through the filemanager) can be returned. When you select the video player to view it, it only has audio. This is due to lack of codec support on the platform.
 
 Third-Party Libraries Used
-------------------------------------------
+--------------------------
 * [Android Lock Pattern](https://bitbucket.org/haibison/android-lockpattern/overview)
 * [ColorPickerPreference](https://github.com/attenzione/android-ColorPickerPreference) by Sergey Margaritov
 * [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide
@@ -81,5 +85,5 @@ Third-Party Libraries Used
 * Soon: [ChartView](https://github.com/nadavfima/ChartView/) by nadavfima
 
 Icons Used
-------------------------------------------
+----------
 * [Elegant Icon Font](http://www.elegantthemes.com/blog/resources/elegant-icon-font) by Nick Roach

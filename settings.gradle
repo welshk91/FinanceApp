@@ -1,4 +1,3 @@
 include ':cardsUILib'
-include ':colorPicker'
 include ':wizardLib'
 include ':financeApp'

@@ -23,7 +23,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:23.0.0'
     compile 'com.android.support:appcompat-v7:23.0.0'
-    compile project(':colorPicker')
+    compile 'net.margaritov.preference.colorpicker.ColorPickerPreference:ColorPickerPreference:1.0.0'
     compile project(':cardsUILib')
     compile 'haibison.android:lockpattern:12.0.0'
     compile project(':wizardLib')

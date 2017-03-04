@@ -3,21 +3,20 @@
     android:id="@+id/ScrollView01"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:fadeScrollbars="true" >
+    android:fadeScrollbars="true">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:isScrollContainer="true"
         android:orientation="vertical"
-        android:padding="4dp" >
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/TextView00"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account:" >
-        </TextView>
+            android:text="Account:" />
 
         <Spinner
             android:id="@+id/spinner_transaction_account"
@@ -25,16 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView00"
             android:layout_toRightOf="@+id/TextView04"
-            android:inputType="text" >
-        </Spinner>
+            android:inputType="text" />
 
         <TextView
             android:id="@+id/TextView01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/spinner_transaction_account"
-            android:text="@string/name:" >
-        </TextView>
+            android:text="@string/name" />
 
         <EditText
             android:id="@+id/EditTransactionName"
@@ -42,16 +39,14 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView01"
             android:layout_toRightOf="@+id/TextView04"
-            android:inputType="text" >
-        </EditText>
+            android:inputType="text" />
 
         <TextView
             android:id="@+id/TextView02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/EditTransactionName"
-            android:text="@string/value:" >
-        </TextView>
+            android:text="@string/value" />
 
         <EditText
             android:id="@+id/EditTransactionValue"
@@ -61,15 +56,14 @@
             android:layout_toRightOf="@+id/TextView04"
             android:digits="1234567890."
             android:imeOptions="actionNext"
-            android:inputType="numberDecimal|phone" >
-        </EditText>
+            android:inputType="numberDecimal|phone" />
 
         <TextView
             android:id="@+id/TextView03"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/EditTransactionValue"
-            android:text="@string/type:" />
+            android:text="@string/type" />
 
         <Spinner
             android:id="@+id/spinner_transaction_type"
@@ -84,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/spinner_transaction_type"
-            android:text="@string/category:" />
+            android:text="@string/category" />
 
         <Spinner
             android:id="@+id/spinner_transaction_category"
@@ -98,8 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/spinner_transaction_category"
-            android:text="@string/memo:" >
-        </TextView>
+            android:text="@string/memo" />
 
         <AutoCompleteTextView
             android:id="@+id/EditTransactionMemo"
@@ -109,16 +102,14 @@
             android:layout_toRightOf="@+id/TextView04"
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
             android:maxLength="200"
-            android:maxLines="2" >
-        </AutoCompleteTextView>
+            android:maxLines="2" />
 
         <TextView
             android:id="@+id/TextView07"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/EditTransactionMemo"
-            android:text="Start On:" >
-        </TextView>
+            android:text="Start On:" />
 
         <Button
             android:id="@+id/ButtonTransactionDate"
@@ -127,24 +118,21 @@
             android:layout_alignTop="@+id/TextView07"
             android:layout_toRightOf="@+id/TextView04"
             android:onClick="showDatePickerDialog"
-            android:text="Date" >
-        </Button>
+            android:text="Date" />
 
         <TextView
             android:id="@+id/TextView08"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/ButtonTransactionDate"
-            android:text="Repeat" >
-        </TextView>
+            android:text="Repeat" />
 
         <TextView
             android:id="@+id/TextView08b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/TextView08"
-            android:text="Every:" >
-        </TextView>
+            android:text="Every:" />
 
         <EditText
             android:id="@+id/EditRate"
@@ -153,8 +141,7 @@
             android:layout_alignTop="@+id/TextView08"
             android:layout_toRightOf="@+id/TextView04"
             android:imeOptions="actionNext"
-            android:inputType="number" >
-        </EditText>
+            android:inputType="number" />
 
         <Spinner
             android:id="@+id/spinner_rate_type"
@@ -169,8 +156,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/EditRate"
-            android:text="@string/cleared:" >
-        </TextView>
+            android:text="@string/cleared" />
 
         <CheckBox
             android:id="@+id/CheckTransactionCleared"
@@ -178,8 +164,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/TextView09"
             android:layout_toRightOf="@+id/TextView04"
-            android:checked="true" >
-        </CheckBox>
+            android:checked="true" />
     </RelativeLayout>
 
 </ScrollView>

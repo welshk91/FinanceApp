@@ -28,7 +28,7 @@
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/name:" />
+                android:text="@string/name" />
 
             <EditText
                 android:id="@+id/account_name"
@@ -40,7 +40,7 @@
             <TextView
                 android:id="@+id/label_balance"
                 style="@style/WizardFormLabel"
-                android:text="@string/balance:" />
+                android:text="@string/balance" />
 
             <EditText
                 android:id="@+id/account_balance"

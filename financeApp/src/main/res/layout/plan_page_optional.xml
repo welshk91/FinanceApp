@@ -28,7 +28,7 @@
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/memo:" />
+                android:text="@string/memo" />
 
             <AutoCompleteTextView
                 android:id="@+id/transaction_memo"
@@ -41,7 +41,7 @@
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/cleared:" />
+                android:text="@string/cleared" />
 
             <CheckBox
                 android:id="@+id/transaction_cleared"

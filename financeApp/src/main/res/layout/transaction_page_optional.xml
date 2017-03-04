@@ -15,20 +15,20 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WizardPageContainer" >
+    style="@style/WizardPageContainer">
 
     <TextView style="@style/WizardPageTitle" />
 
-    <ScrollView style="@style/FragmentInfo" >
+    <ScrollView style="@style/FragmentInfo">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/checknum:" />
+                android:text="@string/checknum" />
 
             <EditText
                 android:id="@+id/transaction_checknum"
@@ -39,7 +39,7 @@
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/memo:" />
+                android:text="@string/memo" />
 
             <AutoCompleteTextView
                 android:id="@+id/transaction_memo"
@@ -48,40 +48,35 @@
                 android:hint="Memo"
                 android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
                 android:maxLength="200"
-                android:maxLines="2" >
-            </AutoCompleteTextView>
+                android:maxLines="2"></AutoCompleteTextView>
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/date:" />
+                android:text="@string/date" />
 
             <Button
                 android:id="@+id/transaction_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="showDatePickerDialog"
-                android:text="Date" >
-            </Button>
+                android:text="Date"></Button>
 
             <Button
                 android:id="@+id/transaction_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="showTimePickerDialog"
-                android:text="Time" >
-            </Button>
+                android:text="Time"></Button>
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/cleared:" >
-            </TextView>
+                android:text="@string/cleared"></TextView>
 
             <CheckBox
                 android:id="@+id/transaction_cleared"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:checked="true" >
-            </CheckBox>
+                android:checked="true"></CheckBox>
         </LinearLayout>
     </ScrollView>
 

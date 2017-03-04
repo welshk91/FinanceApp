@@ -51,7 +51,7 @@
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/type:" />
+                android:text="@string/type" />
 
             <Spinner
                 android:id="@+id/spinner_transaction_type"
@@ -63,7 +63,7 @@
 
             <TextView
                 style="@style/WizardFormLabel"
-                android:text="@string/category:" />
+                android:text="@string/category" />
 
             <Spinner
                 android:id="@+id/spinner_transaction_category"

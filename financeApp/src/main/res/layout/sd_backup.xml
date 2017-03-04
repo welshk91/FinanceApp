@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="4dp" >
+    android:padding="4dp">
 
     <TextView
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/name:" >
-    </TextView>
+        android:text="@string/name" />
 
     <EditText
         android:id="@+id/EditBackupName"
@@ -18,7 +17,6 @@
         android:layout_alignTop="@+id/TextView01"
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@+id/TextView01"
-        android:inputType="text" >
-    </EditText>
+        android:inputType="text" />
 
 </RelativeLayout>

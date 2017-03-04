@@ -20,11 +20,12 @@ There is currently no license I'm releasing this code under (subject to change).
 Known Issues
 --------------------------------------
 * Options navigates "up" awkwardly
+* Wizard text is now white? Was black recently...
 
 Things To Do
 --------------------------------------
-* Complete work on Dropbox sync and add Dropbox 'Saver' Drop-In (when it becomes available)
-* Add Archieve support (ie keep balance when making back ups)
+* Google Cloud back up (using Google Account?)
+* Add Archive support (ie keep balance when making back ups)
 * Add warning of liability to Pattern. Add encryption and possibly email for recovery?
 * Make the Attachment code available
 * Add custom search suggestions

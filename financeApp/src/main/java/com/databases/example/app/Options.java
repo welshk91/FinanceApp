@@ -29,8 +29,8 @@ import com.databases.example.data.MyContentProvider;
 
 import java.util.List;
 
-import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
-import group.pals.android.lib.ui.lockpattern.util.Settings;
+import haibison.android.lockpattern.LockPatternActivity;
+import haibison.android.lockpattern.utils.AlpSettings;
 
 public class Options extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     private static final int REQUEST_CREATE_PATTERN = 0;
@@ -114,7 +114,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
             //			intent.putExtra(LockPatternActivity._Mode, LockPatternActivity.LPMode.CreatePattern);
             //			startActivityForResult(intent, REQUEST_CREATE_PATTERN);
 
-            Settings.Security.setAutoSavePattern(getActivity(), true);
+            AlpSettings.Security.setAutoSavePattern(getActivity(), true);
             Intent intent = new Intent(LockPatternActivity.ACTION_CREATE_PATTERN, null, getActivity(), LockPatternActivity.class);
             startActivityForResult(intent, REQUEST_CREATE_PATTERN);
         }
@@ -200,7 +200,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
                         public void onClick(DialogInterface dialog, int id) {
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                             prefs.edit().clear().commit();
-                            Settings.Security.setPattern(getActivity(), null);
+                            AlpSettings.Security.setPattern(getActivity(), null);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {

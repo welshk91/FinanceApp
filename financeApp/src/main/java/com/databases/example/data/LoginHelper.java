@@ -19,7 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import group.pals.android.lib.ui.lockpattern.util.Settings;
+import haibison.android.lockpattern.utils.AlpSettings;
 
 public class LoginHelper extends AppCompatActivity {
     @Override
@@ -110,7 +110,7 @@ public class LoginHelper extends AppCompatActivity {
                                     //if code = pattern
                                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                                     prefs.edit().putBoolean("checkbox_lock_enabled", false).commit();
-                                    Settings.Security.setPattern(getActivity(), null);
+                                    AlpSettings.Security.setPattern(getActivity(), null);
 
                                     //else
                                     //Toast.makeText(getActivity(), "Code is incorrect", Toast.LENGTH_SHORT).show();

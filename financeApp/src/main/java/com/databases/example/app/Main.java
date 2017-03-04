@@ -21,8 +21,8 @@ import com.databases.example.R;
 import com.databases.example.data.SearchWidget;
 import com.databases.example.view.Drawer;
 
-import group.pals.android.lib.ui.lockpattern.LockPatternActivity;
-import group.pals.android.lib.ui.lockpattern.util.Settings;
+import haibison.android.lockpattern.LockPatternActivity;
+import haibison.android.lockpattern.utils.AlpSettings;
 
 public class Main extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
@@ -76,7 +76,7 @@ public class Main extends AppCompatActivity {
 
     //Confirm Lockscreen
     private void confirmPattern() {
-        if (Settings.Security.getPattern(this) != null) {
+        if (AlpSettings.Security.getPattern(this) != null) {
             //Log.d("Main", "valueOf getPattern="+String.valueOf(Settings.Security.getPattern(this)));
             //Log.d("Main", "getPattern="+String.valueOf(Settings.Security.getPattern(this)));
 

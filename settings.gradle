@@ -1,5 +1,4 @@
 include ':cardsUILib'
 include ':colorPicker'
-include ':lockpattern'
 include ':wizardLib'
 include ':financeApp'

@@ -78,7 +78,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.category_item, parent);
+            v = vi.inflate(R.layout.category_item, null);
 
             viewHolder = new CategoryViewHolder();
             viewHolder.tvName = (TextView) v.findViewById(R.id.category_name);
@@ -194,7 +194,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.subcategory_item, parent);
+            v = vi.inflate(R.layout.subcategory_item, null);
 
             viewHolder = new SubCategoryViewHolder();
             viewHolder.tvName = (TextView) v.findViewById(R.id.subcategory_name);

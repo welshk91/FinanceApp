@@ -106,19 +106,6 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
                         }
 
                     });
-
-            //Dropbox Options
-            Preference prefDropbox = findPreference("pref_dropbox");
-            prefDropbox
-                    .setOnPreferenceClickListener(new OnPreferenceClickListener() {
-
-                        public boolean onPreferenceClick(Preference preference) {
-                            dropboxOptions();
-                            return true;
-                        }
-
-                    });
-
         }
 
         //Draw a lockscreen pattern
@@ -136,12 +123,6 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
         public void sdOptions() {
             Intent intentSD = new Intent(getActivity(), SD.class);
             startActivity(intentSD);
-        }
-
-        //Launch Dropbox Options screen
-        public void dropboxOptions() {
-            Intent intentDropbox = new Intent(getActivity(), Dropbox.class);
-            startActivity(intentDropbox);
         }
 
         @Override

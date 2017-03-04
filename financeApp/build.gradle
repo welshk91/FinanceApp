@@ -26,7 +26,5 @@ dependencies {
     compile project(':colorPicker')
     compile project(':cardsUILib')
     compile project(':lockpattern')
-    compile project(':dropboxChooserSDK')
     compile project(':wizardLib')
-    compile files('libs/dropbox-sync-sdk-android.jar')
 }

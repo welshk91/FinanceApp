@@ -72,11 +72,6 @@
             android:summary="Local Backup options"
             android:title="Local Backup Settings" >
         </Preference>
-        <Preference
-            android:key="pref_dropbox"
-            android:summary="Dropbox options"
-            android:title="Dropbox Settings" >
-        </Preference>
     </PreferenceScreen>
 
 </PreferenceScreen>

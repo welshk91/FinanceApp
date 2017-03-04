@@ -67,13 +67,6 @@
                 android:value="com.databases.example.app.Options" />
         </activity>
         <activity
-            android:name=".app.Dropbox"
-            android:label="@string/app_name">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.databases.example.app.Options" />
-        </activity>
-        <activity
             android:name=".app.Categories"
             android:label="@string/app_name" />
         <activity
@@ -103,25 +96,6 @@
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:screenOrientation="user"
             android:theme="@style/Alp.Theme.Dark" />
-        <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
-        <activity
-            android:name="com.dropbox.client2.android.AuthActivity"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <data android:scheme="db-n98lux9z2rp08lb" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <service
-            android:name="com.dropbox.sync.android.DbxSyncService"
-            android:enabled="true"
-            android:exported="false"
-            android:label="Dropbox Sync" />
 
         <provider
             android:name=".data.MyContentProvider"

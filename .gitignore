@@ -47,3 +47,6 @@ ant.properties
 build.xml
 proguard-project.txt
 lint.xml
+
+# File that holds important API keys
+api_keys.xml

@@ -17,12 +17,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.databases.example.R;
 import com.databases.example.data.SearchWidget;
 import com.databases.example.view.Drawer;
 
 import haibison.android.lockpattern.LockPatternActivity;
 import haibison.android.lockpattern.utils.AlpSettings;
+import io.fabric.sdk.android.Fabric;
 
 public class Main extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
@@ -31,6 +33,7 @@ public class Main extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
         boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);

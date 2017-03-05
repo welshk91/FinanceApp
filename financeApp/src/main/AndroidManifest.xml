@@ -97,6 +97,11 @@
             android:authorities="com.databases.example.provider"
             android:exported="false"
             android:multiprocess="true" />
+
+        <!--IMPORTANT Generate your own Fabric Key if you want crash reporting-->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="@string/fabric_key" />
     </application>
 
 </manifest>

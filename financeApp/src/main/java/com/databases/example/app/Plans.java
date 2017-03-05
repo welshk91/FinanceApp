@@ -93,6 +93,19 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     //For Memo autocomplete
     public static final ArrayList<String> dropdownResults = new ArrayList<String>();
 
+    public static final String PLAN_ID = "plan_id";
+    public static final String PLAN_ACCOUNT_ID = "plan_acct_id";
+    public static final String PLAN_NAME = "plan_name";
+    public static final String PLAN_VALUE = "plan_value";
+    public static final String PLAN_TYPE = "plan_type";
+    public static final String PLAN_CATEGORY = "plan_category";
+    public static final String PLAN_MEMO = "plan_memo";
+    public static final String PLAN_OFFSET = "plan_offset";
+    public static final String PLAN_RATE = "plan_rate";
+    public static final String PLAN_NEXT = "plan_next";
+    public static final String PLAN_SCHEDULED = "plan_scheduled";
+    public static final String PLAN_CLEARED = "plan_cleared";
+
     private final String ADD_FRAGMENT_TAG = "plans_add_fragment";
     private final String EDIT_FRAGMENT_TAG = "plans_edit_fragment";
     private final String VIEW_FRAGMENT_TAG = "plans_view_fragment";
@@ -199,16 +212,16 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         Log.d("Plans-schedule", "FirstRun:" + firstRun);
 
         Intent intent = new Intent(this, PlanReceiver.class);
-        intent.putExtra("plan_id", plan.id);
-        intent.putExtra("plan_acct_id", plan.acctId);
-        intent.putExtra("plan_name", plan.name);
-        intent.putExtra("plan_value", plan.value);
-        intent.putExtra("plan_type", plan.type);
-        intent.putExtra("plan_category", plan.category);
-        intent.putExtra("plan_memo", plan.memo);
-        intent.putExtra("plan_offset", plan.offset);
-        intent.putExtra("plan_rate", plan.rate);
-        intent.putExtra("plan_cleared", plan.cleared);
+        intent.putExtra(PLAN_ID, plan.id);
+        intent.putExtra(PLAN_ACCOUNT_ID, plan.acctId);
+        intent.putExtra(PLAN_NAME, plan.name);
+        intent.putExtra(PLAN_VALUE, plan.value);
+        intent.putExtra(PLAN_TYPE, plan.type);
+        intent.putExtra(PLAN_CATEGORY, plan.category);
+        intent.putExtra(PLAN_MEMO, plan.memo);
+        intent.putExtra(PLAN_OFFSET, plan.offset);
+        intent.putExtra(PLAN_RATE, plan.rate);
+        intent.putExtra(PLAN_CLEARED, plan.cleared);
 
         //Parse Rate (token 0 is amount, token 1 is type)
         String phrase = plan.rate;
@@ -285,16 +298,16 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
 
     public void cancelPlan(PlanRecord plan) {
         Intent intent = new Intent(this, PlanReceiver.class);
-        intent.putExtra("plan_id", plan.id);
-        intent.putExtra("plan_acct_id", plan.acctId);
-        intent.putExtra("plan_name", plan.name);
-        intent.putExtra("plan_value", plan.value);
-        intent.putExtra("plan_type", plan.type);
-        intent.putExtra("plan_category", plan.category);
-        intent.putExtra("plan_memo", plan.memo);
-        intent.putExtra("plan_offset", plan.offset);
-        intent.putExtra("plan_rate", plan.rate);
-        intent.putExtra("plan_cleared", plan.cleared);
+        intent.putExtra(PLAN_ID, plan.id);
+        intent.putExtra(PLAN_ACCOUNT_ID, plan.acctId);
+        intent.putExtra(PLAN_NAME, plan.name);
+        intent.putExtra(PLAN_VALUE, plan.value);
+        intent.putExtra(PLAN_TYPE, plan.type);
+        intent.putExtra(PLAN_CATEGORY, plan.category);
+        intent.putExtra(PLAN_MEMO, plan.memo);
+        intent.putExtra(PLAN_OFFSET, plan.offset);
+        intent.putExtra(PLAN_RATE, plan.rate);
+        intent.putExtra(PLAN_CLEARED, plan.cleared);
 
         // In reality, you would want to have a static variable for the request code instead of 192837
         PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -592,18 +605,18 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                             record = adapterPlans.getPlan(selected.keyAt(i));
 
                             intent = new Intent(Plans.this, PlanReceiver.class);
-                            intent.putExtra("plan_id", record.id);
-                            intent.putExtra("plan_acct_id", record.acctId);
-                            intent.putExtra("plan_name", record.name);
-                            intent.putExtra("plan_value", record.value);
-                            intent.putExtra("plan_type", record.type);
-                            intent.putExtra("plan_category", record.category);
-                            intent.putExtra("plan_memo", record.memo);
-                            intent.putExtra("plan_offset", record.offset);
-                            intent.putExtra("plan_rate", record.rate);
-                            intent.putExtra("plan_next", record.next);
-                            intent.putExtra("plan_scheduled", record.scheduled);
-                            intent.putExtra("plan_cleared", record.cleared);
+                            intent.putExtra(PLAN_ID, record.id);
+                            intent.putExtra(PLAN_ACCOUNT_ID, record.acctId);
+                            intent.putExtra(PLAN_NAME, record.name);
+                            intent.putExtra(PLAN_VALUE, record.value);
+                            intent.putExtra(PLAN_TYPE, record.type);
+                            intent.putExtra(PLAN_CATEGORY, record.category);
+                            intent.putExtra(PLAN_MEMO, record.memo);
+                            intent.putExtra(PLAN_OFFSET, record.offset);
+                            intent.putExtra(PLAN_RATE, record.rate);
+                            intent.putExtra(PLAN_NEXT, record.next);
+                            intent.putExtra(PLAN_SCHEDULED, record.scheduled);
+                            intent.putExtra(PLAN_CLEARED, record.cleared);
 
                             PendingIntent sender = PendingIntent.getBroadcast(Plans.this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

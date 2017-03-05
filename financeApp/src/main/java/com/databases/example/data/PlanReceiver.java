@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.app.Checkbook;
+import com.databases.example.app.Plans;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -45,18 +46,18 @@ public class PlanReceiver extends BroadcastReceiver {
             Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
 
             try {
-                String plan_id = bundle.getString("plan_id");
-                String plan_acct_id = bundle.getString("plan_acct_id");
-                String plan_name = bundle.getString("plan_name");
-                String plan_value = bundle.getString("plan_value");
-                String plan_type = bundle.getString("plan_type");
-                String plan_category = bundle.getString("plan_category");
-                String plan_memo = bundle.getString("plan_memo");
-                String plan_offset = bundle.getString("plan_offset");
-                String plan_rate = bundle.getString("plan_rate");
-                String plan_next = bundle.getString("plan_next");
-                String plan_scheduled = bundle.getString("plan_scheduled");
-                String plan_cleared = bundle.getString("plan_cleared");
+                String plan_id = bundle.getString(Plans.PLAN_ID);
+                String plan_acct_id = bundle.getString(Plans.PLAN_ACCOUNT_ID);
+                String plan_name = bundle.getString(Plans.PLAN_NAME);
+                String plan_value = bundle.getString(Plans.PLAN_VALUE);
+                String plan_type = bundle.getString(Plans.PLAN_TYPE);
+                String plan_category = bundle.getString(Plans.PLAN_CATEGORY);
+                String plan_memo = bundle.getString(Plans.PLAN_MEMO);
+                String plan_offset = bundle.getString(Plans.PLAN_OFFSET);
+                String plan_rate = bundle.getString(Plans.PLAN_RATE);
+                String plan_next = bundle.getString(Plans.PLAN_NEXT);
+                String plan_scheduled = bundle.getString(Plans.PLAN_SCHEDULED);
+                String plan_cleared = bundle.getString(Plans.PLAN_CLEARED);
 
                 PlanRecord record = new PlanRecord(plan_id, plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
 
@@ -219,18 +220,18 @@ public class PlanReceiver extends BroadcastReceiver {
         Log.e("PlanReceiver-schedule", "FirstRun:" + firstRun);
 
         Intent intent = new Intent(context, PlanReceiver.class);
-        intent.putExtra("plan_id", plan.id);
-        intent.putExtra("plan_acct_id", plan.acctId);
-        intent.putExtra("plan_name", plan.name);
-        intent.putExtra("plan_value", plan.value);
-        intent.putExtra("plan_type", plan.type);
-        intent.putExtra("plan_category", plan.category);
-        intent.putExtra("plan_memo", plan.memo);
-        intent.putExtra("plan_offset", plan.offset);
-        intent.putExtra("plan_rate", plan.rate);
-        intent.putExtra("plan_next", plan.next);
-        intent.putExtra("plan_scheduled", plan.scheduled);
-        intent.putExtra("plan_cleared", plan.cleared);
+        intent.putExtra(Plans.PLAN_ID, plan.id);
+        intent.putExtra(Plans.PLAN_ACCOUNT_ID, plan.acctId);
+        intent.putExtra(Plans.PLAN_NAME, plan.name);
+        intent.putExtra(Plans.PLAN_VALUE, plan.value);
+        intent.putExtra(Plans.PLAN_TYPE, plan.type);
+        intent.putExtra(Plans.PLAN_CATEGORY, plan.category);
+        intent.putExtra(Plans.PLAN_MEMO, plan.memo);
+        intent.putExtra(Plans.PLAN_OFFSET, plan.offset);
+        intent.putExtra(Plans.PLAN_RATE, plan.rate);
+        intent.putExtra(Plans.PLAN_NEXT, plan.next);
+        intent.putExtra(Plans.PLAN_SCHEDULED, plan.scheduled);
+        intent.putExtra(Plans.PLAN_CLEARED, plan.cleared);
 
         //Parse Rate (token 0 is amount, token 1 is type)
         final String phrase = plan.rate;

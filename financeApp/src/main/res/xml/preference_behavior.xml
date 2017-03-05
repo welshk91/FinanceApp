@@ -48,6 +48,7 @@
             android:summary="Define a pattern for your lockscreen"
             android:title="Set a Pattern" />
 
+        <!--suppress AndroidDomInspection -->
         <EditTextPreference
             android:defaultValue=""
             android:dependency="checkbox_lock_enabled"

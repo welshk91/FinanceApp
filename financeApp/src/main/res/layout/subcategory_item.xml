@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/subcategory_item_layout"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:gravity="left|center"
     android:minHeight="48dp"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/subcategory_name"
@@ -15,7 +15,7 @@
         android:fontFamily="sans-serif-thin"
         android:gravity="center"
         android:paddingLeft="6dp"
-        android:textColor="#222222"
+        android:textColor="@color/subcategory_title_default"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -26,7 +26,7 @@
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:paddingLeft="6dp"
-        android:textColor="#000000"
+        android:textColor="@color/subcategory_details_default"
         android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="gone" />
@@ -39,7 +39,7 @@
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:paddingLeft="6dp"
-        android:textColor="#000000"
+        android:textColor="@color/subcategory_details_default"
         android:textSize="14sp"
         android:textStyle="bold" />
 

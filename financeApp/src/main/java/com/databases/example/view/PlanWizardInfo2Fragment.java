@@ -64,13 +64,13 @@ public class PlanWizardInfo2Fragment extends Fragment {
         View rootView = inflater.inflate(R.layout.plan_page_info2, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mRateView = ((TextInputEditText) rootView.findViewById(R.id.EditRate));
+        mRateView = ((TextInputEditText) rootView.findViewById(R.id.edit_rate));
         mRateView.setText(mPage.getData().getString(PlanWizardInfo2Page.RATE_DATA_KEY));
 
         mAccountsView = (Spinner) rootView.findViewById(R.id.spinner_transaction_account);
         mAccountsView.setAdapter(Plans.accountSpinnerAdapter);
 
-        Plans.pDate = (Button) rootView.findViewById(R.id.ButtonTransactionDate);
+        Plans.pDate = (Button) rootView.findViewById(R.id.plan_date_picker);
         if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) != null && mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY).length() > 0) {
             final DateTime date = new DateTime();
             date.setStringSQL(mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY));

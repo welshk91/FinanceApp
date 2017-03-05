@@ -2,60 +2,55 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/TextViewCurrentLink"
+            android:id="@+id/view_current_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your current attachment is " >
-        </TextView>
+            android:text="Your current attachment is " />
 
         <Button
-            android:id="@+id/ButtonAddLink"
+            android:id="@+id/add_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/TextViewCurrentLink"
+            android:layout_below="@+id/view_current_link"
             android:layout_margin="5dp"
             android:onClick="linkAdd"
             android:padding="15dp"
-            android:text="Add" >
-        </Button>
+            android:text="Add" />
 
         <Button
-            android:id="@+id/ButtonViewLink"
+            android:id="@+id/view_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/TextViewCurrentLink"
+            android:layout_below="@+id/view_current_link"
             android:layout_margin="5dp"
-            android:layout_toRightOf="@+id/ButtonAddLink"
+            android:layout_toRightOf="@+id/add_link"
             android:onClick="linkView"
             android:padding="15dp"
-            android:text="View" >
-        </Button>
+            android:text="View" />
 
         <Button
-            android:id="@+id/ButtonDoneLink"
+            android:id="@+id/done_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/TextViewCurrentLink"
+            android:layout_below="@+id/view_current_link"
             android:layout_margin="5dp"
-            android:layout_toRightOf="@+id/ButtonViewLink"
+            android:layout_toRightOf="@+id/view_link"
             android:onClick="linkDone"
             android:padding="15dp"
-            android:text="Done" >
-        </Button>
+            android:text="Done" />
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ButtonViewLink"
+            android:layout_below="@+id/view_link"
             android:adjustViewBounds="true"
             android:contentDescription="Your Last Link"
             android:src="@android:drawable/stat_notify_sdcard" />

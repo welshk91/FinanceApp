@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ScrollView01"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fadeScrollbars="true">
 
     <LinearLayout
-        android:id="@+id/layout_account_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -18,7 +16,7 @@
             android:text="From:" />
 
         <Spinner
-            android:id="@+id/SpinnerAccountFrom"
+            android:id="@+id/spinner_account_from"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -28,18 +26,18 @@
             android:text="To:" />
 
         <Spinner
-            android:id="@+id/SpinnerAccountTo"
+            android:id="@+id/spinner_account_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/EditAccountAmount_layout"
+            android:id="@+id/edit_account_amount_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/EditAccountAmount"
+                android:id="@+id/edit_account_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:digits="1234567890.-"

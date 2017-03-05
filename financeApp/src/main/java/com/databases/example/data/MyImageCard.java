@@ -19,7 +19,7 @@ public class MyImageCard extends Card{
         View v = LayoutInflater.from(context).inflate(R.layout.card_picture, null);
 
         ((TextView) v.findViewById(R.id.title)).setText(title);
-        ((ImageView) v.findViewById(R.id.imageView1)).setImageResource(image);
+        ((ImageView) v.findViewById(R.id.image_view)).setImageResource(image);
 
         return v;
     }

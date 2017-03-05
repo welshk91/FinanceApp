@@ -24,9 +24,10 @@ Known Issues
 
 Things To Do
 ------------
-* Improve Drawer/Hamburger menu
-* Move EditTexts to TextInputLayout/TextInputEditText
+* Make Constants File
+* Make Utilities Files
 * Move ListViews to RecyclerViews
+* Improve Drawer/Hamburger menu
 * Realm database
 * Google Cloud back up (using Google Account?)
 * Add Archive support (ie keep balance when making back ups)

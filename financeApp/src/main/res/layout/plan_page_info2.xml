@@ -27,25 +27,23 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/TextView00"
                 style="@style/WizardFormLabel"
                 android:text="Account:" />
 
             <Spinner
                 android:id="@+id/spinner_transaction_account"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:inputType="text"
                 android:saveEnabled="false" />
 
             <TextView
-                android:id="@+id/TextView01"
                 style="@style/WizardFormLabel"
                 android:text="Start On:" />
 
             <Button
-                android:id="@+id/ButtonTransactionDate"
+                android:id="@+id/plan_date_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -59,14 +57,14 @@
                 android:weightSum="1">
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/EditRate_layout"
+                    android:id="@+id/edit_rate_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:layout_weight=".5">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/EditRate"
+                        android:id="@+id/edit_rate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Enter a Rate"

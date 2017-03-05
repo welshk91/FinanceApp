@@ -93,7 +93,7 @@ public class SD extends AppCompatActivity{
     }
 
     public void sdBackup(View v) {
-        TextInputEditText tvLogStatus = (TextInputEditText) findViewById(R.id.EditTextBackupDir);
+        TextInputEditText tvLogStatus = (TextInputEditText) findViewById(R.id.backup_directory);
         String customBackupDir = tvLogStatus.getText().toString().trim();
 
         DialogFragment newFragment = BackupDialogFragment.newInstance(customBackupDir);
@@ -129,7 +129,7 @@ public class SD extends AppCompatActivity{
                     .setCancelable(true)
                     .setPositiveButton("Backup",new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
-                            TextInputEditText backupTextBox = (TextInputEditText) categoryAddView.findViewById(R.id.EditBackupName);
+                            TextInputEditText backupTextBox = (TextInputEditText) categoryAddView.findViewById(R.id.backup_name);
                             String backupName = backupTextBox.getText().toString().trim();
 
                             /**

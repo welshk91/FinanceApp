@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <ListView
         android:id="@+id/sort_options"
@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:entries="@array/sort_options_account"
-        android:padding="5dp" >
-    </ListView>
+        android:padding="5dp" />
 
-</RelativeLayout>
+</FrameLayout>

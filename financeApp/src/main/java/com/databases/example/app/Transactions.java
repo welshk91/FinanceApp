@@ -489,7 +489,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                 }
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_noTransaction);
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
                     lv.setEmptyView(noResult);
                     noResult.setText("No Transactions\n\n To Add A Transaction, Please Use The ActionBar On The Top");
 
@@ -511,7 +511,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                 Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_noTransaction);
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
                     lv.setEmptyView(noResult);
                     noResult.setText("No Transactions Found");
 

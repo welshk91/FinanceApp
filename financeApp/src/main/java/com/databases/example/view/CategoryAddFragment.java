@@ -55,7 +55,7 @@ public class CategoryAddFragment extends DialogFragment {
         LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View categoryAddView = li.inflate(R.layout.category_add, null);
 
-        final TextInputEditText editName = (TextInputEditText) categoryAddView.findViewById(R.id.EditCategoryName);
+        final TextInputEditText editName = (TextInputEditText) categoryAddView.findViewById(R.id.edit_category_name);
         final TextInputEditText editNote = (TextInputEditText) categoryAddView.findViewById(R.id.EditCategoryNote);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());

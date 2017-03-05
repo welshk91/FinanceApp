@@ -141,7 +141,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        TextView noResult = (TextView) findViewById(R.id.plans_noPlans);
+        TextView noResult = (TextView) findViewById(R.id.plans_empty);
         lvPlans.setEmptyView(noResult);
 
         adapterPlans = new PlansListViewAdapter(this, null);

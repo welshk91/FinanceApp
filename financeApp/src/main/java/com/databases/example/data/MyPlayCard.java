@@ -29,7 +29,7 @@ public class MyPlayCard extends Card {
                 .parseColor(color));
 
         if (isClickable)
-            v.findViewById(R.id.contentLayout)
+            v.findViewById(R.id.content_layout)
                     .setBackgroundResource(R.drawable.selectable_background_cardbank);
 
         if (hasOverflow)

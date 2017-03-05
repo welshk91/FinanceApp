@@ -10,13 +10,13 @@
         android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/EditTextBackupDir_layout"
+            android:id="@+id/backup_directory_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/EditTextBackupDir"
+                android:id="@+id/backup_directory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Folder: "
@@ -28,7 +28,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:id="@+id/ButtonBackup"
+            android:id="@+id/backup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -37,7 +37,7 @@
             android:text="Backup"/>
 
         <Button
-            android:id="@+id/ButtonRestore"
+            android:id="@+id/restore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"

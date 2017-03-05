@@ -4,7 +4,7 @@
     android:layout_width="240dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#F8F8F8"
+    android:background="@color/drawer_background"
     android:choiceMode="singleChoice"
     android:fadeScrollbars="true">
 

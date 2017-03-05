@@ -43,14 +43,14 @@ public class AccountTransferFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final LayoutInflater li = LayoutInflater.from(getActivity());
         final View promptsView = li.inflate(R.layout.account_transfer, null);
-        final TextInputEditText tAmount = (TextInputEditText) promptsView.findViewById(R.id.EditAccountAmount);
+        final TextInputEditText tAmount = (TextInputEditText) promptsView.findViewById(R.id.edit_account_amount);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(promptsView);
         alertDialogBuilder.setTitle("Transfer Money");
 
-        transferSpinnerFrom = (Spinner) promptsView.findViewById(R.id.SpinnerAccountFrom);
-        transferSpinnerTo = (Spinner) promptsView.findViewById(R.id.SpinnerAccountTo);
+        transferSpinnerFrom = (Spinner) promptsView.findViewById(R.id.spinner_account_from);
+        transferSpinnerTo = (Spinner) promptsView.findViewById(R.id.spinner_account_to);
 
         //Populate Account Drop-down List
         accountPopulate();

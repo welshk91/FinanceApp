@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/accounts"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/account_list"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/account_footer"
         android:layout_alignParentTop="true"
-        android:background="#e5e5e5"
+        android:background="@color/listview_background"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:drawSelectorOnTop="true" />
 
     <TextView
-        android:id="@+id/account_noTransaction"
+        android:id="@+id/account_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -26,11 +26,11 @@
 
     <TextView
         android:id="@+id/account_footer"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#000000"
+        android:background="@color/balance_background"
         android:text="Total Balance:"
-        android:textColor="#ffffff" />
+        android:textColor="@color/balance_text" />
 
 </RelativeLayout>

@@ -402,7 +402,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                 }
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_noTransaction);
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
                     noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
                     lv.setEmptyView(noResult);
 
@@ -418,7 +418,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                 Log.v("Accounts-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_noTransaction);
+                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
                     noResult.setText("No Accounts Found");
                     lv.setEmptyView(noResult);
 

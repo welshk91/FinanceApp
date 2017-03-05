@@ -43,7 +43,7 @@ public class CategoryEditFragment extends DialogFragment {
         SubCategoryRecord subrecord;
         CategoryRecord record;
 
-        final TextInputEditText editName = (TextInputEditText) categoryEditView.findViewById(R.id.EditCategoryName);
+        final TextInputEditText editName = (TextInputEditText) categoryEditView.findViewById(R.id.edit_category_name);
         final TextInputEditText editNote = (TextInputEditText) categoryEditView.findViewById(R.id.EditCategoryNote);
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());

@@ -63,7 +63,7 @@ public class Cards extends Fragment {
         View myFragmentView = inflater.inflate(R.layout.cards_ui, container, false);
 
         //Initialize Card View
-        mCardView = (CardUI) myFragmentView.findViewById(R.id.cardsview);
+        mCardView = (CardUI) myFragmentView.findViewById(R.id.cards_view);
         mCardView.setSwipeable(true);
 
         dealCardsCheckbook(mCardView);

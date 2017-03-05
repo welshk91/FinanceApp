@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="pref_screen_misc" >
+    android:key="pref_screen_misc">
 
     <Preference
         android:key="pref_reset"
         android:summary="Will reset all custom values to their defaults."
-        android:title="Reset Defaults" >
-    </Preference>
+        android:title="Reset Defaults" />
     <Preference
-        android:key="pref_clearDB"
+        android:key="pref_clear_database"
         android:summary="Will delete all the checkbook data. Use with extreme caution."
-        android:title="Delete Checkbook" >
-    </Preference>
+        android:title="Delete Checkbook" />
 
     <SeekBarPreference
         android:defaultValue="16"
         android:key="pref_key_testSeekBar"
         android:max="64"
-        android:title="SeekBar Test" >
-    </SeekBarPreference>
+        android:title="SeekBar Test" />
 
 </PreferenceScreen>

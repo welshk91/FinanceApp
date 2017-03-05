@@ -122,11 +122,11 @@ public class Links extends AppCompatActivity {
                         linkFilePath = getPath(data.getData());
                         lastLink = data;
 
-                        TextView currentLink = (TextView) findViewById(R.id.TextViewCurrentLink);
+                        TextView currentLink = (TextView) findViewById(R.id.view_current_link);
                         currentLink.setText("Current Attachment : " + linkFilePath);
 
                         //Set thumbnail
-                        ImageView image = (ImageView) findViewById(R.id.imageView1);
+                        ImageView image = (ImageView) findViewById(R.id.image_view);
 
                         try {
                             image.setImageURI(lastLink.getData());
@@ -143,10 +143,10 @@ public class Links extends AppCompatActivity {
                         getContactInfo(data);
                         Log.e("Links-onActivityResult", "contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
 
-                        TextView currentLink = (TextView) findViewById(R.id.TextViewCurrentLink);
+                        TextView currentLink = (TextView) findViewById(R.id.view_current_link);
                         currentLink.setText("Current Attachment : " + contactName);
 
-                        ImageView image = (ImageView) findViewById(R.id.imageView1);
+                        ImageView image = (ImageView) findViewById(R.id.image_view);
 
                         try {
                             image.setImageURI(contactPhoto);

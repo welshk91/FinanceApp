@@ -5,29 +5,23 @@
     <item
         android:id="@+id/account_menu_search"
         android:icon="@android:drawable/ic_menu_search"
-        android:title="Search"
+        android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 
     <item
         android:id="@+id/account_menu_add"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="Add"
+        android:title="@string/add"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/account_menu_transfer"
         android:icon="@android:drawable/ic_popup_sync"
-        android:title="Transfer" />
+        android:title="@string/transfer" />
 
     <item
         android:id="@+id/account_menu_sort"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Sort" />
-
-    <item
-        android:id="@+id/account_menu_unknown"
-        android:icon="@android:drawable/ic_menu_more"
-        android:title="Unknown" />
-
+        android:title="@string/sort" />
 </menu>

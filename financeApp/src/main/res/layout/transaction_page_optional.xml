@@ -66,14 +66,12 @@
                 android:id="@+id/transaction_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="showDatePickerDialog"
                 android:text="Date" />
 
             <Button
                 android:id="@+id/transaction_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="showTimePickerDialog"
                 android:text="Time" />
 
             <CheckBox

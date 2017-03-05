@@ -53,6 +53,7 @@ import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
 import com.databases.example.data.TransactionRecord;
 import com.databases.example.data.TransactionWizardOptionalPage;
+import com.databases.example.utils.Constants;
 import com.databases.example.view.TransactionSortDialogFragment;
 import com.databases.example.view.TransactionViewFragment;
 import com.databases.example.view.TransactionWizard;
@@ -66,6 +67,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class Transactions extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String TRANSACTION_FRAG_TAG = "transaction_frag_tag";
+
     public static final int TRANS_LOADER = 987654321;
     public static final int TRANS_SEARCH_LOADER = 98765;
     public static final int TRANS_SUBCATEGORY_LOADER = 987;
@@ -75,8 +78,8 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
     //Used to determine if fragment should show all transactions
     private boolean showAllTransactions = false;
 
-    public static Button tTime;
-    public static Button tDate;
+    public static Button timePicker;
+    public static Button datePicker;
 
     //ID of account transaction belongs to
     public static int account_id = 0;
@@ -100,18 +103,22 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
     //ActionMode
     private Object mActionMode = null;
 
-    /**
-     * Called when the activity is first created.
-     */
+    private final String SHOW_ALL_TRANSACTIONS = "boolShowAll";
+
+    private final String ADD_FRAGMENT_TAG = "transaction_add_fragment";
+    private final String EDIT_FRAGMENT_TAG = "transaction_edit_fragment";
+    private final String VIEW_FRAGMENT_TAG = "transaction_view_fragment";
+    private final String TRANSFER_FRAGMENT_TAG = "transaction_transfer_fragment";
+    private final String SORT_FRAGMENT_TAG = "transaction_sort_fragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         account_id = 0;
-    }//end onCreate
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         myFragmentView = inflater.inflate(R.layout.transactions, container, false);
         lv = (ListView) myFragmentView.findViewById(R.id.transaction_list);
 
@@ -131,10 +138,10 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
 
                                               Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
                                           }
-                                      }// end onItemClick
+                                      }
 
-                                  }//end onItemClickListener
-        );//end setOnItemClickListener
+                                  }
+        );
 
         lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -200,11 +207,11 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
         boolean searchFragment = true;
 
         if (bundle != null) {
-            showAllTransactions = bundle.getBoolean("showAll");
-            searchFragment = bundle.getBoolean("boolSearch");
+            showAllTransactions = bundle.getBoolean(Checkbook.SHOW_ALL_KEY);
+            searchFragment = bundle.getBoolean(Search.BOOLEAN_SEARCH_KEY);
 
             if (!showAllTransactions && !searchFragment) {
-                account_id = bundle.getInt("ID");
+                account_id = bundle.getInt(Accounts.ACCOUNT_ID_KEY);
             }
 
             Log.v("Transactions-populate", "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account_id);
@@ -212,21 +219,21 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
 
         if (showAllTransactions) {
             Bundle b = new Bundle();
-            b.putBoolean("boolShowAll", true);
+            b.putBoolean(SHOW_ALL_TRANSACTIONS, true);
             Log.v("Transactions-populate", "start loader (all transactions)...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         } else if (searchFragment) {
-            String query = getActivity().getIntent().getStringExtra("query");
+            String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
 
             try {
                 Bundle b = new Bundle();
-                b.putBoolean("boolSearch", true);
-                b.putString("query", query);
+                b.putBoolean(Search.BOOLEAN_SEARCH_KEY, true);
+                b.putString(Search.QUERY_KEY, query);
                 Log.v("Transactions-populate", "start search loader...");
                 getLoaderManager().initLoader(TRANS_SEARCH_LOADER, b, this);
             } catch (Exception e) {
                 Log.e("Transactions-populate", "Search Failed. Error e=" + e);
-                Toast.makeText(this.getActivity(), "Search Failed\n" + e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Search Failed\n" + e, Toast.LENGTH_SHORT).show();
                 //return;
             }
 
@@ -246,9 +253,9 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
         if (account_id == 0) {
             Log.e("Transaction-AddDialog", "No account selected before attempting to add transaction...");
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle("No Account Selected");
-            alertDialogBuilder.setMessage("Please select an account before attempting to add a transaction");
-            alertDialogBuilder.setNeutralButton("Okay", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setTitle(R.string.no_account_selected);
+            alertDialogBuilder.setMessage(R.string.select_an_account);
+            alertDialogBuilder.setNeutralButton(R.string.okay, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.cancel();
                 }
@@ -257,14 +264,14 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
             alertDialogBuilder.create().show();
         } else {
             TransactionWizard frag = TransactionWizard.newInstance(null);
-            frag.show(getChildFragmentManager(), "dialogAdd");
+            frag.show(getChildFragmentManager(), ADD_FRAGMENT_TAG);
         }
     }//end of transactionAdd
 
     //For Sorting Transactions
     private void transactionSort() {
         DialogFragment newFragment = TransactionSortDialogFragment.newInstance();
-        newFragment.show(getChildFragmentManager(), "dialogSort");
+        newFragment.show(getChildFragmentManager(), SORT_FRAGMENT_TAG);
     }
 
     //For Menu
@@ -275,10 +282,10 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
         View account_frame = getActivity().findViewById(R.id.account_frag_frame);
 
         if (account_frame != null) {
-            SubMenu subMMenuTransaction = menu.addSubMenu("Transaction");
-            subMMenuTransaction.add(Menu.NONE, R.id.transaction_menu_add, Menu.NONE, "Add");
-            subMMenuTransaction.add(Menu.NONE, R.id.transaction_menu_schedule, Menu.NONE, "Schedule");
-            subMMenuTransaction.add(Menu.NONE, R.id.transaction_menu_sort, Menu.NONE, "Sort");
+            SubMenu subMMenuTransaction = menu.addSubMenu(R.string.transaction);
+            subMMenuTransaction.add(Menu.NONE, R.id.transaction_menu_add, Menu.NONE, R.string.add);
+            subMMenuTransaction.add(Menu.NONE, R.id.transaction_menu_schedule, Menu.NONE, R.string.schedule);
+            subMMenuTransaction.add(Menu.NONE, R.id.transaction_menu_sort, Menu.NONE, R.string.sort);
 
             MenuItem subMenu1Item = subMMenuTransaction.getItem();
             subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -356,8 +363,8 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
             DateTime time = new DateTime();
             time.setStringSQL(hourOfDay + ":" + minute);
 
-            if (tTime != null) {
-                tTime.setText(time.getReadableTime());
+            if (timePicker != null) {
+                timePicker.setText(time.getReadableTime());
             }
 
             if (TransactionWizardOptionalFragment.mPage != null) {
@@ -393,8 +400,8 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
             DateTime date = new DateTime();
             date.setStringSQL(year + "-" + (month + 1) + "-" + day);
 
-            if (tDate != null) {
-                tDate.setText(date.getReadableDate());
+            if (datePicker != null) {
+                datePicker.setText(date.getReadableDate());
             }
 
             if (TransactionWizardOptionalFragment.mPage != null) {
@@ -414,7 +421,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
 
         switch (loaderID) {
             case TRANS_LOADER:
-                if (bundle != null && bundle.getBoolean("boolShowAll")) {
+                if (bundle != null && bundle.getBoolean(SHOW_ALL_TRANSACTIONS)) {
                     Log.v(getClass().getSimpleName(), "new loader (ShowAll) created");
                     return new CursorLoader(
                             getActivity(),    // Parent activity context
@@ -437,7 +444,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                     );
                 }
             case TRANS_SEARCH_LOADER:
-                String query = getActivity().getIntent().getStringExtra("query");
+                String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
                 Log.v(getClass().getSimpleName(), "new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
@@ -481,7 +488,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
 
                 data.moveToPosition(-1);
                 while (data.moveToNext()) {
-                    if (data.getString(typeColumn).equals("Deposit")) {
+                    if (data.getString(typeColumn).equals(Constants.DEPOSIT)) {
                         totalBalance = totalBalance.add(new Money(data.getString(valueColumn)).getBigDecimal(locale));
                     } else {
                         totalBalance = totalBalance.subtract(new Money(data.getString(valueColumn)).getBigDecimal(locale));
@@ -562,9 +569,9 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
     private final class MyActionMode implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+            menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+            menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
             return true;
         }
 
@@ -572,12 +579,12 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             menu.clear();
             if (adapterTransactions.getSelectedCount() == 1 && mode != null) {
-                menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
-                menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-                menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+                menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+                menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
                 return true;
             } else if (adapterTransactions.getSelectedCount() > 1) {
-                menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
                 return true;
             }
 
@@ -593,7 +600,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             DialogFragment newFragment = TransactionViewFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)).id);
-                            newFragment.show(getChildFragmentManager(), "dialogView");
+                            newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
                         }
                     }
 
@@ -604,7 +611,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                         if (selected.valueAt(i)) {
                             final TransactionRecord record = adapterTransactions.getTransaction(selected.keyAt(i));
                             final TransactionWizard frag = TransactionWizard.newInstance(record);
-                            frag.show(getChildFragmentManager(), "dialogEdit");
+                            frag.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
                         }
                     }
 
@@ -649,4 +656,4 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
         super.onDestroyView();
     }
 
-}//end Transactions
+}

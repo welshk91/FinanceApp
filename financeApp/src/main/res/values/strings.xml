@@ -41,6 +41,22 @@
     <string name="pref_key_category_fieldSize">key_category_fieldSize</string>
     <string name="pref_key_subcategory_nameSize">key_subcategory_nameSize</string>
     <string name="pref_key_subcategory_fieldSize">key_subcategory_fieldSize</string>
+    <string name="checkbook">Checkbook</string>
+    <string name="search">Search</string>
+    <string name="transfer">Transfer</string>
+    <string name="sort">Sort</string>
+    <string name="no_accounts_found">No Accounts Found</string>
+    <string name="search_results">Search Results</string>
+    <string name="view">View</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="no_account_selected">No Account Selected</string>
+    <string name="select_an_account">Please select an account before attempting to add a transaction</string>
+    <string name="okay">Okay</string>
+    <string name="transaction">Transaction</string>
+    <string name="schedule">Schedule</string>
+    <string name="plans">Plans</string>
+    <string name="toggle">Toggle</string>
 
     <string-array name="drawer_items">
         <item>Home</item>

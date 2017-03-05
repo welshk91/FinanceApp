@@ -25,7 +25,7 @@ public class SearchWidget {
 
                 searchView.clearFocus();
                 Intent intentSearch = new Intent(context, Search.class);
-                intentSearch.putExtra("query", query);
+                intentSearch.putExtra(Search.QUERY_KEY, query);
                 intentSearch.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intentSearch);
                 return true;

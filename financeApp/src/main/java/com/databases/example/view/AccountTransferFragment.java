@@ -21,6 +21,7 @@ import com.databases.example.app.Accounts;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.utils.Constants;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -102,7 +103,7 @@ public class AccountTransferFragment extends DialogFragment {
                                 final String transferCheckNum = "None";
                                 final String transferMemo = "This is an automatically generated transaction created when you transfer money";
                                 final String transferCleared = "true";
-                                String transferType = "Withdraw";
+                                String transferType = Constants.WITHDRAW;
 
                                 //Check Value to see if it's valid
                                 try {
@@ -166,7 +167,7 @@ public class AccountTransferFragment extends DialogFragment {
                                 }
 
                                 //Transfer To
-                                transferType = "Deposit";
+                                transferType = Constants.DEPOSIT;
 
                                 try {
                                     transferValues.clear();

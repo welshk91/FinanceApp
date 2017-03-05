@@ -19,6 +19,7 @@ import com.databases.example.data.AccountWizardInfoPage;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.utils.Constants;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.PageList;
@@ -149,9 +150,9 @@ public class AccountWizard extends WizardDialogFragment {
 
                 try {
                     if (Float.parseFloat(transactionValue) > 0) {
-                        transactionType = "Deposit";
+                        transactionType = Constants.DEPOSIT;
                     } else {
-                        transactionType = "Withdraw";
+                        transactionType = Constants.WITHDRAW;
                         transactionValue = (Float.parseFloat(transactionValue) * -1) + "";
                     }
                 } catch (Exception e) {

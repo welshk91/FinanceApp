@@ -20,6 +20,7 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.utils.Constants;
 
 import java.util.Locale;
 
@@ -93,14 +94,14 @@ public class TransactionViewFragment extends DialogFragment {
                     new int[]{0xFFe00707, 0xFFe00707});
 
             if (useDefaults) {
-                if (entry_type.contains("Deposit")) {
+                if (entry_type.contains(Constants.DEPOSIT)) {
                     l.setBackgroundDrawable(defaultGradientPos);
                 } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
                 }
 
             } else {
-                if (entry_type.contains("Deposit")) {
+                if (entry_type.contains(Constants.DEPOSIT)) {
                     l.setBackgroundDrawable(defaultGradientPos);
                 } else {
                     l.setBackgroundDrawable(defaultGradientNeg);

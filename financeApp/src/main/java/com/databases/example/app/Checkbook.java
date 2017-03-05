@@ -7,9 +7,7 @@ package com.databases.example.app;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,13 +15,14 @@ import android.view.View;
 import android.view.Window;
 
 import com.databases.example.R;
-import com.databases.example.data.MyContentProvider;
+import com.databases.example.data.PlanReceiver;
+import com.databases.example.utils.NotificationUtils;
 import com.databases.example.view.Drawer;
 
 public class Checkbook extends AppCompatActivity {
-
-    //NavigationDrawer
     private Drawer drawer;
+
+    public static final String SHOW_ALL_KEY = "showAll";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +30,7 @@ public class Checkbook extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.checkbook);
-        setTitle("Checkbook");
+        setTitle(getString(R.string.checkbook));
 
         //NavigationDrawer
         drawer = new Drawer(this);
@@ -48,8 +47,8 @@ public class Checkbook extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             Bundle b = getIntent().getExtras();
 
-            if (b.getBoolean("fromNotification")) {
-                clearNotifications();
+            if (b.getBoolean(PlanReceiver.FROM_NOTIFICATION_KEY)) {
+                NotificationUtils.clearNotifications(this);
             }
         }
 
@@ -58,12 +57,12 @@ public class Checkbook extends AppCompatActivity {
 
         //Bundle for Transaction fragment
         Bundle argsTran = new Bundle();
-        argsTran.putBoolean("showAll", true);
-        argsTran.putBoolean("boolSearch", false);
+        argsTran.putBoolean(SHOW_ALL_KEY, true);
+        argsTran.putBoolean(Search.BOOLEAN_SEARCH_KEY, false);
 
         //Bundle for Account fragment
         Bundle argsAccount = new Bundle();
-        argsAccount.putBoolean("boolSearch", false);
+        argsAccount.putBoolean(Search.BOOLEAN_SEARCH_KEY, false);
 
         transaction_frag.setArguments(argsTran);
         account_frag.setArguments(argsAccount);
@@ -71,18 +70,18 @@ public class Checkbook extends AppCompatActivity {
         if (checkbook_frame == null) {
             Log.d("Checkbook-onCreate", "Mode:dualpane");
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.account_frag_frame, account_frag, "account_frag_tag")
-                    .replace(R.id.transaction_frag_frame, transaction_frag, "transaction_frag_tag")
+                    .replace(R.id.account_frag_frame, account_frag, Accounts.ACCOUNT_FRAG_TAG)
+                    .replace(R.id.transaction_frag_frame, transaction_frag, Transactions.TRANSACTION_FRAG_TAG)
                     .commit();
         } else {
             Log.d("Checkbook-onCreate", "Mode:singlepane");
             getSupportFragmentManager().beginTransaction().
-                    replace(R.id.checkbook_frag_frame, account_frag, "account_frag_tag").commit();
+                    replace(R.id.checkbook_frag_frame, account_frag, Accounts.ACCOUNT_FRAG_TAG).commit();
         }
 
         getSupportFragmentManager().executePendingTransactions();
 
-    }//end onCreate
+    }
 
     //Needed to have notification extras work
     @Override
@@ -93,8 +92,8 @@ public class Checkbook extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             Bundle b = getIntent().getExtras();
 
-            if (b.getBoolean("fromNotification")) {
-                clearNotifications();
+            if (b.getBoolean(PlanReceiver.FROM_NOTIFICATION_KEY)) {
+                NotificationUtils.clearNotifications(this);
             }
         }
 
@@ -110,25 +109,6 @@ public class Checkbook extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    //Method for clearing notifications if they were clicked on
-    private void clearNotifications() {
-        Log.v("Checkbook", "Clearing notifications...");
-        Uri uri = Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/" + 0);
-        getContentResolver().delete(uri, null, null);
-    }
-
-    //Method for selecting a Time when adding a transaction
-    public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new Transactions.TimePickerFragment();
-        newFragment.show(this.getSupportFragmentManager(), "timePicker");
-    }
-
-    //Method for selecting a Date when adding a transaction
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new Transactions.DatePickerFragment();
-        newFragment.show(this.getSupportFragmentManager(), "datePicker");
     }
 
     @Override

@@ -24,8 +24,7 @@ Known Issues
 
 Things To Do
 ------------
-* Make Constants File
-* Make Utilities Files
+* Move DatePickerFragment to it's own file
 * Move ListViews to RecyclerViews
 * Improve Drawer/Hamburger menu
 * Realm database

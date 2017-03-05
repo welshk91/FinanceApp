@@ -20,6 +20,7 @@ import com.databases.example.R;
 import com.databases.example.app.Transactions;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.TransactionWizardInfoPage;
+import com.databases.example.utils.Constants;
 import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
 public class TransactionWizardInfoFragment extends Fragment {
@@ -68,7 +69,7 @@ public class TransactionWizardInfoFragment extends Fragment {
         mValueView.setText(mPage.getData().getString(TransactionWizardInfoPage.VALUE_DATA_KEY));
 
         mTypeView = (Spinner) rootView.findViewById(R.id.spinner_transaction_type);
-        if (mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY) == null || mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY).equals("Withdraw")) {
+        if (mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY) == null || mPage.getData().getString(TransactionWizardInfoPage.TYPE_DATA_KEY).equals(Constants.WITHDRAW)) {
             mTypeView.setSelection(0);
         } else {
             mTypeView.setSelection(1);

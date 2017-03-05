@@ -21,6 +21,7 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.TransactionRecord;
+import com.databases.example.utils.Constants;
 
 import java.util.Locale;
 
@@ -123,14 +124,14 @@ public class TransactionsListViewAdapter extends CursorAdapter {
                         new int[]{0xFFe00707, 0xFFe00707});
 
                 if (useDefaults) {
-                    if (type.contains("Deposit")) {
+                    if (type.contains(Constants.DEPOSIT)) {
                         l.setBackgroundDrawable(defaultGradientPos);
                     } else {
                         l.setBackgroundDrawable(defaultGradientNeg);
                     }
 
                 } else {
-                    if (type.contains("Deposit")) {
+                    if (type.contains(Constants.DEPOSIT)) {
                         l.setBackgroundDrawable(defaultGradientPos);
                     } else {
                         l.setBackgroundDrawable(defaultGradientNeg);

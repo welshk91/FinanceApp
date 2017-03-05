@@ -53,6 +53,8 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 public class Accounts extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String ACCOUNT_FRAG_TAG = "account_frag_tag";
+
     private static final int PICKFILE_RESULT_CODE = 1;
     public static final int ACCOUNTS_LOADER = 123456789;
     public static final int ACCOUNTS_SEARCH_LOADER = 12345;
@@ -68,7 +70,17 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
     public static AccountsListViewAdapter adapterAccounts = null;
 
     public static Object mActionMode = null;
+
+    private final String CURRENT_ACCOUNT_KEY = "currentAccount";
     public static int currentAccount = -1;
+
+    public static final String ACCOUNT_ID_KEY = "ID";
+
+    private final String ADD_FRAGMENT_TAG = "account_add_fragment";
+    private final String EDIT_FRAGMENT_TAG = "account_edit_fragment";
+    private final String VIEW_FRAGMENT_TAG = "account_view_fragment";
+    private final String TRANSFER_FRAGMENT_TAG = "account_transfer_fragment";
+    private final String SORT_FRAGMENT_TAG = "account_sort_fragment";
 
     //Method called upon first creation
     @Override
@@ -76,14 +88,14 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            currentAccount = savedInstanceState.getInt("currentAccount");
+            currentAccount = savedInstanceState.getInt(CURRENT_ACCOUNT_KEY);
         }
 
     }// end onCreate
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt("currentAccount", currentAccount);
+        savedInstanceState.putInt(CURRENT_ACCOUNT_KEY, currentAccount);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -108,14 +120,14 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
                                               //Just get the Account ID
                                               c.moveToFirst();
-                                              int entry_id = c.getInt(0);
+                                              int accountId = c.getInt(0);
                                               c.close();
 
                                               View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
                                               if (checkbook_frame != null) {
                                                   Bundle args = new Bundle();
-                                                  args.putInt("ID", entry_id);
+                                                  args.putInt(ACCOUNT_ID_KEY, accountId);
 
                                                   //Add the fragment to the activity, pushing this transaction on to the back stack.
                                                   Transactions tran_frag = new Transactions();
@@ -128,9 +140,9 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                                                   getFragmentManager().executePendingTransactions();
                                               } else {
                                                   Bundle args = new Bundle();
-                                                  args.putBoolean("showAll", false);
-                                                  args.putBoolean("boolSearch", false);
-                                                  args.putInt("ID", entry_id);
+                                                  args.putBoolean(Checkbook.SHOW_ALL_KEY, false);
+                                                  args.putBoolean(Search.BOOLEAN_SEARCH_KEY, false);
+                                                  args.putInt(ACCOUNT_ID_KEY, accountId);
 
                                                   currentAccount = position;
 
@@ -147,8 +159,8 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                                           }
                                       }// end onItemClick
 
-                                  }//end onItemClickListener
-        );//end setOnItemClickListener
+                                  }
+        );
 
         lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -211,19 +223,19 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         boolean searchFragment = true;
 
         if (bundle != null) {
-            searchFragment = bundle.getBoolean("boolSearch");
+            searchFragment = bundle.getBoolean(Search.BOOLEAN_SEARCH_KEY);
         }
 
         //Fragment is a search fragment
         if (searchFragment) {
 
             //Word being searched
-            String query = getActivity().getIntent().getStringExtra("query");
+            String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
 
             try {
                 Bundle b = new Bundle();
-                b.putBoolean("boolSearch", true);
-                b.putString("query", query);
+                b.putBoolean(Search.BOOLEAN_SEARCH_KEY, true);
+                b.putString(Search.QUERY_KEY, query);
                 Log.v("Accounts-populate", "start search loader...");
                 getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
             } catch (Exception e) {
@@ -255,19 +267,19 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
     //For Adding an Account
     private void accountAdd() {
         AccountWizard newFragment = AccountWizard.newInstance(null);
-        newFragment.show(getChildFragmentManager(), "dialogAdd");
+        newFragment.show(getChildFragmentManager(), ADD_FRAGMENT_TAG);
     }
 
     //For Transferring from an Account
     private void accountTransfer() {
         DialogFragment newFragment = AccountTransferFragment.newInstance();
-        newFragment.show(getChildFragmentManager(), "dialogTransfer");
+        newFragment.show(getChildFragmentManager(), TRANSFER_FRAGMENT_TAG);
     }
 
     //For Sorting Accounts
     private void accountSort() {
         DialogFragment newFragment = AccountSortDialogFragment.newInstance();
-        newFragment.show(getChildFragmentManager(), "dialogSort");
+        newFragment.show(getChildFragmentManager(), SORT_FRAGMENT_TAG);
     }
 
     //For Menu
@@ -281,7 +293,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
         //If you're in dual-pane mode
         if (transaction_frame != null) {
-            MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "Search");
+            MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, R.string.search);
             menuSearch.setIcon(android.R.drawable.ic_menu_search);
             menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
             menuSearch.setActionView(new SearchView(((AppCompatActivity) getActivity()).getSupportActionBar().getThemedContext()));
@@ -289,11 +301,10 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
             //Create SearchWidget
             new SearchWidget(getActivity(), (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.account_menu_search)));
 
-            SubMenu subMenu1 = menu.addSubMenu("Account");
-            subMenu1.add(Menu.NONE, R.id.account_menu_add, Menu.NONE, "Add");
-            subMenu1.add(Menu.NONE, R.id.account_menu_transfer, Menu.NONE, "Transfer");
-            subMenu1.add(Menu.NONE, R.id.account_menu_sort, Menu.NONE, "Sort");
-            subMenu1.add(Menu.NONE, R.id.account_menu_unknown, Menu.NONE, "Unknown");
+            SubMenu subMenu1 = menu.addSubMenu(R.string.account);
+            subMenu1.add(Menu.NONE, R.id.account_menu_add, Menu.NONE, R.string.add);
+            subMenu1.add(Menu.NONE, R.id.account_menu_transfer, Menu.NONE, R.string.transfer);
+            subMenu1.add(Menu.NONE, R.id.account_menu_sort, Menu.NONE, R.string.sort);
 
             MenuItem subMenu1Item = subMenu1.getItem();
             subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -366,7 +377,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                         sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
                 );
             case ACCOUNTS_SEARCH_LOADER:
-                String query = getActivity().getIntent().getStringExtra("query");
+                String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
                 Log.v("Accounts-onCreateLoader", "new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
@@ -419,10 +430,10 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
-                    noResult.setText("No Accounts Found");
+                    noResult.setText(R.string.no_accounts_found);
                     lv.setEmptyView(noResult);
 
-                    footerTV.setText("Search Results");
+                    footerTV.setText(R.string.search_results);
                 } catch (Exception e) {
                     Log.e("Accounts-onLoadFinished", "Error setting search TextView. e=" + e);
                 }
@@ -461,9 +472,9 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
     private final class MyActionMode implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+            menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+            menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
             return true;
         }
 
@@ -471,12 +482,12 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             menu.clear();
             if (adapterAccounts.getSelectedCount() == 1 && mode != null) {
-                menu.add(0, CONTEXT_MENU_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
-                menu.add(0, CONTEXT_MENU_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-                menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+                menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+                menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
                 return true;
             } else if (adapterAccounts.getSelectedCount() > 1) {
-                menu.add(0, CONTEXT_MENU_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
                 return true;
             }
 
@@ -493,7 +504,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                         if (selected.valueAt(i)) {
                             //accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);
                             DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)).id);
-                            newFragment.show(getChildFragmentManager(), "dialogView");
+                            newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
                         }
                     }
 
@@ -504,7 +515,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                         if (selected.valueAt(i)) {
                             final AccountRecord record = adapterAccounts.getAccount(selected.keyAt(i));
                             AccountWizard newFragment = AccountWizard.newInstance(record);
-                            newFragment.show(getChildFragmentManager(), "dialogEdit");
+                            newFragment.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
                         }
                     }
 
@@ -553,5 +564,4 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
         super.onDestroyView();
     }
-
-}//End Accounts
+}

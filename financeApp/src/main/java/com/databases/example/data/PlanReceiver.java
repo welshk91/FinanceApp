@@ -31,6 +31,8 @@ import java.util.Locale;
 public class PlanReceiver extends BroadcastReceiver {
     private final int NOTIFICATION_ID = 0123456;
 
+    public static final String FROM_NOTIFICATION_KEY = "fromNotification";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
@@ -106,7 +108,7 @@ public class PlanReceiver extends BroadcastReceiver {
 
         //Intent fired when notification is clicked on
         Intent intent = new Intent(context, Checkbook.class);
-        intent.putExtra("fromNotification", true);
+        intent.putExtra(FROM_NOTIFICATION_KEY, true);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Get today's readable date
@@ -191,7 +193,7 @@ public class PlanReceiver extends BroadcastReceiver {
             String cleared = cursorPlans.getString(columnCleared);
 
             /****RESET ALARMS HERE****/
-            Log.d("PlanReceiver-reschedulePlans", "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
+            Log.d(getClass().getSimpleName(), "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
             final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
             schedule(record, context);
         }

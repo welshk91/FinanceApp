@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.databases.example.R;
 import com.databases.example.app.Transactions;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.TransactionWizardOptionalPage;
+import com.databases.example.utils.DateUtils;
 import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
 import java.util.Calendar;
@@ -77,27 +79,39 @@ public class TransactionWizardOptionalFragment extends Fragment {
 //        TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
 //        mMemoView.setKeyListener(input);
 
-        Transactions.tTime = (Button) rootView.findViewById(R.id.transaction_time);
-        Transactions.tDate = (Button) rootView.findViewById(R.id.transaction_date);
+        Transactions.timePicker = (Button) rootView.findViewById(R.id.transaction_time);
+        Transactions.timePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateUtils.showTimePickerDialog((AppCompatActivity) TransactionWizardOptionalFragment.this.getActivity());
+            }
+        });
+        Transactions.datePicker = (Button) rootView.findViewById(R.id.transaction_date);
+        Transactions.datePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateUtils.showDatePickerDialog((AppCompatActivity) TransactionWizardOptionalFragment.this.getActivity());
+            }
+        });
 
         if (data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY) != null && data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY).length() > 0) {
             final DateTime date = new DateTime();
             date.setStringSQL(data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY));
-            Transactions.tDate.setText(date.getReadableDate());
+            Transactions.datePicker.setText(date.getReadableDate());
             mPage.getData().putString(TransactionWizardOptionalPage.DATE_DATA_KEY, date.getReadableDate());
         }
         if (data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY) != null && data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY).length() > 0) {
             final DateTime time = new DateTime();
             time.setStringSQL(data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY));
-            Transactions.tTime.setText(time.getReadableTime());
+            Transactions.timePicker.setText(time.getReadableTime());
             mPage.getData().putString(TransactionWizardOptionalPage.TIME_DATA_KEY, time.getReadableTime());
         } else if (data.getString(TransactionWizardOptionalPage.DATE_DATA_KEY) == null && data.getString(TransactionWizardOptionalPage.TIME_DATA_KEY) == null) {
             final Calendar c = Calendar.getInstance();
             final DateTime date = new DateTime();
             date.setCalendar(c);
 
-            Transactions.tDate.setText(date.getReadableDate());
-            Transactions.tTime.setText(date.getReadableTime());
+            Transactions.datePicker.setText(date.getReadableDate());
+            Transactions.timePicker.setText(date.getReadableTime());
             mPage.getData().putString(TransactionWizardOptionalPage.DATE_DATA_KEY, date.getReadableDate());
             mPage.getData().putString(TransactionWizardOptionalPage.TIME_DATA_KEY, date.getReadableTime());
         }

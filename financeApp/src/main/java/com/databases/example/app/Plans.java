@@ -93,12 +93,18 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     //For Memo autocomplete
     public static final ArrayList<String> dropdownResults = new ArrayList<String>();
 
+    private final String ADD_FRAGMENT_TAG = "plans_add_fragment";
+    private final String EDIT_FRAGMENT_TAG = "plans_edit_fragment";
+    private final String VIEW_FRAGMENT_TAG = "plans_view_fragment";
+    private final String TRANSFER_FRAGMENT_TAG = "plans_transfer_fragment";
+    private final String SORT_FRAGMENT_TAG = "plans_sort_fragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.plans);
-        setTitle("Plans");
+        setTitle(getString(R.string.plans));
 
         //NavigationDrawer
         drawer = new Drawer(this);
@@ -111,17 +117,17 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
 
         //Set Listener for regular mouse click
         lvPlans.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                if (mActionMode != null) {
-                    listItemChecked(position);
-                } else {
-                    //Stuff for clicking...
-                }
-            }// end onItemClick
+                                           @Override
+                                           public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                                               if (mActionMode != null) {
+                                                   listItemChecked(position);
+                                               } else {
+                                                   //TODO Stuff for clicking...
+                                               }
+                                           }// end onItemClick
 
-        }//end onItemClickListener
-        );//end setOnItemClickListener
+                                       }
+        );
 
         lvPlans.setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -173,8 +179,8 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     //For Scheduling a Transaction
     private void planAdd() {
         PlanWizard newFragment = PlanWizard.newInstance(null);
-        newFragment.show(getSupportFragmentManager(), "dialogAdd");
-    }//end of planAdd
+        newFragment.show(getSupportFragmentManager(), ADD_FRAGMENT_TAG);
+    }
 
     public void schedule(PlanRecord plan) {
         Date d = null;
@@ -311,7 +317,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         super.onCreateOptionsMenu(menu);
 
         //Show Search
-        MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "Search");
+        MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, R.string.search);
         menuSearch.setIcon(android.R.drawable.ic_menu_search);
         menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
@@ -319,7 +325,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         new SearchWidget(this, (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.account_menu_search)));
 
         //Add
-        MenuItem subMenu1Item = menu.add(Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, Menu.NONE, "Add");
+        MenuItem subMenu1Item = menu.add(Menu.NONE, ACTIONBAR_MENU_ADD_PLAN_ID, Menu.NONE, R.string.add);
         subMenu1Item.setIcon(android.R.drawable.ic_menu_add);
         subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -348,12 +354,6 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         Log.d(getClass().getSimpleName(), "Options changed. Requery");
         //getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
         //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
-    }
-
-    //Method for selecting a Date when adding a transaction
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public static class DatePickerFragment extends DialogFragment
@@ -406,9 +406,9 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
         switch (loaderID) {
             case PLAN_LOADER:
-                if (bundle != null && bundle.getBoolean("boolSearch")) {
+                if (bundle != null && bundle.getBoolean(Search.BOOLEAN_SEARCH_KEY)) {
                     //Log.v("Plans-onCreateLoader","new loader (boolSearch "+ query + ") created");
-                    String query = this.getIntent().getStringExtra("query");
+                    String query = this.getIntent().getStringExtra(Search.QUERY_KEY);
                     return new CursorLoader(
                             this,    // Parent activity context
                             (Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query
@@ -514,10 +514,10 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     private final class MyActionMode implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, ACTION_MODE_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, ACTION_MODE_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, ACTION_MODE_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
-            menu.add(0, ACTION_MODE_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
+            menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+            menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+            menu.add(0, ACTION_MODE_DELETE, 2, R.string.edit).setIcon(android.R.drawable.ic_menu_delete);
+            menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
             return true;
         }
 
@@ -525,14 +525,14 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             menu.clear();
             if (adapterPlans.getSelectedCount() == 1 && mode != null) {
-                menu.add(0, ACTION_MODE_VIEW, 0, "View").setIcon(android.R.drawable.ic_menu_view);
-                menu.add(0, ACTION_MODE_EDIT, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-                menu.add(0, ACTION_MODE_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
-                menu.add(0, ACTION_MODE_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
+                menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+                menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+                menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+                menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
                 return true;
             } else if (adapterPlans.getSelectedCount() > 1) {
-                menu.add(0, ACTION_MODE_DELETE, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete);
-                menu.add(0, ACTION_MODE_TOGGLE, 3, "Toggle").setIcon(android.R.drawable.ic_menu_revert);
+                menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+                menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
                 return true;
             }
 
@@ -549,7 +549,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             DialogFragment newFragment = PlanViewFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);
-                            newFragment.show(getSupportFragmentManager(), "dialogView");
+                            newFragment.show(getSupportFragmentManager(), VIEW_FRAGMENT_TAG);
                         }
                     }
 
@@ -560,7 +560,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                         if (selected.valueAt(i)) {
                             record = adapterPlans.getPlan(selected.keyAt(i));
                             final PlanWizard frag = PlanWizard.newInstance(record);
-                            frag.show(getSupportFragmentManager(), "dialogEdit");
+                            frag.show(getSupportFragmentManager(), EDIT_FRAGMENT_TAG);
                         }
                     }
 
@@ -656,4 +656,4 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         super.onDestroy();
     }
 
-}//end of Plans
+}

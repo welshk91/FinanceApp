@@ -25,15 +25,11 @@ import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 
-/*
- * NOTE TO MYSELF
- * Look at Dictionary example for reference (Virtual Tables)
- */
-
 public class Search extends AppCompatActivity {
-
-    //NavigationDrawer
     private Drawer drawer;
+
+    public static final String BOOLEAN_SEARCH_KEY = "boolSearch";
+    public static final String QUERY_KEY = "query";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +44,7 @@ public class Search extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
-        String query = intent.getStringExtra("query");
+        String query = intent.getStringExtra(QUERY_KEY);
         setTitle("Search <" + query + ">");
         makeView();
     }

@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.databases.example.R;
+import com.databases.example.app.DatePickerInterface;
 import com.databases.example.app.PlansActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
@@ -76,7 +78,22 @@ public class PlanWizardInfo2Fragment extends Fragment {
         PlansActivity.datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateUtils.showDatePickerPlanDialog((AppCompatActivity) getActivity());
+                DateUtils.showDatePickerDialog((AppCompatActivity) getActivity(), new DatePickerInterface() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        DateTime date = new DateTime();
+                        date.setStringSQL(year + "-" + (month + 1) + "-" + day);
+
+                        if (PlansActivity.datePicker != null) {
+                            PlansActivity.datePicker.setText(date.getReadableDate());
+                        }
+
+                        if (PlanWizardInfo2Fragment.mPage != null) {
+                            PlanWizardInfo2Fragment.mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
+                            PlanWizardInfo2Fragment.mPage.notifyDataChanged();
+                        }
+                    }
+                });
             }
         });
 

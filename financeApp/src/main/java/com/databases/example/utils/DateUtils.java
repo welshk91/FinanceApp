@@ -1,10 +1,11 @@
 package com.databases.example.utils;
 
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.databases.example.app.PlansActivity;
-import com.databases.example.app.TransactionsFragment;
+import com.databases.example.app.DatePickerFragment;
+import com.databases.example.app.DatePickerInterface;
+import com.databases.example.app.TimePickerFragment;
+import com.databases.example.app.TimePickerInterface;
 
 /**
  * Created by kwelsh on 3/5/17.
@@ -16,20 +17,18 @@ public class DateUtils {
 
 
     //Method for selecting a Time when adding a transaction
-    public static void showTimePickerDialog(AppCompatActivity appCompatActivity) {
-        DialogFragment newFragment = new TransactionsFragment.TimePickerFragment();
+    public static void showTimePickerDialog(AppCompatActivity appCompatActivity, TimePickerInterface timePickerInterface) {
+        TimePickerFragment newFragment = new TimePickerFragment();
+        newFragment.setTimePickerInterface(timePickerInterface);
+
         newFragment.show(appCompatActivity.getSupportFragmentManager(), TIME_PICKER_TAG);
     }
 
     //Method for selecting a Date when adding a transaction
-    public static void showDatePickerDialog(AppCompatActivity appCompatActivity) {
-        DialogFragment newFragment = new TransactionsFragment.DatePickerFragment();
-        newFragment.show(appCompatActivity.getSupportFragmentManager(), DATE_PICKER_TAG);
-    }
+    public static void showDatePickerDialog(AppCompatActivity appCompatActivity, DatePickerInterface datePickerInterface) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.setDatePickerInterface(datePickerInterface);
 
-    //Method for selecting a Date when adding a transaction
-    public static void showDatePickerPlanDialog(AppCompatActivity appCompatActivity) {
-        DialogFragment newFragment = new PlansActivity.DatePickerFragment();
         newFragment.show(appCompatActivity.getSupportFragmentManager(), DATE_PICKER_TAG);
     }
 }

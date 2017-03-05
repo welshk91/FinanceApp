@@ -15,9 +15,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.databases.example.R;
+import com.databases.example.app.DatePickerInterface;
+import com.databases.example.app.TimePickerInterface;
 import com.databases.example.app.TransactionsFragment;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.TransactionWizardOptionalPage;
@@ -83,14 +87,44 @@ public class TransactionWizardOptionalFragment extends Fragment {
         TransactionsFragment.timePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateUtils.showTimePickerDialog((AppCompatActivity) TransactionWizardOptionalFragment.this.getActivity());
+                DateUtils.showTimePickerDialog((AppCompatActivity) getActivity(), new TimePickerInterface() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        DateTime time = new DateTime();
+                        time.setStringSQL(hourOfDay + ":" + minute);
+
+                        if (TransactionsFragment.timePicker != null) {
+                            TransactionsFragment.timePicker.setText(time.getReadableTime());
+                        }
+
+                        if (TransactionWizardOptionalFragment.mPage != null) {
+                            TransactionWizardOptionalFragment.mPage.getData().putString(TransactionWizardOptionalPage.TIME_DATA_KEY, time.getReadableTime());
+                            TransactionWizardOptionalFragment.mPage.notifyDataChanged();
+                        }
+                    }
+                });
             }
         });
         TransactionsFragment.datePicker = (Button) rootView.findViewById(R.id.transaction_date);
         TransactionsFragment.datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateUtils.showDatePickerDialog((AppCompatActivity) TransactionWizardOptionalFragment.this.getActivity());
+                DateUtils.showDatePickerDialog((AppCompatActivity) getActivity(), new DatePickerInterface() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        DateTime date = new DateTime();
+                        date.setStringSQL(year + "-" + (month + 1) + "-" + day);
+
+                        if (TransactionsFragment.datePicker != null) {
+                            TransactionsFragment.datePicker.setText(date.getReadableDate());
+                        }
+
+                        if (TransactionWizardOptionalFragment.mPage != null) {
+                            TransactionWizardOptionalFragment.mPage.getData().putString(TransactionWizardOptionalPage.DATE_DATA_KEY, date.getReadableDate());
+                            TransactionWizardOptionalFragment.mPage.notifyDataChanged();
+                        }
+                    }
+                });
             }
         });
 

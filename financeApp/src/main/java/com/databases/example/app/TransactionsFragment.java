@@ -5,9 +5,6 @@
 package com.databases.example.app;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,32 +35,25 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
-import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
-import com.databases.example.data.TransactionWizardOptionalPage;
 import com.databases.example.model.Transaction;
 import com.databases.example.utils.Constants;
 import com.databases.example.view.TransactionSortDialogFragment;
 import com.databases.example.view.TransactionViewFragment;
 import com.databases.example.view.TransactionWizard;
-import com.databases.example.view.TransactionWizardOptionalFragment;
 import com.databases.example.view.TransactionsListViewAdapter;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 public class TransactionsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -336,78 +326,6 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         } else {
             Log.e(getClass().getSimpleName(), "Transaction is detached");
             //Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    //Method to help create TimePicker
-    public static class TimePickerFragment extends DialogFragment
-            implements TimePickerDialog.OnTimeSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current time as the default values for the picker
-            final Calendar cal = Calendar.getInstance();
-
-            SimpleDateFormat dateFormatHour = new SimpleDateFormat("hh");
-            SimpleDateFormat dateFormatMinute = new SimpleDateFormat("mm");
-
-            int hour = Integer.parseInt(dateFormatHour.format(cal.getTime()));
-            int minute = Integer.parseInt(dateFormatMinute.format(cal.getTime()));
-
-            return new TimePickerDialog(getActivity(), this, hour, minute,
-                    false);
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            DateTime time = new DateTime();
-            time.setStringSQL(hourOfDay + ":" + minute);
-
-            if (timePicker != null) {
-                timePicker.setText(time.getReadableTime());
-            }
-
-            if (TransactionWizardOptionalFragment.mPage != null) {
-                TransactionWizardOptionalFragment.mPage.getData().putString(TransactionWizardOptionalPage.TIME_DATA_KEY, time.getReadableTime());
-                TransactionWizardOptionalFragment.mPage.notifyDataChanged();
-            }
-
-        }
-    }
-
-    //Method to help create DatePicker
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar cal = Calendar.getInstance();
-
-            SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
-            SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
-            SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
-
-            int year = Integer.parseInt(dateFormatYear.format(cal.getTime()));
-            int month = Integer.parseInt(dateFormatMonth.format(cal.getTime())) - 1;
-            int day = Integer.parseInt(dateFormatDay.format(cal.getTime()));
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            DateTime date = new DateTime();
-            date.setStringSQL(year + "-" + (month + 1) + "-" + day);
-
-            if (datePicker != null) {
-                datePicker.setText(date.getReadableDate());
-            }
-
-            if (TransactionWizardOptionalFragment.mPage != null) {
-                TransactionWizardOptionalFragment.mPage.getData().putString(TransactionWizardOptionalPage.DATE_DATA_KEY, date.getReadableDate());
-                TransactionWizardOptionalFragment.mPage.notifyDataChanged();
-            }
-
         }
     }
 

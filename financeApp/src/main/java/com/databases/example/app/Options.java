@@ -41,10 +41,18 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
         setTitle("Options");
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            addPreferencesFromResource(R.xml.preference_appearance);
+            addPreferencesFromResource(R.xml.preference_appearance_accounts);
+            addPreferencesFromResource(R.xml.preference_appearance_transactions);
+            addPreferencesFromResource(R.xml.preference_appearance_plans);
+            addPreferencesFromResource(R.xml.preference_appearance_categories);
+            addPreferencesFromResource(R.xml.preference_appearance_subcategories);
             addPreferencesFromResource(R.xml.preference_behavior);
             addPreferencesFromResource(R.xml.preference_misc);
-            PreferenceManager.setDefaultValues(this, R.xml.preference_appearance, false);
+            PreferenceManager.setDefaultValues(this, R.xml.preference_appearance_accounts, false);
+            PreferenceManager.setDefaultValues(this, R.xml.preference_appearance_transactions, false);
+            PreferenceManager.setDefaultValues(this, R.xml.preference_appearance_plans, false);
+            PreferenceManager.setDefaultValues(this, R.xml.preference_appearance_categories, false);
+            PreferenceManager.setDefaultValues(this, R.xml.preference_appearance_subcategories, false);
             PreferenceManager.setDefaultValues(this, R.xml.preference_behavior, false);
             PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
         }//End if Build<Honeycomb
@@ -65,7 +73,11 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.preference_appearance);
+            addPreferencesFromResource(R.xml.preference_appearance_accounts);
+            addPreferencesFromResource(R.xml.preference_appearance_transactions);
+            addPreferencesFromResource(R.xml.preference_appearance_plans);
+            addPreferencesFromResource(R.xml.preference_appearance_categories);
+            addPreferencesFromResource(R.xml.preference_appearance_subcategories);
             getActivity().setTitle("Appearance");
         }
 
@@ -177,7 +189,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
                     });
 
             //Clear Database
-            Preference prefClearDB = findPreference("pref_clearDB");
+            Preference prefClearDB = findPreference("pref_clear_database");
             prefClearDB
                     .setOnPreferenceClickListener(new OnPreferenceClickListener() {
 

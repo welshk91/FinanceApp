@@ -27,9 +27,39 @@ android {
     }
 
     buildTypes {
+        def BOOLEAN = "boolean"
+        def TRUE = "true"
+        def FALSE = "false"
+        def REPORT_CRASHES = "REPORT_CRASHES"
+        def REPORT_ANALYTICS = "REPORT_ANALYTICS"
+        def SHOW_SETTINGS = "SHOW_SETTINGS"
+
         release {
+            buildConfigField BOOLEAN, REPORT_CRASHES, TRUE
+            buildConfigField BOOLEAN, REPORT_ANALYTICS, TRUE
+            buildConfigField BOOLEAN, SHOW_SETTINGS, FALSE
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = outputFile.name.replace('.apk', "-" + defaultConfig.versionName + ".apk")
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
+        }
+
+        debug {
+            buildConfigField BOOLEAN, REPORT_CRASHES, FALSE
+            buildConfigField BOOLEAN, REPORT_ANALYTICS, FALSE
+            buildConfigField BOOLEAN, SHOW_SETTINGS, TRUE
+
+            ext.enableCrashlytics = false
+            debuggable true
         }
     }
 }

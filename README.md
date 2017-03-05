@@ -24,6 +24,7 @@ Known Issues
 
 Things To Do
 ------------
+* Make Objects Parcelable or Serializable
 * Move DatePickerFragment to it's own file
 * Move ListViews to RecyclerViews
 * Improve Drawer/Hamburger menu

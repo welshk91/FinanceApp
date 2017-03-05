@@ -3,6 +3,7 @@ package com.databases.example.utils;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.databases.example.app.Plans;
 import com.databases.example.app.Transactions;
 
 /**
@@ -23,6 +24,12 @@ public class DateUtils {
     //Method for selecting a Date when adding a transaction
     public static void showDatePickerDialog(AppCompatActivity appCompatActivity) {
         DialogFragment newFragment = new Transactions.DatePickerFragment();
+        newFragment.show(appCompatActivity.getSupportFragmentManager(), DATE_PICKER_TAG);
+    }
+
+    //Method for selecting a Date when adding a transaction
+    public static void showDatePickerPlanDialog(AppCompatActivity appCompatActivity) {
+        DialogFragment newFragment = new Plans.DatePickerFragment();
         newFragment.show(appCompatActivity.getSupportFragmentManager(), DATE_PICKER_TAG);
     }
 }

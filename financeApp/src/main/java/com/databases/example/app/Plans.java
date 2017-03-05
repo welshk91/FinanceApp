@@ -84,7 +84,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     private final int ACTION_MODE_DELETE = 3;
     private final int ACTION_MODE_TOGGLE = 4;
 
-    public static Button pDate;
+    public static Button datePicker;
     private PlansListViewAdapter adapterPlans;
 
     //ActionMode
@@ -379,8 +379,8 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
             DateTime date = new DateTime();
             date.setStringSQL(year + "-" + (month + 1) + "-" + day);
 
-            if (pDate != null) {
-                pDate.setText(date.getReadableDate());
+            if (datePicker != null) {
+                datePicker.setText(date.getReadableDate());
             }
 
             if (PlanWizardInfo2Fragment.mPage != null) {

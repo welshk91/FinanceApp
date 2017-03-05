@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.databases.example.app.Plans;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.PlanWizardInfo2Page;
+import com.databases.example.utils.DateUtils;
 import com.wizardpager.wizard.ui.PageFragmentCallbacks;
 
 import java.util.Calendar;
@@ -70,18 +72,25 @@ public class PlanWizardInfo2Fragment extends Fragment {
         mAccountsView = (Spinner) rootView.findViewById(R.id.spinner_transaction_account);
         mAccountsView.setAdapter(Plans.accountSpinnerAdapter);
 
-        Plans.pDate = (Button) rootView.findViewById(R.id.plan_date_picker);
+        Plans.datePicker = (Button) rootView.findViewById(R.id.plan_date_picker);
+        Plans.datePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateUtils.showDatePickerPlanDialog((AppCompatActivity) getActivity());
+            }
+        });
+
         if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) != null && mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY).length() > 0) {
             final DateTime date = new DateTime();
             date.setStringSQL(mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY));
-            Plans.pDate.setText(date.getReadableDate());
+            Plans.datePicker.setText(date.getReadableDate());
             mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
         } else if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) == null) {
             final Calendar c = Calendar.getInstance();
             final DateTime date = new DateTime();
             date.setCalendar(c);
 
-            Plans.pDate.setText(date.getReadableDate());
+            Plans.datePicker.setText(date.getReadableDate());
             mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
         }
 

@@ -131,12 +131,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean deleteDatabase() {
-        Log.d("DatabaseHelper-deleteDatabase", "Deleting database...");
+        Log.d(getClass().getSimpleName(), "Deleting database...");
 
         try {
             return context.deleteDatabase(DATABASE_NAME);
         } catch (Exception e) {
-            Log.e("DatabaseHelper-deleteDatabase", "Couldn't delete database. Error e=" + e);
+            Log.e(getClass().getSimpleName(), "Couldn't delete database. Error e=" + e);
         }
 
         return false;
@@ -144,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d("DatabaseHelper-onUpgrade", "Upgrading database from " + oldVersion + " to " + newVersion);
+        Log.d(getClass().getSimpleName(), "Upgrading database from " + oldVersion + " to " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANSACTIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLANS);
@@ -157,7 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Adds some basic default categories
     private void addDefaultCategories(SQLiteDatabase db) {
-        Log.d("DatabaseHelper-onCreate", "Adding Default Categories...");
+        Log.d("DatabaseHelper-onCreate", "Adding Default CategoriesActivity...");
 
         //Default
         final String sqlDefaultCategory = "INSERT INTO " + TABLE_CATEGORIES

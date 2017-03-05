@@ -32,7 +32,7 @@
         </receiver>
 
         <activity
-            android:name=".app.Main"
+            android:name=".app.MainActivity"
             android:configChanges="keyboardHidden"
             android:label="@string/app_name">
             <intent-filter>
@@ -55,27 +55,27 @@
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.databases.example.app.Main" />
+                android:value="com.databases.example.app.MainActivity" />
         </activity>
         <activity
-            android:name=".app.Plans"
+            android:name=".app.PlansActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".app.SD"
+            android:name=".app.BackupActivity"
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.databases.example.app.Options" />
         </activity>
         <activity
-            android:name=".app.Categories"
+            android:name=".app.CategoriesActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".app.Links"
+            android:name=".app.LinksActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
         <activity
-            android:name=".app.Search"
+            android:name=".app.SearchActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"

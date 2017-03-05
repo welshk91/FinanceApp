@@ -25,7 +25,7 @@ import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 
-public class Search extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity {
     private Drawer drawer;
 
     public static final String BOOLEAN_SEARCH_KEY = "boolSearch";
@@ -45,7 +45,7 @@ public class Search extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
         String query = intent.getStringExtra(QUERY_KEY);
-        setTitle("Search <" + query + ">");
+        setTitle("SearchActivity <" + query + ">");
         makeView();
     }
 
@@ -58,8 +58,8 @@ public class Search extends AppCompatActivity {
 
         MyPagerAdapter mTabsAdapter = new MyPagerAdapter(this, mViewPager);
 
-        mTabsAdapter.addTab(Accounts.class, null);
-        mTabsAdapter.addTab(Transactions.class, null);
+        mTabsAdapter.addTab(AccountsFragment.class, null);
+        mTabsAdapter.addTab(TransactionsFragment.class, null);
         mTabsAdapter.notifyDataSetChanged();
 
         //NavigationDrawer
@@ -105,7 +105,7 @@ public class Search extends AppCompatActivity {
         }
 
         public int getCount() {
-            //One for Account tab, One for Transactions tab
+            //One for Account tab, One for TransactionsFragment tab
             //return 2;
             return mTabs.size();
         }
@@ -124,10 +124,10 @@ public class Search extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Accounts";
+                    return "AccountsFragment";
 
                 case 1:
-                    return "Transactions";
+                    return "TransactionsFragment";
 
                 default:
                     return "Unknown Page!";

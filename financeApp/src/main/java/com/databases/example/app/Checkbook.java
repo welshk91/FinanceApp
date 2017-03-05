@@ -52,17 +52,17 @@ public class Checkbook extends AppCompatActivity {
             }
         }
 
-        Accounts account_frag = new Accounts();
-        Transactions transaction_frag = new Transactions();
+        AccountsFragment account_frag = new AccountsFragment();
+        TransactionsFragment transaction_frag = new TransactionsFragment();
 
         //Bundle for Transaction fragment
         Bundle argsTran = new Bundle();
         argsTran.putBoolean(SHOW_ALL_KEY, true);
-        argsTran.putBoolean(Search.BOOLEAN_SEARCH_KEY, false);
+        argsTran.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
 
         //Bundle for Account fragment
         Bundle argsAccount = new Bundle();
-        argsAccount.putBoolean(Search.BOOLEAN_SEARCH_KEY, false);
+        argsAccount.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
 
         transaction_frag.setArguments(argsTran);
         account_frag.setArguments(argsAccount);
@@ -70,13 +70,13 @@ public class Checkbook extends AppCompatActivity {
         if (checkbook_frame == null) {
             Log.d("Checkbook-onCreate", "Mode:dualpane");
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.account_frag_frame, account_frag, Accounts.ACCOUNT_FRAG_TAG)
-                    .replace(R.id.transaction_frag_frame, transaction_frag, Transactions.TRANSACTION_FRAG_TAG)
+                    .replace(R.id.account_frag_frame, account_frag, AccountsFragment.ACCOUNT_FRAG_TAG)
+                    .replace(R.id.transaction_frag_frame, transaction_frag, TransactionsFragment.TRANSACTION_FRAG_TAG)
                     .commit();
         } else {
             Log.d("Checkbook-onCreate", "Mode:singlepane");
             getSupportFragmentManager().beginTransaction().
-                    replace(R.id.checkbook_frag_frame, account_frag, Accounts.ACCOUNT_FRAG_TAG).commit();
+                    replace(R.id.checkbook_frag_frame, account_frag, AccountsFragment.ACCOUNT_FRAG_TAG).commit();
         }
 
         getSupportFragmentManager().executePendingTransactions();

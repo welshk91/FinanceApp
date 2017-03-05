@@ -16,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.CategoryRecord;
 import com.databases.example.data.DatabaseHelper;
-import com.databases.example.data.SubCategoryRecord;
+import com.databases.example.model.Category;
+import com.databases.example.model.Subcategory;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
     }
 
     //My method for getting a Category Record at a certain position
-    public CategoryRecord getCategory(long id) {
+    public Category getCategory(long id) {
         Cursor group = category;
 
         group.moveToPosition((int) id);
@@ -44,11 +44,11 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         String itemName = group.getString(NameColumn);
         String itemNote = group.getString(NoteColumn);
 
-        return new CategoryRecord(itemId, itemName, itemNote);
+        return new Category(itemId, itemName, itemNote);
     }
 
     //My method for getting a Category Record at a certain position
-    public SubCategoryRecord getSubCategory(int groupId, int childId) {
+    public Subcategory getSubCategory(int groupId, int childId) {
         Cursor group = subcategory.get(groupId);
 
         group.moveToPosition(childId);
@@ -62,7 +62,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         String itemSubname = group.getString(NameColumn);
         String itemNote = group.getString(NoteColumn);
 
-        return new SubCategoryRecord(itemId, itemTo_id, itemSubname, itemNote);
+        return new Subcategory(itemId, itemTo_id, itemSubname, itemNote);
     }
 
     @Override
@@ -320,13 +320,13 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
     }
 
     public void swapSubCategoryCursor(Cursor data) {
-        Log.e("Categories-swapSubCategoryCursor", "Cursor data=" + data + " data size=" + data.getCount());
+        Log.e(getClass().getSimpleName(), "Cursor data=" + data + " data size=" + data.getCount());
         subcategory.add(data);
     }
 
 }
 
-//ViewHolder for Categories
+//ViewHolder for CategoriesActivity
 class CategoryViewHolder {
     TextView tvName;
     TextView tvNote;

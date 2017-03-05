@@ -1,13 +1,13 @@
-package com.databases.example.data;
+package com.databases.example.model;
 
 //An Object Class used to hold the data of each sub-category record
-public class SubCategoryRecord {
+public class Subcategory {
     public final String id;
     public final String catId;
     public final String name;
     public final String note;
 
-    public SubCategoryRecord(String id, String catId, String name, String note) {
+    public Subcategory(String id, String catId, String name, String note) {
         this.id = id;
         this.catId = catId;
         this.name = name;

@@ -22,7 +22,8 @@ import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.app.Checkbook;
-import com.databases.example.app.Plans;
+import com.databases.example.app.PlansActivity;
+import com.databases.example.model.Plan;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -46,20 +47,20 @@ public class PlanReceiver extends BroadcastReceiver {
             Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
 
             try {
-                String plan_id = bundle.getString(Plans.PLAN_ID);
-                String plan_acct_id = bundle.getString(Plans.PLAN_ACCOUNT_ID);
-                String plan_name = bundle.getString(Plans.PLAN_NAME);
-                String plan_value = bundle.getString(Plans.PLAN_VALUE);
-                String plan_type = bundle.getString(Plans.PLAN_TYPE);
-                String plan_category = bundle.getString(Plans.PLAN_CATEGORY);
-                String plan_memo = bundle.getString(Plans.PLAN_MEMO);
-                String plan_offset = bundle.getString(Plans.PLAN_OFFSET);
-                String plan_rate = bundle.getString(Plans.PLAN_RATE);
-                String plan_next = bundle.getString(Plans.PLAN_NEXT);
-                String plan_scheduled = bundle.getString(Plans.PLAN_SCHEDULED);
-                String plan_cleared = bundle.getString(Plans.PLAN_CLEARED);
+                String plan_id = bundle.getString(PlansActivity.PLAN_ID);
+                String plan_acct_id = bundle.getString(PlansActivity.PLAN_ACCOUNT_ID);
+                String plan_name = bundle.getString(PlansActivity.PLAN_NAME);
+                String plan_value = bundle.getString(PlansActivity.PLAN_VALUE);
+                String plan_type = bundle.getString(PlansActivity.PLAN_TYPE);
+                String plan_category = bundle.getString(PlansActivity.PLAN_CATEGORY);
+                String plan_memo = bundle.getString(PlansActivity.PLAN_MEMO);
+                String plan_offset = bundle.getString(PlansActivity.PLAN_OFFSET);
+                String plan_rate = bundle.getString(PlansActivity.PLAN_RATE);
+                String plan_next = bundle.getString(PlansActivity.PLAN_NEXT);
+                String plan_scheduled = bundle.getString(PlansActivity.PLAN_SCHEDULED);
+                String plan_cleared = bundle.getString(PlansActivity.PLAN_CLEARED);
 
-                PlanRecord record = new PlanRecord(plan_id, plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
+                Plan record = new Plan(plan_id, plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
 
                 transactionAdd(record, context);
 
@@ -75,7 +76,7 @@ public class PlanReceiver extends BroadcastReceiver {
     }
 
     //For Adding a Transaction
-    private void transactionAdd(PlanRecord plan, Context context) {
+    private void transactionAdd(Plan plan, Context context) {
         final Calendar cal = Calendar.getInstance();
         Locale locale = context.getResources().getConfiguration().locale;
         DateTime date = new DateTime();
@@ -135,7 +136,7 @@ public class PlanReceiver extends BroadcastReceiver {
         mBuilder.setAutoCancel(true);
 
         //Inbox Style
-        inboxStyle.setBigContentTitle("Plans:");
+        inboxStyle.setBigContentTitle("PlansActivity:");
         Cursor notifications = context.getContentResolver().query(Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/"), null, null, null, null);
 
         while (notifications.moveToNext()) {
@@ -195,14 +196,14 @@ public class PlanReceiver extends BroadcastReceiver {
 
             /****RESET ALARMS HERE****/
             Log.d(getClass().getSimpleName(), "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
-            final PlanRecord record = new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
+            final Plan record = new Plan(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
             schedule(record, context);
         }
 
     }
 
-    //Re-Hash of the schedule method of Plans.java
-    private void schedule(PlanRecord plan, Context context) {
+    //Re-Hash of the schedule method of PlansActivity.java
+    private void schedule(Plan plan, Context context) {
         Date d = null;
 
         try {
@@ -220,18 +221,18 @@ public class PlanReceiver extends BroadcastReceiver {
         Log.e("PlanReceiver-schedule", "FirstRun:" + firstRun);
 
         Intent intent = new Intent(context, PlanReceiver.class);
-        intent.putExtra(Plans.PLAN_ID, plan.id);
-        intent.putExtra(Plans.PLAN_ACCOUNT_ID, plan.acctId);
-        intent.putExtra(Plans.PLAN_NAME, plan.name);
-        intent.putExtra(Plans.PLAN_VALUE, plan.value);
-        intent.putExtra(Plans.PLAN_TYPE, plan.type);
-        intent.putExtra(Plans.PLAN_CATEGORY, plan.category);
-        intent.putExtra(Plans.PLAN_MEMO, plan.memo);
-        intent.putExtra(Plans.PLAN_OFFSET, plan.offset);
-        intent.putExtra(Plans.PLAN_RATE, plan.rate);
-        intent.putExtra(Plans.PLAN_NEXT, plan.next);
-        intent.putExtra(Plans.PLAN_SCHEDULED, plan.scheduled);
-        intent.putExtra(Plans.PLAN_CLEARED, plan.cleared);
+        intent.putExtra(PlansActivity.PLAN_ID, plan.id);
+        intent.putExtra(PlansActivity.PLAN_ACCOUNT_ID, plan.acctId);
+        intent.putExtra(PlansActivity.PLAN_NAME, plan.name);
+        intent.putExtra(PlansActivity.PLAN_VALUE, plan.value);
+        intent.putExtra(PlansActivity.PLAN_TYPE, plan.type);
+        intent.putExtra(PlansActivity.PLAN_CATEGORY, plan.category);
+        intent.putExtra(PlansActivity.PLAN_MEMO, plan.memo);
+        intent.putExtra(PlansActivity.PLAN_OFFSET, plan.offset);
+        intent.putExtra(PlansActivity.PLAN_RATE, plan.rate);
+        intent.putExtra(PlansActivity.PLAN_NEXT, plan.next);
+        intent.putExtra(PlansActivity.PLAN_SCHEDULED, plan.scheduled);
+        intent.putExtra(PlansActivity.PLAN_CLEARED, plan.cleared);
 
         //Parse Rate (token 0 is amount, token 1 is type)
         final String phrase = plan.rate;

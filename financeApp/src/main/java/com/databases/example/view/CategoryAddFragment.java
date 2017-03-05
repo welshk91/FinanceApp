@@ -12,10 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.databases.example.R;
-import com.databases.example.app.Categories;
-import com.databases.example.data.CategoryRecord;
+import com.databases.example.app.CategoriesActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.model.Category;
 
 public class CategoryAddFragment extends DialogFragment {
     public static CategoryAddFragment newInstance() {
@@ -38,13 +38,13 @@ public class CategoryAddFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         boolean isCategory = true;
         String itemID = "0";
-        CategoryRecord catRecord;
+        Category catRecord;
 
         if (!this.getArguments().isEmpty()) {
             isCategory = false;
             int groupPos = getArguments().getInt("group");
             int childPos = getArguments().getInt("child");
-            catRecord = Categories.adapterCategory.getCategory(groupPos);
+            catRecord = CategoriesActivity.adapterCategory.getCategory(groupPos);
             itemID = catRecord.id;
             //Log.e("categoryAdd", "itemID: " + catRecord.id);
         }
@@ -83,7 +83,7 @@ public class CategoryAddFragment extends DialogFragment {
                                 categoryValues.put(DatabaseHelper.CATEGORY_NAME, name);
                                 categoryValues.put(DatabaseHelper.CATEGORY_NOTE, note);
                                 getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-                                getActivity().getSupportLoaderManager().restartLoader(Categories.CATEGORIES_LOADER, null, (Categories) getActivity());
+                                getActivity().getSupportLoaderManager().restartLoader(CategoriesActivity.CATEGORIES_LOADER, null, (CategoriesActivity) getActivity());
                             }
                             //Add a subcategory
                             else {
@@ -92,12 +92,12 @@ public class CategoryAddFragment extends DialogFragment {
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, name);
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, note);
                                 getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-                                ((Categories) getActivity()).subcategoryPopulate(catID);
+                                ((CategoriesActivity) getActivity()).subcategoryPopulate(catID);
 
                             }
 
                         } catch (Exception e) {
-                            Log.e("Categories-AddDialog", "Error adding Categories. e = " + e);
+                            Log.e(getClass().getSimpleName(), "Error adding CategoriesActivity. e = " + e);
                         }
                     }
                 })

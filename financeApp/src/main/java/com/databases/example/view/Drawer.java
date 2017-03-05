@@ -19,11 +19,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.databases.example.R;
-import com.databases.example.app.Categories;
+import com.databases.example.app.CategoriesActivity;
 import com.databases.example.app.Checkbook;
-import com.databases.example.app.Main;
+import com.databases.example.app.MainActivity;
 import com.databases.example.app.Options;
-import com.databases.example.app.Plans;
+import com.databases.example.app.PlansActivity;
 
 //An Object Class used to handle the NavigationDrawer
 public class Drawer extends AppCompatActivity {
@@ -80,7 +80,7 @@ public class Drawer extends AppCompatActivity {
                 case 0:
                     Log.d("SliderMenu", "Home Listener Fired");
                     Drawer.this.toggle();
-                    Intent intentHome = new Intent(context, Main.class);
+                    Intent intentHome = new Intent(context, MainActivity.class);
                     intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentHome);
                     break;
@@ -94,17 +94,17 @@ public class Drawer extends AppCompatActivity {
                     break;
 
                 case 2:
-                    Log.d("SliderMenu", "Categories Listener Fired");
+                    Log.d("SliderMenu", "CategoriesActivity Listener Fired");
                     Drawer.this.toggle();
-                    Intent intentCategories = new Intent(context, Categories.class);
+                    Intent intentCategories = new Intent(context, CategoriesActivity.class);
                     intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentCategories);
                     break;
 
                 case 3:
-                    Log.d("SliderMenu", "Plans Listener Fired");
+                    Log.d("SliderMenu", "PlansActivity Listener Fired");
                     Drawer.this.toggle();
-                    Intent intentPlans = new Intent(context, Plans.class);
+                    Intent intentPlans = new Intent(context, PlansActivity.class);
                     intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     context.startActivity(intentPlans);
                     break;
@@ -112,7 +112,7 @@ public class Drawer extends AppCompatActivity {
                 case 4:
                     Log.d("SliderMenu", "Statistics Listener Fired");
                     Drawer.this.toggle();
-                    //	Intent intentStats = new Intent(Main.this, Accounts.class);
+                    //	Intent intentStats = new Intent(MainActivity.this, AccountsFragment.class);
                     //	startActivity(intentStats);
                     //drawPattern();
                     break;

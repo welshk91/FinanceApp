@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.databases.example.R;
-import com.databases.example.app.Transactions;
+import com.databases.example.app.TransactionsFragment;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.TransactionWizardInfoPage;
 import com.databases.example.utils.Constants;
@@ -76,10 +76,10 @@ public class TransactionWizardInfoFragment extends Fragment {
         }
 
         mCategoryView = (Spinner) rootView.findViewById(R.id.spinner_transaction_category);
-        mCategoryView.setAdapter(Transactions.adapterCategory);
+        mCategoryView.setAdapter(TransactionsFragment.adapterCategory);
 
         String category = mPage.getData().getString(TransactionWizardInfoPage.CATEGORY_DATA_KEY);
-        final int count = Transactions.adapterCategory.getCount();
+        final int count = TransactionsFragment.adapterCategory.getCount();
         String catName;
         Cursor cursor;
 
@@ -170,7 +170,7 @@ public class TransactionWizardInfoFragment extends Fragment {
         mCategoryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Cursor cursor = (Cursor) Transactions.adapterCategory.getItem(pos);
+                Cursor cursor = (Cursor) TransactionsFragment.adapterCategory.getItem(pos);
                 String category = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 
                 mPage.getData().putString(TransactionWizardInfoPage.CATEGORY_DATA_KEY, category);

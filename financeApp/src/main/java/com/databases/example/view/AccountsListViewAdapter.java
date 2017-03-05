@@ -17,11 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.Accounts;
-import com.databases.example.data.AccountRecord;
+import com.databases.example.app.AccountsFragment;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
+import com.databases.example.model.Account;
 
 import java.util.Locale;
 
@@ -33,7 +33,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public AccountRecord getAccount(long position) {
+    public Account getAccount(long position) {
         final Cursor group = getCursor();
 
         group.moveToPosition((int) position);
@@ -48,7 +48,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
         final String time = group.getString(TimeColumn);
         final String date = group.getString(DateColumn);
 
-        return new AccountRecord(id, name, balance, time, date);
+        return new Account(id, name, balance, time, date);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
                 tvTime.setText("Time: " + t.getReadableTime());
             }
 
-            if (user.getPosition() == Accounts.currentAccount && Accounts.mActionMode == null) {
+            if (user.getPosition() == AccountsFragment.currentAccount && AccountsFragment.mActionMode == null) {
                 view.setBackgroundColor(0x7734B5E4);
             } else if (mSelectedItemsIds.get(user.getPosition())) {
                 view.setBackgroundColor(0x9934B5E4);

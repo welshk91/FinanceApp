@@ -14,15 +14,15 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.Plans;
+import com.databases.example.app.PlansActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
-import com.databases.example.data.PlanRecord;
 import com.databases.example.data.PlanWizardInfo1Page;
 import com.databases.example.data.PlanWizardInfo2Page;
 import com.databases.example.data.PlanWizardOptionalPage;
+import com.databases.example.model.Plan;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.PageList;
@@ -35,9 +35,9 @@ import java.util.Locale;
  */
 public class PlanWizard extends WizardDialogFragment {
     private final AbstractWizardModel mWizardModel = new PlanWizardModel(getActivity());
-    private static PlanRecord oldPlan;
+    private static Plan oldPlan;
 
-    public static PlanWizard newInstance(PlanRecord record) {
+    public static PlanWizard newInstance(Plan record) {
         PlanWizard frag = new PlanWizard();
 
         if (record != null) {
@@ -171,13 +171,13 @@ public class PlanWizard extends WizardDialogFragment {
                 transactionValues.put(DatabaseHelper.PLAN_CLEARED, bundleOptional.getString(PlanWizardOptionalPage.CLEARED_DATA_KEY));
 
                 //Cancel old plan
-                ((Plans) getActivity()).cancelPlan(oldPlan);
+                ((PlansActivity) getActivity()).cancelPlan(oldPlan);
 
                 //Update Plan
                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY)), transactionValues, DatabaseHelper.PLAN_ID + "=" + bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY), null);
 
                 //Schedule Plan
-                PlanRecord record = new PlanRecord(bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY) + "",
+                Plan record = new Plan(bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY) + "",
                         bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY) + "",
                         bundleInfo1.getString(PlanWizardInfo1Page.NAME_DATA_KEY),
                         value, bundleInfo1.getString(PlanWizardInfo1Page.TYPE_DATA_KEY),
@@ -189,7 +189,7 @@ public class PlanWizard extends WizardDialogFragment {
                         "true",
                         bundleOptional.getString(PlanWizardOptionalPage.CLEARED_DATA_KEY));
 
-                ((Plans) getActivity()).schedule(record);
+                ((PlansActivity) getActivity()).schedule(record);
             } else {
                 ContentValues transactionValues = new ContentValues();
                 transactionValues.put(DatabaseHelper.PLAN_ACCT_ID, bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY));
@@ -207,7 +207,7 @@ public class PlanWizard extends WizardDialogFragment {
                 Uri u = getActivity().getContentResolver().insert(MyContentProvider.PLANS_URI, transactionValues);
 
                 //Schedule Plan
-                PlanRecord record = new PlanRecord(u.getLastPathSegment(),
+                Plan record = new Plan(u.getLastPathSegment(),
                         bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY) + "",
                         bundleInfo1.getString(PlanWizardInfo1Page.NAME_DATA_KEY),
                         value, bundleInfo1.getString(PlanWizardInfo1Page.TYPE_DATA_KEY),
@@ -219,7 +219,7 @@ public class PlanWizard extends WizardDialogFragment {
                         "true",
                         bundleOptional.getString(PlanWizardOptionalPage.CLEARED_DATA_KEY));
 
-                ((Plans) getActivity()).schedule(record);
+                ((PlansActivity) getActivity()).schedule(record);
             }
 
         }

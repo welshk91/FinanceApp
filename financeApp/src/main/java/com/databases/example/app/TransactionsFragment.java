@@ -51,8 +51,8 @@ import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
-import com.databases.example.data.TransactionRecord;
 import com.databases.example.data.TransactionWizardOptionalPage;
+import com.databases.example.model.Transaction;
 import com.databases.example.utils.Constants;
 import com.databases.example.view.TransactionSortDialogFragment;
 import com.databases.example.view.TransactionViewFragment;
@@ -66,7 +66,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Transactions extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class TransactionsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TRANSACTION_FRAG_TAG = "transaction_frag_tag";
 
     public static final int TRANS_LOADER = 987654321;
@@ -108,7 +108,6 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
     private final String ADD_FRAGMENT_TAG = "transaction_add_fragment";
     private final String EDIT_FRAGMENT_TAG = "transaction_edit_fragment";
     private final String VIEW_FRAGMENT_TAG = "transaction_view_fragment";
-    private final String TRANSFER_FRAGMENT_TAG = "transaction_transfer_fragment";
     private final String SORT_FRAGMENT_TAG = "transaction_sort_fragment";
 
     @Override
@@ -136,7 +135,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                                               int selectionRowID = (int) adapterTransactions.getItemId(position);
                                               String item = adapterTransactions.getTransaction(position).name;
 
-                                              Toast.makeText(Transactions.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
+                                              Toast.makeText(TransactionsFragment.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
                                           }
                                       }
 
@@ -208,39 +207,39 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
 
         if (bundle != null) {
             showAllTransactions = bundle.getBoolean(Checkbook.SHOW_ALL_KEY);
-            searchFragment = bundle.getBoolean(Search.BOOLEAN_SEARCH_KEY);
+            searchFragment = bundle.getBoolean(SearchActivity.BOOLEAN_SEARCH_KEY);
 
             if (!showAllTransactions && !searchFragment) {
-                account_id = bundle.getInt(Accounts.ACCOUNT_ID_KEY);
+                account_id = bundle.getInt(AccountsFragment.ACCOUNT_ID_KEY);
             }
 
-            Log.v("Transactions-populate", "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account_id);
+            Log.v(getClass().getSimpleName(), "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account_id);
         }
 
         if (showAllTransactions) {
             Bundle b = new Bundle();
             b.putBoolean(SHOW_ALL_TRANSACTIONS, true);
-            Log.v("Transactions-populate", "start loader (all transactions)...");
+            Log.v(getClass().getSimpleName(), "start loader (all transactions)...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         } else if (searchFragment) {
-            String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
+            String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
 
             try {
                 Bundle b = new Bundle();
-                b.putBoolean(Search.BOOLEAN_SEARCH_KEY, true);
-                b.putString(Search.QUERY_KEY, query);
-                Log.v("Transactions-populate", "start search loader...");
+                b.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, true);
+                b.putString(SearchActivity.QUERY_KEY, query);
+                Log.v(getClass().getSimpleName(), "start search loader...");
                 getLoaderManager().initLoader(TRANS_SEARCH_LOADER, b, this);
             } catch (Exception e) {
-                Log.e("Transactions-populate", "Search Failed. Error e=" + e);
-                Toast.makeText(getActivity(), "Search Failed\n" + e, Toast.LENGTH_SHORT).show();
+                Log.e(getClass().getSimpleName(), "SearchActivity Failed. Error e=" + e);
+                Toast.makeText(getActivity(), "SearchActivity Failed\n" + e, Toast.LENGTH_SHORT).show();
                 //return;
             }
 
         } else {
             Bundle b = new Bundle();
             b.putInt("aID", account_id);
-            Log.v("Transactions-populate", "start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account_id + ")...");
+            Log.v(getClass().getSimpleName(), "start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account_id + ")...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         }
 
@@ -268,7 +267,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
         }
     }//end of transactionAdd
 
-    //For Sorting Transactions
+    //For Sorting TransactionsFragment
     private void transactionSort() {
         DialogFragment newFragment = TransactionSortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), SORT_FRAGMENT_TAG);
@@ -302,7 +301,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //Intent intentUp = new Intent(Transactions.this.getActivity(), Main.class);
+                //Intent intentUp = new Intent(TransactionsFragment.this.getActivity(), MainActivity.class);
                 //intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 //startActivity(intentUp);
                 //menu.toggle();
@@ -313,7 +312,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                 return true;
 
             case R.id.transaction_menu_schedule:
-                Intent intentPlans = new Intent(getActivity(), Plans.class);
+                Intent intentPlans = new Intent(getActivity(), PlansActivity.class);
                 getActivity().startActivity(intentPlans);
                 return true;
 
@@ -444,7 +443,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                     );
                 }
             case TRANS_SEARCH_LOADER:
-                String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
+                String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
                 Log.v(getClass().getSimpleName(), "new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
@@ -498,7 +497,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
                     lv.setEmptyView(noResult);
-                    noResult.setText("No Transactions\n\n To Add A Transaction, Please Use The ActionBar On The Top");
+                    noResult.setText("No TransactionsFragment\n\n To Add A Transaction, Please Use The ActionBar On The Top");
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
@@ -520,9 +519,9 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
                     lv.setEmptyView(noResult);
-                    noResult.setText("No Transactions Found");
+                    noResult.setText("No TransactionsFragment Found");
 
-                    footerTV.setText("Search Results");
+                    footerTV.setText("SearchActivity Results");
                 } catch (Exception e) {
                     Log.e(getClass().getSimpleName(), "Error setting search TextView. e=" + e);
                 }
@@ -609,7 +608,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                 case CONTEXT_MENU_EDIT:
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
-                            final TransactionRecord record = adapterTransactions.getTransaction(selected.keyAt(i));
+                            final Transaction record = adapterTransactions.getTransaction(selected.keyAt(i));
                             final TransactionWizard frag = TransactionWizard.newInstance(record);
                             frag.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
                         }
@@ -618,7 +617,7 @@ public class Transactions extends Fragment implements OnSharedPreferenceChangeLi
                     mode.finish();
                     return true;
                 case CONTEXT_MENU_DELETE:
-                    TransactionRecord record;
+                    Transaction record;
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterTransactions.getTransaction(selected.keyAt(i));

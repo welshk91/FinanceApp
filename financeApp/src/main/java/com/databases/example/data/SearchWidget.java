@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 
-import com.databases.example.app.Search;
+import com.databases.example.app.SearchActivity;
 
 public class SearchWidget {
     public SearchWidget(final Context context, final SearchView abSearch) {
         final SearchView searchView = abSearch;
-        searchView.setQueryHint("Search!");
+        searchView.setQueryHint("SearchActivity!");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -24,8 +24,8 @@ public class SearchWidget {
                 Log.d(getClass().getSimpleName(), "query=" + query);
 
                 searchView.clearFocus();
-                Intent intentSearch = new Intent(context, Search.class);
-                intentSearch.putExtra(Search.QUERY_KEY, query);
+                Intent intentSearch = new Intent(context, SearchActivity.class);
+                intentSearch.putExtra(SearchActivity.QUERY_KEY, query);
                 intentSearch.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intentSearch);
                 return true;

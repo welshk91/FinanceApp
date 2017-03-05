@@ -25,6 +25,8 @@ Known Issues
 Things To Do
 ------------
 * Make Objects Parcelable or Serializable
+* Replace default logging system with [Timber](https://github.com/JakeWharton/timber)
+* Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Move DatePickerFragment to it's own file
 * Move ListViews to RecyclerViews
 * Improve Drawer/Hamburger menu

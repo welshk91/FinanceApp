@@ -131,9 +131,9 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
             startActivityForResult(intent, REQUEST_CREATE_PATTERN);
         }
 
-        //Launch SD Options screen
+        //Launch BackupActivity Options screen
         public void sdOptions() {
-            Intent intentSD = new Intent(getActivity(), SD.class);
+            Intent intentSD = new Intent(getActivity(), BackupActivity.class);
             startActivity(intentSD);
         }
 
@@ -244,7 +244,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
                                     getActivity().getContentResolver().delete(uri, null, null);
 
                                     //Navigate User back home
-                                    Intent intentDashboard = new Intent(getActivity(), Main.class);
+                                    Intent intentDashboard = new Intent(getActivity(), MainActivity.class);
                                     intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intentDashboard);
                                 }
@@ -340,7 +340,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
     //							getActivity().getContentResolver().delete(uri, null, null);
     //
     //							//Navigate User back home
-    //							Intent intentDashboard = new Intent(getActivity(), Main.class);
+    //							Intent intentDashboard = new Intent(getActivity(), MainActivity.class);
     //							intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     //							startActivity(intentDashboard);
     //						}

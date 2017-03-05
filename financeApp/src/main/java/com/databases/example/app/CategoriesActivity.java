@@ -39,7 +39,7 @@ import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 
-public class Categories extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class CategoriesActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final int CATEGORIES_LOADER = 8675309;
     public static final int SUBCATEGORIES_LOADER = 867;
 
@@ -68,7 +68,7 @@ public class Categories extends AppCompatActivity implements OnSharedPreferenceC
         dh = new DatabaseHelper(this);
 
         setContentView(R.layout.categories);
-        setTitle("Categories");
+        setTitle("CategoriesActivity");
 
         //NavigationDrawer
         drawer = new Drawer(this);
@@ -178,8 +178,8 @@ public class Categories extends AppCompatActivity implements OnSharedPreferenceC
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        //Show Search
-        MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "Search");
+        //Show SearchActivity
+        MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, "SearchActivity");
         menuSearch.setIcon(android.R.drawable.ic_menu_search);
         menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         menuSearch.setActionView(new SearchView(getSupportActionBar().getThemedContext()));
@@ -289,7 +289,7 @@ public class Categories extends AppCompatActivity implements OnSharedPreferenceC
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        //Toast.makeText(this, "Options Just Changed: Categories.Java", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Options Just Changed: CategoriesActivity.Java", Toast.LENGTH_SHORT).show();
         //categoryPopulate();
     }
 
@@ -385,4 +385,4 @@ public class Categories extends AppCompatActivity implements OnSharedPreferenceC
         }
     }
 
-}//end Categories
+}//end CategoriesActivity

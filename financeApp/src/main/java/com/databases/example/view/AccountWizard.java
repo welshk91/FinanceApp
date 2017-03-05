@@ -14,11 +14,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.AccountRecord;
 import com.databases.example.data.AccountWizardInfoPage;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.model.Account;
 import com.databases.example.utils.Constants;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
@@ -30,7 +30,7 @@ import java.util.Locale;
 public class AccountWizard extends WizardDialogFragment {
     private final AbstractWizardModel mWizardModel = new AccountWizardModel(getActivity());
 
-    public static AccountWizard newInstance(AccountRecord record) {
+    public static AccountWizard newInstance(Account record) {
         AccountWizard frag = new AccountWizard();
 
         if (record != null) {

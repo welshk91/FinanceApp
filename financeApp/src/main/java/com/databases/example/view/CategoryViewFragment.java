@@ -10,9 +10,9 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.databases.example.R;
-import com.databases.example.app.Categories;
-import com.databases.example.data.CategoryRecord;
-import com.databases.example.data.SubCategoryRecord;
+import com.databases.example.app.CategoriesActivity;
+import com.databases.example.model.Category;
+import com.databases.example.model.Subcategory;
 
 public class CategoryViewFragment extends DialogFragment {
     public static CategoryViewFragment newInstance(int gPos, int cPos,int t) {
@@ -40,7 +40,7 @@ public class CategoryViewFragment extends DialogFragment {
             final View categoryStatsView = li.inflate(R.layout.subcategory_item, null);
             alertDialogBuilder.setView(categoryStatsView);
 
-            SubCategoryRecord record = Categories.adapterCategory.getSubCategory(groupPos, childPos);
+            Subcategory record = CategoriesActivity.adapterCategory.getSubCategory(groupPos, childPos);
 
             //Set Statistics
             TextView statsName = (TextView)categoryStatsView.findViewById(R.id.subcategory_name);
@@ -54,7 +54,7 @@ public class CategoryViewFragment extends DialogFragment {
             final View categoryStatsView = li.inflate(R.layout.category_item, null);
             alertDialogBuilder.setView(categoryStatsView);
 
-            CategoryRecord record = Categories.adapterCategory.getCategory(groupPos);
+            Category record = CategoriesActivity.adapterCategory.getCategory(groupPos);
 
             //Set Statistics
             TextView statsName = (TextView)categoryStatsView.findViewById(R.id.category_name);

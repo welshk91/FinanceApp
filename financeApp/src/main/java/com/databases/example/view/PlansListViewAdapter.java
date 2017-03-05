@@ -20,7 +20,7 @@ import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
-import com.databases.example.data.PlanRecord;
+import com.databases.example.model.Plan;
 import com.databases.example.utils.Constants;
 
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class PlansListViewAdapter extends CursorAdapter {
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public PlanRecord getPlan(long position) {
+    public Plan getPlan(long position) {
         final Cursor group = getCursor();
 
         group.moveToPosition((int) position);
@@ -63,7 +63,7 @@ public class PlansListViewAdapter extends CursorAdapter {
         final String scheduled = group.getString(columnScheduled);
         final String cleared = group.getString(columnCleared);
 
-        return new PlanRecord(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
+        return new Plan(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
     }
 
     @Override

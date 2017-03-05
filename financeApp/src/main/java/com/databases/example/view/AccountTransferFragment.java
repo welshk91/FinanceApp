@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.Accounts;
+import com.databases.example.app.AccountsFragment;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.MyContentProvider;
@@ -82,9 +82,9 @@ public class AccountTransferFragment extends DialogFragment {
                                     transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
                                     transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
                                 } catch (Exception e) {
-                                    Log.e("Account-transferDialog", "No Accounts? Exception e=" + e);
+                                    Log.e("Account-transferDialog", "No AccountsFragment? Exception e=" + e);
                                     dialog.cancel();
-                                    Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), "No AccountsFragment \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
@@ -109,7 +109,7 @@ public class AccountTransferFragment extends DialogFragment {
                                 try {
                                     tAmount = Float.parseFloat(transferAmount);
                                 } catch (Exception e) {
-                                    Log.e("Accounts-transfer", "Invalid amount? Error e=" + e);
+                                    Log.e(getClass().getSimpleName(), "Invalid amount? Error e=" + e);
                                     return;
                                 }
 
@@ -161,7 +161,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     c.close();
 
                                 } catch (Exception e) {
-                                    Log.e("Accounts-transferDialog", "Transfer From failed. Exception e=" + e);
+                                    Log.e(getClass().getSimpleName(), "Transfer From failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -216,7 +216,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     c.close();
 
                                 } catch (Exception e) {
-                                    Log.e("Accounts-transferDialog", "Transfer To failed. Exception e=" + e);
+                                    Log.e(getClass().getSimpleName(), "Transfer To failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
                                 }
 
@@ -240,7 +240,7 @@ public class AccountTransferFragment extends DialogFragment {
         String[] from = new String[]{DatabaseHelper.ACCOUNT_NAME};
         int[] to = new int[]{android.R.id.text1};
 
-        Cursor accountCursor = Accounts.adapterAccounts.getCursor();
+        Cursor accountCursor = AccountsFragment.adapterAccounts.getCursor();
 
         transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to, 0);
         transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

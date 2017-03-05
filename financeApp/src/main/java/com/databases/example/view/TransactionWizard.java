@@ -14,14 +14,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.Transactions;
+import com.databases.example.app.TransactionsFragment;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
-import com.databases.example.data.TransactionRecord;
 import com.databases.example.data.TransactionWizardInfoPage;
 import com.databases.example.data.TransactionWizardOptionalPage;
+import com.databases.example.model.Transaction;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.PageList;
@@ -32,7 +32,7 @@ import java.util.Locale;
 public class TransactionWizard extends WizardDialogFragment {
     private final AbstractWizardModel mWizardModel = new TransactionWizardModel(getActivity());
 
-    public static TransactionWizard newInstance(TransactionRecord record) {
+    public static TransactionWizard newInstance(Transaction record) {
         TransactionWizard frag = new TransactionWizard();
 
         if (record != null) {
@@ -162,7 +162,7 @@ public class TransactionWizard extends WizardDialogFragment {
                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY)), transactionValues, DatabaseHelper.TRANS_ID + "=" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY), null);
             } else {
                 ContentValues transactionValues = new ContentValues();
-                transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Transactions.account_id);
+                transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, TransactionsFragment.account_id);
                 transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
                 transactionValues.put(DatabaseHelper.TRANS_NAME, bundleInfo.getString(TransactionWizardInfoPage.NAME_DATA_KEY));
                 transactionValues.put(DatabaseHelper.TRANS_VALUE, value);

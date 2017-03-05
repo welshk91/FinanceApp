@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class Cards extends Fragment {
+public class CardsFragment extends Fragment {
     private static CardUI mCardView;
     public static boolean accountChanged = false;
     public static boolean transactionChanged = false;
@@ -48,7 +48,7 @@ public class Cards extends Fragment {
     public void onResume() {
         super.onResume();
         if (accountChanged || planChanged || transactionChanged) {
-            Log.d("Cards", "Refreshing Cards...");
+            Log.d("CardsFragment", "Refreshing CardsFragment...");
             mCardView.clearCards();
             dealCardsCheckbook(mCardView);
             dealCardsPlans(mCardView);
@@ -165,8 +165,8 @@ public class Cards extends Fragment {
             }
 
             if (count == 0) {
-                String title = "No Accounts";
-                String description = "No Accounts created yet";
+                String title = "No AccountsFragment";
+                String description = "No AccountsFragment created yet";
                 mCardView.addCard(new MyCard(title, description));
             }
 
@@ -213,9 +213,9 @@ public class Cards extends Fragment {
                 //Calculate difference of dates
                 try {
                     difference = (today_date.getTime() - transaction_date.getYearMonthDay().getTime()) / 86400000;
-                    Log.d("Cards", transaction_name + " Difference=" + difference);
+                    Log.d("CardsFragment", transaction_name + " Difference=" + difference);
                 } catch (ParseException e) {
-                    Log.e("Cards", "Error parsing transaction time? e=" + e);
+                    Log.e("CardsFragment", "Error parsing transaction time? e=" + e);
                     e.printStackTrace();
                 }
 
@@ -269,8 +269,8 @@ public class Cards extends Fragment {
             }
 
             if (count == 0) {
-                String title = "No Transactions";
-                String description = "No Transactions have occured recently";
+                String title = "No TransactionsFragment";
+                String description = "No TransactionsFragment have occured recently";
                 mCardView.addCard(new MyCard(title, description));
             }
 
@@ -320,7 +320,7 @@ public class Cards extends Fragment {
                     test.setStringSQL(plan_offset);
                     d = test.getYearMonthDay();
                 } catch (java.text.ParseException e) {
-                    Log.e("Cards", "Couldn't grab date for " + plan_name + "\n e:" + e);
+                    Log.e("CardsFragment", "Couldn't grab date for " + plan_name + "\n e:" + e);
                 }
 
                 //Parse Rate (token 0 is amount, token 1 is type)
@@ -347,7 +347,7 @@ public class Cards extends Fragment {
                 }
 
                 difference = (today_date.getTime() - firstRun.getTimeInMillis()) / 86400000;
-                Log.d("Cards", plan_name + " Difference=" + difference);
+                Log.d("CardsFragment", plan_name + " Difference=" + difference);
 
                 //Recent plans
                 if (Math.abs(difference) < lookAhead && plan_scheduled.equals("true")) {
@@ -395,8 +395,8 @@ public class Cards extends Fragment {
             }
 
             if (count == 0) {
-                String title = "No Plans";
-                String description = "No Plans are coming up";
+                String title = "No PlansActivity";
+                String description = "No PlansActivity are coming up";
                 mCardView.addCard(new MyCard(title, description));
             }
 
@@ -404,4 +404,4 @@ public class Cards extends Fragment {
         }
     }
 
-}// end Cards
+}// end CardsFragment

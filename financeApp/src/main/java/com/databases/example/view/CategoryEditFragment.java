@@ -14,11 +14,11 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.databases.example.R;
-import com.databases.example.app.Categories;
-import com.databases.example.data.CategoryRecord;
+import com.databases.example.app.CategoriesActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
-import com.databases.example.data.SubCategoryRecord;
+import com.databases.example.model.Category;
+import com.databases.example.model.Subcategory;
 
 public class CategoryEditFragment extends DialogFragment {
     public static CategoryEditFragment newInstance(int gPos, int cPos, int t) {
@@ -40,8 +40,8 @@ public class CategoryEditFragment extends DialogFragment {
         final int groupPos = getArguments().getInt("group");
         final int childPos = getArguments().getInt("child");
 
-        SubCategoryRecord subrecord;
-        CategoryRecord record;
+        Subcategory subrecord;
+        Category record;
 
         final TextInputEditText editName = (TextInputEditText) categoryEditView.findViewById(R.id.edit_category_name);
         final TextInputEditText editNote = (TextInputEditText) categoryEditView.findViewById(R.id.EditCategoryNote);
@@ -49,12 +49,12 @@ public class CategoryEditFragment extends DialogFragment {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
         if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            subrecord = Categories.adapterCategory.getSubCategory(groupPos, childPos);
+            subrecord = CategoriesActivity.adapterCategory.getSubCategory(groupPos, childPos);
             alertDialogBuilder.setTitle("Editing " + subrecord.name);
             editName.setText(subrecord.name);
             editNote.setText(subrecord.note);
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-            record = Categories.adapterCategory.getCategory(groupPos);
+            record = CategoriesActivity.adapterCategory.getCategory(groupPos);
             alertDialogBuilder.setTitle("Editing " + record.name);
             editName.setText(record.name);
             editNote.setText(record.note);
@@ -70,7 +70,7 @@ public class CategoryEditFragment extends DialogFragment {
 
                         try {
                             if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                                SubCategoryRecord oldRecord = Categories.adapterCategory.getSubCategory(groupPos, childPos);
+                                Subcategory oldRecord = CategoriesActivity.adapterCategory.getSubCategory(groupPos, childPos);
 
                                 ContentValues subcategoryValues = new ContentValues();
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_ID, oldRecord.id);
@@ -78,19 +78,19 @@ public class CategoryEditFragment extends DialogFragment {
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, newName);
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, newNote);
                                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + oldRecord.id), subcategoryValues, DatabaseHelper.SUBCATEGORY_ID + " = " + oldRecord.id, null);
-                                ((Categories) getActivity()).subcategoryPopulate(oldRecord.id);
+                                ((CategoriesActivity) getActivity()).subcategoryPopulate(oldRecord.id);
                             } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                                CategoryRecord oldRecord = Categories.adapterCategory.getCategory(groupPos);
+                                Category oldRecord = CategoriesActivity.adapterCategory.getCategory(groupPos);
 
                                 ContentValues categoryValues = new ContentValues();
                                 categoryValues.put(DatabaseHelper.CATEGORY_ID, oldRecord.id);
                                 categoryValues.put(DatabaseHelper.CATEGORY_NAME, newName);
                                 categoryValues.put(DatabaseHelper.CATEGORY_NOTE, newNote);
                                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.CATEGORIES_URI + "/" + oldRecord.id), categoryValues, DatabaseHelper.CATEGORY_ID + " = " + oldRecord.id, null);
-                                getActivity().getSupportLoaderManager().restartLoader(Categories.CATEGORIES_LOADER, null, (Categories) getActivity());
+                                getActivity().getSupportLoaderManager().restartLoader(CategoriesActivity.CATEGORIES_LOADER, null, (CategoriesActivity) getActivity());
                             }
                         } catch (Exception e) {
-                            Log.e("Categories-EditDialog", "Error editing Categories");
+                            Log.e(getClass().getSimpleName(), "Error editing CategoriesActivity");
                         }
 
                     }

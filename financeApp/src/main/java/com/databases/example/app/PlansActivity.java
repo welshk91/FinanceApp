@@ -46,9 +46,9 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.PlanReceiver;
-import com.databases.example.data.PlanRecord;
 import com.databases.example.data.PlanWizardInfo2Page;
 import com.databases.example.data.SearchWidget;
+import com.databases.example.model.Plan;
 import com.databases.example.view.Drawer;
 import com.databases.example.view.PlanViewFragment;
 import com.databases.example.view.PlanWizard;
@@ -62,7 +62,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class Plans extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class PlansActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
     private static final int PLAN_LOADER = 5882300;
@@ -195,7 +195,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         newFragment.show(getSupportFragmentManager(), ADD_FRAGMENT_TAG);
     }
 
-    public void schedule(PlanRecord plan) {
+    public void schedule(Plan plan) {
         Date d = null;
 
         try {
@@ -203,13 +203,13 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
             test.setStringSQL(plan.offset);
             d = test.getYearMonthDay();
         } catch (java.text.ParseException e) {
-            Log.e("Plans-schedule", "Couldn't schedule " + plan.name + "\n e:" + e);
+            Log.e("PlansActivity-schedule", "Couldn't schedule " + plan.name + "\n e:" + e);
         }
 
-        Log.d("Plans-schedule", "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+        Log.d("PlansActivity-schedule", "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
         Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
-        Log.d("Plans-schedule", "FirstRun:" + firstRun);
+        Log.d("PlansActivity-schedule", "FirstRun:" + firstRun);
 
         Intent intent = new Intent(this, PlanReceiver.class);
         intent.putExtra(PLAN_ID, plan.id);
@@ -235,14 +235,14 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         final DateTime nextRun = new DateTime();
 
         if (tokens[1].contains("Days")) {
-            Log.d("Plans-schedule", "Days");
+            Log.d("PlansActivity-schedule", "Days");
 
             //If Starting Time is in the past, fire off next day(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("Plans-schedule", "firstRun is " + firstRun);
+            Log.d("PlansActivity-schedule", "firstRun is " + firstRun);
             nextRun.setCalendar(firstRun);
 
             Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
@@ -253,14 +253,14 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
         } else if (tokens[1].contains("Weeks")) {
-            Log.d("Plans-schedule", "Weeks");
+            Log.d("PlansActivity-schedule", "Weeks");
 
             //If Starting Time is in the past, fire off next week(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("Plans-schedule", "firstRun is " + firstRun);
+            Log.d("PlansActivity-schedule", "firstRun is " + firstRun);
             nextRun.setCalendar(firstRun);
 
             Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
@@ -280,7 +280,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                 firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("Plans-schedule", "firstRun is " + firstRun);
+            Log.d("PlansActivity-schedule", "firstRun is " + firstRun);
             nextRun.setCalendar(firstRun);
 
             Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
@@ -291,12 +291,12 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
         } else {
-            Log.e("Plans-schedule", "Could not set alarm; Something wrong with the rate");
+            Log.e("PlansActivity-schedule", "Could not set alarm; Something wrong with the rate");
         }
 
     }
 
-    public void cancelPlan(PlanRecord plan) {
+    public void cancelPlan(Plan plan) {
         Intent intent = new Intent(this, PlanReceiver.class);
         intent.putExtra(PLAN_ID, plan.id);
         intent.putExtra(PLAN_ACCOUNT_ID, plan.acctId);
@@ -319,7 +319,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
             am.cancel(sender);
         } catch (Exception e) {
             Toast.makeText(this, "Error canceling plan", Toast.LENGTH_SHORT).show();
-            Log.e("Plans-schedule", "AlarmManager update was not canceled. " + e.toString());
+            Log.e("PlansActivity-schedule", "AlarmManager update was not canceled. " + e.toString());
         }
 
     }
@@ -329,7 +329,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        //Show Search
+        //Show SearchActivity
         MenuItem menuSearch = menu.add(Menu.NONE, R.id.account_menu_search, Menu.NONE, R.string.search);
         menuSearch.setIcon(android.R.drawable.ic_menu_search);
         menuSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
@@ -419,9 +419,9 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
         switch (loaderID) {
             case PLAN_LOADER:
-                if (bundle != null && bundle.getBoolean(Search.BOOLEAN_SEARCH_KEY)) {
-                    //Log.v("Plans-onCreateLoader","new loader (boolSearch "+ query + ") created");
-                    String query = this.getIntent().getStringExtra(Search.QUERY_KEY);
+                if (bundle != null && bundle.getBoolean(SearchActivity.BOOLEAN_SEARCH_KEY)) {
+                    //Log.v("PlansActivity-onCreateLoader","new loader (boolSearch "+ query + ") created");
+                    String query = this.getIntent().getStringExtra(SearchActivity.QUERY_KEY);
                     return new CursorLoader(
                             this,    // Parent activity context
                             (Uri.parse(MyContentProvider.PLANS_ID + "/SEARCH/" + query)),// Table to query
@@ -431,7 +431,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                             null                // Default sort order
                     );
                 } else {
-                    Log.v("Plans-onCreateLoader", "new loader created");
+                    Log.v(getClass().getSimpleName(), "new loader created");
                     return new CursorLoader(
                             this,    // Parent activity context
                             MyContentProvider.PLANS_URI,// Table to query
@@ -443,7 +443,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                 }
 
             case PLAN_ACCOUNT_LOADER:
-                Log.v("Plans-onCreateLoader", "new plan loader created");
+                Log.v(getClass().getSimpleName(), "new plan loader created");
                 return new CursorLoader(
                         this,    // Parent activity context
                         MyContentProvider.ACCOUNTS_URI,// Table to query
@@ -454,7 +454,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                 );
 
             case PLAN_SUBCATEGORY_LOADER:
-                Log.v("Plans-onCreateLoader", "new category loader created");
+                Log.v(getClass().getSimpleName(), "new category loader created");
                 return new CursorLoader(
                         this,    // Parent activity context
                         MyContentProvider.SUBCATEGORIES_URI,// Table to query
@@ -465,7 +465,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                 );
 
             default:
-                Log.e("Plans-onCreateLoader", "Not a valid CursorLoader ID");
+                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -475,7 +475,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         switch (loader.getId()) {
             case PLAN_LOADER:
                 adapterPlans.swapCursor(data);
-                Log.v("Plans-onLoadFinished", "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             case PLAN_ACCOUNT_LOADER:
@@ -484,7 +484,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
 
                 accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to, 0);
                 accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Log.v("Plans-onLoadFinished", "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             case PLAN_SUBCATEGORY_LOADER:
@@ -493,11 +493,11 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
 
                 categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to, 0);
                 categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Log.v("Plans-onLoadFinished", "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             default:
-                Log.v("Plans-onLoadFinished", "Error. Unknown loader (" + loader.getId());
+                Log.v(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -507,19 +507,19 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         switch (loader.getId()) {
             case PLAN_LOADER:
                 adapterPlans.swapCursor(null);
-                Log.v("Plans-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             case PLAN_ACCOUNT_LOADER:
-                Log.v("Plans-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             case PLAN_SUBCATEGORY_LOADER:
-                Log.v("Plans-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e("Plans-onLoadFinished", "Error. Unknown loader (" + loader.getId());
+                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -555,7 +555,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             SparseBooleanArray selected = adapterPlans.getSelectedIds();
-            PlanRecord record;
+            Plan record;
 
             switch (item.getItemId()) {
                 case ACTION_MODE_VIEW:
@@ -587,7 +587,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                             Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
                             getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
 
-                            Log.d("Plans", "Deleting " + record.name + " id:" + record.id);
+                            Log.d("PlansActivity", "Deleting " + record.name + " id:" + record.id);
 
                             //Cancel all upcoming notifications
                             cancelPlan(record);
@@ -604,7 +604,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                         if (selected.valueAt(i)) {
                             record = adapterPlans.getPlan(selected.keyAt(i));
 
-                            intent = new Intent(Plans.this, PlanReceiver.class);
+                            intent = new Intent(PlansActivity.this, PlanReceiver.class);
                             intent.putExtra(PLAN_ID, record.id);
                             intent.putExtra(PLAN_ACCOUNT_ID, record.acctId);
                             intent.putExtra(PLAN_NAME, record.name);
@@ -618,7 +618,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                             intent.putExtra(PLAN_SCHEDULED, record.scheduled);
                             intent.putExtra(PLAN_CLEARED, record.cleared);
 
-                            PendingIntent sender = PendingIntent.getBroadcast(Plans.this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            PendingIntent sender = PendingIntent.getBroadcast(PlansActivity.this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                             try {
                                 if (record.scheduled.equals("true")) {
@@ -628,7 +628,7 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                                     transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "false");
                                     getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id), transactionValues, DatabaseHelper.PLAN_ID + "=" + record.id, null);
 
-                                    Toast.makeText(Plans.this, "Canceled plan:\n" + record.name, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PlansActivity.this, "Canceled plan:\n" + record.name, Toast.LENGTH_SHORT).show();
                                 } else {
                                     schedule(record);
 
@@ -637,8 +637,8 @@ public class Plans extends AppCompatActivity implements OnSharedPreferenceChange
                                     getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id), transactionValues, DatabaseHelper.PLAN_ID + "=" + record.id, null);
                                 }
                             } catch (Exception e) {
-                                Toast.makeText(Plans.this, "Error toggling plan \n" + record.name, Toast.LENGTH_SHORT).show();
-                                Log.e("Plans-schedule", "Error toggling a plan. " + e.toString());
+                                Toast.makeText(PlansActivity.this, "Error toggling plan \n" + record.name, Toast.LENGTH_SHORT).show();
+                                Log.e("PlansActivity-schedule", "Error toggling a plan. " + e.toString());
                             }
                         }
                     }

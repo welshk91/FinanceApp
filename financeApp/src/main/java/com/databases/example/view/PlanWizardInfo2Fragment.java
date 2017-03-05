@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.databases.example.R;
-import com.databases.example.app.Plans;
+import com.databases.example.app.PlansActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.PlanWizardInfo2Page;
@@ -70,10 +70,10 @@ public class PlanWizardInfo2Fragment extends Fragment {
         mRateView.setText(mPage.getData().getString(PlanWizardInfo2Page.RATE_DATA_KEY));
 
         mAccountsView = (Spinner) rootView.findViewById(R.id.spinner_transaction_account);
-        mAccountsView.setAdapter(Plans.accountSpinnerAdapter);
+        mAccountsView.setAdapter(PlansActivity.accountSpinnerAdapter);
 
-        Plans.datePicker = (Button) rootView.findViewById(R.id.plan_date_picker);
-        Plans.datePicker.setOnClickListener(new View.OnClickListener() {
+        PlansActivity.datePicker = (Button) rootView.findViewById(R.id.plan_date_picker);
+        PlansActivity.datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DateUtils.showDatePickerPlanDialog((AppCompatActivity) getActivity());
@@ -83,14 +83,14 @@ public class PlanWizardInfo2Fragment extends Fragment {
         if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) != null && mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY).length() > 0) {
             final DateTime date = new DateTime();
             date.setStringSQL(mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY));
-            Plans.datePicker.setText(date.getReadableDate());
+            PlansActivity.datePicker.setText(date.getReadableDate());
             mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
         } else if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) == null) {
             final Calendar c = Calendar.getInstance();
             final DateTime date = new DateTime();
             date.setCalendar(c);
 
-            Plans.datePicker.setText(date.getReadableDate());
+            PlansActivity.datePicker.setText(date.getReadableDate());
             mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
         }
 
@@ -104,7 +104,7 @@ public class PlanWizardInfo2Fragment extends Fragment {
         }
 
         final int accountID = mPage.getData().getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY);
-        final int count = Plans.accountSpinnerAdapter.getCount();
+        final int count = PlansActivity.accountSpinnerAdapter.getCount();
         int acctID;
         Cursor cursor;
 
@@ -175,7 +175,7 @@ public class PlanWizardInfo2Fragment extends Fragment {
         mAccountsView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Cursor cursor = (Cursor) Plans.accountSpinnerAdapter.getItem(pos);
+                Cursor cursor = (Cursor) PlansActivity.accountSpinnerAdapter.getItem(pos);
                 int accountID = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
                 String account = cursor.getString(cursor.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
 

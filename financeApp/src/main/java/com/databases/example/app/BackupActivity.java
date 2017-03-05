@@ -34,7 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-public class SD extends AppCompatActivity{
+public class BackupActivity extends AppCompatActivity{
     private final static String DEFAULT_BACKUP_DIR = "/WelshFinanceBackUps";
     private final static int PICKFILE_RESULT_CODE = 123;
 
@@ -66,27 +66,27 @@ public class SD extends AppCompatActivity{
             File sd = Environment.getExternalStorageDirectory();
 
             if (sd.canWrite()) {
-                Log.e("SD-sdRestore", "SD can write into");
+                Log.e(getClass().getSimpleName(), "BackupActivity can write into");
 
                 try{
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("file/*");
                     startActivityForResult(intent,PICKFILE_RESULT_CODE);
                 } catch(ActivityNotFoundException e){
-                    Log.e("SD-sdRestore", "No program to handle intent? Error e=" + e);
+                    Log.e(getClass().getSimpleName(), "No program to handle intent? Error e=" + e);
                     Toast.makeText(this, "Please install a file manager", Toast.LENGTH_LONG).show();
                 } catch(Exception e){
-                    Log.e("SD-sdRestore", "Error e = "+e);
+                    Log.e(getClass().getSimpleName(), "Error e = "+e);
                 }
 
             }
             else{
-                Log.e("SD-sdRestore", "Cannot write into SD");
-                Toast.makeText(this, "No SD Card Found!", Toast.LENGTH_LONG).show();
+                Log.e(getClass().getSimpleName(), "Cannot write into BackupActivity");
+                Toast.makeText(this, "No BackupActivity Card Found!", Toast.LENGTH_LONG).show();
             }
 
         } catch (Exception e) {
-            Log.e("SD-sdRestore", "Error restoring. e="+e);
+            Log.e(getClass().getSimpleName(), "Error restoring. e="+e);
             Toast.makeText(this, "Error restoring \n"+e, Toast.LENGTH_LONG).show();
         }
 
@@ -141,18 +141,18 @@ public class SD extends AppCompatActivity{
                                 File sd = Environment.getExternalStorageDirectory();
 
                                 if (sd.canWrite()) {
-                                    Log.d("SD-BackupDialogFragment", "SD can write into");
+                                    Log.d(getClass().getSimpleName(), "BackupActivity can write into");
 
                                     File backupDir;
 
                                     //Handle Custom Directory
                                     if(customBackupDir.matches("")){
-                                        Log.d("SD-BackupDialogFragment", "Use default directory");
+                                        Log.d(getClass().getSimpleName(), "Use default directory");
                                         backupDir = new File(sd.getAbsoluteFile()+DEFAULT_BACKUP_DIR);
                                         backupDir.mkdir();
                                     }
                                     else{
-                                        Log.d("SD-BackupDialogFragment", "Use custom directory");
+                                        Log.d(getClass().getSimpleName(), "Use custom directory");
                                         if(!customBackupDir.startsWith("/")){
                                             backupDir = new File(sd.getAbsoluteFile()+"/"+customBackupDir);
                                         }
@@ -169,23 +169,23 @@ public class SD extends AppCompatActivity{
                                     File backupDB = new File(backupDBPath);
 
                                     if (currentDB.exists()) {
-                                        Log.d("SD-BackupDialogFragment", "currentDB exists");
+                                        Log.d(getClass().getSimpleName(), "currentDB exists");
                                         FileChannel src = new FileInputStream(currentDB).getChannel();
                                         FileChannel dst = new FileOutputStream(backupDB).getChannel();
                                         dst.transferFrom(src, 0, src.size());
                                         src.close();
                                         dst.close();
-                                        Log.d("SD-BackupDialogFragment", "Successfully backed up database to " + backupDB.getAbsolutePath());
+                                        Log.d(getClass().getSimpleName(), "Successfully backed up database to " + backupDB.getAbsolutePath());
                                         Toast.makeText(getActivity(), "Your backup\n" + backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
                                     }
                                 }
                                 else{
-                                    Log.e("SD-BackupDialogFragment", "Cannot write into SD");
-                                    Toast.makeText(getActivity(), "No SD Card Found!", Toast.LENGTH_LONG).show();
+                                    Log.e(getClass().getSimpleName(), "Cannot write into BackupActivity");
+                                    Toast.makeText(getActivity(), "No BackupActivity Card Found!", Toast.LENGTH_LONG).show();
                                 }
 
                             } catch (Exception e) {
-                                Log.e("SD-BackupDialogFragment", "Error backing up. e="+e);
+                                Log.e(getClass().getSimpleName(), "Error backing up. e="+e);
                                 Toast.makeText(getActivity(), "Error backing up \n"+e, Toast.LENGTH_LONG).show();
                             }
 
@@ -208,7 +208,7 @@ public class SD extends AppCompatActivity{
         switch (requestCode) {
             case PICKFILE_RESULT_CODE:
                 if(resultCode==RESULT_OK){
-                    Log.e("SD-onActivityResult", "OK. Picked "+ getPath(data.getData()));
+                    Log.e(getClass().getSimpleName(), "OK. Picked "+ getPath(data.getData()));
 
                     DatabaseHelper dh = new DatabaseHelper(this);
                     String restoreDBPath = getPath(data.getData());
@@ -222,16 +222,16 @@ public class SD extends AppCompatActivity{
                         dst.transferFrom(src, 0, src.size());
                         src.close();
                         dst.close();
-                        Log.e("SD-onActivityResult", "Successfully restored database to " + restoreDB.getAbsolutePath());
+                        Log.e(getClass().getSimpleName(), "Successfully restored database to " + restoreDB.getAbsolutePath());
                         Toast.makeText(this, "You restored from \n" + restoreDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
                     } catch(Exception e){
-                        Log.e("SD-onActivityResult", "Restore failed \n" + e);
+                        Log.e(getClass().getSimpleName(), "Restore failed \n" + e);
                         Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
                     }
                 }
 
                 if(resultCode==RESULT_CANCELED){
-                    Log.e("SD-onActivityResult", "canceled");
+                    Log.e(getClass().getSimpleName(), "canceled");
                 }
 
                 break;
@@ -257,4 +257,4 @@ public class SD extends AppCompatActivity{
         return linkFilePath;
     }
 
-}//end of SD
+}//end of BackupActivity

@@ -1,7 +1,7 @@
-package com.databases.example.data;
+package com.databases.example.model;
 
 //An Object Class used to hold the data of each account record
-public class AccountRecord {
+public class Account {
 
     public final String id;
     public final String name;
@@ -9,7 +9,7 @@ public class AccountRecord {
     public final String date;
     public final String time;
 
-    public AccountRecord(String id, String name, String balance, String date, String time) {
+    public Account(String id, String name, String balance, String date, String time) {
         this.id = id;
         this.name = name;
         this.balance = balance;

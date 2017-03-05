@@ -1,7 +1,7 @@
-package com.databases.example.data;
+package com.databases.example.model;
 
 //An Object Class used to hold the data of each transaction record
-public class PlanRecord {
+public class Plan {
     public final String id;
     public final String acctId;
     public final String name;
@@ -15,7 +15,7 @@ public class PlanRecord {
     public final String scheduled;
     public final String cleared;
 
-    public PlanRecord(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
+    public Plan(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
         this.id = id;
         this.acctId = acctId;
         this.name = name;

@@ -62,7 +62,7 @@ public class PlanWizardOptionalFragment extends Fragment {
         mMemoView.setText(data.getString(TransactionWizardOptionalPage.MEMO_DATA_KEY));
 
 //        //Adapter for memo's autocomplete
-//        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, Plans.dropdownResults);
+//        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, PlansActivity.dropdownResults);
 //        mMemoView.setAdapter(dropdownAdapter);
 //
 //        //Add dictionary back to autocomplete

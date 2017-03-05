@@ -20,7 +20,7 @@ import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.DateTime;
 import com.databases.example.data.Money;
-import com.databases.example.data.TransactionRecord;
+import com.databases.example.model.Transaction;
 import com.databases.example.utils.Constants;
 
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public TransactionRecord getTransaction(long position) {
+    public Transaction getTransaction(long position) {
         final Cursor group = getCursor();
 
         group.moveToPosition((int) position);
@@ -64,7 +64,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         final String date = group.getString(dateColumn);
         final String cleared = group.getString(clearedColumn);
 
-        return new TransactionRecord(id, acctId, planId, name, value, type, category, checknum, memo, time, date, cleared);
+        return new Transaction(id, acctId, planId, name, value, type, category, checknum, memo, time, date, cleared);
     }
 
     @Override

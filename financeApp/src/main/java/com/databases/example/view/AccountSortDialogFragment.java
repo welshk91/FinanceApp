@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.databases.example.R;
-import com.databases.example.app.Accounts;
+import com.databases.example.app.AccountsFragment;
 import com.databases.example.data.DatabaseHelper;
 
 /**
@@ -79,13 +79,13 @@ public class AccountSortDialogFragment extends DialogFragment {
                         break;
 
                     default:
-                        Log.e("Accounts-SortFragment", "Unknown Sorting Option!");
+                        Log.e(getClass().getSimpleName(), "Unknown Sorting Option!");
                         break;
 
                 }//end switch
 
                 //Restart loader with new sort order
-                getParentFragment().getLoaderManager().restartLoader(Accounts.ACCOUNTS_LOADER, null, (Accounts) getParentFragment());
+                getParentFragment().getLoaderManager().restartLoader(AccountsFragment.ACCOUNTS_LOADER, null, (AccountsFragment) getParentFragment());
 
                 getDialog().cancel();
             }

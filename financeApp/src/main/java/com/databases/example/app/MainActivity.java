@@ -24,7 +24,7 @@ import com.databases.example.view.Drawer;
 import haibison.android.lockpattern.LockPatternActivity;
 import haibison.android.lockpattern.utils.AlpSettings;
 
-public class Main extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
     private Drawer drawer;
 
@@ -32,7 +32,7 @@ public class Main extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
 
         if (lockEnabled) {
@@ -41,8 +41,8 @@ public class Main extends AppCompatActivity {
 
         setContentView(R.layout.main);
 
-        //Add Cards Fragments
-        Cards cards_frag = new Cards();
+        //Add CardsFragment Fragments
+        CardsFragment cards_frag = new CardsFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.card_frame, cards_frag, "cards_tag").commit();
@@ -77,15 +77,15 @@ public class Main extends AppCompatActivity {
     //Confirm Lockscreen
     private void confirmPattern() {
         if (AlpSettings.Security.getPattern(this) != null) {
-            //Log.d("Main", "valueOf getPattern="+String.valueOf(Settings.Security.getPattern(this)));
-            //Log.d("Main", "getPattern="+String.valueOf(Settings.Security.getPattern(this)));
+            //Log.d("MainActivity", "valueOf getPattern="+String.valueOf(Settings.Security.getPattern(this)));
+            //Log.d("MainActivity", "getPattern="+String.valueOf(Settings.Security.getPattern(this)));
 
-            Intent intent = new Intent(LockPatternActivity.ACTION_COMPARE_PATTERN, null, Main.this, LockPatternActivity.class);
+            Intent intent = new Intent(LockPatternActivity.ACTION_COMPARE_PATTERN, null, MainActivity.this, LockPatternActivity.class);
             //Intent intentForget = new Intent(this, LoginHelper.class);
             //intent.putExtra(LockPatternActivity.EXTRA_INTENT_ACTIVITY_FORGOT_PATTERN, intentForget);
             startActivityForResult(intent, LOCKSCREEN_SIGNIN);
         } else {
-            Toast.makeText(Main.this, "Cannot Use Lockscreen\nNo Pattern Set Yet", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Cannot Use Lockscreen\nNo Pattern Set Yet", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -95,28 +95,28 @@ public class Main extends AppCompatActivity {
             case LOCKSCREEN_SIGNIN:
                 switch (resultCode) {
                     case RESULT_OK:
-                        Toast.makeText(Main.this, "Sign In\nAccepted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Sign In\nAccepted", Toast.LENGTH_SHORT).show();
                         break;
                     case RESULT_CANCELED:
-                        Toast.makeText(Main.this, "Sign In\nCanceled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Sign In\nCanceled", Toast.LENGTH_SHORT).show();
                         this.finish();
                         this.moveTaskToBack(true);
                         super.onDestroy();
                         break;
                     case LockPatternActivity.RESULT_FAILED:
-                        Toast.makeText(Main.this, "Sign In\nFailed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Sign In\nFailed", Toast.LENGTH_SHORT).show();
                         this.finish();
                         this.moveTaskToBack(true);
                         super.onDestroy();
                         break;
                     case LockPatternActivity.RESULT_FORGOT_PATTERN:
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Main.this);
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                         boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
 
                         if (!lockEnabled) {
-                            Toast.makeText(Main.this, "Sign In\nReset", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Sign In\nReset", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(Main.this, "Sign In\nForgotten", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Sign In\nForgotten", Toast.LENGTH_SHORT).show();
                         }
 
                         break;
@@ -136,4 +136,4 @@ public class Main extends AppCompatActivity {
         drawer.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
-}// end Main
+}// end MainActivity

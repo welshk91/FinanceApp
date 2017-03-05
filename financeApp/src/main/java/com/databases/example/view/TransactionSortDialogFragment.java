@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.databases.example.R;
-import com.databases.example.app.Transactions;
+import com.databases.example.app.TransactionsFragment;
 import com.databases.example.data.DatabaseHelper;
 
 /**
@@ -89,13 +89,13 @@ public class TransactionSortDialogFragment extends DialogFragment {
                         break;
 
                     default:
-                        Log.e("Accounts-SortFragment", "Unknown Sorting Option!");
+                        Log.e(getClass().getSimpleName(), "Unknown Sorting Option!");
                         break;
 
                 }//end switch
 
                 //Restart loader with new sort order
-                getParentFragment().getLoaderManager().restartLoader(Transactions.TRANS_LOADER, null, (Transactions) getParentFragment());
+                getParentFragment().getLoaderManager().restartLoader(TransactionsFragment.TRANS_LOADER, null, (TransactionsFragment) getParentFragment());
 
                 getDialog().cancel();
             }

@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.databases.example.R;
-import com.databases.example.app.Plans;
+import com.databases.example.app.PlansActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.PlanWizardInfo1Page;
 import com.databases.example.utils.Constants;
@@ -76,10 +76,10 @@ public class PlanWizardInfo1Fragment extends Fragment {
         }
 
         mCategoryView = (Spinner) rootView.findViewById(R.id.spinner_transaction_category);
-        mCategoryView.setAdapter(Plans.categorySpinnerAdapter);
+        mCategoryView.setAdapter(PlansActivity.categorySpinnerAdapter);
 
         String category = mPage.getData().getString(PlanWizardInfo1Page.CATEGORY_DATA_KEY);
-        final int count = Plans.categorySpinnerAdapter.getCount();
+        final int count = PlansActivity.categorySpinnerAdapter.getCount();
         String catName;
         Cursor cursor;
 
@@ -170,7 +170,7 @@ public class PlanWizardInfo1Fragment extends Fragment {
         mCategoryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Cursor cursor = (Cursor) Plans.categorySpinnerAdapter.getItem(pos);
+                Cursor cursor = (Cursor) PlansActivity.categorySpinnerAdapter.getItem(pos);
                 String category = cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME));
 
                 mPage.getData().putString(PlanWizardInfo1Page.CATEGORY_DATA_KEY, category);

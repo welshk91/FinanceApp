@@ -48,8 +48,8 @@ public class Money {
 
 //	double result = 50.00 + 5.45 - 30.67;
 //	BigDecimal result2 = new BigDecimal(result).setScale(Currency.getInstance(getResources().getConfiguration().locale).getDefaultFractionDigits(), BigDecimal.ROUND_HALF_UP);
-//	Log.e("Accounts-calculateBalance", "BigDecimal: " + result2);
+//	Log.e("AccountsFragment-calculateBalance", "BigDecimal: " + result2);
 //	NumberFormat form = NumberFormat.getCurrencyInstance();
-//	Log.e("Accounts-calculateBalance", "Amount: " + form.format(result2));
+//	Log.e("AccountsFragment-calculateBalance", "Amount: " + form.format(result2));
 
 }//End Money

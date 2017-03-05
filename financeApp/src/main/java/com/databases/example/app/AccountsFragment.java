@@ -38,11 +38,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.AccountRecord;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
+import com.databases.example.model.Account;
 import com.databases.example.view.AccountSortDialogFragment;
 import com.databases.example.view.AccountTransferFragment;
 import com.databases.example.view.AccountViewFragment;
@@ -52,7 +52,7 @@ import com.databases.example.view.AccountsListViewAdapter;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-public class Accounts extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACCOUNT_FRAG_TAG = "account_frag_tag";
 
     private static final int PICKFILE_RESULT_CODE = 1;
@@ -130,7 +130,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                                                   args.putInt(ACCOUNT_ID_KEY, accountId);
 
                                                   //Add the fragment to the activity, pushing this transaction on to the back stack.
-                                                  Transactions tran_frag = new Transactions();
+                                                  TransactionsFragment tran_frag = new TransactionsFragment();
                                                   tran_frag.setArguments(args);
                                                   FragmentTransaction ft = getFragmentManager().beginTransaction();
                                                   ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -141,14 +141,14 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                                               } else {
                                                   Bundle args = new Bundle();
                                                   args.putBoolean(Checkbook.SHOW_ALL_KEY, false);
-                                                  args.putBoolean(Search.BOOLEAN_SEARCH_KEY, false);
+                                                  args.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
                                                   args.putInt(ACCOUNT_ID_KEY, accountId);
 
                                                   currentAccount = position;
 
                                                   //Add the fragment to the activity
                                                   //NOTE: Don't add custom animation, seems to mess with onLoaderReset
-                                                  Transactions tran_frag = new Transactions();
+                                                  TransactionsFragment tran_frag = new TransactionsFragment();
                                                   tran_frag.setArguments(args);
                                                   FragmentTransaction ft = getFragmentManager().beginTransaction();
                                                   //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -223,31 +223,31 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         boolean searchFragment = true;
 
         if (bundle != null) {
-            searchFragment = bundle.getBoolean(Search.BOOLEAN_SEARCH_KEY);
+            searchFragment = bundle.getBoolean(SearchActivity.BOOLEAN_SEARCH_KEY);
         }
 
         //Fragment is a search fragment
         if (searchFragment) {
 
             //Word being searched
-            String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
+            String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
 
             try {
                 Bundle b = new Bundle();
-                b.putBoolean(Search.BOOLEAN_SEARCH_KEY, true);
-                b.putString(Search.QUERY_KEY, query);
-                Log.v("Accounts-populate", "start search loader...");
+                b.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, true);
+                b.putString(SearchActivity.QUERY_KEY, query);
+                Log.v(getClass().getSimpleName(), "start search loader...");
                 getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
             } catch (Exception e) {
-                Log.e("Accounts-populate", "Search Failed. Error e=" + e);
-                Toast.makeText(this.getActivity(), "Search Failed\n" + e, Toast.LENGTH_LONG).show();
+                Log.e(getClass().getSimpleName(), "SearchActivity Failed. Error e=" + e);
+                Toast.makeText(this.getActivity(), "SearchActivity Failed\n" + e, Toast.LENGTH_LONG).show();
             }
 
         }
 
-        //Not A Search Fragment
+        //Not A SearchActivity Fragment
         else {
-            Log.v("Accounts-populate", "start loader...");
+            Log.v(getClass().getSimpleName(), "start loader...");
             getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
         }
 
@@ -256,9 +256,9 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
     //For Attaching to an Account
     public void accountAttach(android.view.MenuItem item) {
         final AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final AccountRecord record = adapterAccounts.getAccount(itemInfo.position);
+        final Account record = adapterAccounts.getAccount(itemInfo.position);
 
-        Intent intentLink = new Intent(this.getActivity(), Links.class);
+        Intent intentLink = new Intent(this.getActivity(), LinksActivity.class);
         intentLink.putExtra(DatabaseHelper.ACCOUNT_ID, record.id);
         intentLink.putExtra(DatabaseHelper.ACCOUNT_NAME, record.name);
         startActivityForResult(intentLink, PICKFILE_RESULT_CODE);
@@ -276,7 +276,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         newFragment.show(getChildFragmentManager(), TRANSFER_FRAGMENT_TAG);
     }
 
-    //For Sorting Accounts
+    //For Sorting AccountsFragment
     private void accountSort() {
         DialogFragment newFragment = AccountSortDialogFragment.newInstance();
         newFragment.show(getChildFragmentManager(), SORT_FRAGMENT_TAG);
@@ -322,7 +322,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //Intent intentUp = new Intent(Accounts.this.getActivity(), Main.class);
+                //Intent intentUp = new Intent(AccountsFragment.this.getActivity(), MainActivity.class);
                 //intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 //startActivity(intentUp);
                 //menu.toggle();
@@ -334,7 +334,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
             case R.id.account_menu_transfer:
                 if (adapterAccounts.getCount() < 2) {
-                    Toast.makeText(getActivity(), "Not Enough Accounts For Transfer \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Not Enough AccountsFragment For Transfer \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
                 } else {
                     accountTransfer();
                 }
@@ -364,10 +364,10 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         String sortOrder = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getString(getString(R.string.pref_key_account_sort), null);
 
-        Log.d("Accounts-onCreateLoader", "calling create loader...");
+        Log.d(getClass().getSimpleName(), "calling create loader...");
         switch (loaderID) {
             case ACCOUNTS_LOADER:
-                Log.v("Accounts-onCreateLoader", "new loader created");
+                Log.v(getClass().getSimpleName(), "new loader created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
                         MyContentProvider.ACCOUNTS_URI,// Table to query
@@ -377,8 +377,8 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                         sortOrder           // Default sort order-> "CAST (AcctBalance AS INTEGER)" + " DESC"
                 );
             case ACCOUNTS_SEARCH_LOADER:
-                String query = getActivity().getIntent().getStringExtra(Search.QUERY_KEY);
-                Log.v("Accounts-onCreateLoader", "new loader (boolSearch " + query + ") created");
+                String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
+                Log.v(getClass().getSimpleName(), "new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
                         (Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
@@ -389,7 +389,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                 );
 
             default:
-                Log.e("Accounts-onCreateLoader", "Not a valid CursorLoader ID");
+                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -401,7 +401,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         switch (loader.getId()) {
             case ACCOUNTS_LOADER:
                 adapterAccounts.swapCursor(data);
-                Log.v("Accounts-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 int balanceColumn = data.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
                 BigDecimal totalBalance = BigDecimal.ZERO;
@@ -414,19 +414,19 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
-                    noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
+                    noResult.setText("No AccountsFragment\n\n To Add An Account, Please Use The ActionBar On The Top");
                     lv.setEmptyView(noResult);
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
-                    Log.e("Accounts-onLoadFinished", "Error setting balance TextView. e=" + e);
+                    Log.e(getClass().getSimpleName(), "Error setting balance TextView. e=" + e);
                 }
 
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
                 adapterAccounts.swapCursor(data);
-                Log.v("Accounts-onLoadFinished", "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
@@ -435,13 +435,13 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
 
                     footerTV.setText(R.string.search_results);
                 } catch (Exception e) {
-                    Log.e("Accounts-onLoadFinished", "Error setting search TextView. e=" + e);
+                    Log.e(getClass().getSimpleName(), "Error setting search TextView. e=" + e);
                 }
 
                 break;
 
             default:
-                Log.e("Accounts-onLoadFinished", "Error. Unknown loader (" + loader.getId());
+                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
                 break;
         }
 
@@ -455,16 +455,16 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
         switch (loader.getId()) {
             case ACCOUNTS_LOADER:
                 adapterAccounts.swapCursor(null);
-                Log.v("Accounts-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
                 adapterAccounts.swapCursor(null);
-                Log.v("Accounts-onLoaderReset", "loader reset. loader=" + loader.getId());
+                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e("Accounts-onLoadFinished", "Error. Unknown loader (" + loader.getId());
+                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -513,7 +513,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                 case CONTEXT_MENU_EDIT:
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
-                            final AccountRecord record = adapterAccounts.getAccount(selected.keyAt(i));
+                            final Account record = adapterAccounts.getAccount(selected.keyAt(i));
                             AccountWizard newFragment = AccountWizard.newInstance(record);
                             newFragment.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
                         }
@@ -522,7 +522,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                     mode.finish();
                     return true;
                 case CONTEXT_MENU_DELETE:
-                    AccountRecord record;
+                    Account record;
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterAccounts.getAccount(selected.keyAt(i));
@@ -531,7 +531,7 @@ public class Accounts extends Fragment implements OnSharedPreferenceChangeListen
                             Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
                             getActivity().getContentResolver().delete(uri, DatabaseHelper.ACCOUNT_ID + "=" + record.id, null);
 
-                            //Delete All Transactions of that account
+                            //Delete All TransactionsFragment of that account
                             uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
                             getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ACCT_ID + "=" + record.id, null);
 

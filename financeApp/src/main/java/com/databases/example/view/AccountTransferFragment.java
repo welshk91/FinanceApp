@@ -7,11 +7,11 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -43,7 +43,7 @@ public class AccountTransferFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final LayoutInflater li = LayoutInflater.from(getActivity());
         final View promptsView = li.inflate(R.layout.account_transfer, null);
-        final EditText tAmount = (EditText) promptsView.findViewById(R.id.EditAccountAmount);
+        final TextInputEditText tAmount = (TextInputEditText) promptsView.findViewById(R.id.EditAccountAmount);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(promptsView);

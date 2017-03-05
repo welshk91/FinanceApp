@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,8 +28,8 @@ public class PlanWizardInfo1Fragment extends Fragment {
     private PageFragmentCallbacks mCallbacks;
     private String mKey;
     private PlanWizardInfo1Page mPage;
-    private EditText mNameView;
-    private EditText mValueView;
+    private TextInputEditText mNameView;
+    private TextInputEditText mValueView;
     private Spinner mTypeView;
     private Spinner mCategoryView;
 
@@ -61,10 +61,10 @@ public class PlanWizardInfo1Fragment extends Fragment {
         View rootView = inflater.inflate(R.layout.plan_page_info1, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mNameView = ((EditText) rootView.findViewById(R.id.transaction_name));
+        mNameView = ((TextInputEditText) rootView.findViewById(R.id.transaction_name));
         mNameView.setText(mPage.getData().getString(PlanWizardInfo1Page.NAME_DATA_KEY));
 
-        mValueView = ((EditText) rootView.findViewById(R.id.transaction_value));
+        mValueView = ((TextInputEditText) rootView.findViewById(R.id.transaction_value));
         mValueView.setText(mPage.getData().getString(PlanWizardInfo1Page.VALUE_DATA_KEY));
 
         mTypeView = (Spinner) rootView.findViewById(R.id.spinner_transaction_type);

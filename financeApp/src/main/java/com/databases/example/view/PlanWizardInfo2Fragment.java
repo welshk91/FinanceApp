@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,7 +33,7 @@ public class PlanWizardInfo2Fragment extends Fragment {
     private String mKey;
     public static PlanWizardInfo2Page mPage;
     private Spinner mAccountsView;
-    private EditText mRateView;
+    private TextInputEditText mRateView;
     private Spinner mRateTypeView;
 
     public static PlanWizardInfo2Fragment create(String key) {
@@ -64,7 +64,7 @@ public class PlanWizardInfo2Fragment extends Fragment {
         View rootView = inflater.inflate(R.layout.plan_page_info2, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mRateView = ((EditText) rootView.findViewById(R.id.EditRate));
+        mRateView = ((TextInputEditText) rootView.findViewById(R.id.EditRate));
         mRateView.setText(mPage.getData().getString(PlanWizardInfo2Page.RATE_DATA_KEY));
 
         mAccountsView = (Spinner) rootView.findViewById(R.id.spinner_transaction_account);

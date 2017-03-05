@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/category_add"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="4dp">
 
-    <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/EditCategoryName_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/name" />
+        android:layout_marginBottom="16dp">
 
-    <EditText
-        android:id="@+id/EditCategoryName"
-        android:layout_width="fill_parent"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/EditCategoryName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Name"
+            android:inputType="textCapWords"
+            android:maxLines="1" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/EditCategoryNote_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/TextView01"
-        android:layout_marginLeft="20dp"
-        android:layout_toRightOf="@+id/TextView01"
-        android:inputType="text" />
+        android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/TextView02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/EditCategoryName"
-        android:text="Note" />
-
-    <EditText
-        android:id="@+id/EditCategoryNote"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/TextView02"
-        android:layout_marginLeft="20dp"
-        android:layout_toRightOf="@+id/TextView01"
-        android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete" />
-
-</RelativeLayout>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/EditCategoryNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Note"
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+            android:maxLines="31" />
+    </android.support.design.widget.TextInputLayout>
+</LinearLayout>

@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.databases.example.R;
@@ -93,7 +93,7 @@ public class SD extends AppCompatActivity{
     }
 
     public void sdBackup(View v) {
-        EditText tvLogStatus = (EditText)findViewById(R.id.EditTextBackupDir);
+        TextInputEditText tvLogStatus = (TextInputEditText) findViewById(R.id.EditTextBackupDir);
         String customBackupDir = tvLogStatus.getText().toString().trim();
 
         DialogFragment newFragment = BackupDialogFragment.newInstance(customBackupDir);
@@ -129,7 +129,7 @@ public class SD extends AppCompatActivity{
                     .setCancelable(true)
                     .setPositiveButton("Backup",new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
-                            EditText backupTextBox = (EditText)categoryAddView.findViewById(R.id.EditBackupName);
+                            TextInputEditText backupTextBox = (TextInputEditText) categoryAddView.findViewById(R.id.EditBackupName);
                             String backupName = backupTextBox.getText().toString().trim();
 
                             /**

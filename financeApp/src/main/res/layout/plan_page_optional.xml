@@ -26,28 +26,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                style="@style/WizardFormLabel"
-                android:text="@string/memo" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/transaction_memo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
 
-            <AutoCompleteTextView
-                android:id="@+id/transaction_memo"
-                style="@style/WizardEditText"
-                android:layout_marginBottom="16dp"
-                android:hint="Memo"
-                android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
-                android:maxLength="200"
-                android:maxLines="2" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/transaction_memo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Memo"
+                    android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine|textAutoComplete"
+                    android:maxLines="3" />
 
-            <TextView
-                style="@style/WizardFormLabel"
-                android:text="@string/cleared" />
+            </android.support.design.widget.TextInputLayout>
 
             <CheckBox
                 android:id="@+id/transaction_cleared"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true" />
+                android:checked="true"
+                android:text="Cleared?" />
         </LinearLayout>
     </ScrollView>
 

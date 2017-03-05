@@ -5,11 +5,11 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import com.databases.example.R;
 import com.databases.example.app.Categories;
@@ -55,8 +55,8 @@ public class CategoryAddFragment extends DialogFragment {
         LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View categoryAddView = li.inflate(R.layout.category_add, null);
 
-        final EditText editName = (EditText) categoryAddView.findViewById(R.id.EditCategoryName);
-        final EditText editNote = (EditText) categoryAddView.findViewById(R.id.EditCategoryNote);
+        final TextInputEditText editName = (TextInputEditText) categoryAddView.findViewById(R.id.EditCategoryName);
+        final TextInputEditText editNote = (TextInputEditText) categoryAddView.findViewById(R.id.EditCategoryNote);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
         alertDialogBuilder.setView(categoryAddView);

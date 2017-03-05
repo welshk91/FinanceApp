@@ -15,13 +15,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.databases.example"
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "Alpha"
     }
@@ -65,8 +65,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.0.0'
-    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
     compile 'net.margaritov.preference.colorpicker.ColorPickerPreference:ColorPickerPreference:1.0.0'
     compile project(':cardsUILib')
     compile 'haibison.android:lockpattern:12.0.0'

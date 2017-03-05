@@ -24,9 +24,9 @@ Known Issues
 
 Things To Do
 ------------
+* Improve Drawer/Hamburger menu
 * Move EditTexts to TextInputLayout/TextInputEditText
 * Move ListViews to RecyclerViews
-* Fabric integration
 * Realm database
 * Google Cloud back up (using Google Account?)
 * Add Archive support (ie keep balance when making back ups)

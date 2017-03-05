@@ -2,53 +2,49 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/TextView01"
-            android:layout_width="wrap_content"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/EditTextBackupDir_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="Folder: "
-            android:textSize="18sp" >
-        </TextView>
+            android:layout_marginBottom="16dp">
 
-        <EditText
-            android:id="@+id/EditTextBackupDir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/TextView01"
-            android:hint="/WelshFinanceBackUps"
-            android:inputType="text" >
-        </EditText>
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/EditTextBackupDir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Folder: "
+                android:inputType="text"
+                android:maxLines="1"
+                android:minWidth="200dp"
+                android:text="/WelshFinanceBackUps" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/ButtonBackup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/EditTextBackupDir"
             android:layout_margin="5dp"
             android:onClick="sdBackup"
             android:padding="15dp"
-            android:text="Backup" >
-        </Button>
+            android:text="Backup"/>
 
         <Button
             android:id="@+id/ButtonRestore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ButtonBackup"
             android:layout_margin="5dp"
             android:onClick="sdRestore"
             android:padding="15dp"
-            android:text="Restore" >
-        </Button>
-    </RelativeLayout>
+            android:text="Restore"/>
+    </LinearLayout>
 
     <include
         android:id="@+id/drawer"

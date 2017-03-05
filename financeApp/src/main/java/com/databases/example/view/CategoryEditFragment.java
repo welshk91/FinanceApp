@@ -6,11 +6,11 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 
 import com.databases.example.R;
@@ -43,8 +43,8 @@ public class CategoryEditFragment extends DialogFragment {
         SubCategoryRecord subrecord;
         CategoryRecord record;
 
-        final EditText editName = (EditText) categoryEditView.findViewById(R.id.EditCategoryName);
-        final EditText editNote = (EditText) categoryEditView.findViewById(R.id.EditCategoryNote);
+        final TextInputEditText editName = (TextInputEditText) categoryEditView.findViewById(R.id.EditCategoryName);
+        final TextInputEditText editNote = (TextInputEditText) categoryEditView.findViewById(R.id.EditCategoryNote);
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 

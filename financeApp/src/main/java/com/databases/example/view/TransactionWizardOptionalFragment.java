@@ -3,20 +3,17 @@ package com.databases.example.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.TextKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.databases.example.R;
@@ -32,8 +29,8 @@ public class TransactionWizardOptionalFragment extends Fragment {
 
     private PageFragmentCallbacks mCallbacks;
     public static TransactionWizardOptionalPage mPage;
-    private EditText mCheckNumView;
-    private AutoCompleteTextView mMemoView;
+    private TextInputEditText mCheckNumView;
+    private TextInputEditText mMemoView;
     private CheckBox mClearedView;
 
     public static TransactionWizardOptionalFragment create(String key) {
@@ -66,19 +63,19 @@ public class TransactionWizardOptionalFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.transaction_page_optional, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mCheckNumView = ((EditText) rootView.findViewById(R.id.transaction_checknum));
+        mCheckNumView = ((TextInputEditText) rootView.findViewById(R.id.transaction_checknum));
         mCheckNumView.setText(data.getString(TransactionWizardOptionalPage.CHECKNUM_DATA_KEY));
 
-        mMemoView = ((AutoCompleteTextView) rootView.findViewById(R.id.transaction_memo));
+        mMemoView = ((TextInputEditText) rootView.findViewById(R.id.transaction_memo));
         mMemoView.setText(data.getString(TransactionWizardOptionalPage.MEMO_DATA_KEY));
 
-        //Adapter for memo's autocomplete
-        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, Transactions.dropdownResults);
-        mMemoView.setAdapter(dropdownAdapter);
-
-        //Add dictionary back to autocomplete
-        TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
-        mMemoView.setKeyListener(input);
+//        //Adapter for memo's autocomplete
+//        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_dropdown_item_1line, Transactions.dropdownResults);
+//        mMemoView.setAdapter(dropdownAdapter);
+//
+//        //Add dictionary back to autocomplete
+//        TextKeyListener input = TextKeyListener.getInstance(true, TextKeyListener.Capitalize.NONE);
+//        mMemoView.setKeyListener(input);
 
         Transactions.tTime = (Button) rootView.findViewById(R.id.transaction_time);
         Transactions.tDate = (Button) rootView.findViewById(R.id.transaction_date);

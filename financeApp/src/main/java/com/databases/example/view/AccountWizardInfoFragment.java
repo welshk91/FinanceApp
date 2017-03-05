@@ -3,6 +3,7 @@ package com.databases.example.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.databases.example.R;
@@ -26,8 +26,8 @@ public class AccountWizardInfoFragment extends Fragment {
 
     private PageFragmentCallbacks mCallbacks;
     private AccountWizardInfoPage mPage;
-    private EditText mNameView;
-    private EditText mBalanceView;
+    private TextInputEditText mNameView;
+    private TextInputEditText mBalanceView;
 
     public static AccountWizardInfoFragment create(String key) {
         Bundle bundle = new Bundle();
@@ -57,22 +57,11 @@ public class AccountWizardInfoFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.account_page_info, container, false);
         ((TextView) rootView.findViewById(android.R.id.title)).setText(mPage.getTitle());
 
-        mNameView = ((EditText) rootView.findViewById(R.id.account_name));
+        mNameView = ((TextInputEditText) rootView.findViewById(R.id.account_name));
         mNameView.setText(mPage.getData().getString(AccountWizardInfoPage.NAME_DATA_KEY));
 
-        mBalanceView = ((EditText) rootView.findViewById(R.id.account_balance));
+        mBalanceView = ((TextInputEditText) rootView.findViewById(R.id.account_balance));
         mBalanceView.setText(mPage.getData().getString(AccountWizardInfoPage.BALANCE_DATA_KEY));
-
-        if (mPage.getData().isEmpty()) {
-            mBalanceView.setVisibility(View.VISIBLE);
-            TextView balanceLabel = (TextView) rootView.findViewById(R.id.label_balance);
-            balanceLabel.setVisibility(View.VISIBLE);
-        } else {
-            mBalanceView.setVisibility(View.GONE);
-            TextView balanceLabel = (TextView) rootView.findViewById(R.id.label_balance);
-            balanceLabel.setVisibility(View.GONE);
-        }
-
         return rootView;
     }
 

@@ -15,40 +15,49 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WizardPageContainer" >
+    style="@style/WizardPageContainer">
 
     <TextView style="@style/WizardPageTitle" />
 
-    <ScrollView style="@style/FragmentInfo" >
+    <ScrollView style="@style/FragmentInfo">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
-            <TextView
-                style="@style/WizardFormLabel"
-                android:text="@string/name" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/account_name_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
 
-            <EditText
-                android:id="@+id/account_name"
-                style="@style/WizardEditText"
-                android:layout_marginBottom="16dp"
-                android:hint="Enter Name"
-                android:inputType="text" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/account_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Name"
+                    android:inputType="textCapWords"
+                    android:maxLines="1" />
 
-            <TextView
-                android:id="@+id/label_balance"
-                style="@style/WizardFormLabel"
-                android:text="@string/balance" />
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/account_balance"
-                style="@style/WizardEditText"
-                android:layout_marginBottom="16dp"
-                android:digits="1234567890.-"
-                android:hint="Enter Balance"
-                android:inputType="numberDecimal|phone" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/account_balance_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/account_balance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="1234567890.-"
+                    android:hint="Enter Balance"
+                    android:inputType="numberDecimal|phone"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </ScrollView>
 

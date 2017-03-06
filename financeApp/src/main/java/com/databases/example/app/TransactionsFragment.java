@@ -45,6 +45,7 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.Money;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.SearchWidget;
+import com.databases.example.model.Account;
 import com.databases.example.model.Transaction;
 import com.databases.example.utils.Constants;
 import com.databases.example.view.TransactionSortDialogFragment;
@@ -72,7 +73,8 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     public static Button datePicker;
 
     //ID of account transaction belongs to
-    public static int account_id = 0;
+    //TODO make non-static
+    public static Account account;
 
     private ListView lv = null;
 
@@ -103,7 +105,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        account_id = 0;
+        account = null;
     }
 
     @Override
@@ -200,10 +202,10 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
             searchFragment = bundle.getBoolean(SearchActivity.BOOLEAN_SEARCH_KEY);
 
             if (!showAllTransactions && !searchFragment) {
-                account_id = bundle.getInt(AccountsFragment.ACCOUNT_ID_KEY);
+                account = bundle.getParcelable(AccountsFragment.ACCOUNT_ID_KEY);
             }
 
-            Log.v(getClass().getSimpleName(), "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account_id);
+            Log.v(getClass().getSimpleName(), "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account);
         }
 
         if (showAllTransactions) {
@@ -228,8 +230,8 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
         } else {
             Bundle b = new Bundle();
-            b.putInt("aID", account_id);
-            Log.v(getClass().getSimpleName(), "start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account_id + ")...");
+            b.putParcelable("aID", account);    //Not sure if we need this, "aID" doesn't seem to be used anywhere...
+            Log.v(getClass().getSimpleName(), "start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account.id + ")...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         }
 
@@ -239,7 +241,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
     //For Adding a Transaction
     private void transactionAdd() {
-        if (account_id == 0) {
+        if (account == null) {
             Log.e("Transaction-AddDialog", "No account selected before attempting to add transaction...");
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
             alertDialogBuilder.setTitle(R.string.no_account_selected);
@@ -349,7 +351,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                             sortOrder            // Default sort order
                     );
                 } else {
-                    String selection = DatabaseHelper.TRANS_ACCT_ID + "=" + account_id;
+                    String selection = DatabaseHelper.TRANS_ACCT_ID + "=" + account.id;
                     Log.v(getClass().getSimpleName(), "new loader created");
                     return new CursorLoader(
                             getActivity(),            // Parent activity context
@@ -422,10 +424,10 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                     Log.e(getClass().getSimpleName(), "Error setting balance TextView. e=" + e);
                 }
 
-                if (account_id != 0) {
+                if (account != null) {
                     ContentValues values = new ContentValues();
                     values.put(DatabaseHelper.ACCOUNT_BALANCE, totalBalance + "");
-                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + account_id), values, DatabaseHelper.ACCOUNT_ID + "=" + account_id, null);
+                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + account.id), values, DatabaseHelper.ACCOUNT_ID + "=" + account.id, null);
                 }
 
                 break;

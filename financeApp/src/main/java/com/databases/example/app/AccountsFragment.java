@@ -125,7 +125,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
                                               if (checkbook_frame != null) {
                                                   Bundle args = new Bundle();
-                                                  args.putInt(ACCOUNT_ID_KEY, accounts.get(0).id);
+                                                  args.putParcelable(ACCOUNT_ID_KEY, accounts.get(0));
 
                                                   //Add the fragment to the activity, pushing this transaction on to the back stack.
                                                   TransactionsFragment tran_frag = new TransactionsFragment();
@@ -140,7 +140,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                                                   Bundle args = new Bundle();
                                                   args.putBoolean(Checkbook.SHOW_ALL_KEY, false);
                                                   args.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
-                                                  args.putInt(ACCOUNT_ID_KEY, accounts.get(0).id);
+                                                  args.putParcelable(ACCOUNT_ID_KEY, accounts.get(0));
 
                                                   currentAccount = position;
 

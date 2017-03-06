@@ -162,7 +162,7 @@ public class TransactionWizard extends WizardDialogFragment {
                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY)), transactionValues, DatabaseHelper.TRANS_ID + "=" + bundleInfo.getInt(TransactionWizardInfoPage.ID_DATA_KEY), null);
             } else {
                 ContentValues transactionValues = new ContentValues();
-                transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, TransactionsFragment.account_id);
+                transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, TransactionsFragment.account.id);
                 transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
                 transactionValues.put(DatabaseHelper.TRANS_NAME, bundleInfo.getString(TransactionWizardInfoPage.NAME_DATA_KEY));
                 transactionValues.put(DatabaseHelper.TRANS_VALUE, value);

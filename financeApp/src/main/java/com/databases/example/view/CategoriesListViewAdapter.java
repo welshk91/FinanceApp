@@ -40,7 +40,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         int NameColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NAME);
         int NoteColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NOTE);
 
-        String itemId = group.getString(0);
+        int itemId = group.getInt(0);
         String itemName = group.getString(NameColumn);
         String itemNote = group.getString(NoteColumn);
 
@@ -56,9 +56,8 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         int NameColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME);
         int NoteColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE);
 
-        //Log.e("HERE", "columns " + IDColumn + " " + ToIDColumn + " " + NameColumn + " " + NoteColumn);
-        String itemId = group.getString(0);
-        String itemTo_id = group.getString(ToIDColumn);
+        int itemId = group.getInt(0);
+        int itemTo_id = group.getInt(ToIDColumn);
         String itemSubname = group.getString(NameColumn);
         String itemNote = group.getString(NoteColumn);
 

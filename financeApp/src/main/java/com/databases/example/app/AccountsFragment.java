@@ -50,6 +50,7 @@ import com.databases.example.view.AccountWizard;
 import com.databases.example.view.AccountsListViewAdapter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -118,16 +119,13 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                                               int selectionRowID = (int) adapterAccounts.getItemId(position);
                                               Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null);
 
-                                              //Just get the Account ID
-                                              c.moveToFirst();
-                                              int accountId = c.getInt(0);
-                                              c.close();
+                                              ArrayList<Account> accounts = Account.getAccounts(c);
 
                                               View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
                                               if (checkbook_frame != null) {
                                                   Bundle args = new Bundle();
-                                                  args.putInt(ACCOUNT_ID_KEY, accountId);
+                                                  args.putInt(ACCOUNT_ID_KEY, accounts.get(0).id);
 
                                                   //Add the fragment to the activity, pushing this transaction on to the back stack.
                                                   TransactionsFragment tran_frag = new TransactionsFragment();
@@ -142,7 +140,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                                                   Bundle args = new Bundle();
                                                   args.putBoolean(Checkbook.SHOW_ALL_KEY, false);
                                                   args.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
-                                                  args.putInt(ACCOUNT_ID_KEY, accountId);
+                                                  args.putInt(ACCOUNT_ID_KEY, accounts.get(0).id);
 
                                                   currentAccount = position;
 
@@ -414,7 +412,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
-                    noResult.setText("No AccountsFragment\n\n To Add An Account, Please Use The ActionBar On The Top");
+                    noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
                     lv.setEmptyView(noResult);
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));

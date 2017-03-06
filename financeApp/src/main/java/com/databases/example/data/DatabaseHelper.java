@@ -673,5 +673,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NOTIFICATIONS, whereClause, whereArgs);
     }
-
-}//End DatabaseHelper
+}

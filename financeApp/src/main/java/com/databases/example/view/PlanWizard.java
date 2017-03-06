@@ -51,7 +51,7 @@ public class PlanWizard extends WizardDialogFragment {
             final Bundle bundle = new Bundle();
 
             final Bundle bdl1 = new Bundle();
-            bdl1.putInt("id", Integer.parseInt(record.id));
+            bdl1.putInt("id", record.id);
             bdl1.putString("name", record.name);
             bdl1.putString("value", record.value);
             bdl1.putString("type", record.type);
@@ -59,8 +59,8 @@ public class PlanWizard extends WizardDialogFragment {
             bundle.putBundle("Transaction Info", bdl1);
 
             final Bundle bdl2 = new Bundle();
-            bdl2.putInt("accountID", Integer.parseInt(record.acctId));
-            bdl2.putString("account", record.acctId);
+            bdl2.putInt("accountID", record.acctId);
+            bdl2.putString("account", String.valueOf(record.acctId));
             bdl2.putString("date", record.offset);
             bdl2.putString("rate", tokens[0]);
             bdl2.putString("rate type", tokens[1]);
@@ -177,8 +177,8 @@ public class PlanWizard extends WizardDialogFragment {
                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY)), transactionValues, DatabaseHelper.PLAN_ID + "=" + bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY), null);
 
                 //Schedule Plan
-                Plan record = new Plan(bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY) + "",
-                        bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY) + "",
+                Plan record = new Plan(bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY),
+                        bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY),
                         bundleInfo1.getString(PlanWizardInfo1Page.NAME_DATA_KEY),
                         value, bundleInfo1.getString(PlanWizardInfo1Page.TYPE_DATA_KEY),
                         bundleInfo1.getString(PlanWizardInfo1Page.CATEGORY_DATA_KEY),
@@ -207,8 +207,8 @@ public class PlanWizard extends WizardDialogFragment {
                 Uri u = getActivity().getContentResolver().insert(MyContentProvider.PLANS_URI, transactionValues);
 
                 //Schedule Plan
-                Plan record = new Plan(u.getLastPathSegment(),
-                        bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY) + "",
+                Plan record = new Plan(Integer.parseInt(u.getLastPathSegment()),
+                        bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY),
                         bundleInfo1.getString(PlanWizardInfo1Page.NAME_DATA_KEY),
                         value, bundleInfo1.getString(PlanWizardInfo1Page.TYPE_DATA_KEY),
                         bundleInfo1.getString(PlanWizardInfo1Page.CATEGORY_DATA_KEY),

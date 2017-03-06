@@ -1,7 +1,12 @@
 package com.databases.example.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.databases.example.data.DatabaseHelper;
+
+import java.util.ArrayList;
 
 //An Object Class used to hold the data of each transaction record
 public class Transaction implements Parcelable {
@@ -32,6 +37,37 @@ public class Transaction implements Parcelable {
         this.time = time;
         this.date = date;
         this.cleared = cleared;
+    }
+
+    /**
+     * Method to get transactions out of a cursor object
+     *
+     * @param cursor the cursor object containing transactions
+     * @return an array list of all the transactions in the cursor object
+     */
+    public static ArrayList<Transaction> getTransactions(Cursor cursor) {
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        Transaction transaction;
+
+        while (cursor.moveToNext()) {
+            transaction = new Transaction(
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TRANS_ID)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_NAME)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_VALUE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_TYPE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_CATEGORY)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_MEMO)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_TIME)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_DATE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_CLEARED))
+            );
+            transactions.add(transaction);
+        }
+
+        return transactions;
     }
 
     @Override

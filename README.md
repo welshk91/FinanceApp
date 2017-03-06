@@ -26,10 +26,14 @@ Things To Do
 ------------
 * Make Objects Parcelable or Serializable
 * Replace default logging system with [Timber](https://github.com/JakeWharton/timber)
+* Add a simple way to import test data via Options
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Move ListViews to RecyclerViews
+* Move ActionMode into it's own class with Interface
 * Improve Drawer/Hamburger menu
-* Realm database
+* Improve the way we handle & store dates/times (we should store dates as System.currentTimeMillis)
+* Figure out how to handle memo (does it need an auto complete? Or should we go with a spinner like categories?)
+* Realm database (doesn't seem to have an easy way to hook into providers...)
 * Google Cloud back up (using Google Account?)
 * Add Archive support (ie keep balance when making back ups)
 * Add warning of liability to Pattern. Add encryption and possibly email for recovery?
@@ -38,10 +42,10 @@ Things To Do
 * PDF/XML/HTML Reports
 * Improve First-Time Run (use third party library to draw attention to objects, wizard in the beginning for database importing/syncing, ...)
 * Export/Import oxf (Make sure to support required fields)
-* Improve look (icons, animations, fonts, default colors, slide menu, big notifications)
+* Improve look (icons, animations, fonts, item views, default colors, slide menu, big notifications)
 * Encrypt entire database (SQLCipher)
 * Improve Preferences code
-
+* Clean up some of the Android Lint warnings
 
 Optimizations
 -------------

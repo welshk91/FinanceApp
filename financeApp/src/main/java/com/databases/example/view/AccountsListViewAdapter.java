@@ -43,7 +43,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
         final int TimeColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_TIME);
         final int DateColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_DATE);
 
-        final String id = group.getString(0);
+        final int id = group.getInt(0);
         final String name = group.getString(NameColumn);
         final String balance = group.getString(BalanceColumn);
         final String time = group.getString(TimeColumn);
@@ -71,7 +71,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
             int TimeColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_TIME);
             int DateColumn = user.getColumnIndex(DatabaseHelper.ACCOUNT_DATE);
 
-            String id = user.getString(0);
+            int id = user.getInt(0);
             String name = user.getString(NameColumn);
             Money balance = new Money(user.getString(BalanceColumn));
             String time = user.getString(TimeColumn);

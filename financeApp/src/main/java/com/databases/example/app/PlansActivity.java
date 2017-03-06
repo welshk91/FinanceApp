@@ -228,7 +228,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         String delims = "[ ]+";
         String[] tokens = phrase.split(delims);
 
-        final PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent sender = PendingIntent.getBroadcast(this, plan.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         final Locale locale = getResources().getConfiguration().locale;
@@ -310,7 +310,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         intent.putExtra(PLAN_CLEARED, plan.cleared);
 
         // In reality, you would want to have a static variable for the request code instead of 192837
-        PendingIntent sender = PendingIntent.getBroadcast(this, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(this, plan.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get the AlarmManager service
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -618,7 +618,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                             intent.putExtra(PLAN_SCHEDULED, record.scheduled);
                             intent.putExtra(PLAN_CLEARED, record.cleared);
 
-                            PendingIntent sender = PendingIntent.getBroadcast(PlansActivity.this, Integer.parseInt(record.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            PendingIntent sender = PendingIntent.getBroadcast(PlansActivity.this, record.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                             try {
                                 if (record.scheduled.equals("true")) {

@@ -136,7 +136,7 @@ public class CardsFragment extends Fragment {
                     cards.add(new MyPlayCard(title, description, color, "#222222", false, false));
                 }
 
-            }//end while
+            }
 
             return cards;
         }
@@ -243,7 +243,7 @@ public class CardsFragment extends Fragment {
                     cards.add(new MyPlayCard(title, description, color, "#222222", false, false));
                 }
 
-            }//end while
+            }
 
             return cards;
         }
@@ -366,7 +366,7 @@ public class CardsFragment extends Fragment {
                     cards.add(new MyPlayCard(title, description, color, "#222222", false, false));
                 }
 
-            }//end while
+            }
 
             return cards;
         }

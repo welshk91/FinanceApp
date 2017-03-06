@@ -25,17 +25,17 @@ import com.databases.example.utils.Constants;
 import java.util.Locale;
 
 public class PlanViewFragment extends DialogFragment {
-    public static PlanViewFragment newInstance(String id) {
+    public static PlanViewFragment newInstance(int id) {
         PlanViewFragment frag = new PlanViewFragment();
         Bundle args = new Bundle();
-        args.putString("id", id);
+        args.putInt("id", id);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final String ID = getArguments().getString("id");
+        final int ID = getArguments().getInt("id");
         final Cursor cursor = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI + "/" + (ID)), null, null, null, null);
 
         int entry_id = 0;

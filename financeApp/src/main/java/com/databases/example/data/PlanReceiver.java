@@ -47,8 +47,8 @@ public class PlanReceiver extends BroadcastReceiver {
             Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
 
             try {
-                String plan_id = bundle.getString(PlansActivity.PLAN_ID);
-                String plan_acct_id = bundle.getString(PlansActivity.PLAN_ACCOUNT_ID);
+                int plan_id = bundle.getInt(PlansActivity.PLAN_ID);
+                int plan_acct_id = bundle.getInt(PlansActivity.PLAN_ACCOUNT_ID);
                 String plan_name = bundle.getString(PlansActivity.PLAN_NAME);
                 String plan_value = bundle.getString(PlansActivity.PLAN_VALUE);
                 String plan_type = bundle.getString(PlansActivity.PLAN_TYPE);
@@ -181,8 +181,8 @@ public class PlanReceiver extends BroadcastReceiver {
         int columnCleared = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
         while (cursorPlans.moveToNext()) {
-            String id = cursorPlans.getString(0);
-            String to_id = cursorPlans.getString(columnToID);
+            int id = cursorPlans.getInt(0);
+            int to_id = cursorPlans.getInt(columnToID);
             String name = cursorPlans.getString(columnName);
             String value = cursorPlans.getString(columnValue);
             String type = cursorPlans.getString(columnType);
@@ -238,7 +238,7 @@ public class PlanReceiver extends BroadcastReceiver {
         final String phrase = plan.rate;
         final String[] tokens = phrase.split("[ ]+");
 
-        final PendingIntent sender = PendingIntent.getBroadcast(context, Integer.parseInt(plan.id), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent sender = PendingIntent.getBroadcast(context, plan.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Get the AlarmManager service
         final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

@@ -50,8 +50,8 @@ public class PlansListViewAdapter extends CursorAdapter {
         final int columnScheduled = group.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
         final int columnCleared = group.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
-        final String id = group.getString(0);
-        final String to_id = group.getString(columnToID);
+        final int id = group.getInt(0);
+        final int to_id = group.getInt(columnToID);
         final String name = group.getString(columnName);
         final String value = group.getString(columnValue);
         final String type = group.getString(columnType);

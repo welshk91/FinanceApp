@@ -93,7 +93,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     }
 
     //Method for filling subcategories
-    public void subcategoryPopulate(String catId) {
+    public void subcategoryPopulate(int catId) {
         Cursor cursorSubCategory = dh.getSubCategories(null, DatabaseHelper.SUBCATEGORY_CAT_ID + "=" + catId, null, null);
         resultsCursor.add(cursorSubCategory);
     }//end of subcategoryPopulate
@@ -127,14 +127,14 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         int type = ExpandableListView.getPackedPositionType(info.packedPosition);
 
         if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            String subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
+            int subcategoryID = adapterCategory.getSubCategory(groupPos, childPos).id;
             Uri uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + subcategoryID);
 
             getContentResolver().delete(uri, DatabaseHelper.SUBCATEGORY_ID + "=" + subcategoryID, null);
 
             Log.d(getClass().getSimpleName(), "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-            String categoryID = adapterCategory.getCategory(groupPos).id;
+            int categoryID = adapterCategory.getCategory(groupPos).id;
 
             //Delete category
             Uri uri = Uri.parse(MyContentProvider.CATEGORIES_URI + "/" + categoryID);
@@ -350,7 +350,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
                     //Bundle bundle = new Bundle();
                     //bundle.putString("id", data.getString(0));
                     //getSupportLoaderManager().restartLoader(SUBCATEGORIES_LOADER, bundle, this);
-                    subcategoryPopulate(data.getString(0));
+                    subcategoryPopulate(data.getInt(0));
                 }
 
                 break;

@@ -1,12 +1,17 @@
 package com.databases.example.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.databases.example.data.DatabaseHelper;
+
+import java.util.ArrayList;
+
 //An Object Class used to hold the data of each transaction record
 public class Plan implements Parcelable {
-    public final String id;
-    public final String acctId;
+    public final int id;
+    public final int acctId;
     public final String name;
     public final String value;
     public final String type;
@@ -18,7 +23,7 @@ public class Plan implements Parcelable {
     public final String scheduled;
     public final String cleared;
 
-    public Plan(String id, String acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
+    public Plan(int id, int acctId, String name, String value, String type, String category, String memo, String offset, String rate, String next, String scheduled, String cleared) {
         this.id = id;
         this.acctId = acctId;
         this.name = name;
@@ -33,6 +38,37 @@ public class Plan implements Parcelable {
         this.cleared = cleared;
     }
 
+    /**
+     * Method to get plans out of a cursor object
+     *
+     * @param cursor the cursor object containing plans
+     * @return an array list of all the plans in the cursor object
+     */
+    public static ArrayList<Plan> getPlans(Cursor cursor) {
+        ArrayList<Plan> plans = new ArrayList<>();
+        Plan plan;
+
+        while (cursor.moveToNext()) {
+            plan = new Plan(
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.PLAN_ID)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_NAME)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_VALUE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_TYPE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CATEGORY)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_MEMO)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_RATE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_NEXT)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CLEARED))
+            );
+            plans.add(plan);
+        }
+
+        return plans;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -40,8 +76,8 @@ public class Plan implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.acctId);
+        dest.writeInt(this.id);
+        dest.writeInt(this.acctId);
         dest.writeString(this.name);
         dest.writeString(this.value);
         dest.writeString(this.type);
@@ -55,8 +91,8 @@ public class Plan implements Parcelable {
     }
 
     protected Plan(Parcel in) {
-        this.id = in.readString();
-        this.acctId = in.readString();
+        this.id = in.readInt();
+        this.acctId = in.readInt();
         this.name = in.readString();
         this.value = in.readString();
         this.type = in.readString();

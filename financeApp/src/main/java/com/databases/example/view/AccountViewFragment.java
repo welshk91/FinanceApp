@@ -26,17 +26,17 @@ import java.util.Locale;
 //Class that handles view fragment
 public class AccountViewFragment extends DialogFragment {
 
-    public static AccountViewFragment newInstance(String id) {
+    public static AccountViewFragment newInstance(int id) {
         AccountViewFragment frag = new AccountViewFragment();
         Bundle args = new Bundle();
-        args.putString("id", id);
+        args.putInt("id", id);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final String ID = getArguments().getString("id");
+        final int ID = getArguments().getInt("id");
         final Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (ID)), null, null, null, null);
 
         int entry_id = 0;

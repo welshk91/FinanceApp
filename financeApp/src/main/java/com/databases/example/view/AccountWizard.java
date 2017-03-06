@@ -37,7 +37,7 @@ public class AccountWizard extends WizardDialogFragment {
             final Bundle bundle = new Bundle();
 
             final Bundle bdl1 = new Bundle();
-            bdl1.putString("id", record.id);
+            bdl1.putInt("id", record.id);
             bdl1.putString("name", record.name);
             bdl1.putString("balance", record.balance);
             bdl1.putString("time", record.time);
@@ -138,7 +138,7 @@ public class AccountWizard extends WizardDialogFragment {
 
                 //Variables for adding Starting Balance transaction
                 final String transactionName = "STARTING BALANCE";
-                final String transactionPlanId = "0";
+                final int transactionPlanId = -1;
                 String transactionValue = balance;
                 final String transactionCategory = "STARTING BALANCE";
                 final String transactionCheckNum = "None";

@@ -37,7 +37,7 @@ public class CategoryAddFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         boolean isCategory = true;
-        String itemID = "0";
+        int itemID = -1;
         Category catRecord;
 
         if (!this.getArguments().isEmpty()) {
@@ -50,7 +50,7 @@ public class CategoryAddFragment extends DialogFragment {
         }
 
         final boolean isCat = isCategory;
-        final String catID = itemID;
+        final int catID = itemID;
 
         LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View categoryAddView = li.inflate(R.layout.category_add, null);

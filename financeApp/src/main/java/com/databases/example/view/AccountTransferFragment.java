@@ -82,9 +82,9 @@ public class AccountTransferFragment extends DialogFragment {
                                     transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
                                     transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
                                 } catch (Exception e) {
-                                    Log.e("Account-transferDialog", "No AccountsFragment? Exception e=" + e);
+                                    Log.e("Account-transferDialog", "No Accounts? Exception e=" + e);
                                     dialog.cancel();
-                                    Toast.makeText(getActivity(), "No AccountsFragment \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
                                     return;
                                 }
 

@@ -1,20 +1,48 @@
 package com.databases.example.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.databases.example.data.DatabaseHelper;
+
+import java.util.ArrayList;
+
 //An Object Class used to hold the data of each sub-category record
 public class Subcategory implements Parcelable {
-    public final String id;
-    public final String catId;
+    public final int id;
+    public final int catId;
     public final String name;
     public final String note;
 
-    public Subcategory(String id, String catId, String name, String note) {
+    public Subcategory(int id, int catId, String name, String note) {
         this.id = id;
         this.catId = catId;
         this.name = name;
         this.note = note;
+    }
+
+    /**
+     * Method to get subcategories out of a cursor object
+     *
+     * @param cursor the cursor object containing subcategory
+     * @return an array list of all the subcategories in the cursor object
+     */
+    public static ArrayList<Subcategory> getSubcategories(Cursor cursor) {
+        ArrayList<Subcategory> subcategories = new ArrayList<>();
+        Subcategory subcategory;
+
+        while (cursor.moveToNext()) {
+            subcategory = new Subcategory(
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_ID)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE))
+            );
+            subcategories.add(subcategory);
+        }
+
+        return subcategories;
     }
 
     @Override
@@ -24,15 +52,15 @@ public class Subcategory implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.catId);
+        dest.writeInt(this.id);
+        dest.writeInt(this.catId);
         dest.writeString(this.name);
         dest.writeString(this.note);
     }
 
     protected Subcategory(Parcel in) {
-        this.id = in.readString();
-        this.catId = in.readString();
+        this.id = in.readInt();
+        this.catId = in.readInt();
         this.name = in.readString();
         this.note = in.readString();
     }

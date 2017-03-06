@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_key_lock_enabled">checkbox_lock_enabled</string>
+
+    <string name="pref_screen_cards">pref_screen_cards</string>
+    <string name="pref_key_cards_recent_transactions">pref_key_card_transactionDaysRecent</string>
+    <string name="pref_key_cards_show_only_overdrawn">checkbox_card_accountOnlyOverdrawn</string>
+    <string name="pref_key_cards_plan_look_ahead">pref_key_card_planLookAhead</string>
+    <string name="pref_screen_lock">pref_screen_lock</string>
+    <string name="pref_key_lock_emergency_email">pref_emergency_email</string>
+    <string name="pref_screen_backup">pref_screen_backup</string>
+    <string name="pref_key_reset">pref_reset</string>
+    <string name="pref_key_clear_database">pref_clear_database</string>
+
+</resources>

@@ -25,22 +25,11 @@
     <string name="checknum">CHECK NUM:</string>
     <string name="memo">MEMO:</string>
     <string name="date">DATE:</string>
+    <string name="time">TIME:</string>
     <string name="scheduled">SCHEDULED:</string>
     <string name="cleared">CLEARED:</string>
     <string name="drawer_open">Drawer is open</string>
     <string name="drawer_closed">Drawer is closed</string>
-    <string name="pref_key_account_sort">key_account_sort</string>
-    <string name="pref_key_account_nameSize">key_account_nameSize</string>
-    <string name="pref_key_account_fieldSize">key_account_fieldSize</string>
-    <string name="pref_key_transaction_sort">key_transaction_sort</string>
-    <string name="pref_key_transaction_nameSize">key_transaction_nameSize</string>
-    <string name="pref_key_transaction_fieldSize">key_transaction_fieldSize</string>
-    <string name="pref_key_plan_nameSize">key_plan_nameSize</string>
-    <string name="pref_key_plan_fieldSize">key_plan_fieldSize</string>
-    <string name="pref_key_category_nameSize">key_category_nameSize</string>
-    <string name="pref_key_category_fieldSize">key_category_fieldSize</string>
-    <string name="pref_key_subcategory_nameSize">key_subcategory_nameSize</string>
-    <string name="pref_key_subcategory_fieldSize">key_subcategory_fieldSize</string>
     <string name="checkbook">Checkbook</string>
     <string name="search">Search</string>
     <string name="transfer">Transfer</string>
@@ -57,6 +46,28 @@
     <string name="schedule">Schedule</string>
     <string name="plans">Plans</string>
     <string name="toggle">Toggle</string>
+    <string name="acount_id">Account ID</string>
+    <string name="offset">Offset</string>
+    <string name="rate">Rate</string>
+    <string name="pref_key_lock_setlock">pref_setlock</string>
+    <string name="pref_key_backup_local_options">pref_sd</string>
+    <string name="card_positive_account">This account is doing well.</string>
+    <string name="card_negative_account">This account is overdrawn.</string>
+    <string name="card_transaction_not_cleared">This transaction has not been cleared.</string>
+    <string name="card_no_accounts_created">No Accounts created yet</string>
+    <string name="card_no_accounts">No Accounts</string>
+    <string name="cards_transaction_occurred_today">This transaction occurred today.</string>
+    <string name="cards_transaction_occurred_yesterday">This transaction occurred yesterday.</string>
+    <string name="cards_transaction_occurred_num_days">This transaction occurred %d days ago.</string>
+    <string name="no_transactions">No Transactions</string>
+    <string name="no_transaction_have_occurred_recently">No Transactions have occurred recently</string>
+    <string name="planned_transaction_occurred_today">This planned transaction occurred today</string>
+    <string name="planned_transaction_occurred_yesterday">This planned transaction occurred yesterday</string>
+    <string name="planned_transaction_tomorrow">This planned transaction is coming up tomorrow</string>
+    <string name="planned_transaction_occurred_recently">This planned transaction occurred recently</string>
+    <string name="planned_transaction_soon">This planned transaction is coming up</string>
+    <string name="no_plans">No Plans</string>
+    <string name="no_plans_soon">No Plans are coming up</string>
 
     <string-array name="drawer_items">
         <item>Home</item>
@@ -119,30 +130,6 @@
         <item>STUDENT LOANS</item>
         <item>TIP</item>
         <item>TRANSFER</item>
-    </string-array>
-    <string-array name="pref_transaction_listOptions">
-        <item>Name</item>
-        <item>Value</item>
-        <item>Time</item>
-        <item>Date</item>
-    </string-array>
-    <string-array name="pref_transaction_listValues">
-        <item>List Value Name</item>
-        <item>List Value Value</item>
-        <item>List Value Time</item>
-        <item>List Value Date</item>
-    </string-array>
-    <string-array name="pref_account_listOptions">
-        <item>Name</item>
-        <item>Balance</item>
-        <item>Time</item>
-        <item>Date</item>
-    </string-array>
-    <string-array name="pref_account_listValues">
-        <item>List Value Name</item>
-        <item>List Value Balance</item>
-        <item>List Value Time</item>
-        <item>List Value Date</item>
     </string-array>
 
 </resources>

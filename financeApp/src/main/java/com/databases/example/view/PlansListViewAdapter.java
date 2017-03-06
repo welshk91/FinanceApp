@@ -72,7 +72,7 @@ public class PlansListViewAdapter extends CursorAdapter {
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_plan_default_appearance), true);
 
         if (user != null) {
             TextView tvName = (TextView) view.findViewById(R.id.plan_name);
@@ -101,7 +101,7 @@ public class PlansListViewAdapter extends CursorAdapter {
             final int columnCleared = user.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
 
             String id = user.getString(0);
-            String to_id = user.getString(columnToID);
+            String account_id = user.getString(columnToID);
             String name = user.getString(columnName);
             Money value = new Money(user.getString(columnValue));
             String type = user.getString(columnType);
@@ -151,37 +151,37 @@ public class PlansListViewAdapter extends CursorAdapter {
             if (name != null) {
                 tvName.setText(name);
             }
-            if (to_id != null) {
-                tvAccount.setText("Account ID: " + to_id);
+            if (account_id != null) {
+                tvAccount.setText(context.getString(R.string.acount_id) + " " + account_id);
             }
             if (value != null) {
-                tvValue.setText("Value: " + value.getNumberFormat(locale));
+                tvValue.setText(context.getString(R.string.value) + " " + value.getNumberFormat(locale));
             }
             if (type != null) {
-                tvType.setText("Type: " + type);
+                tvType.setText(context.getString(R.string.type) + " " + type);
             }
             if (category != null) {
-                tvCategory.setText("Category: " + category);
+                tvCategory.setText(context.getString(R.string.category) + " " + category);
             }
             if (memo != null) {
-                tvMemo.setText("Memo: " + memo);
+                tvMemo.setText(context.getString(R.string.memo) + " " + memo);
             }
             if (offset != null) {
                 temp.setStringSQL(offset);
-                tvOffset.setText("Offset: " + temp.getReadableDate());
+                tvOffset.setText(context.getString(R.string.offset) + " " + temp.getReadableDate());
             }
             if (rate != null) {
-                tvRate.setText("Rate: " + rate);
+                tvRate.setText(context.getString(R.string.rate) +" " + rate);
             }
             if (next != null) {
                 temp.setStringSQL(next);
-                tvNext.setText("Next: " + temp.getReadableDate());
+                tvNext.setText(context.getString(R.string.next) +" " + temp.getReadableDate());
             }
             if (scheduled != null) {
-                tvScheduled.setText("Scheduled: " + scheduled);
+                tvScheduled.setText(context.getString(R.string.scheduled) + " " + scheduled);
             }
             if (cleared != null) {
-                tvCleared.setText("Cleared: " + cleared);
+                tvCleared.setText(context.getString(R.string.cleared) + " " + cleared);
             }
 
             if (scheduled.equals("false")) {
@@ -214,15 +214,15 @@ public class PlansListViewAdapter extends CursorAdapter {
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_plan", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_plan_default_appearance), true);
 
         //Change Background Colors
         try {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.plan_layout);
-                int startColor = prefs.getInt("key_plan_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
-                int endColor = prefs.getInt("key_plan_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int startColor = prefs.getInt(context.getString(R.string.pref_key_plan_start_background_color), ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt(context.getString(R.string.pref_key_plan_end_background_color), ContextCompat.getColor(context, R.color.white));
                 GradientDrawable customGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -234,7 +234,7 @@ public class PlansListViewAdapter extends CursorAdapter {
 
         //Change Size of main field
         try {
-            String customSize = prefs.getString(context.getString(R.string.pref_key_plan_nameSize), "24");
+            String customSize = prefs.getString(context.getString(R.string.pref_key_plan_name_size), "24");
 
             if (useDefaults) {
                 tvName.setTextSize(24);
@@ -247,7 +247,7 @@ public class PlansListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int customColor = prefs.getInt("key_plan_nameColor", ContextCompat.getColor(context, R.color.plans_title_default));
+            int customColor = prefs.getInt(context.getString(R.string.pref_key_plan_name_color), ContextCompat.getColor(context, R.color.plans_title_default));
 
             if (useDefaults) {
                 tvName.setTextColor(ContextCompat.getColor(context, R.color.plans_title_default));
@@ -260,7 +260,7 @@ public class PlansListViewAdapter extends CursorAdapter {
         }
 
         try {
-            String defaultSize = prefs.getString(context.getString(R.string.pref_key_plan_fieldSize), "14");
+            String defaultSize = prefs.getString(context.getString(R.string.pref_key_plan_field_size), "14");
             int customSize = Integer.parseInt(defaultSize);
 
             if (useDefaults) {
@@ -292,7 +292,7 @@ public class PlansListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_plan_fieldColor", ContextCompat.getColor(context, R.color.plans_details_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_plan_details_color), ContextCompat.getColor(context, R.color.plans_details_default));
 
             if (useDefaults) {
                 tvAccount.setTextColor(ContextCompat.getColor(context, R.color.plans_details_default));
@@ -323,67 +323,67 @@ public class PlansListViewAdapter extends CursorAdapter {
         }
 
         //For User-Defined Field Visibility
-        if (useDefaults || prefs.getBoolean("checkbox_plan_nameField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_plan_name_show), true)) {
             tvName.setVisibility(View.VISIBLE);
         } else {
             tvName.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_plan_accountField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_plan_account_show), true)) {
             tvAccount.setVisibility(View.VISIBLE);
         } else {
             tvAccount.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_plan_valueField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_plan_value_show), true)) {
             tvValue.setVisibility(View.VISIBLE);
         } else {
             tvValue.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_plan_typeField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_plan_type_show), false) && !useDefaults) {
             tvType.setVisibility(View.VISIBLE);
         } else {
             tvType.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_plan_categoryField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_plan_category_show), true)) {
             tvCategory.setVisibility(View.VISIBLE);
         } else {
             tvCategory.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_plan_memoField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_plan_memo_show), false) && !useDefaults) {
             tvMemo.setVisibility(View.VISIBLE);
         } else {
             tvMemo.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_plan_offsetField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_plan_offset_show), false) && !useDefaults) {
             tvOffset.setVisibility(View.VISIBLE);
         } else {
             tvOffset.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_plan_rateField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_plan_rate_show), true)) {
             tvRate.setVisibility(View.VISIBLE);
         } else {
             tvRate.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_plan_nextField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_plan_next_show), true)) {
             tvNext.setVisibility(View.VISIBLE);
         } else {
             tvNext.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_plan_scheduledField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_plan_scheduled_show), false) && !useDefaults) {
             tvScheduled.setVisibility(View.VISIBLE);
         } else {
             tvScheduled.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_plan_clearedField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_plan_cleared_show), false) && !useDefaults) {
             tvCleared.setVisibility(View.VISIBLE);
         } else {
             tvCleared.setVisibility(View.GONE);

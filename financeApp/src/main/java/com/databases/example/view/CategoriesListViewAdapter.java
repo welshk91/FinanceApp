@@ -74,7 +74,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_category", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_category_default_appearance), true);
 
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -94,8 +94,8 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.category_layout);
-                int startColor = prefs.getInt("key_category_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
-                int endColor = prefs.getInt("key_category_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int startColor = prefs.getInt(context.getString(R.string.pref_key_category_start_background_color), ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt(context.getString(R.string.pref_key_category_end_background_color), ContextCompat.getColor(context, R.color.white));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -109,7 +109,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
         //Change Size/Color of main field
         try {
-            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_category_nameSize), "24");
+            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_category_name_size), "24");
 
             if (useDefaults) {
                 viewHolder.tvName.setTextSize(24);
@@ -122,7 +122,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_category_nameColor", ContextCompat.getColor(context, R.color.categories_main_category_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_category_name_color), ContextCompat.getColor(context, R.color.categories_main_category_default));
 
             if (useDefaults) {
                 viewHolder.tvName.setTextColor(ContextCompat.getColor(context, R.color.categories_main_category_default));
@@ -144,14 +144,14 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         //Log.d("getGroupView", "Found Category: " + itemName);
 
         //For User-Defined Field Visibility
-        if (useDefaults || prefs.getBoolean("checkbox_category_nameField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_category_name_show), true)) {
             viewHolder.tvName.setVisibility(View.VISIBLE);
             viewHolder.tvName.setText(itemName);
         } else {
             viewHolder.tvName.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_category_noteField", false) && !useDefaults && itemNote != null) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_category_note_show), false) && !useDefaults && itemNote != null) {
             viewHolder.tvNote.setVisibility(View.VISIBLE);
             viewHolder.tvNote.setText(itemNote);
         } else {
@@ -190,7 +190,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_subcategory", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_subcategory_default_appearance), true);
 
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -210,8 +210,8 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.subcategory_item_layout);
-                int startColor = prefs.getInt("key_subcategory_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
-                int endColor = prefs.getInt("key_subcategory_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int startColor = prefs.getInt(context.getString(R.string.pref_key_subcategory_start_background_color), ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt(context.getString(R.string.pref_key_subcategory_end_background_color), ContextCompat.getColor(context, R.color.white));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -223,7 +223,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 
         //Change Size/color of main field
         try {
-            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_subcategory_nameSize), "24");
+            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_subcategory_name_size), "24");
 
             if (useDefaults) {
                 viewHolder.tvName.setTextSize(24);
@@ -236,7 +236,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_subcategory_nameColor", ContextCompat.getColor(context, R.color.categories_subcategory_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_subcategory_name_color), ContextCompat.getColor(context, R.color.categories_subcategory_default));
 
             if (useDefaults) {
                 viewHolder.tvName.setTextColor(ContextCompat.getColor(context, R.color.categories_subcategory_default));
@@ -259,13 +259,13 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         String itemNote = user.getString(NoteColumn);
         //Log.d("getChildView", "Found SubCategory: " + itemSubname);
 
-        if (useDefaults || prefs.getBoolean("checkbox_subcategory_nameField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_subcategory_name_show), true)) {
             viewHolder.tvName.setVisibility(View.VISIBLE);
             viewHolder.tvName.setText(itemSubname);
         } else {
             viewHolder.tvName.setVisibility(View.GONE);
         }
-        if (prefs.getBoolean("checkbox_subcategory_noteField", false) && !useDefaults && itemNote != null) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_subcategory_note_show), false) && !useDefaults && itemNote != null) {
             viewHolder.tvNote.setVisibility(View.VISIBLE);
             viewHolder.tvNote.setText(itemNote);
         } else {

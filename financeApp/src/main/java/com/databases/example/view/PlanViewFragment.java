@@ -71,7 +71,7 @@ public class PlanViewFragment extends DialogFragment {
         final View planStatsView = li.inflate(R.layout.plan_item, null);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+        final boolean useDefaults = prefs.getBoolean(getString(R.string.pref_key_account_default_appearance), true);
 
         final Locale locale = getResources().getConfiguration().locale;
         final Money value = new Money(entry_value);

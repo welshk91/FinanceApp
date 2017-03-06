@@ -42,7 +42,7 @@ public class CardsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(false);
-    }// end onCreate
+    }
 
     @Override
     public void onResume() {
@@ -68,7 +68,6 @@ public class CardsFragment extends Fragment {
 
         dealCardsCheckbook(mCardView);
         dealCardsPlans(mCardView);
-        //dealCardsStatistics(mCardView);
 
         accountChanged = false;
         planChanged = false;
@@ -95,11 +94,6 @@ public class CardsFragment extends Fragment {
         runner.execute(planCursor);
     }
 
-    public void dealCardsStatistics(CardUI view) {
-        //CardTask runner = new CardTask();
-        //runner.execute("Statistics",view);
-    }
-
     private class CardTaskAccounts extends AsyncTask<Object, Void, ArrayList<Card>> {
 
         @Override
@@ -113,7 +107,7 @@ public class CardsFragment extends Fragment {
             String account_balance;
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final boolean onlyOverdrawn = prefs.getBoolean("checkbox_card_accountOnlyOverdrawn", false);
+            final boolean onlyOverdrawn = prefs.getBoolean(getString(R.string.pref_key_cards_show_only_overdrawn), false);
 
             String title;
             String description;
@@ -130,11 +124,11 @@ public class CardsFragment extends Fragment {
                 //Determine if Account health is good or not
                 if (Float.parseFloat(account_balance) >= 0 && !onlyOverdrawn) {
                     title = account_name;
-                    description = "This account is doing well.";
+                    description = getString(R.string.card_positive_account);
                     color = "#4ac925";
                 } else if (Float.parseFloat(account_balance) < 0) {
                     title = account_name;
-                    description = "This account is overdrawn.";
+                    description = getString(R.string.card_negative_account);
                     color = "#e00707";
                 }
 
@@ -150,7 +144,7 @@ public class CardsFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Card> result) {
             CardStack stackCheckbook = new CardStack();
-            stackCheckbook.setTitle("CHECKBOOK");
+            stackCheckbook.setTitle(getString(R.string.checkbook).toUpperCase());
             mCardView.addStack(stackCheckbook);
             int count = 0;
 
@@ -165,8 +159,8 @@ public class CardsFragment extends Fragment {
             }
 
             if (count == 0) {
-                String title = "No AccountsFragment";
-                String description = "No AccountsFragment created yet";
+                String title = getString(R.string.card_no_accounts);
+                String description = getString(R.string.card_no_accounts_created);
                 mCardView.addCard(new MyCard(title, description));
             }
 
@@ -190,7 +184,7 @@ public class CardsFragment extends Fragment {
             String transaction_cleared;
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final int daysRecent = Integer.parseInt(prefs.getString("pref_key_card_transactionDaysRecent", "5"));
+            final int daysRecent = Integer.parseInt(prefs.getString(getString(R.string.pref_key_cards_recent_transactions), "5"));
 
             String title;
             String description;
@@ -222,7 +216,7 @@ public class CardsFragment extends Fragment {
                 //Uncleared transactions
                 if (!Boolean.parseBoolean(transaction_cleared)) {
                     title = transaction_name;
-                    description = "This transaction has not been cleared.";
+                    description = getString(R.string.card_transaction_not_cleared);
                     color = "#f2a400";
                 }
 
@@ -233,13 +227,13 @@ public class CardsFragment extends Fragment {
 
                     switch (new BigDecimal(difference).intValueExact()) {
                         case 0:
-                            description = "This transaction occured today.";
+                            description = getString(R.string.cards_transaction_occurred_today);
                             break;
                         case 1:
-                            description = "This transaction occured yesterday.";
+                            description = getString(R.string.cards_transaction_occurred_yesterday);
                             break;
                         default:
-                            description = "This transaction occured " + difference + " days ago";
+                            description = getString(R.string.cards_transaction_occurred_num_days, difference);
                             break;
                     }
 
@@ -269,8 +263,8 @@ public class CardsFragment extends Fragment {
             }
 
             if (count == 0) {
-                String title = "No TransactionsFragment";
-                String description = "No TransactionsFragment have occured recently";
+                String title = getString(R.string.no_transactions);
+                String description = getString(R.string.no_transaction_have_occurred_recently);
                 mCardView.addCard(new MyCard(title, description));
             }
 
@@ -304,7 +298,7 @@ public class CardsFragment extends Fragment {
             final int plan_scheduled_column = cursor.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final int lookAhead = Integer.parseInt(prefs.getString("pref_key_card_planLookAhead", "5"));
+            final int lookAhead = Integer.parseInt(prefs.getString(getString(R.string.pref_key_cards_plan_look_ahead), "5"));
 
             while (cursor.moveToNext() && !isCancelled()) {
                 title = "";
@@ -355,15 +349,15 @@ public class CardsFragment extends Fragment {
                     color = "#33b6ea";
 
                     if (difference == 0) {
-                        description = "This planned transaction occured today";
+                        description = getString(R.string.planned_transaction_occurred_today);
                     } else if (difference == 1) {
-                        description = "This planned transaction occured yesterday";
+                        description = getString(R.string.planned_transaction_occurred_yesterday);
                     } else if (difference == -1) {
-                        description = "This planned transaction is coming up tomorrow";
+                        description = getString(R.string.planned_transaction_tomorrow);
                     } else if (difference < -1) {
-                        description = "This planned transaction occured recently";
+                        description = getString(R.string.planned_transaction_occurred_recently);
                     } else if (difference > 1) {
-                        description = "This planned transaction is coming up";
+                        description = getString(R.string.planned_transaction_soon);
                     }
                 }
 
@@ -380,7 +374,7 @@ public class CardsFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Card> result) {
             CardStack stackPlans = new CardStack();
-            stackPlans.setTitle("PLANS");
+            stackPlans.setTitle(getString(R.string.plans).toUpperCase());
             mCardView.addStack(stackPlans);
             int count = 0;
 
@@ -395,8 +389,8 @@ public class CardsFragment extends Fragment {
             }
 
             if (count == 0) {
-                String title = "No PlansActivity";
-                String description = "No PlansActivity are coming up";
+                String title = getString(R.string.no_plans);
+                String description = getString(R.string.no_plans_soon);
                 mCardView.addCard(new MyCard(title, description));
             }
 

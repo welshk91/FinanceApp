@@ -28,12 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
     private Drawer drawer;
 
+    private final String CARDS_TAG = "cards_tag";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
+        boolean lockEnabled = prefs.getBoolean(getString(R.string.pref_key_lock_enabled), false);
 
         if (lockEnabled) {
             confirmPattern();
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         CardsFragment cards_frag = new CardsFragment();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.card_frame, cards_frag, "cards_tag").commit();
+                .replace(R.id.card_frame, cards_frag, CARDS_TAG).commit();
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case LockPatternActivity.RESULT_FORGOT_PATTERN:
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                        boolean lockEnabled = prefs.getBoolean("checkbox_lock_enabled", false);
+                        boolean lockEnabled = prefs.getBoolean(getString(R.string.pref_key_lock_enabled), false);
 
                         if (!lockEnabled) {
                             Toast.makeText(MainActivity.this, "Sign In\nReset", Toast.LENGTH_SHORT).show();

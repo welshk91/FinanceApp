@@ -71,7 +71,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_transaction_default_appearance), true);
 
         if (cursor != null) {
             TextView tvName = (TextView) view.findViewById(R.id.transaction_name);
@@ -154,39 +154,39 @@ public class TransactionsListViewAdapter extends CursorAdapter {
             }
 
             if (value != null) {
-                tvValue.setText("Value: " + value.getNumberFormat(locale));
+                tvValue.setText(context.getString(R.string.value) + " " + value.getNumberFormat(locale));
             }
 
             if (type != null) {
-                tvType.setText("Type: " + type);
+                tvType.setText(context.getString(R.string.type) + " " + type);
             }
 
             if (category != null) {
-                tvCategory.setText("Category: " + category);
+                tvCategory.setText(context.getString(R.string.category) + " " + category);
             }
 
             if (checknum != null) {
-                tvChecknum.setText("Check Num: " + checknum);
+                tvChecknum.setText(context.getString(R.string.checknum) + " " + checknum);
             }
 
             if (memo != null) {
-                tvMemo.setText("Memo: " + memo);
+                tvMemo.setText(context.getString(R.string.memo) + " " + memo);
             }
 
             if (date != null) {
                 DateTime d = new DateTime();
                 d.setStringSQL(date);
-                tvDate.setText("Date: " + d.getReadableDate());
+                tvDate.setText(context.getString(R.string.date) + " " + d.getReadableDate());
             }
 
             if (time != null) {
                 DateTime t = new DateTime();
                 t.setStringSQL(time);
-                tvTime.setText("Time: " + t.getReadableTime());
+                tvTime.setText(context.getString(R.string.time) + " " + t.getReadableTime());
             }
 
             if (cleared != null) {
-                tvCleared.setText("Cleared: " + cleared);
+                tvCleared.setText(context.getString(R.string.cleared) + " " + cleared);
             }
 
             view.setBackgroundColor(mSelectedItemsIds.get(cursor.getPosition()) ? 0x9934B5E4 : Color.TRANSPARENT);
@@ -211,13 +211,13 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         TextView tvCleared = (TextView) v.findViewById(R.id.transaction_cleared);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_transaction", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_transaction_default_appearance), true);
 
         //Change Background Colors
         try {
             if (!useDefaults) {
-                int startColor = prefs.getInt("key_transaction_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
-                int endColor = prefs.getInt("key_transaction_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int startColor = prefs.getInt(context.getString(R.string.pref_key_transaction_start_background_color), ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt(context.getString(R.string.pref_key_transaction_end_background_color), ContextCompat.getColor(context, R.color.white));
 
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
@@ -229,7 +229,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_transaction_nameSize), "24");
+            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_transaction_name_size), "24");
 
             if (useDefaults) {
                 tvName.setTextSize(24);
@@ -242,7 +242,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_transaction_nameColor", ContextCompat.getColor(context, R.color.transaction_title_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_transaction_name_color), ContextCompat.getColor(context, R.color.transaction_title_default));
 
             if (useDefaults) {
                 tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_title_default));
@@ -255,7 +255,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_transaction_fieldSize), "14");
+            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_transaction_field_size), "14");
 
             if (useDefaults) {
                 tvValue.setTextSize(14);
@@ -282,7 +282,7 @@ public class TransactionsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_transaction_fieldColor", ContextCompat.getColor(context, R.color.transaction_details_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_transaction_details_color), ContextCompat.getColor(context, R.color.transaction_details_default));
 
             if (useDefaults) {
                 tvValue.setTextColor(ContextCompat.getColor(context, R.color.transaction_details_default));
@@ -308,55 +308,55 @@ public class TransactionsListViewAdapter extends CursorAdapter {
             Toast.makeText(context, "Could Not Set Custom Field Size", Toast.LENGTH_SHORT).show();
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_transaction_nameField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_transaction_name_show), true)) {
             tvName.setVisibility(View.VISIBLE);
         } else {
             tvName.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_transaction_valueField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_transaction_value_show), true)) {
             tvValue.setVisibility(View.VISIBLE);
         } else {
             tvValue.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_transaction_typeField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_transaction_type_show), false) && !useDefaults) {
             tvType.setVisibility(View.VISIBLE);
         } else {
             tvType.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_transaction_categoryField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_transaction_category_show), true)) {
             tvCategory.setVisibility(View.VISIBLE);
         } else {
             tvCategory.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_transaction_checknumField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_transaction_checknum_show), false) && !useDefaults) {
             tvChecknum.setVisibility(View.VISIBLE);
         } else {
             tvChecknum.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_transaction_memoField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_transaction_memo_show), false) && !useDefaults) {
             tvMemo.setVisibility(View.VISIBLE);
         } else {
             tvMemo.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_transaction_dateField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_transaction_date_show), true)) {
             tvDate.setVisibility(View.VISIBLE);
         } else {
             tvDate.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_transaction_timeField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_transaction_time_show), false) && !useDefaults) {
             tvTime.setVisibility(View.VISIBLE);
         } else {
             tvTime.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_transaction_clearedField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_transaction_cleared_show), false) && !useDefaults) {
             tvCleared.setVisibility(View.VISIBLE);
         } else {
             tvCleared.setVisibility(View.GONE);

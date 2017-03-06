@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:key="pref_screen_behavior">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceScreen
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:key="pref_screen_cards"
+        android:key="@string/pref_screen_cards"
         android:summary="Card options"
         android:title="Cards">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="checkbox_card_accountOnlyOverdrawn"
+            android:key="@string/pref_key_cards_show_only_overdrawn"
             android:summary="If checked, only overdrawn account cards will be shown"
             android:title="Show Only Overdrawn Accounts?" />
 
@@ -18,14 +17,14 @@
             android:defaultValue="5"
             android:digits="0123456789"
             android:inputType="number|phone"
-            android:key="pref_key_card_transactionDaysRecent"
+            android:key="@string/pref_key_cards_recent_transactions"
             android:summary="Number of days a Transaction Card is considered recent . Default is &apos;5&apos;"
             android:title="Days a Transaction Card is New" />
         <EditTextPreference
             android:defaultValue="5"
             android:digits="0123456789"
             android:inputType="number|phone"
-            android:key="pref_key_card_planLookAhead"
+            android:key="@string/pref_key_cards_plan_look_ahead"
             android:summary="Number of days to look ahead for Plan Cards . Default is &apos;5&apos;"
             android:title="Look Ahead for Plan Cards (Days);" />
     </PreferenceScreen>
@@ -33,27 +32,27 @@
     <PreferenceScreen
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:key="pref_screen_lock"
+        android:key="@string/pref_screen_lock"
         android:summary="Lockscreen options"
         android:title="Lockscreen">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="checkbox_lock_enabled"
+            android:key="@string/pref_key_lock_enabled"
             android:summary="Enable lockscreen"
             android:title="Lockscreen" />
 
         <Preference
-            android:dependency="checkbox_lock_enabled"
-            android:key="pref_setlock"
+            android:dependency="@string/pref_key_lock_enabled"
+            android:key="@string/pref_key_lock_setlock"
             android:summary="Define a pattern for your lockscreen"
             android:title="Set a Pattern" />
 
         <!--suppress AndroidDomInspection -->
         <EditTextPreference
             android:defaultValue=""
-            android:dependency="checkbox_lock_enabled"
+            android:dependency="@string/pref_key_lock_enabled"
             android:inputType="textEmailAddress"
-            android:key="pref_emergency_email"
+            android:key="@string/pref_key_lock_emergency_email"
             android:summary="Email address if you forget your pattern"
             android:title="Emergency Email Address" />
     </PreferenceScreen>
@@ -61,11 +60,11 @@
     <PreferenceScreen
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:key="pref_screen_backup"
+        android:key="@string/pref_screen_backup"
         android:summary="Backup options"
         android:title="Backup">
         <Preference
-            android:key="pref_sd"
+            android:key="@string/pref_key_backup_local_options"
             android:summary="Local Backup options"
             android:title="Local Backup Settings" />
     </PreferenceScreen>

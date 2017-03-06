@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_key_account_sort">account_sort</string>
+    <string name="pref_key_account_name_size">account_name_size</string>
+    <string name="pref_key_account_details_size">account_details_size</string>
+
+    <string name="pref_key_account_screen">pref_screen_accounts</string>
+    <string name="pref_key_account_default_appearance">account_default_appearance</string>
+    <string name="pref_key_account_start_background_color">account_start_background_color</string>
+    <string name="pref_key_account_end_background_color">account_end_background_color</string>
+    <string name="pref_key_account_name_color">account_name_color</string>
+    <string name="pref_key_account_details_color">account_details_color</string>
+    <string name="pref_key_account_name_show">account_name_show</string>
+    <string name="pref_key_account_balance_show">account_balance_show</string>
+    <string name="pref_key_account_date_show">account_date_show</string>
+    <string name="pref_key_account_time_show">account_time_show</string>
+
+    <string-array name="pref_account_listOptions">
+        <item>Name</item>
+        <item>Balance</item>
+        <item>Time</item>
+        <item>Date</item>
+    </string-array>
+    <string-array name="pref_account_listValues">
+        <item>List Value Name</item>
+        <item>List Value Balance</item>
+        <item>List Value Time</item>
+        <item>List Value Date</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_key_category_name_size">category_name_size</string>
+    <string name="pref_key_category_field_size">category_field_size</string>
+
+    <string name="pref_key_category_screen">pref_screen_category</string>
+    <string name="pref_key_category_default_appearance">category_default_appearance</string>
+    <string name="pref_key_category_start_background_color">category_startBackgroundColor</string>
+    <string name="pref_key_category_end_background_color">category_endBackgroundColor</string>
+
+    <string name="pref_key_category_name_color">category_nameColor</string>
+    <string name="pref_key_category_details_color">category_fieldColor</string>
+    <string name="pref_key_category_name_show">category_nameField</string>
+    <string name="pref_key_category_note_show">category_noteField</string>
+    <string name="pref_key_category_fields">pref_screen_category_fields</string>
+
+</resources>

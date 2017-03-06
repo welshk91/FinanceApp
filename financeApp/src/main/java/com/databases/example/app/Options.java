@@ -177,7 +177,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
             prefs.registerOnSharedPreferenceChangeListener(this);
 
             //Reset Preferences
-            Preference prefReset = findPreference("pref_reset");
+            Preference prefReset = findPreference(getString(R.string.pref_key_reset));
             prefReset
                     .setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
@@ -189,7 +189,7 @@ public class Options extends PreferenceActivity implements OnSharedPreferenceCha
                     });
 
             //Clear Database
-            Preference prefClearDB = findPreference("pref_clear_database");
+            Preference prefClearDB = findPreference(getString(R.string.pref_key_clear_database));
             prefClearDB
                     .setOnPreferenceClickListener(new OnPreferenceClickListener() {
 

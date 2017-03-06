@@ -3,13 +3,13 @@
     <PreferenceScreen
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:key="pref_screen_accounts"
+        android:key="@string/pref_key_account_screen"
         android:summary="Change appearance of accounts"
         android:title="Account Appearance">
         <CheckBoxPreference
             android:defaultValue="true"
             android:disableDependentsState="true"
-            android:key="checkbox_default_appearance_account"
+            android:key="@string/pref_key_account_default_appearance"
             android:summary="Use Default Values instead of User-Defined Ones"
             android:title="Use Default Values" />
 
@@ -19,15 +19,15 @@
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-1"
-                android:dependency="checkbox_default_appearance_account"
-                android:key="key_account_startBackgroundColor"
+                android:dependency="@string/pref_key_account_default_appearance"
+                android:key="@string/pref_key_account_start_background_color"
                 android:summary="Starting background color of each account row."
                 android:title="Background Starting Color" />
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-1"
-                android:dependency="checkbox_default_appearance_account"
-                android:key="key_account_endBackgroundColor"
+                android:dependency="@string/pref_key_account_default_appearance"
+                android:key="@string/pref_key_account_end_background_color"
                 android:summary="Ending background color of each account row."
                 android:title="Background Ending Color" />
         </PreferenceCategory>
@@ -37,35 +37,35 @@
             android:title="Fonts">
             <EditTextPreference
                 android:defaultValue="24"
-                android:dependency="checkbox_default_appearance_account"
+                android:dependency="@string/pref_key_account_default_appearance"
                 android:digits="0123456789"
                 android:inputType="number|phone"
-                android:key="@string/pref_key_account_nameSize"
+                android:key="@string/pref_key_account_name_size"
                 android:summary="Change the size of Name field. Default is &apos;24&apos;"
                 android:title="Size of main field" />
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-14540254"
-                android:dependency="checkbox_default_appearance_account"
-                android:key="key_account_nameColor"
+                android:dependency="@string/pref_key_account_default_appearance"
+                android:key="@string/pref_key_account_name_color"
                 android:summary="Change the color of Name field."
                 android:title="Color of main field" />
 
             <EditTextPreference
                 android:defaultValue="14"
-                android:dependency="checkbox_default_appearance_account"
+                android:dependency="@string/pref_key_account_default_appearance"
                 android:digits="0123456789"
                 android:inputType="number|phone"
-                android:key="@string/pref_key_account_fieldSize"
+                android:key="@string/pref_key_account_details_size"
                 android:summary="Change the size of secondary fields. Default is &apos;14&apos;"
                 android:title="Size of secondary fields" />
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-16777216"
-                android:dependency="checkbox_default_appearance_account"
-                android:key="key_account_fieldColor"
+                android:dependency="@string/pref_key_account_default_appearance"
+                android:key="@string/pref_key_account_details_color"
                 android:summary="Change the color of secondary fields."
                 android:title="Color of secondary fields" />
         </PreferenceCategory>
@@ -76,28 +76,28 @@
             <PreferenceScreen
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:dependency="checkbox_default_appearance_account"
+                android:dependency="@string/pref_key_account_default_appearance"
                 android:key="pref_screen_account_fields"
                 android:summary="Change fields visible for account"
                 android:title="Account Fields">
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_account_nameField"
+                    android:key="@string/pref_key_account_name_show"
                     android:summary="Name Field"
                     android:title="Name" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_account_balanceField"
+                    android:key="@string/pref_key_account_balance_show"
                     android:summary="Balance Field"
                     android:title="Balance" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_account_dateField"
+                    android:key="@string/pref_key_account_date_show"
                     android:summary="Date Field"
                     android:title="Date" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="checkbox_account_timeField"
+                    android:key="@string/pref_key_account_time_show"
                     android:summary="Time Field"
                     android:title="Time" />
             </PreferenceScreen>

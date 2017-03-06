@@ -3,11 +3,11 @@
     android:key="pref_screen_misc">
 
     <Preference
-        android:key="pref_reset"
+        android:key="@string/pref_key_reset"
         android:summary="Will reset all custom values to their defaults."
         android:title="Reset Defaults" />
     <Preference
-        android:key="pref_clear_database"
+        android:key="@string/pref_key_clear_database"
         android:summary="Will delete all the checkbook data. Use with extreme caution."
         android:title="Delete Checkbook" />
 

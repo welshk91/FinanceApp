@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_key_subcategory_name_size">subcategory_name_size</string>
+    <string name="pref_key_subcategory_field_size">subcategory_field_size</string>
+
+    <string name="pref_key_subcategory_screen">pref_screen_subcategory</string>
+    <string name="pref_key_subcategory_default_appearance">subcategory_default_appearance</string>
+    <string name="pref_key_subcategory_start_background_color">subcategory_start_background_color</string>
+    <string name="pref_key_subcategory_end_background_color">subcategory_end_background_color</string>
+
+    <string name="pref_key_subcategory_name_color">subcategory_name_color</string>
+    <string name="pref_key_subcategory_details_color">subcategory_details_color</string>
+    <string name="pref_key_subcategory_name_show">subcategory_name_show</string>
+    <string name="pref_key_subcategory_note_show">subcategory_note_show</string>
+    <string name="pref_key_subcategory_fields">pref_screen_subcategory_fields</string>
+
+</resources>

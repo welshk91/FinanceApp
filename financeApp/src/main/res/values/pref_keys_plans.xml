@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_key_plan_name_size">plan_name_size</string>
+    <string name="pref_key_plan_field_size">plan_field_size</string>
+
+    <string name="pref_key_plan_screen">pref_screen_plan</string>
+    <string name="pref_key_plan_default_appearance">plan_default_appearance</string>
+    <string name="pref_key_plan_start_background_color">plan_start_background_color</string>
+    <string name="pref_key_plan_end_background_color">plan_end_background_color</string>
+    <string name="pref_key_plan_name_color">plan_name_color</string>
+    <string name="pref_key_plan_details_color">plan_field_color</string>
+    <string name="pref_key_plan_fields">plan_fields</string>
+    <string name="pref_key_plan_name_show">plan_name_show</string>
+    <string name="pref_key_plan_account_show">plan_account_show</string>
+    <string name="pref_key_plan_value_show">plan_value_show</string>
+    <string name="pref_key_plan_type_show">plan_type_show</string>
+    <string name="pref_key_plan_category_show">plan_category_show</string>
+    <string name="pref_key_plan_memo_show">plan_memo_show</string>
+    <string name="pref_key_plan_offset_show">plan_offset_show</string>
+    <string name="pref_key_plan_rate_show">plan_rate_show</string>
+    <string name="pref_key_plan_next_show">plan_next_show</string>
+    <string name="pref_key_plan_scheduled_show">plan_scheduled_show</string>
+    <string name="pref_key_plan_cleared_show">plan_cleared_show</string>
+
+</resources>

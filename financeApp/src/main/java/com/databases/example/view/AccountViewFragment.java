@@ -58,7 +58,7 @@ public class AccountViewFragment extends DialogFragment {
         final View accountStatsView = li.inflate(R.layout.account_item, null);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+        final boolean useDefaults = prefs.getBoolean(getString(R.string.pref_key_account_default_appearance), true);
 
         final Locale locale = getResources().getConfiguration().locale;
         final Money balance = new Money(entry_balance);

@@ -78,7 +78,10 @@
 
     <color name="drawer_background">@color/google_white</color>
     <color name="drawer_text_color">@color/grey</color>
+
     <color name="card_title_default">#33B6EA</color>
+    <color name="card_account_positive_default">#4ac925</color>
+    <color name="card_account_negative_default">#e00707</color>
 
     <color name="account_title_default">@color/text_darker</color>
     <color name="account_details_default">@color/text_darkest</color>

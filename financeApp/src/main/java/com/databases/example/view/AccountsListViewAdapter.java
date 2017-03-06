@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_account_default_appearance), true);
 
         if (user != null) {
             TextView tvName = (TextView) view.findViewById(R.id.account_name);
@@ -105,6 +106,8 @@ public class AccountsListViewAdapter extends CursorAdapter {
                 }
 
             } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), "Error setting custom gradient");
+                e.printStackTrace();
                 Toast.makeText(context, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
             }
 
@@ -113,19 +116,19 @@ public class AccountsListViewAdapter extends CursorAdapter {
             }
 
             if (balance != null) {
-                tvBalance.setText("Balance: " + balance.getNumberFormat(locale));
+                tvBalance.setText(context.getString(R.string.balance) + " " + balance.getNumberFormat(locale));
             }
 
             if (date != null) {
                 DateTime d = new DateTime();
                 d.setStringSQL(date);
-                tvDate.setText("Date: " + d.getReadableDate());
+                tvDate.setText(context.getString(R.string.date) + " " + d.getReadableDate());
             }
 
             if (time != null) {
                 DateTime t = new DateTime();
                 t.setStringSQL(time);
-                tvTime.setText("Time: " + t.getReadableTime());
+                tvTime.setText(context.getString(R.string.time) + " " + t.getReadableTime());
             }
 
             if (user.getPosition() == AccountsFragment.currentAccount && AccountsFragment.mActionMode == null) {
@@ -151,15 +154,15 @@ public class AccountsListViewAdapter extends CursorAdapter {
 
         //For Custom View Properties
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean useDefaults = prefs.getBoolean("checkbox_default_appearance_account", true);
+        boolean useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_account_default_appearance), true);
 
         //Change Background Colors
         try {
             if (!useDefaults) {
                 LinearLayout l;
                 l = (LinearLayout) v.findViewById(R.id.account_layout);
-                int startColor = prefs.getInt("key_account_startBackgroundColor", ContextCompat.getColor(context, R.color.white));
-                int endColor = prefs.getInt("key_account_endBackgroundColor", ContextCompat.getColor(context, R.color.white));
+                int startColor = prefs.getInt(context.getString(R.string.pref_key_account_start_background_color), ContextCompat.getColor(context, R.color.white));
+                int endColor = prefs.getInt(context.getString(R.string.pref_key_account_end_background_color), ContextCompat.getColor(context, R.color.white));
                 GradientDrawable defaultGradient = new GradientDrawable(
                         GradientDrawable.Orientation.BOTTOM_TOP,
                         new int[]{startColor, endColor});
@@ -171,7 +174,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
 
         //Change Size of main field
         try {
-            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_nameSize), "24");
+            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_name_size), "24");
 
             if (useDefaults) {
                 tvName.setTextSize(24);
@@ -184,7 +187,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_account_nameColor", ContextCompat.getColor(context, R.color.account_title_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_account_name_color), ContextCompat.getColor(context, R.color.account_title_default));
 
             if (useDefaults) {
                 tvName.setTextColor(ContextCompat.getColor(context, R.color.account_title_default));
@@ -197,7 +200,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_fieldSize), "14");
+            String DefaultSize = prefs.getString(context.getString(R.string.pref_key_account_details_size), "14");
 
             if (useDefaults) {
                 tvBalance.setTextSize(14);
@@ -214,7 +217,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
         }
 
         try {
-            int DefaultColor = prefs.getInt("key_account_fieldColor", ContextCompat.getColor(context, R.color.account_details_default));
+            int DefaultColor = prefs.getInt(context.getString(R.string.pref_key_account_details_color), ContextCompat.getColor(context, R.color.account_details_default));
 
             if (useDefaults) {
                 tvBalance.setTextColor(ContextCompat.getColor(context, R.color.account_details_default));
@@ -231,25 +234,25 @@ public class AccountsListViewAdapter extends CursorAdapter {
         }
 
         //For User-Defined Field Visibility
-        if (useDefaults || prefs.getBoolean("checkbox_account_nameField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_account_name_show), true)) {
             tvName.setVisibility(View.VISIBLE);
         } else {
             tvName.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_account_balanceField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_account_balance_show), true)) {
             tvBalance.setVisibility(View.VISIBLE);
         } else {
             tvBalance.setVisibility(View.GONE);
         }
 
-        if (useDefaults || prefs.getBoolean("checkbox_account_dateField", true)) {
+        if (useDefaults || prefs.getBoolean(context.getString(R.string.pref_key_account_date_show), true)) {
             tvDate.setVisibility(View.VISIBLE);
         } else {
             tvDate.setVisibility(View.GONE);
         }
 
-        if (prefs.getBoolean("checkbox_account_timeField", false) && !useDefaults) {
+        if (prefs.getBoolean(context.getString(R.string.pref_key_account_time_show), false) && !useDefaults) {
             tvTime.setVisibility(View.VISIBLE);
         } else {
             tvTime.setVisibility(View.GONE);

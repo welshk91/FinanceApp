@@ -3,13 +3,13 @@
     <PreferenceScreen
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:key="pref_screen_transactions"
+        android:key="@string/pref_key_transaction_screen"
         android:summary="Change appearance of transactions"
         android:title="Transaction Appearance">
         <CheckBoxPreference
             android:defaultValue="true"
             android:disableDependentsState="true"
-            android:key="checkbox_default_appearance_transaction"
+            android:key="@string/pref_key_transaction_default_appearance"
             android:summary="Use Default Values instead of User-Defined Ones"
             android:title="Use Default Values" />
 
@@ -19,15 +19,15 @@
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-1"
-                android:dependency="checkbox_default_appearance_transaction"
-                android:key="key_transaction_startBackgroundColor"
+                android:dependency="@string/pref_key_transaction_default_appearance"
+                android:key="@string/pref_key_transaction_start_background_color"
                 android:summary="Starting background color of each transaction row."
                 android:title="Background Starting Color" />
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-1"
-                android:dependency="checkbox_default_appearance_transaction"
-                android:key="key_transaction_endBackgroundColor"
+                android:dependency="@string/pref_key_transaction_default_appearance"
+                android:key="@string/pref_key_transaction_end_background_color"
                 android:summary="Ending background color of each transaction row."
                 android:title="Background Ending Color" />
         </PreferenceCategory>
@@ -37,35 +37,35 @@
             android:title="Fonts">
             <EditTextPreference
                 android:defaultValue="24"
-                android:dependency="checkbox_default_appearance_transaction"
+                android:dependency="@string/pref_key_transaction_default_appearance"
                 android:digits="0123456789"
                 android:inputType="number|phone"
-                android:key="@string/pref_key_transaction_nameSize"
+                android:key="@string/pref_key_transaction_name_size"
                 android:summary="Change the size of Name field. Default is &apos;24&apos;"
                 android:title="Size of main field" />
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-14540254"
-                android:dependency="checkbox_default_appearance_transaction"
-                android:key="key_transaction_nameColor"
+                android:dependency="@string/pref_key_transaction_default_appearance"
+                android:key="@string/pref_key_transaction_name_color"
                 android:summary="Change the color of Name field."
                 android:title="Color of main field" />
 
             <EditTextPreference
                 android:defaultValue="14"
-                android:dependency="checkbox_default_appearance_transaction"
+                android:dependency="@string/pref_key_transaction_default_appearance"
                 android:digits="0123456789"
                 android:inputType="number|phone"
-                android:key="@string/pref_key_transaction_fieldSize"
+                android:key="@string/pref_key_transaction_field_size"
                 android:summary="Change the size of Name field. Default is &apos;14&apos;"
                 android:title="Size of secondary fields" />
 
             <net.margaritov.preference.colorpicker.ColorPickerPreference
                 alphaSlider="true"
                 android:defaultValue="-16777216"
-                android:dependency="checkbox_default_appearance_transaction"
-                android:key="key_transaction_fieldColor"
+                android:dependency="@string/pref_key_transaction_default_appearance"
+                android:key="@string/pref_key_transaction_details_color"
                 android:summary="Change the color of Name field."
                 android:title="Color of secondary fields" />
         </PreferenceCategory>
@@ -76,53 +76,53 @@
             <PreferenceScreen
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:dependency="checkbox_default_appearance_transaction"
-                android:key="pref_screen_transaction_fields"
+                android:dependency="@string/pref_key_transaction_default_appearance"
+                android:key="@string/pref_key_transaction_fields"
                 android:summary="Change fields visible for transaction"
                 android:title="Transaction Fields">
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_transaction_nameField"
+                    android:key="@string/pref_key_transaction_name_show"
                     android:summary="Name Field"
                     android:title="Name" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_transaction_valueField"
+                    android:key="@string/pref_key_transaction_value_show"
                     android:summary="Value Field"
                     android:title="Value" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="checkbox_transaction_typeField"
+                    android:key="@string/pref_key_transaction_type_show"
                     android:summary="Type Field"
                     android:title="Type" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_transaction_categoryField"
+                    android:key="@string/pref_key_transaction_category_show"
                     android:summary="Category Field"
                     android:title="Category" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="checkbox_transaction_checknumField"
+                    android:key="@string/pref_key_transaction_checknum_show"
                     android:summary="Check Number Field"
                     android:title="Check Number" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="checkbox_transaction_memoField"
+                    android:key="@string/pref_key_transaction_memo_show"
                     android:summary="Memo Field"
                     android:title="Memo" />
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="checkbox_transaction_dateField"
+                    android:key="@string/pref_key_transaction_date_show"
                     android:summary="Date Field"
                     android:title="Date" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="checkbox_transaction_timeField"
+                    android:key="@string/pref_key_transaction_time_show"
                     android:summary="Time Field"
                     android:title="Time" />
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:key="checkbox_transaction_clearedField"
+                    android:key="@string/pref_key_transaction_cleared_show"
                     android:summary="Cleared Field"
                     android:title="Cleared" />
             </PreferenceScreen>

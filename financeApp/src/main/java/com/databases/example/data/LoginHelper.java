@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.databases.example.R;
+
 import haibison.android.lockpattern.utils.AlpSettings;
 
 public class LoginHelper extends AppCompatActivity {
@@ -109,7 +111,7 @@ public class LoginHelper extends AppCompatActivity {
 
                                     //if code = pattern
                                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                                    prefs.edit().putBoolean("checkbox_lock_enabled", false).commit();
+                                    prefs.edit().putBoolean(getString(R.string.pref_key_lock_enabled), false).commit();
                                     AlpSettings.Security.setPattern(getActivity(), null);
 
                                     //else

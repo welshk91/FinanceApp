@@ -42,16 +42,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".data.LoginHelper"
+            android:name=".app.PatternRetrievalActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">/
         </activity>
         <activity
-            android:name=".app.Checkbook"
+            android:name=".app.CheckbookActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" />
         <activity
-            android:name=".app.Options"
+            android:name=".app.OptionsActivity"
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -65,7 +65,7 @@
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.databases.example.app.Options" />
+                android:value="com.databases.example.app.OptionsActivity" />
         </activity>
         <activity
             android:name=".app.CategoriesActivity"

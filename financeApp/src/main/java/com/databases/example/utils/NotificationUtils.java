@@ -14,7 +14,7 @@ public class NotificationUtils {
 
     //Method for clearing notifications if they were clicked on
     public static void clearNotifications(Context context) {
-        Log.v("Checkbook", "Clearing notifications...");
+        Log.v("CheckbookActivity", "Clearing notifications...");
         Uri uri = Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/" + 0);
         context.getContentResolver().delete(uri, null, null);
     }

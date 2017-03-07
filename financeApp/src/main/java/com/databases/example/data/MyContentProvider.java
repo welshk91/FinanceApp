@@ -12,7 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.databases.example.app.CardsFragment;
+import com.databases.example.fragments.CardsFragment;
 
 public class MyContentProvider extends ContentProvider {
     private static DatabaseHelper dh = null;

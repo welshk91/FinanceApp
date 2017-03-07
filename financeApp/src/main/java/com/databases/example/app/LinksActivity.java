@@ -30,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.view.Drawer;
 
 import java.io.File;
 
@@ -39,7 +38,7 @@ public class LinksActivity extends AppCompatActivity {
     private final static int PICKCONTACT_RESULT_CODE = 2;
 
     //NavigationDrawer
-    private Drawer drawer;
+    private DrawerActivity drawerActivity;
 
     private Intent lastLink;
     private String linkFilePath = null;
@@ -61,7 +60,7 @@ public class LinksActivity extends AppCompatActivity {
         setTitle("Attachments");
 
         //NavigationDrawer
-        drawer = new Drawer(this);
+        drawerActivity = new DrawerActivity(this);
 
     }//end onCreate
 
@@ -313,7 +312,7 @@ public class LinksActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawer.toggle();
+                drawerActivity.toggle();
                 break;
 
         }
@@ -323,13 +322,13 @@ public class LinksActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawer.getDrawerToggle().syncState();
+        drawerActivity.getDrawerToggle().syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
 }//end of LinksActivity

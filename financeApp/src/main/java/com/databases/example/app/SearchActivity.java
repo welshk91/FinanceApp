@@ -21,12 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.databases.example.R;
-import com.databases.example.view.Drawer;
+import com.databases.example.fragments.AccountsFragment;
+import com.databases.example.fragments.TransactionsFragment;
 
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
-    private Drawer drawer;
+    private DrawerActivity drawerActivity;
 
     public static final String BOOLEAN_SEARCH_KEY = "boolSearch";
     public static final String QUERY_KEY = "query";
@@ -63,7 +64,7 @@ public class SearchActivity extends AppCompatActivity {
         mTabsAdapter.notifyDataSetChanged();
 
         //NavigationDrawer
-        drawer = new Drawer(this);
+        drawerActivity = new DrawerActivity(this);
     }
 
     public static class MyPagerAdapter extends FragmentStatePagerAdapter
@@ -180,7 +181,7 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawer.toggle();
+                drawerActivity.toggle();
                 break;
         }
         return true;
@@ -189,13 +190,13 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawer.getDrawerToggle().syncState();
+        drawerActivity.getDrawerToggle().syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
 }//end SearchMain

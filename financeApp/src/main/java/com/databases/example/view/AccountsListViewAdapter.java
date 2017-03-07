@@ -18,11 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.AccountsFragment;
 import com.databases.example.data.DatabaseHelper;
-import com.databases.example.data.DateTime;
-import com.databases.example.data.Money;
+import com.databases.example.fragments.AccountsFragment;
 import com.databases.example.model.Account;
+import com.databases.example.utils.DateTime;
+import com.databases.example.utils.Money;
 
 import java.util.Locale;
 

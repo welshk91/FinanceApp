@@ -21,9 +21,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.Checkbook;
+import com.databases.example.app.CheckbookActivity;
 import com.databases.example.app.PlansActivity;
 import com.databases.example.model.Plan;
+import com.databases.example.utils.DateTime;
+import com.databases.example.utils.Money;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -40,11 +42,11 @@ public class PlanReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Log.d("PlanReceiver-onReceive", "Notified of boot");
+            Log.d(getClass().getSimpleName(), "Notified of boot");
             reschedulePlans(context);
         } else {
             String name = bundle.getString("plan_name");
-            Log.d("PlanReceiver-onReceive", "PlanReceiver received " + name);
+            Log.d(getClass().getSimpleName(), "PlanReceiver received " + name);
 
             try {
                 int plan_id = bundle.getInt(PlansActivity.PLAN_ID);
@@ -67,7 +69,7 @@ public class PlanReceiver extends BroadcastReceiver {
                 notify(context, bundle);
             } catch (Exception e) {
                 Toast.makeText(context, "There was an error somewhere \n e = " + e, Toast.LENGTH_SHORT).show();
-                Log.e("onReceive", "ERROR: " + e);
+                Log.e(getClass().getSimpleName(), "ERROR: " + e);
                 e.printStackTrace();
             }
 
@@ -109,7 +111,7 @@ public class PlanReceiver extends BroadcastReceiver {
         String plan_value = bundle.getString("plan_value");
 
         //Intent fired when notification is clicked on
-        Intent intent = new Intent(context, Checkbook.class);
+        Intent intent = new Intent(context, CheckbookActivity.class);
         intent.putExtra(FROM_NOTIFICATION_KEY, true);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -211,14 +213,14 @@ public class PlanReceiver extends BroadcastReceiver {
             test.setStringSQL(plan.offset);
             d = test.getYearMonthDay();
         } catch (java.text.ParseException e) {
-            Log.e("PlanReceiver-schedule", "Couldn't schedule " + plan.name + "\n e:" + e);
+            Log.e(getClass().getSimpleName(), "Couldn't schedule " + plan.name + "\n e:" + e);
             e.printStackTrace();
         }
 
-        Log.e("PlanReceiver-schedule", "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+        Log.e(getClass().getSimpleName(), "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
         Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
-        Log.e("PlanReceiver-schedule", "FirstRun:" + firstRun);
+        Log.e(getClass().getSimpleName(), "FirstRun:" + firstRun);
 
         Intent intent = new Intent(context, PlanReceiver.class);
         intent.putExtra(PlansActivity.PLAN_ID, plan.id);
@@ -247,14 +249,14 @@ public class PlanReceiver extends BroadcastReceiver {
         final DateTime nextRun = new DateTime();
 
         if (tokens[1].contains("Days")) {
-            Log.d("PlanReceiver-schedule", "Days");
+            Log.d(getClass().getSimpleName(), "Days");
 
             //If Starting Time is in the past, fire off next day(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
+            Log.d(getClass().getSimpleName(), "firstRun is " + firstRun);
 
             nextRun.setCalendar(firstRun);
 
@@ -271,7 +273,7 @@ public class PlanReceiver extends BroadcastReceiver {
                 firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
+            Log.d(getClass().getSimpleName(), "firstRun is " + firstRun);
 
             nextRun.setCalendar(firstRun);
 
@@ -281,7 +283,7 @@ public class PlanReceiver extends BroadcastReceiver {
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY) * 7, sender);
         } else if (tokens[1].contains("Months")) {
-            Log.d("PlanReceiver-schedule", "Months");
+            Log.d(getClass().getSimpleName(), "Months");
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(cal.getTimeInMillis());
             cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
@@ -291,7 +293,7 @@ public class PlanReceiver extends BroadcastReceiver {
                 firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("PlanReceiver-schedule", "firstRun is " + firstRun);
+            Log.d(getClass().getSimpleName(), "firstRun is " + firstRun);
 
             nextRun.setCalendar(firstRun);
 
@@ -301,7 +303,7 @@ public class PlanReceiver extends BroadcastReceiver {
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
         } else {
-            Log.e("PlanReceiver-schedule", "Could not set alarm; Something wrong with the rate");
+            Log.e(getClass().getSimpleName(), "Could not set alarm; Something wrong with the rate");
         }
 
     }

@@ -43,17 +43,16 @@ import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
-import com.databases.example.data.DateTime;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.data.PlanReceiver;
-import com.databases.example.data.PlanWizardInfo2Page;
-import com.databases.example.data.SearchWidget;
+import com.databases.example.fragments.PlanViewFragment;
 import com.databases.example.model.Plan;
-import com.databases.example.view.Drawer;
-import com.databases.example.view.PlanViewFragment;
-import com.databases.example.view.PlanWizard;
-import com.databases.example.view.PlanWizardInfo2Fragment;
+import com.databases.example.model.SearchWidget;
+import com.databases.example.utils.DateTime;
 import com.databases.example.view.PlansListViewAdapter;
+import com.databases.example.wizard.PlanWizard;
+import com.databases.example.wizard.PlanWizardInfo2Fragment;
+import com.databases.example.wizard.PlanWizardInfo2Page;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     private static final int PLAN_ACCOUNT_LOADER = 2300;
 
     //NavigationDrawer
-    private Drawer drawer;
+    private DrawerActivity drawerActivity;
 
     //Adapter for category spinner
     public static SimpleCursorAdapter categorySpinnerAdapter = null;
@@ -120,7 +119,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         setTitle(getString(R.string.plans));
 
         //NavigationDrawer
-        drawer = new Drawer(this);
+        drawerActivity = new DrawerActivity(this);
 
         ListView lvPlans = (ListView) this.findViewById(R.id.plans_list);
 
@@ -350,7 +349,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawer.toggle();
+                drawerActivity.toggle();
                 break;
 
             case ACTIONBAR_MENU_ADD_PLAN_ID:
@@ -364,7 +363,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.d(getClass().getSimpleName(), "Options changed. Requery");
+        Log.d(getClass().getSimpleName(), "OptionsActivity changed. Requery");
         //getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
         //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
     }
@@ -406,13 +405,13 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawer.getDrawerToggle().syncState();
+        drawerActivity.getDrawerToggle().syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
     @Override

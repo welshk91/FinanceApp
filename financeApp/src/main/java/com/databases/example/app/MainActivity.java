@@ -18,15 +18,15 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.SearchWidget;
-import com.databases.example.view.Drawer;
+import com.databases.example.fragments.CardsFragment;
+import com.databases.example.model.SearchWidget;
 
 import haibison.android.lockpattern.LockPatternActivity;
 import haibison.android.lockpattern.utils.AlpSettings;
 
 public class MainActivity extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
-    private Drawer drawer;
+    private DrawerActivity drawerActivity;
 
     private final String CARDS_TAG = "cards_tag";
 
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
-        drawer = new Drawer(this);
+        drawerActivity = new DrawerActivity(this);
 
     }// end onCreate
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawer.toggle();
+                drawerActivity.toggle();
                 break;
         }
         return true;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             //Log.d("MainActivity", "getPattern="+String.valueOf(Settings.Security.getPattern(this)));
 
             Intent intent = new Intent(LockPatternActivity.ACTION_COMPARE_PATTERN, null, MainActivity.this, LockPatternActivity.class);
-            //Intent intentForget = new Intent(this, LoginHelper.class);
+            //Intent intentForget = new Intent(this, PatternRetrievalActivity.class);
             //intent.putExtra(LockPatternActivity.EXTRA_INTENT_ACTIVITY_FORGOT_PATTERN, intentForget);
             startActivityForResult(intent, LOCKSCREEN_SIGNIN);
         } else {
@@ -129,13 +129,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawer.getDrawerToggle().syncState();
+        drawerActivity.getDrawerToggle().syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
 }// end MainActivity

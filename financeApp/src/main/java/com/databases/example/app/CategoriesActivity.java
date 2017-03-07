@@ -30,12 +30,11 @@ import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
-import com.databases.example.data.SearchWidget;
+import com.databases.example.fragments.CategoryAddFragment;
+import com.databases.example.fragments.CategoryEditFragment;
+import com.databases.example.fragments.CategoryViewFragment;
+import com.databases.example.model.SearchWidget;
 import com.databases.example.view.CategoriesListViewAdapter;
-import com.databases.example.view.CategoryAddFragment;
-import com.databases.example.view.CategoryEditFragment;
-import com.databases.example.view.CategoryViewFragment;
-import com.databases.example.view.Drawer;
 
 import java.util.ArrayList;
 
@@ -44,7 +43,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     public static final int SUBCATEGORIES_LOADER = 867;
 
     //NavigationDrawer
-    private Drawer drawer;
+    private DrawerActivity drawerActivity;
 
     public static CategoriesListViewAdapter adapterCategory = null;
 
@@ -71,7 +70,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         setTitle("CategoriesActivity");
 
         //NavigationDrawer
-        drawer = new Drawer(this);
+        drawerActivity = new DrawerActivity(this);
 
         ExpandableListView lvCategory = (ExpandableListView) this.findViewById(R.id.category_list);
 
@@ -199,7 +198,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                drawer.toggle();
+                drawerActivity.toggle();
                 break;
 
             case R.id.account_menu_add:
@@ -289,20 +288,20 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        //Toast.makeText(this, "Options Just Changed: CategoriesActivity.Java", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "OptionsActivity Just Changed: CategoriesActivity.Java", Toast.LENGTH_SHORT).show();
         //categoryPopulate();
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawer.getDrawerToggle().syncState();
+        drawerActivity.getDrawerToggle().syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawer.getDrawerToggle().onConfigurationChanged(newConfig);
+        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
     @Override

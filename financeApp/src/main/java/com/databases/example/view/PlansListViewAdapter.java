@@ -18,10 +18,10 @@ import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
-import com.databases.example.data.DateTime;
-import com.databases.example.data.Money;
 import com.databases.example.model.Plan;
 import com.databases.example.utils.Constants;
+import com.databases.example.utils.DateTime;
+import com.databases.example.utils.Money;
 
 import java.util.Locale;
 

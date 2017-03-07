@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -16,6 +15,8 @@ import com.databases.example.app.CategoriesActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.model.Category;
+
+import timber.log.Timber;
 
 public class CategoryAddFragment extends DialogFragment {
     public static CategoryAddFragment newInstance() {
@@ -97,7 +98,7 @@ public class CategoryAddFragment extends DialogFragment {
                             }
 
                         } catch (Exception e) {
-                            Log.e(getClass().getSimpleName(), "Error adding CategoriesActivity. e = " + e);
+                            Timber.e("Error adding Categories. e = " + e);
                         }
                     }
                 })

@@ -68,6 +68,13 @@
     <string name="planned_transaction_soon">This planned transaction is coming up</string>
     <string name="no_plans">No Plans</string>
     <string name="no_plans_soon">No Plans are coming up</string>
+    <string name="local_backup">Local Backup</string>
+    <string name="categories">Categories</string>
+    <string name="attachments">Attachments</string>
+    <string name="attachment">Attachment</string>
+    <string name="appearance">Appearance</string>
+    <string name="behavior">Behavior</string>
+    <string name="misc">Misc</string>
 
     <string-array name="drawer_items">
         <item>Home</item>

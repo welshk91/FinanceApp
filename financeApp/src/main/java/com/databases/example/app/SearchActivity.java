@@ -164,7 +164,7 @@ public class SearchActivity extends AppCompatActivity {
             return (1f);
         }
 
-    }//end mypageadapter
+    }
 
     //For Menu
     @Override
@@ -199,4 +199,4 @@ public class SearchActivity extends AppCompatActivity {
         drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
-}//end SearchMain
+}

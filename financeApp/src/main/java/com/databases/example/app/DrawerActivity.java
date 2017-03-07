@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.databases.example.R;
+
+import timber.log.Timber;
 
 //An Object Class used to handle the NavigationDrawer
 public class DrawerActivity extends AppCompatActivity {
@@ -64,8 +65,7 @@ public class DrawerActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(drawerToggle);
         ((AppCompatActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
         ((AppCompatActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-    }//end constructor
+    }
 
     /* The listener for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -73,7 +73,7 @@ public class DrawerActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             switch (position) {
                 case 0:
-                    Log.d("SliderMenu", "Home Listener Fired");
+                    Timber.v("Home Listener Fired");
                     DrawerActivity.this.toggle();
                     Intent intentHome = new Intent(context, MainActivity.class);
                     intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -81,7 +81,7 @@ public class DrawerActivity extends AppCompatActivity {
                     break;
 
                 case 1:
-                    Log.d("SliderMenu", "CheckbookActivity Listener Fired");
+                    Timber.v("CheckbookActivity Listener Fired");
                     DrawerActivity.this.toggle();
                     Intent intentCheckbook = new Intent(context, CheckbookActivity.class);
                     intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -89,7 +89,7 @@ public class DrawerActivity extends AppCompatActivity {
                     break;
 
                 case 2:
-                    Log.d("SliderMenu", "CategoriesActivity Listener Fired");
+                    Timber.v("CategoriesActivity Listener Fired");
                     DrawerActivity.this.toggle();
                     Intent intentCategories = new Intent(context, CategoriesActivity.class);
                     intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -97,7 +97,7 @@ public class DrawerActivity extends AppCompatActivity {
                     break;
 
                 case 3:
-                    Log.d("SliderMenu", "PlansActivity Listener Fired");
+                    Timber.v("PlansActivity Listener Fired");
                     DrawerActivity.this.toggle();
                     Intent intentPlans = new Intent(context, PlansActivity.class);
                     intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -105,7 +105,7 @@ public class DrawerActivity extends AppCompatActivity {
                     break;
 
                 case 4:
-                    Log.d("SliderMenu", "Statistics Listener Fired");
+                    Timber.v("Statistics Listener Fired");
                     DrawerActivity.this.toggle();
                     //	Intent intentStats = new Intent(MainActivity.this, AccountsFragment.class);
                     //	startActivity(intentStats);
@@ -113,25 +113,25 @@ public class DrawerActivity extends AppCompatActivity {
                     break;
 
                 case 5:
-                    Log.d("SliderMenu", "OptionsActivity Listener Fired");
+                    Timber.v("OptionsActivity Listener Fired");
                     DrawerActivity.this.toggle();
                     Intent intentOptions = new Intent(context, OptionsActivity.class);
                     context.startActivity(intentOptions);
                     break;
 
                 case 6:
-                    Log.d("SliderMenu", "Help Listener Fired");
+                    Timber.v("Help Listener Fired");
                     DrawerActivity.this.toggle();
                     break;
 
                 case 7:
-                    Log.d("SliderMenu", "Exit Listener Fired");
+                    Timber.v("Exit Listener Fired");
                     DrawerActivity.this.toggle();
                     closeApp();
                     break;
 
                 default:
-                    Log.e("SliderMenu", "Default Listener Fired");
+                    Timber.e("Default Listener Fired");
                     break;
             }
         }
@@ -218,12 +218,11 @@ public class DrawerActivity extends AppCompatActivity {
                     break;
 
                 default:
-                    Log.e("SliderMenu", "Default Listener Fired");
+                    Timber.e("Default Listener Fired");
                     break;
             }
 
             return rowView;
         }
     }
-
-}//end class
+}

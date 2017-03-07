@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -19,6 +18,8 @@ import com.databases.example.data.PlanReceiver;
 import com.databases.example.fragments.AccountsFragment;
 import com.databases.example.fragments.TransactionsFragment;
 import com.databases.example.utils.NotificationUtils;
+
+import timber.log.Timber;
 
 public class CheckbookActivity extends AppCompatActivity {
     private DrawerActivity drawerActivity;
@@ -37,7 +38,7 @@ public class CheckbookActivity extends AppCompatActivity {
         drawerActivity = new DrawerActivity(this);
 
         if (savedInstanceState != null) {
-            Log.e("CheckbookActivity", "SavedState");
+            Timber.d("SavedState, returning...");
             return;
         }
 
@@ -69,13 +70,13 @@ public class CheckbookActivity extends AppCompatActivity {
         account_frag.setArguments(argsAccount);
 
         if (checkbook_frame == null) {
-            Log.d(getClass().getSimpleName(), "Mode:dualpane");
+            Timber.d("Mode:dual-pane");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.account_frag_frame, account_frag, AccountsFragment.ACCOUNT_FRAG_TAG)
                     .replace(R.id.transaction_frag_frame, transaction_frag, TransactionsFragment.TRANSACTION_FRAG_TAG)
                     .commit();
         } else {
-            Log.d(getClass().getSimpleName(), "Mode:singlepane");
+            Timber.d("Mode:single-pane");
             getSupportFragmentManager().beginTransaction().
                     replace(R.id.checkbook_frag_frame, account_frag, AccountsFragment.ACCOUNT_FRAG_TAG).commit();
         }
@@ -124,4 +125,4 @@ public class CheckbookActivity extends AppCompatActivity {
         drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
-}//end CheckbookActivity
+}

@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,8 @@ import com.databases.example.utils.DateTime;
 import com.databases.example.utils.Money;
 
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class AccountsListViewAdapter extends CursorAdapter {
     private SparseBooleanArray mSelectedItemsIds;
@@ -106,7 +107,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
                 }
 
             } catch (Exception e) {
-                Log.e(getClass().getSimpleName(), "Error setting custom gradient");
+                Timber.e("Error setting custom gradient");
                 e.printStackTrace();
                 Toast.makeText(context, "Could Not Set Custom gradient", Toast.LENGTH_SHORT).show();
             }

@@ -10,9 +10,10 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import com.databases.example.fragments.CardsFragment;
+
+import timber.log.Timber;
 
 public class MyContentProvider extends ContentProvider {
     private static DatabaseHelper dh = null;
@@ -172,7 +173,7 @@ public class MyContentProvider extends ContentProvider {
         switch (uriType) {
             case DATABASE_ID:
                 dh.deleteDatabase();
-                Log.d(getClass().getSimpleName(), "URI=" + ACCOUNTS_URI);
+                Timber.d("URI=" + ACCOUNTS_URI);
                 getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
                 getContext().getContentResolver().notifyChange(TRANSACTIONS_URI, null);
                 getContext().getContentResolver().notifyChange(CATEGORIES_URI, null);
@@ -265,7 +266,7 @@ public class MyContentProvider extends ContentProvider {
 
         switch (uriType) {
             case TRANSACTION_ID:
-                Log.d(getClass().getSimpleName(), "Updating transaction & account information");
+                Timber.d("Updating transaction & account information");
                 //rowsUpdated = dh.updateAccount(values,whereClause,whereArgs);
                 rowsUpdated = dh.updateTransaction(values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
@@ -273,23 +274,23 @@ public class MyContentProvider extends ContentProvider {
                 CardsFragment.transactionChanged = true;
                 break;
             case ACCOUNT_ID:
-                Log.d(getClass().getSimpleName(), "Updating account information");
+                Timber.d("Updating account information");
                 rowsUpdated = dh.updateAccount(values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 CardsFragment.accountChanged = true;
                 break;
             case CATEGORY_ID:
-                Log.d(getClass().getSimpleName(), "Updating category information");
+                Timber.d("Updating category information");
                 rowsUpdated = dh.updateCategory(values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 break;
             case SUBCATEGORY_ID:
-                Log.d(getClass().getSimpleName(), "Updating subcategory information");
+                Timber.d("Updating subcategory information");
                 rowsUpdated = dh.updateSubCategory(values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 break;
             case PLAN_ID:
-                Log.d(getClass().getSimpleName(), "Updating plan information");
+                Timber.d("Updating plan information");
                 rowsUpdated = dh.updatePlan(values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 CardsFragment.planChanged = true;
@@ -304,8 +305,8 @@ public class MyContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         // TODO Auto-generated method stub
-        Log.d(getClass().getSimpleName(), "Tried to use getType method, but I didn't do anything but return null here...");
+        Timber.d("Tried to use getType method, but I didn't do anything but return null here...");
         return null;
     }
 
-}//End MyContentProvider
+}

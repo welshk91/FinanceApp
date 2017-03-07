@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.databases.example.R;
@@ -32,6 +31,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class PlanReceiver extends BroadcastReceiver {
     private final int NOTIFICATION_ID = 0123456;
 
@@ -42,11 +43,11 @@ public class PlanReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Log.d(getClass().getSimpleName(), "Notified of boot");
+            Timber.v("Notified of boot");
             reschedulePlans(context);
         } else {
             String name = bundle.getString("plan_name");
-            Log.d(getClass().getSimpleName(), "PlanReceiver received " + name);
+            Timber.v(getClass().getSimpleName(), "PlanReceiver received " + name);
 
             try {
                 int plan_id = bundle.getInt(PlansActivity.PLAN_ID);
@@ -69,12 +70,10 @@ public class PlanReceiver extends BroadcastReceiver {
                 notify(context, bundle);
             } catch (Exception e) {
                 Toast.makeText(context, "There was an error somewhere \n e = " + e, Toast.LENGTH_SHORT).show();
-                Log.e(getClass().getSimpleName(), "ERROR: " + e);
+                Timber.e("ERROR: " + e);
                 e.printStackTrace();
             }
-
         }
-
     }
 
     //For Adding a Transaction
@@ -98,7 +97,7 @@ public class PlanReceiver extends BroadcastReceiver {
 
         //Insert values into accounts table
         context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
-    }//end of transactionAdd
+    }
 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -131,7 +130,7 @@ public class PlanReceiver extends BroadcastReceiver {
         context.getContentResolver().insert(MyContentProvider.NOTIFICATIONS_URI, notificationValues);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle("Plan " + plan_name + " Occured");
+        mBuilder.setContentTitle("Plan " + plan_name + " Occurred");
         mBuilder.setContentText(value.getNumberFormat(context.getResources().getConfiguration().locale) + " " + today.getReadableDate());
         mBuilder.setSmallIcon(R.drawable.ic_launcher);
         mBuilder.setContentIntent(contentIntent);
@@ -197,7 +196,7 @@ public class PlanReceiver extends BroadcastReceiver {
             String cleared = cursorPlans.getString(columnCleared);
 
             /****RESET ALARMS HERE****/
-            Log.d(getClass().getSimpleName(), "rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
+            Timber.d("rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
             final Plan record = new Plan(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
             schedule(record, context);
         }
@@ -213,14 +212,14 @@ public class PlanReceiver extends BroadcastReceiver {
             test.setStringSQL(plan.offset);
             d = test.getYearMonthDay();
         } catch (java.text.ParseException e) {
-            Log.e(getClass().getSimpleName(), "Couldn't schedule " + plan.name + "\n e:" + e);
+            Timber.e("Couldn't schedule " + plan.name + "\n e:" + e);
             e.printStackTrace();
         }
 
-        Log.e(getClass().getSimpleName(), "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+        Timber.d("d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
         Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
-        Log.e(getClass().getSimpleName(), "FirstRun:" + firstRun);
+        Timber.d("FirstRun:" + firstRun);
 
         Intent intent = new Intent(context, PlanReceiver.class);
         intent.putExtra(PlansActivity.PLAN_ID, plan.id);
@@ -249,14 +248,14 @@ public class PlanReceiver extends BroadcastReceiver {
         final DateTime nextRun = new DateTime();
 
         if (tokens[1].contains("Days")) {
-            Log.d(getClass().getSimpleName(), "Days");
+            Timber.v("Days");
 
             //If Starting Time is in the past, fire off next day(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d(getClass().getSimpleName(), "firstRun is " + firstRun);
+            Timber.d("firstRun is " + firstRun);
 
             nextRun.setCalendar(firstRun);
 
@@ -266,14 +265,14 @@ public class PlanReceiver extends BroadcastReceiver {
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
         } else if (tokens[1].contains("Weeks")) {
-            Log.d("PlanReceiver-schedule", "Weeks");
+            Timber.v("Weeks");
 
             //If Starting Time is in the past, fire off next week(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d(getClass().getSimpleName(), "firstRun is " + firstRun);
+            Timber.d("firstRun is " + firstRun);
 
             nextRun.setCalendar(firstRun);
 
@@ -283,7 +282,7 @@ public class PlanReceiver extends BroadcastReceiver {
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY) * 7, sender);
         } else if (tokens[1].contains("Months")) {
-            Log.d(getClass().getSimpleName(), "Months");
+            Timber.v("Months");
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(cal.getTimeInMillis());
             cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
@@ -293,7 +292,7 @@ public class PlanReceiver extends BroadcastReceiver {
                 firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d(getClass().getSimpleName(), "firstRun is " + firstRun);
+            Timber.d("firstRun is " + firstRun);
 
             nextRun.setCalendar(firstRun);
 
@@ -303,9 +302,8 @@ public class PlanReceiver extends BroadcastReceiver {
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
         } else {
-            Log.e(getClass().getSimpleName(), "Could not set alarm; Something wrong with the rate");
+            Timber.e("Could not set alarm; Something wrong with the rate");
         }
-
     }
 
-}//end of PlanReceiver
+}

@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
@@ -24,6 +23,8 @@ import com.databases.example.utils.DateTime;
 
 import java.util.Calendar;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 //Class that handles transfers fragment
 public class AccountTransferFragment extends DialogFragment {
@@ -81,13 +82,13 @@ public class AccountTransferFragment extends DialogFragment {
                                     transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
                                     transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
                                 } catch (Exception e) {
-                                    Log.e("Account-transferDialog", "No Accounts? Exception e=" + e);
+                                    Timber.e("No Accounts? Exception e=" + e);
                                     dialog.cancel();
                                     Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
-                                Log.d("Account-Transfer", "From:" + transferFrom + " To:" + transferTo + " Amount:" + transferAmount);
+                                Timber.d("From:" + transferFrom + " To:" + transferTo + " Amount:" + transferAmount);
 
                                 //Transfer From
                                 final Calendar cal = Calendar.getInstance();
@@ -108,7 +109,7 @@ public class AccountTransferFragment extends DialogFragment {
                                 try {
                                     tAmount = Float.parseFloat(transferAmount);
                                 } catch (Exception e) {
-                                    Log.e(getClass().getSimpleName(), "Invalid amount? Error e=" + e);
+                                    Timber.e("Invalid amount? Error e=" + e);
                                     return;
                                 }
 
@@ -160,7 +161,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     c.close();
 
                                 } catch (Exception e) {
-                                    Log.e(getClass().getSimpleName(), "Transfer From failed. Exception e=" + e);
+                                    Timber.e("Transfer From failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -215,7 +216,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     c.close();
 
                                 } catch (Exception e) {
-                                    Log.e(getClass().getSimpleName(), "Transfer To failed. Exception e=" + e);
+                                    Timber.e("Transfer To failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
                                 }
 
@@ -253,6 +254,6 @@ public class AccountTransferFragment extends DialogFragment {
         transferSpinnerFrom.setSelection(0);
         transferSpinnerTo.setSelection(1);
 
-    }//end of accountPopulate
+    }
 
 }

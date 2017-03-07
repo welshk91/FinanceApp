@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import timber.log.Timber;
+
 public class CardsFragment extends Fragment {
     private static CardUI mCardView;
     public static boolean accountChanged = false;
@@ -48,7 +49,7 @@ public class CardsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (accountChanged || planChanged || transactionChanged) {
-            Log.d("CardsFragment", "Refreshing CardsFragment...");
+            Timber.d("Refreshing CardsFragment...");
             mCardView.clearCards();
             dealCardsCheckbook(mCardView);
             dealCardsPlans(mCardView);
@@ -207,9 +208,9 @@ public class CardsFragment extends Fragment {
                 //Calculate difference of dates
                 try {
                     difference = (today_date.getTime() - transaction_date.getYearMonthDay().getTime()) / 86400000;
-                    Log.d("CardsFragment", transaction_name + " Difference=" + difference);
+                    Timber.d(transaction_name + " Difference=" + difference);
                 } catch (ParseException e) {
-                    Log.e("CardsFragment", "Error parsing transaction time? e=" + e);
+                    Timber.e("Error parsing transaction time? e=" + e);
                     e.printStackTrace();
                 }
 
@@ -314,7 +315,7 @@ public class CardsFragment extends Fragment {
                     test.setStringSQL(plan_offset);
                     d = test.getYearMonthDay();
                 } catch (java.text.ParseException e) {
-                    Log.e("CardsFragment", "Couldn't grab date for " + plan_name + "\n e:" + e);
+                    Timber.e("Couldn't grab date for " + plan_name + "\n e:" + e);
                 }
 
                 //Parse Rate (token 0 is amount, token 1 is type)
@@ -341,7 +342,7 @@ public class CardsFragment extends Fragment {
                 }
 
                 difference = (today_date.getTime() - firstRun.getTimeInMillis()) / 86400000;
-                Log.d("CardsFragment", plan_name + " Difference=" + difference);
+                Timber.d(plan_name + " Difference=" + difference);
 
                 //Recent plans
                 if (Math.abs(difference) < lookAhead && plan_scheduled.equals("true")) {
@@ -398,4 +399,4 @@ public class CardsFragment extends Fragment {
         }
     }
 
-}// end CardsFragment
+}

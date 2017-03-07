@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +14,8 @@ import android.widget.ListView;
 
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
+
+import timber.log.Timber;
 
 /**
  * Created by kev on 10/6/14.
@@ -88,10 +89,10 @@ public class TransactionSortDialogFragment extends DialogFragment {
                         break;
 
                     default:
-                        Log.e(getClass().getSimpleName(), "Unknown Sorting Option!");
+                        Timber.e("Unknown Sorting Option!");
                         break;
 
-                }//end switch
+                }
 
                 //Restart loader with new sort order
                 getParentFragment().getLoaderManager().restartLoader(TransactionsFragment.TRANS_LOADER, null, (TransactionsFragment) getParentFragment());

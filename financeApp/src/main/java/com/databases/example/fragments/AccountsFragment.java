@@ -20,7 +20,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -52,6 +51,8 @@ import com.databases.example.wizard.AccountWizard;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACCOUNT_FRAG_TAG = "account_frag_tag";
@@ -234,10 +235,10 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                 Bundle b = new Bundle();
                 b.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, true);
                 b.putString(SearchActivity.QUERY_KEY, query);
-                Log.v(getClass().getSimpleName(), "start search loader...");
+                Timber.v("start search loader...");
                 getLoaderManager().initLoader(ACCOUNTS_SEARCH_LOADER, b, this);
             } catch (Exception e) {
-                Log.e(getClass().getSimpleName(), "SearchActivity Failed. Error e=" + e);
+                Timber.e("SearchActivity Failed. Error e=" + e);
                 Toast.makeText(this.getActivity(), "SearchActivity Failed\n" + e, Toast.LENGTH_LONG).show();
             }
 
@@ -245,7 +246,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
         //Not A SearchActivity Fragment
         else {
-            Log.v(getClass().getSimpleName(), "start loader...");
+            Timber.v("start loader...");
             getLoaderManager().initLoader(ACCOUNTS_LOADER, bundle, this);
         }
 
@@ -350,7 +351,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (!isDetached()) {
-            Log.d(getClass().getSimpleName(), "OptionsActivity changed. Requery");
+            Timber.d("OptionsActivity changed. Requery");
             //getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
             //getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
         }
@@ -362,10 +363,10 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         String sortOrder = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getString(getString(R.string.pref_key_account_sort), null);
 
-        Log.d(getClass().getSimpleName(), "calling create loader...");
+        Timber.d("calling create loader...");
         switch (loaderID) {
             case ACCOUNTS_LOADER:
-                Log.v(getClass().getSimpleName(), "new loader created");
+                Timber.v("new loader created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
                         MyContentProvider.ACCOUNTS_URI,// Table to query
@@ -376,7 +377,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                 );
             case ACCOUNTS_SEARCH_LOADER:
                 String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
-                Log.v(getClass().getSimpleName(), "new loader (boolSearch " + query + ") created");
+                Timber.v("new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
                         (Uri.parse(MyContentProvider.ACCOUNTS_URI + "/SEARCH/" + query)),// Table to query
@@ -387,7 +388,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                 );
 
             default:
-                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
+                Timber.e("Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -399,7 +400,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         switch (loader.getId()) {
             case ACCOUNTS_LOADER:
                 adapterAccounts.swapCursor(data);
-                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 int balanceColumn = data.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
                 BigDecimal totalBalance = BigDecimal.ZERO;
@@ -417,14 +418,14 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "Error setting balance TextView. e=" + e);
+                    Timber.e("Error setting balance TextView. e=" + e);
                 }
 
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
                 adapterAccounts.swapCursor(data);
-                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
@@ -433,13 +434,13 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
                     footerTV.setText(R.string.search_results);
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "Error setting search TextView. e=" + e);
+                    Timber.e("Error setting search TextView. e=" + e);
                 }
 
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
 
@@ -453,16 +454,16 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         switch (loader.getId()) {
             case ACCOUNTS_LOADER:
                 adapterAccounts.swapCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
                 adapterAccounts.swapCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -542,7 +543,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
                 default:
                     mode.finish();
-                    Log.e(getClass().getSimpleName(), "ERROR. Clicked " + item);
+                    Timber.e("ERROR. Clicked " + item);
                     return false;
             }
         }

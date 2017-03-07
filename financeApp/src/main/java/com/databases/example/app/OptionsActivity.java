@@ -20,7 +20,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -31,6 +30,7 @@ import java.util.List;
 
 import haibison.android.lockpattern.LockPatternActivity;
 import haibison.android.lockpattern.utils.AlpSettings;
+import timber.log.Timber;
 
 public class OptionsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
     private static final int REQUEST_CREATE_PATTERN = 0;
@@ -38,7 +38,7 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("OptionsActivity");
+        setTitle(getString(R.string.options));
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             addPreferencesFromResource(R.xml.preference_appearance_accounts);
@@ -55,11 +55,11 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
             PreferenceManager.setDefaultValues(this, R.xml.preference_appearance_subcategories, false);
             PreferenceManager.setDefaultValues(this, R.xml.preference_behavior, false);
             PreferenceManager.setDefaultValues(this, R.xml.preference_misc, false);
-        }//End if Build<Honeycomb
+        }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
-    }//end onCreate
+    }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -78,7 +78,7 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
             addPreferencesFromResource(R.xml.preference_appearance_plans);
             addPreferencesFromResource(R.xml.preference_appearance_categories);
             addPreferencesFromResource(R.xml.preference_appearance_subcategories);
-            getActivity().setTitle("Appearance");
+            getActivity().setTitle(getString(R.string.appearance));
         }
 
         @Override
@@ -94,7 +94,7 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference_behavior);
-            getActivity().setTitle("Behavior");
+            getActivity().setTitle(getString(R.string.behavior));
 
             //Draw Pattern
             Preference prefDraw = findPreference("pref_setlock");
@@ -154,11 +154,12 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
                         //preferences.edit().putString("myPattern", savedPattern).commit();
                         //preferences.edit().putString("myPattern", String.valueOf(savedPattern)).commit();
                         Toast.makeText(this.getActivity(), "Saved Pattern", Toast.LENGTH_SHORT).show();
-                        Log.d("onActivityResult", "Saved a lockscreen pattern");
+                        Timber.d("Saved a lockscreen pattern");
                     } else {
                         Toast.makeText(this.getActivity(), "Could not save pattern", Toast.LENGTH_LONG).show();
-                        Log.e("onActivityResult", "Failed to save a lockscreen pattern");
+                        Timber.e("Failed to save a lockscreen pattern");
                     }
+
                     break;
             }
         }
@@ -171,7 +172,7 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference_misc);
-            getActivity().setTitle("Misc");
+            getActivity().setTitle(getString(R.string.misc));
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             prefs.registerOnSharedPreferenceChangeListener(this);
@@ -223,8 +224,7 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
 
             AlertDialog alertDialogReset = alertDialogBuilder.create();
             alertDialogReset.show();
-
-        }//end of prefsReset
+        }
 
         //Ask if user wants to delete checkbook
         public void clearDB() {
@@ -262,7 +262,7 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
             //newFragment.show(this.getActivity().getFragmentManager(), "dialogDelete");
             //newFragment.show(this.getActivity().getSupportFragmentManager(), "dialogDelete");
 
-        }//end of clearDB
+        }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -356,4 +356,4 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
     //		}
     //	}
 
-}//end of OptionsActivity
+}

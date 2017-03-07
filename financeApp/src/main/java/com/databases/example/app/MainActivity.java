@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         //NavigationDrawer
         drawerActivity = new DrawerActivity(this);
 
-    }// end onCreate
+    }
 
     //For Menu
     @Override

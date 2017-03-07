@@ -21,7 +21,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -57,6 +56,8 @@ import com.databases.example.wizard.TransactionWizard;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class TransactionsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final String TRANSACTION_FRAG_TAG = "transaction_frag_tag";
@@ -206,13 +207,13 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 account = bundle.getParcelable(AccountsFragment.ACCOUNT_ID_KEY);
             }
 
-            Log.v(getClass().getSimpleName(), "searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account);
+            Timber.v("searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account);
         }
 
         if (showAllTransactions) {
             Bundle b = new Bundle();
             b.putBoolean(SHOW_ALL_TRANSACTIONS, true);
-            Log.v(getClass().getSimpleName(), "start loader (all transactions)...");
+            Timber.v("start loader (all transactions)...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         } else if (searchFragment) {
             String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
@@ -221,10 +222,10 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 Bundle b = new Bundle();
                 b.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, true);
                 b.putString(SearchActivity.QUERY_KEY, query);
-                Log.v(getClass().getSimpleName(), "start search loader...");
+                Timber.v("start search loader...");
                 getLoaderManager().initLoader(TRANS_SEARCH_LOADER, b, this);
             } catch (Exception e) {
-                Log.e(getClass().getSimpleName(), "SearchActivity Failed. Error e=" + e);
+                Timber.e("SearchActivity Failed. Error e=" + e);
                 Toast.makeText(getActivity(), "SearchActivity Failed\n" + e, Toast.LENGTH_SHORT).show();
                 //return;
             }
@@ -232,7 +233,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         } else {
             Bundle b = new Bundle();
             b.putParcelable("aID", account);    //Not sure if we need this, "aID" doesn't seem to be used anywhere...
-            Log.v(getClass().getSimpleName(), "start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account.id + ")...");
+            Timber.v("start loader (" + DatabaseHelper.TRANS_ACCT_ID + "=" + account.id + ")...");
             getLoaderManager().initLoader(TRANS_LOADER, b, this);
         }
 
@@ -243,7 +244,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     //For Adding a Transaction
     private void transactionAdd() {
         if (account == null) {
-            Log.e("Transaction-AddDialog", "No account selected before attempting to add transaction...");
+            Timber.w("No account selected before attempting to add transaction...");
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
             alertDialogBuilder.setTitle(R.string.no_account_selected);
             alertDialogBuilder.setMessage(R.string.select_an_account);
@@ -258,7 +259,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
             TransactionWizard frag = TransactionWizard.newInstance(null);
             frag.show(getChildFragmentManager(), ADD_FRAGMENT_TAG);
         }
-    }//end of transactionAdd
+    }
 
     //For Sorting TransactionsFragment
     private void transactionSort() {
@@ -286,7 +287,6 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
             inflater.inflate(R.menu.transaction_menu, menu);
             new SearchWidget(getActivity(), (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.transaction_menu_search)));
         }
-
     }
 
     //For Menu Items
@@ -321,13 +321,13 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.e(getClass().getSimpleName(), "OptionsActivity Changed");
+        Timber.v("OptionsActivity Changed");
         if (!isDetached()) {
-            Log.e(getClass().getSimpleName(), "Transaction is attached");
+            Timber.d("Transaction is attached");
             //Toast.makeText(this.getActivity(), "Transaction is attached", Toast.LENGTH_SHORT).show();
             //populate();
         } else {
-            Log.e(getClass().getSimpleName(), "Transaction is detached");
+            Timber.d("Transaction is detached");
             //Toast.makeText(this.getActivity(), "Transaction is detached", Toast.LENGTH_SHORT).show();
         }
     }
@@ -342,7 +342,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         switch (loaderID) {
             case TRANS_LOADER:
                 if (bundle != null && bundle.getBoolean(SHOW_ALL_TRANSACTIONS)) {
-                    Log.v(getClass().getSimpleName(), "new loader (ShowAll) created");
+                    Timber.v("new loader (ShowAll) created");
                     return new CursorLoader(
                             getActivity(),    // Parent activity context
                             MyContentProvider.TRANSACTIONS_URI,// Table to query
@@ -353,7 +353,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                     );
                 } else {
                     String selection = DatabaseHelper.TRANS_ACCT_ID + "=" + account.id;
-                    Log.v(getClass().getSimpleName(), "new loader created");
+                    Timber.v("new loader created");
                     return new CursorLoader(
                             getActivity(),            // Parent activity context
                             MyContentProvider.TRANSACTIONS_URI,// Table to query
@@ -365,7 +365,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 }
             case TRANS_SEARCH_LOADER:
                 String query = getActivity().getIntent().getStringExtra(SearchActivity.QUERY_KEY);
-                Log.v(getClass().getSimpleName(), "new loader (boolSearch " + query + ") created");
+                Timber.v("new loader (boolSearch " + query + ") created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
                         (Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/SEARCH/" + query)),// Table to query
@@ -376,7 +376,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 );
 
             case TRANS_SUBCATEGORY_LOADER:
-                Log.v(getClass().getSimpleName(), "new category loader created");
+                Timber.v("new category loader created");
                 return new CursorLoader(
                         getActivity(),    // Parent activity context
                         MyContentProvider.SUBCATEGORIES_URI,// Table to query
@@ -387,7 +387,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 );
 
             default:
-                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
+                Timber.e("Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -399,7 +399,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         switch (loader.getId()) {
             case TRANS_LOADER:
                 adapterTransactions.swapCursor(data);
-                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 final int valueColumn = data.getColumnIndex(DatabaseHelper.TRANS_VALUE);
                 final int typeColumn = data.getColumnIndex(DatabaseHelper.TRANS_TYPE);
@@ -422,7 +422,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "Error setting balance TextView. e=" + e);
+                    Timber.e("Error setting balance TextView. e=" + e);
                 }
 
                 if (account != null) {
@@ -435,7 +435,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
             case TRANS_SEARCH_LOADER:
                 adapterTransactions.swapCursor(data);
-                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 try {
                     TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
@@ -444,7 +444,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
                     footerTV.setText("SearchActivity Results");
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "Error setting search TextView. e=" + e);
+                    Timber.e("Error setting search TextView. e=" + e);
                 }
                 break;
 
@@ -453,7 +453,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
 
@@ -467,21 +467,21 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         switch (loader.getId()) {
             case TRANS_LOADER:
                 adapterTransactions.swapCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case TRANS_SEARCH_LOADER:
                 adapterTransactions.swapCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case TRANS_SUBCATEGORY_LOADER:
                 adapterCategory.swapCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -555,7 +555,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
                 default:
                     mode.finish();
-                    Log.e(getClass().getSimpleName(), "ERROR. Clicked " + item);
+                    Timber.e("ERROR. Clicked " + item);
                     return false;
             }
         }

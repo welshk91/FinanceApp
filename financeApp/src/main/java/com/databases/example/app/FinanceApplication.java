@@ -7,6 +7,7 @@ import com.crashlytics.android.core.CrashlyticsCore;
 import com.databases.example.BuildConfig;
 
 import io.fabric.sdk.android.Fabric;
+import timber.log.Timber;
 
 /**
  * Created by kwelsh on 3/4/17.
@@ -23,5 +24,10 @@ public class FinanceApplication extends Application{
                 .build();
 
         Fabric.with(this, crashlyticsKit);
+
+        //Set up logging
+        if (BuildConfig.REPORT_LOGS) {
+            Timber.plant(new Timber.DebugTree());
+        }
     }
 }

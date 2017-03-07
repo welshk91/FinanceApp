@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,8 @@ import com.databases.example.model.Category;
 import com.databases.example.model.Subcategory;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
     private Cursor category;
@@ -319,7 +320,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
     }
 
     public void swapSubCategoryCursor(Cursor data) {
-        Log.e(getClass().getSimpleName(), "Cursor data=" + data + " data size=" + data.getCount());
+        Timber.v("Cursor data=" + data + " data size=" + data.getCount());
         subcategory.add(data);
     }
 

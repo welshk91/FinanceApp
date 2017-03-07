@@ -20,7 +20,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,15 +33,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-public class BackupActivity extends AppCompatActivity{
+import timber.log.Timber;
+
+public class BackupActivity extends AppCompatActivity {
     private final static String DEFAULT_BACKUP_DIR = "/WelshFinanceBackUps";
     private final static int PICKFILE_RESULT_CODE = 123;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sd);
-        setTitle("Local Backup");
+        setTitle(getString(R.string.local_backup));
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,28 +67,27 @@ public class BackupActivity extends AppCompatActivity{
             File sd = Environment.getExternalStorageDirectory();
 
             if (sd.canWrite()) {
-                Log.e(getClass().getSimpleName(), "BackupActivity can write into");
+                Timber.v("SD can write into");
 
-                try{
+                try {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("file/*");
-                    startActivityForResult(intent,PICKFILE_RESULT_CODE);
-                } catch(ActivityNotFoundException e){
-                    Log.e(getClass().getSimpleName(), "No program to handle intent? Error e=" + e);
+                    startActivityForResult(intent, PICKFILE_RESULT_CODE);
+                } catch (ActivityNotFoundException e) {
+                    Timber.e("No program to handle intent? Error e=" + e);
                     Toast.makeText(this, "Please install a file manager", Toast.LENGTH_LONG).show();
-                } catch(Exception e){
-                    Log.e(getClass().getSimpleName(), "Error e = "+e);
+                } catch (Exception e) {
+                    Timber.e("Error e = " + e);
                 }
 
-            }
-            else{
-                Log.e(getClass().getSimpleName(), "Cannot write into BackupActivity");
-                Toast.makeText(this, "No BackupActivity Card Found!", Toast.LENGTH_LONG).show();
+            } else {
+                Timber.w("Cannot write into SD");
+                Toast.makeText(this, "No SD Card Found!", Toast.LENGTH_LONG).show();
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error restoring. e="+e);
-            Toast.makeText(this, "Error restoring \n"+e, Toast.LENGTH_LONG).show();
+            Timber.e("Error restoring. e=" + e);
+            Toast.makeText(this, "Error restoring \n" + e, Toast.LENGTH_LONG).show();
         }
 
     }
@@ -127,8 +127,8 @@ public class BackupActivity extends AppCompatActivity{
             //set dialog message
             alertDialogBuilder
                     .setCancelable(true)
-                    .setPositiveButton("Backup",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
+                    .setPositiveButton("Backup", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
                             TextInputEditText backupTextBox = (TextInputEditText) categoryAddView.findViewById(R.id.backup_name);
                             String backupName = backupTextBox.getText().toString().trim();
 
@@ -141,58 +141,55 @@ public class BackupActivity extends AppCompatActivity{
                                 File sd = Environment.getExternalStorageDirectory();
 
                                 if (sd.canWrite()) {
-                                    Log.d(getClass().getSimpleName(), "BackupActivity can write into");
+                                    Timber.v("SD can write into");
 
                                     File backupDir;
 
                                     //Handle Custom Directory
-                                    if(customBackupDir.matches("")){
-                                        Log.d(getClass().getSimpleName(), "Use default directory");
-                                        backupDir = new File(sd.getAbsoluteFile()+DEFAULT_BACKUP_DIR);
+                                    if (customBackupDir.matches("")) {
+                                        Timber.d("Use default directory");
+                                        backupDir = new File(sd.getAbsoluteFile() + DEFAULT_BACKUP_DIR);
                                         backupDir.mkdir();
-                                    }
-                                    else{
-                                        Log.d(getClass().getSimpleName(), "Use custom directory");
-                                        if(!customBackupDir.startsWith("/")){
-                                            backupDir = new File(sd.getAbsoluteFile()+"/"+customBackupDir);
-                                        }
-                                        else{
-                                            backupDir = new File(sd.getAbsoluteFile()+customBackupDir);
+                                    } else {
+                                        Timber.d("Use custom directory");
+                                        if (!customBackupDir.startsWith("/")) {
+                                            backupDir = new File(sd.getAbsoluteFile() + "/" + customBackupDir);
+                                        } else {
+                                            backupDir = new File(sd.getAbsoluteFile() + customBackupDir);
                                         }
 
                                         backupDir.mkdir();
                                     }
 
                                     DatabaseHelper dh = new DatabaseHelper(getActivity());
-                                    String backupDBPath = backupDir.getAbsolutePath()+"/"+backupName;
+                                    String backupDBPath = backupDir.getAbsolutePath() + "/" + backupName;
                                     File currentDB = dh.getDatabase();
                                     File backupDB = new File(backupDBPath);
 
                                     if (currentDB.exists()) {
-                                        Log.d(getClass().getSimpleName(), "currentDB exists");
+                                        Timber.d("currentDB exists");
                                         FileChannel src = new FileInputStream(currentDB).getChannel();
                                         FileChannel dst = new FileOutputStream(backupDB).getChannel();
                                         dst.transferFrom(src, 0, src.size());
                                         src.close();
                                         dst.close();
-                                        Log.d(getClass().getSimpleName(), "Successfully backed up database to " + backupDB.getAbsolutePath());
+                                        Timber.d("Successfully backed up database to " + backupDB.getAbsolutePath());
                                         Toast.makeText(getActivity(), "Your backup\n" + backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
                                     }
-                                }
-                                else{
-                                    Log.e(getClass().getSimpleName(), "Cannot write into BackupActivity");
-                                    Toast.makeText(getActivity(), "No BackupActivity Card Found!", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Timber.e("Cannot write into SD");
+                                    Toast.makeText(getActivity(), "No SD Card Found!", Toast.LENGTH_LONG).show();
                                 }
 
                             } catch (Exception e) {
-                                Log.e(getClass().getSimpleName(), "Error backing up. e="+e);
-                                Toast.makeText(getActivity(), "Error backing up \n"+e, Toast.LENGTH_LONG).show();
+                                Timber.e("Error backing up. e=" + e);
+                                Toast.makeText(getActivity(), "Error backing up \n" + e, Toast.LENGTH_LONG).show();
                             }
 
                         }
                     })
-                    .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     });
@@ -204,11 +201,11 @@ public class BackupActivity extends AppCompatActivity{
 
     //Method called after picking a file
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PICKFILE_RESULT_CODE:
-                if(resultCode==RESULT_OK){
-                    Log.e(getClass().getSimpleName(), "OK. Picked "+ getPath(data.getData()));
+                if (resultCode == RESULT_OK) {
+                    Timber.v("OK. Picked " + getPath(data.getData()));
 
                     DatabaseHelper dh = new DatabaseHelper(this);
                     String restoreDBPath = getPath(data.getData());
@@ -216,22 +213,22 @@ public class BackupActivity extends AppCompatActivity{
                     File restoreDB = new File(restoreDBPath);
 
                     //write restore file into current database file
-                    try{
+                    try {
                         FileChannel src = new FileInputStream(restoreDB).getChannel();
                         FileChannel dst = new FileOutputStream(currentDB).getChannel();
                         dst.transferFrom(src, 0, src.size());
                         src.close();
                         dst.close();
-                        Log.e(getClass().getSimpleName(), "Successfully restored database to " + restoreDB.getAbsolutePath());
+                        Timber.d("Successfully restored database to " + restoreDB.getAbsolutePath());
                         Toast.makeText(this, "You restored from \n" + restoreDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
-                    } catch(Exception e){
-                        Log.e(getClass().getSimpleName(), "Restore failed \n" + e);
+                    } catch (Exception e) {
+                        Timber.e("Restore failed \n" + e);
                         Toast.makeText(this, "Restore failed \n" + e, Toast.LENGTH_LONG).show();
                     }
                 }
 
-                if(resultCode==RESULT_CANCELED){
-                    Log.e(getClass().getSimpleName(), "canceled");
+                if (resultCode == RESULT_CANCELED) {
+                    Timber.w("canceled");
                 }
 
                 break;
@@ -241,20 +238,19 @@ public class BackupActivity extends AppCompatActivity{
 
     //Method finds path name, both from gallery or file manager
     private String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         String linkFilePath;
 
-        if(cursor != null){
+        if (cursor != null) {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             linkFilePath = cursor.getString(column_index);
-        }
-        else{
+        } else {
             linkFilePath = uri.getPath();
         }
 
         return linkFilePath;
     }
 
-}//end of BackupActivity
+}

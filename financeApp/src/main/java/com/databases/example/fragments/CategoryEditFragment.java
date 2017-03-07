@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -19,6 +18,8 @@ import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.model.Category;
 import com.databases.example.model.Subcategory;
+
+import timber.log.Timber;
 
 public class CategoryEditFragment extends DialogFragment {
     public static CategoryEditFragment newInstance(int gPos, int cPos, int t) {
@@ -90,7 +91,7 @@ public class CategoryEditFragment extends DialogFragment {
                                 getActivity().getSupportLoaderManager().restartLoader(CategoriesActivity.CATEGORIES_LOADER, null, (CategoriesActivity) getActivity());
                             }
                         } catch (Exception e) {
-                            Log.e(getClass().getSimpleName(), "Error editing CategoriesActivity");
+                            Timber.e("Error editing Categories. e=" + e);
                         }
 
                     }

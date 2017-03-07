@@ -11,9 +11,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.File;
+
+import timber.log.Timber;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -88,7 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("DatabaseHelper-onCreate", "Creating database...");
+        Timber.d("Creating database...");
 
         String sqlCommandAccounts = "CREATE TABLE IF NOT EXISTS "
                 + TABLE_ACCOUNTS
@@ -131,12 +132,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean deleteDatabase() {
-        Log.d(getClass().getSimpleName(), "Deleting database...");
+        Timber.d("Deleting database...");
 
         try {
             return context.deleteDatabase(DATABASE_NAME);
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Couldn't delete database. Error e=" + e);
+            Timber.e("Couldn't delete database. Error e=" + e);
         }
 
         return false;
@@ -144,7 +145,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(getClass().getSimpleName(), "Upgrading database from " + oldVersion + " to " + newVersion);
+        Timber.d("Upgrading database from " + oldVersion + " to " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRANSACTIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLANS);
@@ -157,7 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //Adds some basic default categories
     private void addDefaultCategories(SQLiteDatabase db) {
-        Log.d("DatabaseHelper-onCreate", "Adding Default CategoriesActivity...");
+        Timber.d("Adding Default CategoriesActivity...");
 
         //Default
         final String sqlDefaultCategory = "INSERT INTO " + TABLE_CATEGORIES

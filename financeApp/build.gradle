@@ -30,11 +30,13 @@ android {
         def BOOLEAN = "boolean"
         def TRUE = "true"
         def FALSE = "false"
+        def REPORT_LOGS = "REPORT_LOGS"
         def REPORT_CRASHES = "REPORT_CRASHES"
         def REPORT_ANALYTICS = "REPORT_ANALYTICS"
         def SHOW_SETTINGS = "SHOW_SETTINGS"
 
         release {
+            buildConfigField BOOLEAN, REPORT_LOGS, FALSE
             buildConfigField BOOLEAN, REPORT_CRASHES, TRUE
             buildConfigField BOOLEAN, REPORT_ANALYTICS, TRUE
             buildConfigField BOOLEAN, SHOW_SETTINGS, FALSE
@@ -54,6 +56,7 @@ android {
         }
 
         debug {
+            buildConfigField BOOLEAN, REPORT_LOGS, TRUE
             buildConfigField BOOLEAN, REPORT_CRASHES, FALSE
             buildConfigField BOOLEAN, REPORT_ANALYTICS, FALSE
             buildConfigField BOOLEAN, SHOW_SETTINGS, TRUE
@@ -68,10 +71,12 @@ dependencies {
     compile 'com.android.support:support-v4:25.0.0'
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
+    compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'net.margaritov.preference.colorpicker.ColorPickerPreference:ColorPickerPreference:1.0.0'
     compile project(':cardsUILib')
     compile 'haibison.android:lockpattern:12.0.0'
     compile project(':wizardLib')
+    
     compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
         transitive = true;
     }

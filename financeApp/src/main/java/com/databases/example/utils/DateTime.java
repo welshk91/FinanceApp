@@ -4,13 +4,13 @@
 
 package com.databases.example.utils;
 
-import android.util.Log;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class DateTime {
     private Date dateSQL;
@@ -73,7 +73,7 @@ public class DateTime {
                 Date oldDate = dateSQLFormat.parse(stringSQL);
                 newDate = dateFormat.format(oldDate);
             } catch (Exception e) {
-                Log.e(getClass().getSimpleName(), "Error parsing readable date(" + stringSQL + ")!");
+                Timber.e("Error parsing readable date(" + stringSQL + ")!");
                 e.printStackTrace();
             }
             return newDate;
@@ -92,7 +92,7 @@ public class DateTime {
                 Date oldTime = timeSQLFormat.parse(stringSQL);
                 newTime = timeFormat.format(oldTime);
             } catch (Exception e) {
-                Log.e(getClass().getSimpleName(), "Error parsing readable time(" + stringSQL + ")!");
+                Timber.e("Error parsing readable time(" + stringSQL + ")!");
                 e.printStackTrace();
             }
 
@@ -113,7 +113,7 @@ public class DateTime {
                 Date oldDate = dateFormat.parse(stringReadable);
                 newDate = dateSQLFormat.format(oldDate);
             } catch (ParseException e) {
-                Log.e("DateTime-getSQLDate", "Error parsing date(" + stringReadable + ")!");
+                Timber.e("Error parsing date(" + stringReadable + ")!");
                 e.printStackTrace();
             }
 
@@ -134,7 +134,7 @@ public class DateTime {
                 Date oldTime = timeFormat.parse(stringReadable);
                 newTime = timeSQLFormat.format(oldTime);
             } catch (ParseException e) {
-                Log.e("DateTime-getSQLTime", "Error parsing date(" + stringReadable + ")!");
+                Timber.e("Error parsing date(" + stringReadable + ")!");
                 e.printStackTrace();
             }
 
@@ -146,4 +146,4 @@ public class DateTime {
         return dateSQLFormat.parse(stringSQL);
     }
 
-}//End DateTime
+}

@@ -3,9 +3,10 @@ package com.databases.example.model;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 
 import com.databases.example.app.SearchActivity;
+
+import timber.log.Timber;
 
 public class SearchWidget {
     public SearchWidget(final Context context, final SearchView abSearch) {
@@ -15,13 +16,13 @@ public class SearchWidget {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.v(getClass().getSimpleName(), "newText=" + newText);
+                Timber.v("newText=" + newText);
                 return false;
             }
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(getClass().getSimpleName(), "query=" + query);
+                Timber.d("query=" + query);
 
                 searchView.clearFocus();
                 Intent intentSearch = new Intent(context, SearchActivity.class);

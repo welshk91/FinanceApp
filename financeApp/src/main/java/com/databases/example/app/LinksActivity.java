@@ -17,7 +17,6 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +31,8 @@ import android.widget.Toast;
 import com.databases.example.R;
 
 import java.io.File;
+
+import timber.log.Timber;
 
 public class LinksActivity extends AppCompatActivity {
     private final static int PICKFILE_RESULT_CODE = 1;
@@ -57,18 +58,18 @@ public class LinksActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.links);
-        setTitle("Attachments");
+        setTitle(getString(R.string.attachments));
 
         //NavigationDrawer
         drawerActivity = new DrawerActivity(this);
 
-    }//end onCreate
+    }
 
     //Method for when you click the Add button
     public void linkAdd(View v) {
         DialogFragment newFragment = AttachDialogFragment.newInstance();
         newFragment.show(getSupportFragmentManager(), "dialogAttach");
-    }//end of linkAdd
+    }
 
     //Method for when you click the View button
     public void linkView(View v) {
@@ -86,29 +87,29 @@ public class LinksActivity extends AppCompatActivity {
             try {
                 startActivityForResult(Intent.createChooser(intent, "Open with..."), PICKFILE_RESULT_CODE);
             } catch (android.content.ActivityNotFoundException e) {
-                Log.e("LinksActivity-linkView", "No App for this type of file. Error e=" + e);
+                Timber.e("No App for this type of file. Error e=" + e);
                 Toast.makeText(this, "Could not find an app for this type of file.", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
             //Most likely caused by not picking a pile first (NullPointer)
-            Log.e("LinksActivity-linkView", "Error e=" + e);
+            Timber.e("Error e=" + e);
             Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
         }
 
-    }//end of linkView
+    }
 
     //Method for when you click the View button
     public void linkDone(View v) {
 
-        Log.e("LinksActivity-linkDone", "linkFilePath=" + linkFilePath);
-        Log.e("LinksActivity-linkDone", "AcctID=" + getIntent().getExtras().getString("AcctID"));
-        Log.e("LinksActivity-linkDone", "AcctName=" + getIntent().getExtras().getString("AcctName"));
+        Timber.v("linkFilePath=" + linkFilePath);
+        Timber.e("AcctID=" + getIntent().getExtras().getString("AcctID"));
+        Timber.e("AcctName=" + getIntent().getExtras().getString("AcctName"));
 
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
         finish();
-    }//end of linkView
+    }
 
     //Method called after picking a file
     @Override
@@ -131,16 +132,16 @@ public class LinksActivity extends AppCompatActivity {
                             image.setImageURI(lastLink.getData());
                         } catch (Exception e) {
                             //Most likely caused by not picking a file first (NullPointer)
-                            Log.e(getClass().getSimpleName(), "Error e=" + e);
+                            Timber.e("Error e=" + e);
                         }
-
                     }
+
                     break;
 
                 case PICKCONTACT_RESULT_CODE:
                     if (resultCode == RESULT_OK) {
                         getContactInfo(data);
-                        Log.e(getClass().getSimpleName(), "contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
+                        Timber.d("contact: " + contactId + " " + contactName + " " + contactPhone + " " + contactEmail);
 
                         TextView currentLink = (TextView) findViewById(R.id.view_current_link);
                         currentLink.setText("Current Attachment : " + contactName);
@@ -150,19 +151,20 @@ public class LinksActivity extends AppCompatActivity {
                         try {
                             image.setImageURI(contactPhoto);
                         } catch (Exception e) {
-                            Log.e(getClass().getSimpleName(), "Error e=" + e);
+                            Timber.e("Error e=" + e);
                         }
-
                     }
+
                     break;
 
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error e=" + e);
+            Timber.e("Error e=" + e);
             Toast.makeText(this, "Error: " + e, Toast.LENGTH_LONG).show();
         }
-    }//end of onActivityResult
+
+    }
 
     //Method finds path name, both from gallery or file manager
     private String getPath(Uri uri) {
@@ -215,7 +217,7 @@ public class LinksActivity extends AppCompatActivity {
         Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
         contactPhoto = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
-    }//end getContactInfo
+    }
 
     public static class AttachDialogFragment extends DialogFragment {
 
@@ -234,7 +236,7 @@ public class LinksActivity extends AppCompatActivity {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
             alertDialogBuilder.setView(linkChooser);
-            alertDialogBuilder.setTitle("Attachment");
+            alertDialogBuilder.setTitle(R.string.attachment);
             alertDialogBuilder
                     .setCancelable(true);
 
@@ -291,10 +293,10 @@ public class LinksActivity extends AppCompatActivity {
                     try {
                         getActivity().startActivityForResult(intent, PICKFILE_RESULT_CODE);
                     } catch (ActivityNotFoundException e) {
-                        Log.e(getClass().getSimpleName(), "Error e=" + e);
+                        Timber.e("Activity not found? Error e=" + e);
                         Toast.makeText(getActivity(), "No Program Found", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
-                        Log.e(getClass().getSimpleName(), "Error e=" + e);
+                        Timber.e("Error e=" + e);
                     }
 
                     getDialog().cancel();
@@ -331,4 +333,4 @@ public class LinksActivity extends AppCompatActivity {
         drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
-}//end of LinksActivity
+}

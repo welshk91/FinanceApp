@@ -8,6 +8,7 @@ package com.databases.example.app;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,12 +17,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.databases.example.R;
 
 import haibison.android.lockpattern.utils.AlpSettings;
+import timber.log.Timber;
 
 public class PatternRetrievalActivity extends AppCompatActivity {
     @Override
@@ -147,9 +148,9 @@ public class PatternRetrievalActivity extends AppCompatActivity {
 
             try {
                 startActivity(Intent.createChooser(i, "Send mail..."));
-                Log.d(getClass().getSimpleName(), "Successfully emailed pattern");
-            } catch (android.content.ActivityNotFoundException e) {
-                Log.e(getClass().getSimpleName(), "No Email clieant found? Error e=" + e);
+                Timber.d("Successfully emailed pattern");
+            } catch (ActivityNotFoundException e) {
+                Timber.e("No Email clieant found? Error e=" + e);
                 Toast.makeText(getParent(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
             }
 
@@ -158,7 +159,7 @@ public class PatternRetrievalActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Long result) {
-            Log.e("AsyncTask", "onPostExecute");
+            Timber.d("onPostExecute");
             //Toast.makeText(getParent(), "Finished emailing", Toast.LENGTH_SHORT).show();
         }
 

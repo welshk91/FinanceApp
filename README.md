@@ -24,8 +24,7 @@ Known Issues
 
 Things To Do
 ------------
-* Make Objects Parcelable or Serializable
-* Replace default logging system with [Timber](https://github.com/JakeWharton/timber)
+* Pass Parcelable Objects instead of all their parameters
 * Add a simple way to import test data via Options
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Move ListViews to RecyclerViews
@@ -83,6 +82,7 @@ Attachments Not Working
 
 Third-Party Libraries Used
 --------------------------
+* [Timber](https://github.com/JakeWharton/timber)
 * [Android Lock Pattern](https://bitbucket.org/haibison/android-lockpattern/overview)
 * [ColorPickerPreference](https://github.com/attenzione/android-ColorPickerPreference) by Sergey Margaritov
 * [Cards UI](https://github.com/nadavfima/cardsui-for-android) by nadavfima, [Cards UI fork](https://github.com/Androguide/cardsui-for-android) by Androguide

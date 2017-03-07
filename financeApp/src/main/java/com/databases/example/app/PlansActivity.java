@@ -6,8 +6,6 @@
 package com.databases.example.app;
 
 import android.app.AlarmManager;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -25,7 +23,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -35,7 +32,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -51,15 +47,14 @@ import com.databases.example.model.SearchWidget;
 import com.databases.example.utils.DateTime;
 import com.databases.example.view.PlansListViewAdapter;
 import com.databases.example.wizard.PlanWizard;
-import com.databases.example.wizard.PlanWizardInfo2Fragment;
-import com.databases.example.wizard.PlanWizardInfo2Page;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class PlansActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
@@ -202,13 +197,13 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
             test.setStringSQL(plan.offset);
             d = test.getYearMonthDay();
         } catch (java.text.ParseException e) {
-            Log.e("PlansActivity-schedule", "Couldn't schedule " + plan.name + "\n e:" + e);
+            Timber.e("Couldn't schedule " + plan.name + "\n e:" + e);
         }
 
-        Log.d("PlansActivity-schedule", "d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
+        Timber.d("d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
 
         Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
-        Log.d("PlansActivity-schedule", "FirstRun:" + firstRun);
+        Timber.d("FirstRun:" + firstRun);
 
         Intent intent = new Intent(this, PlanReceiver.class);
         intent.putExtra(PLAN_ID, plan.id);
@@ -234,14 +229,14 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         final DateTime nextRun = new DateTime();
 
         if (tokens[1].contains("Days")) {
-            Log.d("PlansActivity-schedule", "Days");
+            Timber.v("Days");
 
             //If Starting Time is in the past, fire off next day(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("PlansActivity-schedule", "firstRun is " + firstRun);
+            Timber.d("firstRun is " + firstRun);
             nextRun.setCalendar(firstRun);
 
             Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
@@ -252,14 +247,14 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
         } else if (tokens[1].contains("Weeks")) {
-            Log.d("PlansActivity-schedule", "Weeks");
+            Timber.v("Weeks");
 
             //If Starting Time is in the past, fire off next week(s)
             while (firstRun.before(Calendar.getInstance())) {
                 firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("PlansActivity-schedule", "firstRun is " + firstRun);
+            Timber.d("firstRun is " + firstRun);
             nextRun.setCalendar(firstRun);
 
             Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
@@ -279,7 +274,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                 firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
             }
 
-            Log.d("PlansActivity-schedule", "firstRun is " + firstRun);
+            Timber.d("firstRun is " + firstRun);
             nextRun.setCalendar(firstRun);
 
             Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
@@ -290,7 +285,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
             am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
         } else {
-            Log.e("PlansActivity-schedule", "Could not set alarm; Something wrong with the rate");
+            Timber.e("Could not set alarm; Something wrong with the rate");
         }
 
     }
@@ -318,9 +313,8 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
             am.cancel(sender);
         } catch (Exception e) {
             Toast.makeText(this, "Error canceling plan", Toast.LENGTH_SHORT).show();
-            Log.e("PlansActivity-schedule", "AlarmManager update was not canceled. " + e.toString());
+            Timber.e("AlarmManager update was not canceled. " + e.toString());
         }
-
     }
 
     //For ActionBar Menu
@@ -363,43 +357,9 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     //Used after a change in settings occurs
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.d(getClass().getSimpleName(), "OptionsActivity changed. Requery");
+        Timber.d("OptionsActivity changed. Requery");
         //getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
         //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
-    }
-
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar cal = Calendar.getInstance();
-
-            SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
-            SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
-            SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
-
-            int year = Integer.parseInt(dateFormatYear.format(cal.getTime()));
-            int month = Integer.parseInt(dateFormatMonth.format(cal.getTime())) - 1;
-            int day = Integer.parseInt(dateFormatDay.format(cal.getTime()));
-
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            DateTime date = new DateTime();
-            date.setStringSQL(year + "-" + (month + 1) + "-" + day);
-
-            if (datePicker != null) {
-                datePicker.setText(date.getReadableDate());
-            }
-
-            if (PlanWizardInfo2Fragment.mPage != null) {
-                PlanWizardInfo2Fragment.mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
-                PlanWizardInfo2Fragment.mPage.notifyDataChanged();
-            }
-        }
     }
 
     @Override
@@ -419,7 +379,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         switch (loaderID) {
             case PLAN_LOADER:
                 if (bundle != null && bundle.getBoolean(SearchActivity.BOOLEAN_SEARCH_KEY)) {
-                    //Log.v("PlansActivity-onCreateLoader","new loader (boolSearch "+ query + ") created");
+                    //Timber.v("new loader (boolSearch "+ query + ") created");
                     String query = this.getIntent().getStringExtra(SearchActivity.QUERY_KEY);
                     return new CursorLoader(
                             this,    // Parent activity context
@@ -430,7 +390,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                             null                // Default sort order
                     );
                 } else {
-                    Log.v(getClass().getSimpleName(), "new loader created");
+                    Timber.v("new loader created");
                     return new CursorLoader(
                             this,    // Parent activity context
                             MyContentProvider.PLANS_URI,// Table to query
@@ -442,7 +402,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                 }
 
             case PLAN_ACCOUNT_LOADER:
-                Log.v(getClass().getSimpleName(), "new plan loader created");
+                Timber.v("new plan loader created");
                 return new CursorLoader(
                         this,    // Parent activity context
                         MyContentProvider.ACCOUNTS_URI,// Table to query
@@ -453,7 +413,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                 );
 
             case PLAN_SUBCATEGORY_LOADER:
-                Log.v(getClass().getSimpleName(), "new category loader created");
+                Timber.v("new category loader created");
                 return new CursorLoader(
                         this,    // Parent activity context
                         MyContentProvider.SUBCATEGORIES_URI,// Table to query
@@ -464,7 +424,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                 );
 
             default:
-                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
+                Timber.e("Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -474,7 +434,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         switch (loader.getId()) {
             case PLAN_LOADER:
                 adapterPlans.swapCursor(data);
-                Log.v(getClass().getSimpleName(), "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
+                Timber.v("load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             case PLAN_ACCOUNT_LOADER:
@@ -483,7 +443,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
                 accountSpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to, 0);
                 accountSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Log.v(getClass().getSimpleName(), "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
+                Timber.v("load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             case PLAN_SUBCATEGORY_LOADER:
@@ -492,11 +452,11 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
                 categorySpinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, data, from, to, 0);
                 categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                Log.v(getClass().getSimpleName(), "load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
+                Timber.v("load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
             default:
-                Log.v(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.v("Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -506,19 +466,19 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         switch (loader.getId()) {
             case PLAN_LOADER:
                 adapterPlans.swapCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case PLAN_ACCOUNT_LOADER:
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case PLAN_SUBCATEGORY_LOADER:
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -586,7 +546,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                             Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
                             getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
 
-                            Log.d("PlansActivity", "Deleting " + record.name + " id:" + record.id);
+                            Timber.d("Deleting " + record.name + " id:" + record.id);
 
                             //Cancel all upcoming notifications
                             cancelPlan(record);
@@ -637,7 +597,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                                 }
                             } catch (Exception e) {
                                 Toast.makeText(PlansActivity.this, "Error toggling plan \n" + record.name, Toast.LENGTH_SHORT).show();
-                                Log.e("PlansActivity-schedule", "Error toggling a plan. " + e.toString());
+                                Timber.e("Error toggling a plan. " + e.toString());
                             }
                         }
                     }
@@ -647,7 +607,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
                 default:
                     mode.finish();
-                    Log.e(getClass().getSimpleName(), "ERROR. Clicked " + item);
+                    Timber.e("ERROR. Clicked " + item);
                     return false;
             }
         }
@@ -667,5 +627,4 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
         super.onDestroy();
     }
-
 }

@@ -18,7 +18,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -37,6 +36,8 @@ import com.databases.example.model.SearchWidget;
 import com.databases.example.view.CategoriesListViewAdapter;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 public class CategoriesActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final int CATEGORIES_LOADER = 8675309;
@@ -67,7 +68,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         dh = new DatabaseHelper(this);
 
         setContentView(R.layout.categories);
-        setTitle("CategoriesActivity");
+        setTitle(getString(R.string.categories));
 
         //NavigationDrawer
         drawerActivity = new DrawerActivity(this);
@@ -131,7 +132,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
 
             getContentResolver().delete(uri, DatabaseHelper.SUBCATEGORY_ID + "=" + subcategoryID, null);
 
-            Log.d(getClass().getSimpleName(), "Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
+            Timber.d("Deleting " + adapterCategory.getSubCategory(groupPos, childPos).name + " id:" + subcategoryID);
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             int categoryID = adapterCategory.getCategory(groupPos).id;
 
@@ -143,7 +144,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
             uri = Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + 0);
             getContentResolver().delete(uri, DatabaseHelper.SUBCATEGORY_CAT_ID + "=" + categoryID, null);
 
-            Log.d(getClass().getSimpleName(), "Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
+            Timber.d("Deleting " + adapterCategory.getCategory(groupPos).name + " id:" + categoryID);
         }
 
         getSupportLoaderManager().restartLoader(CATEGORIES_LOADER, null, this);
@@ -223,22 +224,22 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
             case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
                 String nameSubCategory = adapterCategory.getSubCategory(groupPos, childPos).name;
                 menu.setHeaderTitle(nameSubCategory);
-                menu.add(0, CONTEXT_MENU_SUBCATEGORY_VIEW, 1, "View");
-                menu.add(0, CONTEXT_MENU_SUBCATEGORY_EDIT, 2, "Edit");
-                menu.add(0, CONTEXT_MENU_SUBCATEGORY_DELETE, 3, "Delete");
+                menu.add(0, CONTEXT_MENU_SUBCATEGORY_VIEW, 1, getString(R.string.view));
+                menu.add(0, CONTEXT_MENU_SUBCATEGORY_EDIT, 2, getString(R.string.edit));
+                menu.add(0, CONTEXT_MENU_SUBCATEGORY_DELETE, 3, getString(R.string.delete));
                 break;
 
             case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
                 String nameCategory = adapterCategory.getCategory(groupPos).name;
-                menu.add(1, CONTEXT_MENU_CATEGORY_ADD, 0, "Add");
+                menu.add(1, CONTEXT_MENU_CATEGORY_ADD, 0, getString(R.string.add));
                 menu.setHeaderTitle(nameCategory);
-                menu.add(1, CONTEXT_MENU_CATEGORY_VIEW, 1, "View");
-                menu.add(1, CONTEXT_MENU_CATEGORY_EDIT, 2, "Edit");
-                menu.add(1, CONTEXT_MENU_CATEGORY_DELETE, 3, "Delete");
+                menu.add(1, CONTEXT_MENU_CATEGORY_VIEW, 1, getString(R.string.view));
+                menu.add(1, CONTEXT_MENU_CATEGORY_EDIT, 2, getString(R.string.edit));
+                menu.add(1, CONTEXT_MENU_CATEGORY_DELETE, 3, getString(R.string.delete));
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Context Menu type is not child or group");
+                Timber.e("Context Menu type is not child or group");
                 break;
         }
 
@@ -278,7 +279,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
                 return true;
 
             default:
-                Log.e(getClass().getSimpleName(), "Context Menu type is not child or group");
+                Timber.e("Context Menu type is not child or group");
                 break;
         }
 
@@ -306,10 +307,10 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
-        Log.d(getClass().getSimpleName(), "calling create loader...");
+        Timber.v("calling create loader...");
         switch (loaderID) {
             case CATEGORIES_LOADER:
-                Log.v(getClass().getSimpleName(), "new category loader created");
+                Timber.v("new category loader created");
                 return new CursorLoader(
                         this,    // Parent activity context
                         MyContentProvider.CATEGORIES_URI,// Table to query
@@ -320,7 +321,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
                 );
 
             case SUBCATEGORIES_LOADER:
-                Log.v(getClass().getSimpleName(), "new subcategory loader created");
+                Timber.v("new subcategory loader created");
                 String selection = DatabaseHelper.SUBCATEGORY_CAT_ID + "=" + bundle.getString("id");
                 return new CursorLoader(
                         this,    // Parent activity context
@@ -332,7 +333,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
                 );
 
             default:
-                Log.e(getClass().getSimpleName(), "Not a valid CursorLoader ID");
+                Timber.e("Not a valid CursorLoader ID");
                 return null;
         }
     }
@@ -342,7 +343,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         switch (loader.getId()) {
             case CATEGORIES_LOADER:
                 adapterCategory.swapCategoryCursor(data);
-                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 data.moveToPosition(-1);
                 while (data.moveToNext()) {
@@ -356,11 +357,11 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
 
             case SUBCATEGORIES_LOADER:
                 adapterCategory.swapSubCategoryCursor(data);
-                Log.v(getClass().getSimpleName(), "loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
+                Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
@@ -370,18 +371,18 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         switch (loader.getId()) {
             case CATEGORIES_LOADER:
                 adapterCategory.swapCategoryCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case SUBCATEGORIES_LOADER:
                 adapterCategory.swapSubCategoryCursor(null);
-                Log.v(getClass().getSimpleName(), "loader reset. loader=" + loader.getId());
+                Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             default:
-                Log.e(getClass().getSimpleName(), "Error. Unknown loader (" + loader.getId());
+                Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
     }
 
-}//end CategoriesActivity
+}

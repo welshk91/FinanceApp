@@ -24,8 +24,8 @@ Known Issues
 
 Things To Do
 ------------
+* Construct Observer Pattern so Cards can be refreshed appropriately
 * Pass Parcelable Objects instead of all their parameters
-* Add a simple way to import test data via Options
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Move ListViews to RecyclerViews
 * Move ActionMode into it's own class with Interface

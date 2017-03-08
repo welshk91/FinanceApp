@@ -19,7 +19,6 @@ public class MyContentProvider extends ContentProvider {
     private static DatabaseHelper dh = null;
 
     //IDs
-    private static final int DATABASE_ID = 123;
     private static final int ACCOUNTS_ID = 100;
     private static final int ACCOUNT_ID = 110;
     private static final int ACCOUNT_SEARCH_ID = 120;
@@ -66,7 +65,6 @@ public class MyContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        sURIMatcher.addURI(AUTHORITY, null, DATABASE_ID);
         sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS, ACCOUNTS_ID);
         sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/#", ACCOUNT_ID);
         sURIMatcher.addURI(AUTHORITY, PATH_ACCOUNTS + "/SEARCH/*", ACCOUNT_SEARCH_ID);
@@ -171,15 +169,10 @@ public class MyContentProvider extends ContentProvider {
         int rowsDeleted = 0;
 
         switch (uriType) {
-            case DATABASE_ID:
-                dh.deleteDatabase();
-                Timber.d("URI=" + ACCOUNTS_URI);
-                getContext().getContentResolver().notifyChange(ACCOUNTS_URI, null);
-                getContext().getContentResolver().notifyChange(TRANSACTIONS_URI, null);
-                getContext().getContentResolver().notifyChange(CATEGORIES_URI, null);
-                getContext().getContentResolver().notifyChange(SUBCATEGORIES_URI, null);
-                getContext().getContentResolver().notifyChange(LINKS_URI, null);
-                getContext().getContentResolver().notifyChange(PLANS_URI, null);
+            case ACCOUNTS_ID:
+                rowsDeleted = dh.deleteAccount(uri, whereClause, whereArgs);
+                getContext().getContentResolver().notifyChange(uri, null);
+                CardsFragment.accountChanged = true;
                 break;
             case ACCOUNT_ID:
                 rowsDeleted = dh.deleteAccount(uri, whereClause, whereArgs);
@@ -187,6 +180,11 @@ public class MyContentProvider extends ContentProvider {
                 CardsFragment.accountChanged = true;
                 break;
             case TRANSACTION_ID:
+                rowsDeleted = dh.deleteTransaction(uri, whereClause, whereArgs);
+                getContext().getContentResolver().notifyChange(uri, null);
+                CardsFragment.transactionChanged = true;
+                break;
+            case TRANSACTIONS_ID:
                 rowsDeleted = dh.deleteTransaction(uri, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 CardsFragment.transactionChanged = true;
@@ -200,6 +198,11 @@ public class MyContentProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 break;
             case PLAN_ID:
+                rowsDeleted = dh.deletePlan(uri, whereClause, whereArgs);
+                getContext().getContentResolver().notifyChange(uri, null);
+                CardsFragment.planChanged = true;
+                break;
+            case PLANS_ID:
                 rowsDeleted = dh.deletePlan(uri, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
                 CardsFragment.planChanged = true;
@@ -308,5 +311,4 @@ public class MyContentProvider extends ContentProvider {
         Timber.d("Tried to use getType method, but I didn't do anything but return null here...");
         return null;
     }
-
 }

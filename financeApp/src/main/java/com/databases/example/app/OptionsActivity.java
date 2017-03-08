@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -24,7 +23,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.MyContentProvider;
+import com.databases.example.data.DatabaseUtils;
 
 import java.util.List;
 
@@ -189,6 +188,17 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
 
                     });
 
+            //Add Dummy Data
+            Preference prefAddDummyData = findPreference(getString(R.string.pref_key_add_dummy_data));
+            prefAddDummyData
+                    .setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+                        public boolean onPreferenceClick(Preference preference) {
+                            DatabaseUtils.addTestData(getActivity());
+                            return true;
+                        }
+                    });
+
             //Clear Database
             Preference prefClearDB = findPreference(getString(R.string.pref_key_clear_database));
             prefClearDB
@@ -239,13 +249,11 @@ public class OptionsActivity extends PreferenceActivity implements OnSharedPrefe
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface arg0,
                                                     int arg1) {
-
-                                    Uri uri = Uri.parse(MyContentProvider.DATABASE_URI + "");
-                                    getActivity().getContentResolver().delete(uri, null, null);
+                                    DatabaseUtils.deleteDatabase(getActivity());
 
                                     //Navigate User back home
                                     Intent intentDashboard = new Intent(getActivity(), MainActivity.class);
-                                    intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intentDashboard.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intentDashboard);
                                 }
                             }

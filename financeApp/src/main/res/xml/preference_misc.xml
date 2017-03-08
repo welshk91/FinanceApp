@@ -7,6 +7,10 @@
         android:summary="Will reset all custom values to their defaults."
         android:title="Reset Defaults" />
     <Preference
+        android:key="@string/pref_key_add_dummy_data"
+        android:summary="Will add some Test Data"
+        android:title="Add Dummy Data" />
+    <Preference
         android:key="@string/pref_key_clear_database"
         android:summary="Will delete all the checkbook data. Use with extreme caution."
         android:title="Delete Checkbook" />

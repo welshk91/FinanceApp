@@ -6,16 +6,13 @@ package com.databases.example.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.databases.example.R;
 
@@ -23,122 +20,97 @@ import timber.log.Timber;
 
 //An Object Class used to handle the NavigationDrawer
 public class DrawerActivity extends AppCompatActivity {
-    private final Context context;
     private final DrawerLayout drawerLayout;
-    private final ListView drawerListView;
-
-    private final ActionBarDrawerToggle drawerToggle;
+    private final NavigationView drawerNavView;
 
     public DrawerActivity(final Context context) {
-        this.context = context;
         drawerLayout = (DrawerLayout) ((AppCompatActivity) context).findViewById(R.id.drawer_layout);
-        drawerListView = (ListView) ((AppCompatActivity) context).findViewById(R.id.drawer);
+        drawerNavView = (NavigationView) ((AppCompatActivity) context).findViewById(R.id.drawer);
 
-        String[] drawerItems = context.getResources().getStringArray(R.array.drawer_items);
+        drawerNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
 
-        MyAdapter adapterDrawer = new MyAdapter(context, drawerItems);
-        drawerListView.setAdapter(adapterDrawer);
-        drawerListView.setOnItemClickListener(new DrawerItemClickListener());
+                drawerLayout.closeDrawers();
 
-        drawerToggle = new ActionBarDrawerToggle(
-                (AppCompatActivity) context,
-                drawerLayout,
-                R.drawable.ic_navigation_drawer,
-                R.string.drawer_open,
-                R.string.drawer_closed
-        ) {
+                switch (menuItem.getItemId()) {
+                    case R.id.home:
+                        Timber.v("Home Listener Fired");
+                        Intent intentHome = new Intent(context, MainActivity.class);
+                        intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intentHome);
+                        return true;
 
-            // Called when a drawer has settled in a completely closed state. *//*
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                //((SherlockFragmentActivity) context).getSupportActionBar().setTitle("The title stuff for close");
+                    case R.id.checkbook:
+                        Timber.v("CheckbookActivity Listener Fired");
+                        Intent intentCheckbook = new Intent(context, CheckbookActivity.class);
+                        intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intentCheckbook);
+                        return true;
+
+                    case R.id.categories:
+                        Timber.v("CategoriesActivity Listener Fired");
+                        Intent intentCategories = new Intent(context, CategoriesActivity.class);
+                        intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intentCategories);
+                        return true;
+
+                    case R.id.plans:
+                        Timber.v("PlansActivity Listener Fired");
+                        Intent intentPlans = new Intent(context, PlansActivity.class);
+                        intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intentPlans);
+                        return true;
+
+                    case R.id.statistics:
+                        Timber.v("Statistics Listener Fired");
+                        //	Intent intentStats = new Intent(MainActivity.this, AccountsFragment.class);
+                        //	startActivity(intentStats);
+                        //drawPattern();
+                        return true;
+
+                    case R.id.options:
+                        Timber.v("OptionsActivity Listener Fired");
+                        Intent intentOptions = new Intent(context, OptionsActivity.class);
+                        context.startActivity(intentOptions);
+                        return true;
+
+                    case R.id.help:
+                        Timber.v("Help Listener Fired");
+                        return true;
+
+                    case R.id.exit:
+                        Timber.v("Exit Listener Fired");
+                        closeApp();
+                        return true;
+
+                    default:
+                        Timber.e("Default Listener Fired");
+                        return true;
+                }
+            }
+        });
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle((AppCompatActivity) context, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_closed) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                super.onDrawerClosed(drawerView);
             }
 
-            // Called when a drawer has settled in a completely open state. *//*
+            @Override
             public void onDrawerOpened(View drawerView) {
+                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
                 super.onDrawerOpened(drawerView);
-                //((SherlockFragmentActivity) context).getSupportActionBar().setTitle("The title stuff for open");
             }
         };
 
-        // Set the drawer toggle as the DrawerListener
-        drawerLayout.setDrawerListener(drawerToggle);
-        ((AppCompatActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    /* The listener for ListView in the navigation drawer */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            switch (position) {
-                case 0:
-                    Timber.v("Home Listener Fired");
-                    DrawerActivity.this.toggle();
-                    Intent intentHome = new Intent(context, MainActivity.class);
-                    intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intentHome);
-                    break;
-
-                case 1:
-                    Timber.v("CheckbookActivity Listener Fired");
-                    DrawerActivity.this.toggle();
-                    Intent intentCheckbook = new Intent(context, CheckbookActivity.class);
-                    intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intentCheckbook);
-                    break;
-
-                case 2:
-                    Timber.v("CategoriesActivity Listener Fired");
-                    DrawerActivity.this.toggle();
-                    Intent intentCategories = new Intent(context, CategoriesActivity.class);
-                    intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intentCategories);
-                    break;
-
-                case 3:
-                    Timber.v("PlansActivity Listener Fired");
-                    DrawerActivity.this.toggle();
-                    Intent intentPlans = new Intent(context, PlansActivity.class);
-                    intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(intentPlans);
-                    break;
-
-                case 4:
-                    Timber.v("Statistics Listener Fired");
-                    DrawerActivity.this.toggle();
-                    //	Intent intentStats = new Intent(MainActivity.this, AccountsFragment.class);
-                    //	startActivity(intentStats);
-                    //drawPattern();
-                    break;
-
-                case 5:
-                    Timber.v("OptionsActivity Listener Fired");
-                    DrawerActivity.this.toggle();
-                    Intent intentOptions = new Intent(context, OptionsActivity.class);
-                    context.startActivity(intentOptions);
-                    break;
-
-                case 6:
-                    Timber.v("Help Listener Fired");
-                    DrawerActivity.this.toggle();
-                    break;
-
-                case 7:
-                    Timber.v("Exit Listener Fired");
-                    DrawerActivity.this.toggle();
-                    closeApp();
-                    break;
-
-                default:
-                    Timber.e("Default Listener Fired");
-                    break;
-            }
-        }
-    }
-
-    public ActionBarDrawerToggle getDrawerToggle() {
-        return drawerToggle;
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
     }
 
     //Method to exit app
@@ -146,83 +118,18 @@ public class DrawerActivity extends AppCompatActivity {
         System.exit(0);
     }
 
-    //Close/Open drawer
-    public void toggle() {
-        if (drawerLayout.isDrawerOpen(drawerListView)) {
-            drawerLayout.closeDrawer(drawerListView);
-        } else {
-            drawerLayout.openDrawer(drawerListView);
-        }
-    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    //ArrayAdapter with a custom getView
-    public class MyAdapter extends ArrayAdapter<String> {
-        final Context context;
-        private final String[] names;
+        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
-        public MyAdapter(Context context, String[] drawerItems) {
-            super(context, R.layout.drawer_item, drawerItems);
-            this.context = context;
-            this.names = drawerItems;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return 2;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return position % 2;
-        }
-
-        @Override
-        public View getView(int position, View coverView, ViewGroup parent) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.drawer_item, parent, false);
-
-            TextView itemName = (TextView) rowView.findViewById(R.id.drawer_item_name);
-            itemName.setText(names[position]);
-
-            switch (position) {
-                case 0:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_house_alt, 0, 0, 0);
-                    break;
-
-                case 1:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_wallet, 0, 0, 0);
-                    break;
-
-                case 2:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_ul, 0, 0, 0);
-                    break;
-
-                case 3:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_calendar, 0, 0, 0);
-                    break;
-
-                case 4:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_easel, 0, 0, 0);
-                    break;
-
-                case 5:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_adjust_horiz, 0, 0, 0);
-                    break;
-
-                case 6:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_question, 0, 0, 0);
-                    break;
-
-                case 7:
-                    itemName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_close_alt2, 0, 0, 0);
-                    break;
-
-                default:
-                    Timber.e("Default Listener Fired");
-                    break;
-            }
-
-            return rowView;
-        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -6,7 +6,6 @@ package com.databases.example.app;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -198,10 +197,6 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerActivity.toggle();
-                break;
-
             case R.id.account_menu_add:
                 categoryAdd(null);
                 return true;
@@ -291,18 +286,6 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         //Toast.makeText(this, "OptionsActivity Just Changed: CategoriesActivity.Java", Toast.LENGTH_SHORT).show();
         //categoryPopulate();
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerActivity.getDrawerToggle().syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
     @Override

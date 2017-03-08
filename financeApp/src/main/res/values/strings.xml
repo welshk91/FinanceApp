@@ -49,8 +49,6 @@
     <string name="acount_id">Account ID</string>
     <string name="offset">Offset</string>
     <string name="rate">Rate</string>
-    <string name="pref_key_lock_setlock">pref_setlock</string>
-    <string name="pref_key_backup_local_options">pref_sd</string>
     <string name="card_positive_account">This account is doing well.</string>
     <string name="card_negative_account">This account is overdrawn.</string>
     <string name="card_transaction_not_cleared">This transaction has not been cleared.</string>
@@ -75,6 +73,11 @@
     <string name="appearance">Appearance</string>
     <string name="behavior">Behavior</string>
     <string name="misc">Misc</string>
+
+
+    <string name="home">Home</string>
+    <string name="statistics">Statistics</string>
+    <string name="help">Help</string>
 
     <string-array name="drawer_items">
         <item>Home</item>

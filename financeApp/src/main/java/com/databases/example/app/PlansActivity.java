@@ -11,7 +11,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -342,10 +341,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerActivity.toggle();
-                break;
-
             case ACTIONBAR_MENU_ADD_PLAN_ID:
                 planAdd();
                 break;
@@ -360,18 +355,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         Timber.d("OptionsActivity changed. Requery");
         //getContentResolver().notifyChange(MyContentProvider.PLANNED_TRANSACTIONS_URI, null);
         //getLoaderManager().restartLoader(PLAN_LOADER, null, this);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerActivity.getDrawerToggle().syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
     }
 
     @Override

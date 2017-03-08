@@ -2,6 +2,8 @@
 <resources>
     <string name="pref_key_first_run">pref_first_run</string>
     <string name="pref_key_lock_enabled">checkbox_lock_enabled</string>
+    <string name="pref_key_lock_setlock">pref_setlock</string>
+    <string name="pref_key_backup_local_options">pref_sd</string>
 
     <string name="pref_screen_cards">pref_screen_cards</string>
     <string name="pref_key_cards_recent_transactions">pref_key_card_transactionDaysRecent</string>

@@ -6,7 +6,6 @@ package com.databases.example.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
@@ -14,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.databases.example.R;
@@ -62,17 +60,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         new SearchWidget(this, (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.main_menu_search)));
-        return true;
-    }
-
-    //For Menu Items
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerActivity.toggle();
-                break;
-        }
         return true;
     }
 
@@ -125,17 +112,4 @@ public class MainActivity extends AppCompatActivity {
                 }
         }
     }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerActivity.getDrawerToggle().syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
-    }
-
-}// end MainActivity
+}

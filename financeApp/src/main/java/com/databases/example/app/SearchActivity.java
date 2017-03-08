@@ -8,7 +8,6 @@ package com.databases.example.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.databases.example.R;
@@ -175,28 +173,4 @@ public class SearchActivity extends AppCompatActivity {
         //SearchWidget searchWidget = new SearchWidget(this, menu.findItem(R.id.search_menu_search).getActionView());
         return true;
     }
-
-    //For Menu Items
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerActivity.toggle();
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerActivity.getDrawerToggle().syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerActivity.getDrawerToggle().onConfigurationChanged(newConfig);
-    }
-
 }

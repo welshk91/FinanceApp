@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/home"
+            android:checked="false"
+            android:icon="@drawable/icon_house_alt"
+            android:title="@string/home" />
+
+        <item
+            android:id="@+id/checkbook"
+            android:checked="false"
+            android:icon="@drawable/icon_wallet"
+            android:title="@string/checkbook" />
+
+        <item
+            android:id="@+id/categories"
+            android:checked="false"
+            android:icon="@drawable/icon_ul"
+            android:title="@string/categories" />
+
+        <item
+            android:id="@+id/plans"
+            android:checked="false"
+            android:icon="@drawable/icon_calendar"
+            android:title="@string/plans" />
+
+        <item
+            android:id="@+id/statistics"
+            android:checked="false"
+            android:icon="@drawable/icon_easel"
+            android:title="@string/statistics" />
+
+        <item
+            android:id="@+id/options"
+            android:checked="false"
+            android:icon="@drawable/icon_adjust_horiz"
+            android:title="@string/options" />
+
+        <item
+            android:id="@+id/help"
+            android:checked="false"
+            android:icon="@drawable/icon_question"
+            android:title="@string/help" />
+
+        <item
+            android:id="@+id/exit"
+            android:checked="false"
+            android:icon="@drawable/icon_close_alt2"
+            android:title="@string/exit" />
+    </group>
+</menu>

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="190dp"
-    android:background="@color/blazing_purple"
+    android:background="@color/dark_magenta"
     android:orientation="vertical">
 
     <ImageView
@@ -12,6 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:tint="@color/google_white"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
         android:src="@drawable/icon_house_alt" />
@@ -25,8 +26,8 @@
         android:layout_alignStart="@+id/profile_image"
         android:gravity="left"
         android:paddingBottom="4dp"
-        android:text="Akash Bangad"
-        android:textColor="#FFF"
+        android:text="Kevin Welsh"
+        android:textColor="@color/google_white"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -39,8 +40,8 @@
         android:layout_alignStart="@+id/username"
         android:layout_marginBottom="8dp"
         android:gravity="left"
-        android:text="Akash.bangad93@gmail.com"
-        android:textColor="#fff"
+        android:text="someemailhere@gmail.com"
+        android:textColor="@color/google_white"
         android:textSize="14sp" />
 
 </RelativeLayout>

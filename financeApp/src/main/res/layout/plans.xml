@@ -8,10 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
         <ListView
             android:id="@+id/plans_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
             android:background="@color/listview_background"
             android:divider="@null"
             android:dividerHeight="0dp"

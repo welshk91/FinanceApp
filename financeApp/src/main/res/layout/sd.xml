@@ -9,6 +9,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/backup_directory_layout"
             android:layout_width="match_parent"

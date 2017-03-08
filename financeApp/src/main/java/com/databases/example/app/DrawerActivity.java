@@ -8,9 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -24,9 +25,13 @@ public class DrawerActivity extends AppCompatActivity {
     private final NavigationView drawerNavView;
 
     public DrawerActivity(final Context context) {
+        Toolbar toolbar = (Toolbar) ((AppCompatActivity) context).findViewById(R.id.toolbar);
+        ((AppCompatActivity) context).setSupportActionBar(toolbar);
+//        ((AppCompatActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        ((AppCompatActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
+
         drawerLayout = (DrawerLayout) ((AppCompatActivity) context).findViewById(R.id.drawer_layout);
         drawerNavView = (NavigationView) ((AppCompatActivity) context).findViewById(R.id.drawer);
-
         drawerNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -94,7 +99,8 @@ public class DrawerActivity extends AppCompatActivity {
             }
         });
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle((AppCompatActivity) context, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_closed) {
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle((AppCompatActivity) context, drawerLayout,
+                toolbar, R.string.drawer_open, R.string.drawer_closed) {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -116,20 +122,5 @@ public class DrawerActivity extends AppCompatActivity {
     //Method to exit app
     private void closeApp() {
         System.exit(0);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

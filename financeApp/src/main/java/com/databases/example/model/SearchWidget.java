@@ -11,7 +11,7 @@ import timber.log.Timber;
 public class SearchWidget {
     public SearchWidget(final Context context, final SearchView abSearch) {
         final SearchView searchView = abSearch;
-        searchView.setQueryHint("SearchActivity!");
+        searchView.setQueryHint("Search");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

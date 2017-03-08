@@ -10,6 +10,10 @@
         android:layout_height="match_parent"
         android:baselineAligned="false">
 
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
         <FrameLayout
             android:id="@+id/account_frag_frame"
             android:layout_width="0dp"

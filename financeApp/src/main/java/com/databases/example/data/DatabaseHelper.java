@@ -67,11 +67,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PLAN_CLEARED = "PlanCleared";
 
     public static final String CATEGORY_ID = "_id";
+    public static final String CATEGORY_IS_DEFAULT = "CatIsDefault";
     public static final String CATEGORY_NAME = "CatName";
     public static final String CATEGORY_NOTE = "CatNote";
 
     public static final String SUBCATEGORY_ID = "_id";
     public static final String SUBCATEGORY_CAT_ID = "ToCatID";
+    public static final String SUBCATEGORY_IS_DEFAULT = "SubCatIsDefault";
     public static final String SUBCATEGORY_NAME = "SubCatName";
     public static final String SUBCATEGORY_NOTE = "SubCatNote";
 
@@ -105,11 +107,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String sqlCommandCategory = "CREATE TABLE IF NOT EXISTS "
                 + TABLE_CATEGORIES
-                + " (" + CATEGORY_ID + " INTEGER PRIMARY KEY, " + CATEGORY_NAME + " VARCHAR, " + CATEGORY_NOTE + " VARCHAR);";
+                + " (" + CATEGORY_ID + " INTEGER PRIMARY KEY, " + CATEGORY_IS_DEFAULT + " VARCHAR, " + CATEGORY_NAME + " VARCHAR, " + CATEGORY_NOTE + " VARCHAR);";
 
         String sqlCommandSubCategory = "CREATE TABLE IF NOT EXISTS "
                 + TABLE_SUBCATEGORIES
-                + " (" + SUBCATEGORY_ID + " INTEGER PRIMARY KEY, " + SUBCATEGORY_CAT_ID + " VARCHAR, " + SUBCATEGORY_NAME + " VARCHAR, " + SUBCATEGORY_NOTE + " VARCHAR);";
+                + " (" + SUBCATEGORY_ID + " INTEGER PRIMARY KEY, " + SUBCATEGORY_CAT_ID + " VARCHAR, " + SUBCATEGORY_IS_DEFAULT + " VARCHAR, " + SUBCATEGORY_NAME + " VARCHAR, " + SUBCATEGORY_NOTE + " VARCHAR);";
 
         String sqlCommandLinks = "CREATE TABLE IF NOT EXISTS "
                 + TABLE_LINKS
@@ -127,28 +129,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sqlCommandSubCategory);
         db.execSQL(sqlCommandLinks);
         db.execSQL(sqlCommandNotifications);
-    }
-
-    public boolean deleteDatabase(Context context) {
-        Timber.d("Deleting database...");
-
-        try {
-            Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/");
-            context.getContentResolver().delete(uri, null, null);
-
-            uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/");
-            context.getContentResolver().delete(uri, null, null);
-
-            uri = Uri.parse(MyContentProvider.PLANS_URI + "/");
-            context.getContentResolver().delete(uri, null, null);
-
-            return true;
-            //return context.deleteDatabase(DATABASE_NAME);
-        } catch (Exception e) {
-            Timber.e("Couldn't delete database. Error e=" + e);
-        }
-
-        return false;
     }
 
     @Override
@@ -316,7 +296,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
-        cursor = db.query(TABLE_CATEGORIES, new String[]{CATEGORY_ID + " as _id", CATEGORY_NAME, CATEGORY_NOTE}, selection,
+        cursor = db.query(TABLE_CATEGORIES, new String[]{CATEGORY_ID + " as _id", CATEGORY_IS_DEFAULT, CATEGORY_NAME, CATEGORY_NOTE}, selection,
                 selectionArgs, null, null, sortOrder);
         return cursor;
     }
@@ -355,7 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getSubCategories(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
-        cursor = db.query(TABLE_SUBCATEGORIES, new String[]{SUBCATEGORY_ID + " as _id", SUBCATEGORY_CAT_ID, SUBCATEGORY_NAME, SUBCATEGORY_NOTE}, selection,
+        cursor = db.query(TABLE_SUBCATEGORIES, new String[]{SUBCATEGORY_ID + " as _id", SUBCATEGORY_CAT_ID, SUBCATEGORY_IS_DEFAULT, SUBCATEGORY_NAME, SUBCATEGORY_NOTE}, selection,
                 selectionArgs, null, null, sortOrder);
         return cursor;
     }

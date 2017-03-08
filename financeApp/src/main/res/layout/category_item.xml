@@ -29,4 +29,15 @@
         android:textColor="@color/categories_subcategory_default"
         android:textSize="14sp" />
 
+    <TextView
+        android:id="@+id/category_is_default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:paddingLeft="40dp"
+        android:textColor="@color/categories_subcategory_default"
+        android:textSize="14sp" />
+
 </LinearLayout>

@@ -12,12 +12,14 @@ import java.util.ArrayList;
 public class Subcategory implements Parcelable {
     public final int id;
     public final int catId;
+    public final boolean isDefault;
     public final String name;
     public final String note;
 
-    public Subcategory(int id, int catId, String name, String note) {
+    public Subcategory(int id, int catId, boolean isDefault, String name, String note) {
         this.id = id;
         this.catId = catId;
+        this.isDefault = isDefault;
         this.name = name;
         this.note = note;
     }
@@ -36,6 +38,7 @@ public class Subcategory implements Parcelable {
             subcategory = new Subcategory(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_ID)),
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID)),
+                    Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_IS_DEFAULT))),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE))
             );
@@ -43,6 +46,17 @@ public class Subcategory implements Parcelable {
         }
 
         return subcategories;
+    }
+
+    @Override
+    public String toString() {
+        return "Subcategory{" +
+                "id=" + id +
+                ", catId=" + catId +
+                ", isDefault=" + isDefault +
+                ", name='" + name + '\'' +
+                ", note='" + note + '\'' +
+                '}';
     }
 
     @Override
@@ -54,6 +68,7 @@ public class Subcategory implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
         dest.writeInt(this.catId);
+        dest.writeByte(this.isDefault ? (byte) 1 : (byte) 0);
         dest.writeString(this.name);
         dest.writeString(this.note);
     }
@@ -61,6 +76,7 @@ public class Subcategory implements Parcelable {
     protected Subcategory(Parcel in) {
         this.id = in.readInt();
         this.catId = in.readInt();
+        this.isDefault = in.readByte() != 0;
         this.name = in.readString();
         this.note = in.readString();
     }

@@ -6,13 +6,14 @@
 
     <string name="pref_key_category_screen">pref_screen_category</string>
     <string name="pref_key_category_default_appearance">category_default_appearance</string>
-    <string name="pref_key_category_start_background_color">category_startBackgroundColor</string>
-    <string name="pref_key_category_end_background_color">category_endBackgroundColor</string>
+    <string name="pref_key_category_start_background_color">category_start_background_color</string>
+    <string name="pref_key_category_end_background_color">category_end_background_color</string>
 
     <string name="pref_key_category_name_color">category_nameColor</string>
     <string name="pref_key_category_details_color">category_fieldColor</string>
-    <string name="pref_key_category_name_show">category_nameField</string>
-    <string name="pref_key_category_note_show">category_noteField</string>
+    <string name="pref_key_category_is_default_show">category_is_default_show</string>
+    <string name="pref_key_category_name_show">category_name_show</string>
+    <string name="pref_key_category_note_show">category_note_show</string>
     <string name="pref_key_category_fields">pref_screen_category_fields</string>
 
 </resources>

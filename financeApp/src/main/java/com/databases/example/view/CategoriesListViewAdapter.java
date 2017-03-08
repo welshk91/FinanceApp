@@ -37,32 +37,42 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
     public Category getCategory(long id) {
         Cursor group = category;
 
+        ArrayList<Category> categories = Category.getCategories(group);
+        categories.size();
+
         group.moveToPosition((int) id);
-        int NameColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NAME);
-        int NoteColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NOTE);
+        int isDefaultColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_IS_DEFAULT);
+        int nameColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NAME);
+        int noteColumn = group.getColumnIndex(DatabaseHelper.CATEGORY_NOTE);
 
         int itemId = group.getInt(0);
-        String itemName = group.getString(NameColumn);
-        String itemNote = group.getString(NoteColumn);
+        boolean itemIsDefault = Boolean.parseBoolean(group.getString(isDefaultColumn));
+        String itemName = group.getString(nameColumn);
+        String itemNote = group.getString(noteColumn);
 
-        return new Category(itemId, itemName, itemNote);
+        return new Category(itemId, itemIsDefault, itemName, itemNote);
     }
 
     //My method for getting a Category Record at a certain position
     public Subcategory getSubCategory(int groupId, int childId) {
         Cursor group = subcategory.get(groupId);
 
+        ArrayList<Subcategory> subcategories = Subcategory.getSubcategories(group);
+        subcategories.size();
+
         group.moveToPosition(childId);
-        int ToIDColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID);
-        int NameColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME);
-        int NoteColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE);
+        int toIdColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID);
+        int isDefaultColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_IS_DEFAULT);
+        int nameColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME);
+        int noteColumn = group.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE);
 
         int itemId = group.getInt(0);
-        int itemTo_id = group.getInt(ToIDColumn);
-        String itemSubname = group.getString(NameColumn);
-        String itemNote = group.getString(NoteColumn);
+        int itemTo_id = group.getInt(toIdColumn);
+        boolean itemIsDefault = Boolean.parseBoolean(group.getString(isDefaultColumn));
+        String itemSubname = group.getString(nameColumn);
+        String itemNote = group.getString(noteColumn);
 
-        return new Subcategory(itemId, itemTo_id, itemSubname, itemNote);
+        return new Subcategory(itemId, itemTo_id, itemIsDefault, itemSubname, itemNote);
     }
 
     @Override
@@ -83,6 +93,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             viewHolder = new CategoryViewHolder();
             viewHolder.tvName = (TextView) v.findViewById(R.id.category_name);
             viewHolder.tvNote = (TextView) v.findViewById(R.id.category_note);
+            viewHolder.tvIsDefault = (TextView) v.findViewById(R.id.category_is_default);
 
             v.setTag(viewHolder);
         } else {
@@ -134,11 +145,13 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             Toast.makeText(context, "Could Not Set Custom Name Size", Toast.LENGTH_SHORT).show();
         }
 
+        int IsDefaultColumn = user.getColumnIndex(DatabaseHelper.CATEGORY_IS_DEFAULT);
         int NameColumn = user.getColumnIndex(DatabaseHelper.CATEGORY_NAME);
         int NoteColumn = user.getColumnIndex(DatabaseHelper.CATEGORY_NOTE);
 
         user.moveToPosition(groupPosition);
         String itemId = user.getString(0);
+        String itemIsDefault = user.getString(IsDefaultColumn);
         String itemName = user.getString(NameColumn);
         String itemNote = user.getString(NoteColumn);
         //Log.d("getGroupView", "Found Category: " + itemName);
@@ -156,6 +169,13 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             viewHolder.tvNote.setText(itemNote);
         } else {
             viewHolder.tvNote.setVisibility(View.GONE);
+        }
+
+        if (prefs.getBoolean(context.getString(R.string.pref_key_category_is_default_show), false) && !useDefaults && itemIsDefault != null) {
+            viewHolder.tvIsDefault.setVisibility(View.VISIBLE);
+            viewHolder.tvIsDefault.setText(itemIsDefault);
+        } else {
+            viewHolder.tvIsDefault.setVisibility(View.GONE);
         }
 
         return v;
@@ -200,6 +220,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             viewHolder.tvName = (TextView) v.findViewById(R.id.subcategory_name);
             viewHolder.tvNote = (TextView) v.findViewById(R.id.subcategory_note);
             viewHolder.tvCategory = (TextView) v.findViewById(R.id.subcategory_parent);
+            viewHolder.tvIsDefault = (TextView) v.findViewById(R.id.subcategory_is_default);
             v.setTag(viewHolder);
         } else {
             viewHolder = (SubCategoryViewHolder) v.getTag();
@@ -249,12 +270,14 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
         }
 
         int ToIDColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID);
+        int IsDefaultIDColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_IS_DEFAULT);
         int NameColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_NAME);
         int NoteColumn = user.getColumnIndex(DatabaseHelper.SUBCATEGORY_NOTE);
 
         user.moveToPosition(childPosition);
         String itemId = user.getString(0);
         String itemTo_id = user.getString(ToIDColumn);
+        String itemIsDefault = user.getString(IsDefaultIDColumn);
         String itemSubname = user.getString(NameColumn);
         String itemNote = user.getString(NoteColumn);
         //Log.d("getChildView", "Found SubCategory: " + itemSubname);
@@ -270,6 +293,12 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
             viewHolder.tvNote.setText(itemNote);
         } else {
             viewHolder.tvNote.setVisibility(View.GONE);
+        }
+        if (prefs.getBoolean(context.getString(R.string.pref_key_subcategory_is_default_show), false) && !useDefaults && itemIsDefault != null) {
+            viewHolder.tvIsDefault.setVisibility(View.VISIBLE);
+            viewHolder.tvIsDefault.setText(itemIsDefault);
+        } else {
+            viewHolder.tvIsDefault.setVisibility(View.GONE);
         }
 
         viewHolder.tvCategory.setVisibility(View.GONE);
@@ -330,6 +359,7 @@ public class CategoriesListViewAdapter extends BaseExpandableListAdapter {
 class CategoryViewHolder {
     TextView tvName;
     TextView tvNote;
+    TextView tvIsDefault;
 }
 
 //ViewHolder for SubCategories
@@ -337,4 +367,5 @@ class SubCategoryViewHolder {
     TextView tvName;
     TextView tvCategory;
     TextView tvNote;
+    TextView tvIsDefault;
 }

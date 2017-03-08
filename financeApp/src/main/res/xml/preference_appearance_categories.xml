@@ -90,6 +90,11 @@
                     android:key="@string/pref_key_category_note_show"
                     android:summary="Note Field"
                     android:title="Note" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="@string/pref_key_category_is_default_show"
+                    android:summary="Is Default Field"
+                    android:title="Is Default" />
             </PreferenceScreen>
         </PreferenceCategory>
     </PreferenceScreen>

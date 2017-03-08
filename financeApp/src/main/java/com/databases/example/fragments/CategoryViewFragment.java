@@ -46,9 +46,11 @@ public class CategoryViewFragment extends DialogFragment {
             TextView statsName = (TextView)categoryStatsView.findViewById(R.id.subcategory_name);
             statsName.setText(record.name);
             TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.subcategory_parent);
-            statsValue.setText(record.catId);
+            statsValue.setText(String.valueOf(record.catId));
             TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.subcategory_note);
             statsDate.setText(record.note);
+            TextView statsIsDefault = (TextView)categoryStatsView.findViewById(R.id.subcategory_is_default);
+            statsIsDefault.setText(String.valueOf(record.isDefault));
         }
         else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
             final View categoryStatsView = li.inflate(R.layout.category_item, null);
@@ -61,6 +63,8 @@ public class CategoryViewFragment extends DialogFragment {
             statsName.setText(record.name);
             TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.category_note);
             statsDate.setText(record.note);
+            TextView statsIsDefault = (TextView)categoryStatsView.findViewById(R.id.category_is_default);
+            statsIsDefault.setText(String.valueOf(record.isDefault));
         }
 
         return alertDialogBuilder.create();

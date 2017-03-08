@@ -11,11 +11,13 @@ import java.util.ArrayList;
 //An Object Class used to hold the data of each category record
 public class Category implements Parcelable {
     public final int id;
+    public final boolean isDefault;
     public final String name;
     public final String note;
 
-    public Category(int id, String name, String note) {
+    public Category(int id, boolean isDefault, String name, String note) {
         this.id = id;
+        this.isDefault = isDefault;
         this.name = name;
         this.note = note;
     }
@@ -33,6 +35,7 @@ public class Category implements Parcelable {
         while (cursor.moveToNext()) {
             category = new Category(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.CATEGORY_ID)),
+                    Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(DatabaseHelper.CATEGORY_IS_DEFAULT))),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.CATEGORY_NAME)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.CATEGORY_NOTE))
             );
@@ -43,6 +46,16 @@ public class Category implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", isDefault=" + isDefault +
+                ", name='" + name + '\'' +
+                ", note='" + note + '\'' +
+                '}';
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -50,12 +63,14 @@ public class Category implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
+        dest.writeByte(this.isDefault ? (byte) 1 : (byte) 0);
         dest.writeString(this.name);
         dest.writeString(this.note);
     }
 
     protected Category(Parcel in) {
         this.id = in.readInt();
+        this.isDefault = in.readByte() != 0;
         this.name = in.readString();
         this.note = in.readString();
     }

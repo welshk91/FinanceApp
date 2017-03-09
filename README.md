@@ -26,10 +26,13 @@ Things To Do
 ------------
 * Construct Observer Pattern so Cards can be refreshed appropriately
 * Pass Parcelable Objects instead of all their parameters
+* Let Drawer handle Accounts?
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Move ListViews to RecyclerViews
 * Move ActionMode into it's own class with Interface
 * Improve Drawer/Hamburger menu
+* Fork [Wizard Pager](https://github.com/romannurik/Android-WizardPager) and put up an aar on Maven/Gradle
+* Fork (https://github.com/Androguide/cardsui-for-android) and put up an aar on Maven/Gradle
 * Improve the way we handle & store dates/times (we should store dates as System.currentTimeMillis)
 * Figure out how to handle memo (does it need an auto complete? Or should we go with a spinner like categories?)
 * Realm database (doesn't seem to have an easy way to hook into providers...)
@@ -43,7 +46,6 @@ Things To Do
 * Export/Import oxf (Make sure to support required fields)
 * Improve look (icons, animations, fonts, item views, default colors, slide menu, big notifications)
 * Encrypt entire database (SQLCipher)
-* Improve Preferences code
 * Clean up some of the Android Lint warnings
 
 Optimizations

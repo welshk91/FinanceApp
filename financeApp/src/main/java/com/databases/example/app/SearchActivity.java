@@ -21,6 +21,7 @@ import android.view.View;
 import com.databases.example.R;
 import com.databases.example.fragments.AccountsFragment;
 import com.databases.example.fragments.TransactionsFragment;
+import com.databases.example.utils.Constants;
 
 import java.util.ArrayList;
 
@@ -60,7 +61,7 @@ public class SearchActivity extends AppCompatActivity {
         mTabsAdapter.notifyDataSetChanged();
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.SEARCH, null);
         drawerActivity.initialize();
     }
 

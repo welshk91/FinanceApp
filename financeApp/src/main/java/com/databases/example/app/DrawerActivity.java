@@ -15,19 +15,22 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.databases.example.R;
+import com.databases.example.utils.Constants.ActivityTag;
 
 import timber.log.Timber;
 
 //An Object Class used to handle the NavigationDrawer
 public class DrawerActivity {
     private final AppCompatActivity appCompatActivity;
+    private ActivityTag activityTag;
+    private final DrawerToggleInterface drawerToggleInterface;
 
     private DrawerLayout drawerLayout;
     private NavigationView drawerNavView;
-    private DrawerToggleInterface drawerToggleInterface;
 
-    public DrawerActivity(final AppCompatActivity appCompatActivity, DrawerToggleInterface drawerToggleInterface) {
+    public DrawerActivity(final AppCompatActivity appCompatActivity, ActivityTag activityTag, final DrawerToggleInterface drawerToggleInterface) {
         this.appCompatActivity = appCompatActivity;
+        this.activityTag = activityTag;
         this.drawerToggleInterface = drawerToggleInterface;
     }
 
@@ -39,12 +42,47 @@ public class DrawerActivity {
 
         drawerLayout = (DrawerLayout) appCompatActivity.findViewById(R.id.drawer_layout);
         drawerNavView = (NavigationView) appCompatActivity.findViewById(R.id.drawer);
+
+//        switch (activityTag) {
+//            case MAIN:
+//                drawerNavView.getMenu().getItem(0).setChecked(true);
+//                break;
+//            case CHECKBOOK:
+//                drawerNavView.getMenu().getItem(1).setChecked(true);
+//                break;
+//            case CATEGROIES:
+//                drawerNavView.getMenu().getItem(2).setChecked(true);
+//                break;
+//            case PLANS:
+//                drawerNavView.getMenu().getItem(3).setChecked(true);
+//                break;
+//            case STATISTICS:
+//                drawerNavView.getMenu().getItem(4).setChecked(true);
+//                break;
+//            case OPTIONS:
+//                drawerNavView.getMenu().getItem(5).setChecked(true);
+//                break;
+//            case HELP:
+//                drawerNavView.getMenu().getItem(6).setChecked(true);
+//                break;
+//            case EXIT:
+//                drawerNavView.getMenu().getItem(7).setChecked(true);
+//                break;
+//            case SEARCH:
+//                break;
+//            case LINKS:
+//                break;
+//            default:
+//                Timber.e("Unknown Drawer Menu Item");
+//                break;
+//        }
+
         drawerNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 //Checking if the item is in checked state or not, if not make it in checked state
-                if (menuItem.isChecked()) menuItem.setChecked(false);
-                else menuItem.setChecked(true);
+//                if (menuItem.isChecked()) menuItem.setChecked(false);
+//                else menuItem.setChecked(true);
 
                 drawerLayout.closeDrawers();
 
@@ -122,7 +160,7 @@ public class DrawerActivity {
             }
         };
 
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 

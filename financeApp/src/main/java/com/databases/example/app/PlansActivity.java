@@ -43,6 +43,7 @@ import com.databases.example.data.PlanReceiver;
 import com.databases.example.fragments.PlanViewFragment;
 import com.databases.example.model.Plan;
 import com.databases.example.model.SearchWidget;
+import com.databases.example.utils.Constants;
 import com.databases.example.utils.DateTime;
 import com.databases.example.view.PlansListViewAdapter;
 import com.databases.example.wizard.PlanWizard;
@@ -110,7 +111,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         setTitle(getString(R.string.plans));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.PLANS, null);
         drawerActivity.initialize();
 
         ListView lvPlans = (ListView) this.findViewById(R.id.plans_list);

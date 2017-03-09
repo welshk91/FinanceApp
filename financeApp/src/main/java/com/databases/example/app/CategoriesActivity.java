@@ -32,6 +32,7 @@ import com.databases.example.fragments.CategoryAddFragment;
 import com.databases.example.fragments.CategoryEditFragment;
 import com.databases.example.fragments.CategoryViewFragment;
 import com.databases.example.model.SearchWidget;
+import com.databases.example.utils.Constants;
 import com.databases.example.view.CategoriesListViewAdapter;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         setTitle(getString(R.string.categories));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CATEGROIES, null);
         drawerActivity.initialize();
 
         ExpandableListView lvCategory = (ExpandableListView) this.findViewById(R.id.category_list);

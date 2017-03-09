@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
+import com.databases.example.utils.Constants;
 
 import java.io.File;
 
@@ -56,7 +57,7 @@ public class LinksActivity extends AppCompatActivity {
         setTitle(getString(R.string.attachments));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.LINKS, null);
         drawerActivity.initialize();
     }
 

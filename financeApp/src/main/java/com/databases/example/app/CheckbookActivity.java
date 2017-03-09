@@ -15,6 +15,7 @@ import com.databases.example.R;
 import com.databases.example.data.PlanReceiver;
 import com.databases.example.fragments.AccountsFragment;
 import com.databases.example.fragments.TransactionsFragment;
+import com.databases.example.utils.Constants;
 import com.databases.example.utils.NotificationUtils;
 
 import timber.log.Timber;
@@ -31,7 +32,7 @@ public class CheckbookActivity extends AppCompatActivity {
         setTitle(getString(R.string.checkbook));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CHECKBOOK, null);
         drawerActivity.initialize();
 
         if (savedInstanceState != null) {

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.databases.example.R;
 import com.databases.example.fragments.CardsFragment;
 import com.databases.example.model.SearchWidget;
+import com.databases.example.utils.Constants;
 
 import haibison.android.lockpattern.LockPatternActivity;
 import haibison.android.lockpattern.utils.AlpSettings;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.MAIN, null);
         drawerActivity.initialize();
     }
 

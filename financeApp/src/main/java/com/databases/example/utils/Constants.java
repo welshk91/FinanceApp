@@ -5,6 +5,18 @@ package com.databases.example.utils;
  */
 
 public class Constants {
+    public enum ActivityTag {
+        MAIN,
+        CHECKBOOK,
+        PLANS,
+        CATEGROIES,
+        SEARCH,
+        LINKS,
+        STATISTICS,
+        OPTIONS,
+        HELP,
+        EXIT,
+    }
 
     public static final String DEPOSIT = "Deposit";
     public static final String WITHDRAW = "Withdraw";

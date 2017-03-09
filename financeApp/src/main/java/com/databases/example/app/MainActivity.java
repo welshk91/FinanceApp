@@ -24,7 +24,6 @@ import haibison.android.lockpattern.utils.AlpSettings;
 
 public class MainActivity extends AppCompatActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
-    private DrawerActivity drawerActivity;
 
     private final String CARDS_TAG = "cards_tag";
 
@@ -49,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
-        drawerActivity = new DrawerActivity(this);
-
+        DrawerActivity drawerActivity = new DrawerActivity(this);
     }
 
     //For Menu

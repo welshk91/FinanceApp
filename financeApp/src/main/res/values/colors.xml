@@ -2,11 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedResources">
     <!--Theme Colors -->
 
-    <color name="primary">@color/indigo</color>
-    <color name="primary_dark">@color/sky_blue</color>
-    <color name="accent">@color/pink</color>
+    <color name="primary">@color/teal</color>
+    <color name="primary_dark">@color/teal_dark</color>
+    <color name="accent">@color/purple_light</color>
+    <color name="secondary_text">#757575</color>
+    <color name="divider_color">#BDBDBD</color>
+
     <color name="text_light">@color/white</color>
-    <color name="text_darker">#222222</color>
+    <color name="text_darker">#212121</color>
     <color name="text_darkest">@color/black</color>
     <color name="text_shadow">#99000000</color>
 
@@ -39,7 +42,7 @@
     <color name="blue">#0000FF</color>
     <color name="green">#009933</color>
     <color name="pink">#da3172</color>
-    <color name="purple">#9900CC</color>
+    <color name="purple">#800080</color>
     <color name="red">#FF3300</color>
     <color name="orange">#FF6600</color>
     <color name="yellow">#FFFF00</color>
@@ -60,15 +63,20 @@
     <color name="dracula_black">#282828</color>
 
     <!--Fancy Colors -->
+    <color name="teal">#009688</color>
+    <color name="teal_dark">#00796b</color>
+    <color name="purple_light">#536dfe</color>
+    <color name="indigo">#303F9F</color>
+    <color name="indigo_light">#3F51B5</color>
+    <color name="lavender">#C5CAE9</color>
+    <color name="lime">#CDDC39</color>
+    <color name="lime_dark">#b7c432</color>
     <color name="sky_blue">#3399FF</color>
     <color name="google_white">#F8F8F8</color>
     <color name="blazing_purple">#7734B5</color>
-    <color name="lavender">#E6E6FA</color>
     <color name="dark_magenta">#8B008B</color>
     <color name="faded_primary">#7766CCFF</color>
-    <color name="indigo">#4B0082</color>
     <color name="windowBackground">@color/black</color>
-    <!--<color name="background_material_dark">#fc0000</color>-->
 
 
     <!--Default Colors-->

@@ -20,10 +20,18 @@ import timber.log.Timber;
 
 //An Object Class used to handle the NavigationDrawer
 public class DrawerActivity {
-    private final DrawerLayout drawerLayout;
-    private final NavigationView drawerNavView;
+    private final AppCompatActivity appCompatActivity;
 
-    public DrawerActivity(final AppCompatActivity appCompatActivity) {
+    private DrawerLayout drawerLayout;
+    private NavigationView drawerNavView;
+    private DrawerToggleInterface drawerToggleInterface;
+
+    public DrawerActivity(final AppCompatActivity appCompatActivity, DrawerToggleInterface drawerToggleInterface) {
+        this.appCompatActivity = appCompatActivity;
+        this.drawerToggleInterface = drawerToggleInterface;
+    }
+
+    public void initialize() {
         Toolbar toolbar = (Toolbar) appCompatActivity.findViewById(R.id.toolbar);
         appCompatActivity.setSupportActionBar(toolbar);
 //        appCompatDelegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -42,28 +50,24 @@ public class DrawerActivity {
 
                 switch (menuItem.getItemId()) {
                     case R.id.home:
-                        Timber.v("Home Listener Fired");
                         Intent intentHome = new Intent(appCompatActivity, MainActivity.class);
                         intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         appCompatActivity.startActivity(intentHome);
                         return true;
 
                     case R.id.checkbook:
-                        Timber.v("CheckbookActivity Listener Fired");
                         Intent intentCheckbook = new Intent(appCompatActivity, CheckbookActivity.class);
                         intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         appCompatActivity.startActivity(intentCheckbook);
                         return true;
 
                     case R.id.categories:
-                        Timber.v("CategoriesActivity Listener Fired");
                         Intent intentCategories = new Intent(appCompatActivity, CategoriesActivity.class);
                         intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         appCompatActivity.startActivity(intentCategories);
                         return true;
 
                     case R.id.plans:
-                        Timber.v("PlansActivity Listener Fired");
                         Intent intentPlans = new Intent(appCompatActivity, PlansActivity.class);
                         intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         appCompatActivity.startActivity(intentPlans);
@@ -77,7 +81,6 @@ public class DrawerActivity {
                         return true;
 
                     case R.id.options:
-                        Timber.v("OptionsActivity Listener Fired");
                         Intent intentOptions = new Intent(appCompatActivity, SettingsActivity.class);
                         appCompatActivity.startActivity(intentOptions);
                         return true;
@@ -87,7 +90,6 @@ public class DrawerActivity {
                         return true;
 
                     case R.id.exit:
-                        Timber.v("Exit Listener Fired");
                         closeApp();
                         return true;
 
@@ -103,14 +105,20 @@ public class DrawerActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
+
+                if (drawerToggleInterface != null) {
+                    drawerToggleInterface.onDrawerClosed(drawerView);
+                }
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
                 super.onDrawerOpened(drawerView);
+
+                if (drawerToggleInterface != null) {
+                    drawerToggleInterface.onDrawerOpened(drawerView);
+                }
             }
         };
 

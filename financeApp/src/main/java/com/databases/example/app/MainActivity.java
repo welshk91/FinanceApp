@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this);
+        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        drawerActivity.initialize();
     }
 
     //For Menu

@@ -20,8 +20,6 @@ import com.databases.example.utils.NotificationUtils;
 import timber.log.Timber;
 
 public class CheckbookActivity extends AppCompatActivity {
-    private DrawerActivity drawerActivity;
-
     public static final String SHOW_ALL_KEY = "showAll";
 
     @Override
@@ -33,7 +31,8 @@ public class CheckbookActivity extends AppCompatActivity {
         setTitle(getString(R.string.checkbook));
 
         //NavigationDrawer
-        drawerActivity = new DrawerActivity(this);
+        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        drawerActivity.initialize();
 
         if (savedInstanceState != null) {
             Timber.d("SavedState, returning...");

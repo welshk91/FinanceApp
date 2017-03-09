@@ -36,9 +36,6 @@ public class LinksActivity extends AppCompatActivity {
     private final static int PICKFILE_RESULT_CODE = 1;
     private final static int PICKCONTACT_RESULT_CODE = 2;
 
-    //NavigationDrawer
-    private DrawerActivity drawerActivity;
-
     private Intent lastLink;
     private String linkFilePath = null;
     private static int linkItem;
@@ -59,8 +56,8 @@ public class LinksActivity extends AppCompatActivity {
         setTitle(getString(R.string.attachments));
 
         //NavigationDrawer
-        drawerActivity = new DrawerActivity(this);
-
+        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        drawerActivity.initialize();
     }
 
     //Method for when you click the Add button

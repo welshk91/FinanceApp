@@ -42,9 +42,6 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     public static final int CATEGORIES_LOADER = 8675309;
     public static final int SUBCATEGORIES_LOADER = 867;
 
-    //NavigationDrawer
-    private DrawerActivity drawerActivity;
-
     public static CategoriesListViewAdapter adapterCategory = null;
 
     //Constants for ContextMenu (Category)
@@ -70,7 +67,8 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         setTitle(getString(R.string.categories));
 
         //NavigationDrawer
-        drawerActivity = new DrawerActivity(this);
+        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        drawerActivity.initialize();
 
         ExpandableListView lvCategory = (ExpandableListView) this.findViewById(R.id.category_list);
 

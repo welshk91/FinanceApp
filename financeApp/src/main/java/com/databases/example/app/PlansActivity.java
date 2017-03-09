@@ -62,9 +62,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     private static final int PLAN_SUBCATEGORY_LOADER = 588;
     private static final int PLAN_ACCOUNT_LOADER = 2300;
 
-    //NavigationDrawer
-    private DrawerActivity drawerActivity;
-
     //Adapter for category spinner
     public static SimpleCursorAdapter categorySpinnerAdapter = null;
 
@@ -113,7 +110,8 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         setTitle(getString(R.string.plans));
 
         //NavigationDrawer
-        drawerActivity = new DrawerActivity(this);
+        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        drawerActivity.initialize();
 
         ListView lvPlans = (ListView) this.findViewById(R.id.plans_list);
 

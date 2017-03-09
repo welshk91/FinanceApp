@@ -25,8 +25,6 @@ import com.databases.example.fragments.TransactionsFragment;
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
-    private DrawerActivity drawerActivity;
-
     public static final String BOOLEAN_SEARCH_KEY = "boolSearch";
     public static final String QUERY_KEY = "query";
 
@@ -62,7 +60,8 @@ public class SearchActivity extends AppCompatActivity {
         mTabsAdapter.notifyDataSetChanged();
 
         //NavigationDrawer
-        drawerActivity = new DrawerActivity(this);
+        DrawerActivity drawerActivity = new DrawerActivity(this, null);
+        drawerActivity.initialize();
     }
 
     public static class MyPagerAdapter extends FragmentStatePagerAdapter

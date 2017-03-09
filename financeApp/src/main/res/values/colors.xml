@@ -4,7 +4,7 @@
 
     <color name="primary">@color/teal</color>
     <color name="primary_dark">@color/teal_dark</color>
-    <color name="accent">@color/purple_light</color>
+    <color name="accent">@color/hot_pink</color>
     <color name="secondary_text">#757575</color>
     <color name="divider_color">#BDBDBD</color>
 
@@ -65,6 +65,7 @@
     <!--Fancy Colors -->
     <color name="teal">#009688</color>
     <color name="teal_dark">#00796b</color>
+    <color name="hot_pink">#ff4081</color>
     <color name="purple_light">#536dfe</color>
     <color name="indigo">#303F9F</color>
     <color name="indigo_light">#3F51B5</color>

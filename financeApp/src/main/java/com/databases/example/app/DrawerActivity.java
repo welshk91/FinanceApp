@@ -4,7 +4,6 @@
 
 package com.databases.example.app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -20,18 +19,18 @@ import com.databases.example.R;
 import timber.log.Timber;
 
 //An Object Class used to handle the NavigationDrawer
-public class DrawerActivity extends AppCompatActivity {
+public class DrawerActivity {
     private final DrawerLayout drawerLayout;
     private final NavigationView drawerNavView;
 
-    public DrawerActivity(final Context context) {
-        Toolbar toolbar = (Toolbar) ((AppCompatActivity) context).findViewById(R.id.toolbar);
-        ((AppCompatActivity) context).setSupportActionBar(toolbar);
-//        ((AppCompatActivity) context).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        ((AppCompatActivity) context).getSupportActionBar().setHomeButtonEnabled(true);
+    public DrawerActivity(final AppCompatActivity appCompatActivity) {
+        Toolbar toolbar = (Toolbar) appCompatActivity.findViewById(R.id.toolbar);
+        appCompatActivity.setSupportActionBar(toolbar);
+//        appCompatDelegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        appCompatDelegate.getSupportActionBar().setHomeButtonEnabled(true);
 
-        drawerLayout = (DrawerLayout) ((AppCompatActivity) context).findViewById(R.id.drawer_layout);
-        drawerNavView = (NavigationView) ((AppCompatActivity) context).findViewById(R.id.drawer);
+        drawerLayout = (DrawerLayout) appCompatActivity.findViewById(R.id.drawer_layout);
+        drawerNavView = (NavigationView) appCompatActivity.findViewById(R.id.drawer);
         drawerNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -44,30 +43,30 @@ public class DrawerActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.home:
                         Timber.v("Home Listener Fired");
-                        Intent intentHome = new Intent(context, MainActivity.class);
+                        Intent intentHome = new Intent(appCompatActivity, MainActivity.class);
                         intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(intentHome);
+                        appCompatActivity.startActivity(intentHome);
                         return true;
 
                     case R.id.checkbook:
                         Timber.v("CheckbookActivity Listener Fired");
-                        Intent intentCheckbook = new Intent(context, CheckbookActivity.class);
+                        Intent intentCheckbook = new Intent(appCompatActivity, CheckbookActivity.class);
                         intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(intentCheckbook);
+                        appCompatActivity.startActivity(intentCheckbook);
                         return true;
 
                     case R.id.categories:
                         Timber.v("CategoriesActivity Listener Fired");
-                        Intent intentCategories = new Intent(context, CategoriesActivity.class);
+                        Intent intentCategories = new Intent(appCompatActivity, CategoriesActivity.class);
                         intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(intentCategories);
+                        appCompatActivity.startActivity(intentCategories);
                         return true;
 
                     case R.id.plans:
                         Timber.v("PlansActivity Listener Fired");
-                        Intent intentPlans = new Intent(context, PlansActivity.class);
+                        Intent intentPlans = new Intent(appCompatActivity, PlansActivity.class);
                         intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(intentPlans);
+                        appCompatActivity.startActivity(intentPlans);
                         return true;
 
                     case R.id.statistics:
@@ -79,8 +78,8 @@ public class DrawerActivity extends AppCompatActivity {
 
                     case R.id.options:
                         Timber.v("OptionsActivity Listener Fired");
-                        Intent intentOptions = new Intent(context, SettingsActivity.class);
-                        context.startActivity(intentOptions);
+                        Intent intentOptions = new Intent(appCompatActivity, SettingsActivity.class);
+                        appCompatActivity.startActivity(intentOptions);
                         return true;
 
                     case R.id.help:
@@ -99,7 +98,7 @@ public class DrawerActivity extends AppCompatActivity {
             }
         });
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle((AppCompatActivity) context, drawerLayout,
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(appCompatActivity, drawerLayout,
                 toolbar, R.string.drawer_open, R.string.drawer_closed) {
 
             @Override

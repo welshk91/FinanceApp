@@ -79,7 +79,7 @@ public class DrawerActivity extends AppCompatActivity {
 
                     case R.id.options:
                         Timber.v("OptionsActivity Listener Fired");
-                        Intent intentOptions = new Intent(context, OptionsActivity.class);
+                        Intent intentOptions = new Intent(context, SettingsActivity.class);
                         context.startActivity(intentOptions);
                         return true;
 

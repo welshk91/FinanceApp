@@ -24,6 +24,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "Alpha"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -68,16 +69,17 @@ android {
 }
 
 dependencies {
+    compile project(':cardsUILib')
+    compile project(':wizardLib')
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
+        transitive = true;
+    }
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
     compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'net.margaritov.preference.colorpicker.ColorPickerPreference:ColorPickerPreference:1.0.0'
-    compile project(':cardsUILib')
     compile 'haibison.android:lockpattern:12.0.0'
-    compile project(':wizardLib')
-    
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
-        transitive = true;
-    }
+    compile 'com.android.support:support-vector-drawable:25.2.0'
 }

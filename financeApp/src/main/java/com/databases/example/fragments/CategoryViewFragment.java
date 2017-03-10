@@ -15,7 +15,7 @@ import com.databases.example.model.Category;
 import com.databases.example.model.Subcategory;
 
 public class CategoryViewFragment extends DialogFragment {
-    public static CategoryViewFragment newInstance(int gPos, int cPos,int t) {
+    public static CategoryViewFragment newInstance(int gPos, int cPos, int t) {
         CategoryViewFragment frag = new CategoryViewFragment();
         Bundle args = new Bundle();
         args.putInt("group", gPos);
@@ -36,34 +36,33 @@ public class CategoryViewFragment extends DialogFragment {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setCancelable(true);
 
-        if(type== ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
             final View categoryStatsView = li.inflate(R.layout.subcategory_item, null);
             alertDialogBuilder.setView(categoryStatsView);
 
-            Subcategory record = CategoriesActivity.adapterCategory.getSubCategory(groupPos, childPos);
+            Subcategory record = ((CategoriesActivity) getActivity()).getAdapterCategory().getSubCategory(groupPos, childPos);
 
             //Set Statistics
-            TextView statsName = (TextView)categoryStatsView.findViewById(R.id.subcategory_name);
+            TextView statsName = (TextView) categoryStatsView.findViewById(R.id.subcategory_name);
             statsName.setText(record.name);
-            TextView statsValue = (TextView)categoryStatsView.findViewById(R.id.subcategory_parent);
+            TextView statsValue = (TextView) categoryStatsView.findViewById(R.id.subcategory_parent);
             statsValue.setText(String.valueOf(record.catId));
-            TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.subcategory_note);
+            TextView statsDate = (TextView) categoryStatsView.findViewById(R.id.subcategory_note);
             statsDate.setText(record.note);
-            TextView statsIsDefault = (TextView)categoryStatsView.findViewById(R.id.subcategory_is_default);
+            TextView statsIsDefault = (TextView) categoryStatsView.findViewById(R.id.subcategory_is_default);
             statsIsDefault.setText(String.valueOf(record.isDefault));
-        }
-        else if(type==ExpandableListView.PACKED_POSITION_TYPE_GROUP){
+        } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             final View categoryStatsView = li.inflate(R.layout.category_item, null);
             alertDialogBuilder.setView(categoryStatsView);
 
-            Category record = CategoriesActivity.adapterCategory.getCategory(groupPos);
+            Category record = ((CategoriesActivity) getActivity()).getAdapterCategory().getCategory(groupPos);
 
             //Set Statistics
-            TextView statsName = (TextView)categoryStatsView.findViewById(R.id.category_name);
+            TextView statsName = (TextView) categoryStatsView.findViewById(R.id.category_name);
             statsName.setText(record.name);
-            TextView statsDate = (TextView)categoryStatsView.findViewById(R.id.category_note);
+            TextView statsDate = (TextView) categoryStatsView.findViewById(R.id.category_note);
             statsDate.setText(record.note);
-            TextView statsIsDefault = (TextView)categoryStatsView.findViewById(R.id.category_is_default);
+            TextView statsIsDefault = (TextView) categoryStatsView.findViewById(R.id.category_is_default);
             statsIsDefault.setText(String.valueOf(record.isDefault));
         }
 

@@ -30,7 +30,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -75,7 +74,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     private final int ACTION_MODE_DELETE = 3;
     private final int ACTION_MODE_TOGGLE = 4;
 
-    public static Button datePicker;
     private PlansListViewAdapter adapterPlans;
 
     //ActionMode

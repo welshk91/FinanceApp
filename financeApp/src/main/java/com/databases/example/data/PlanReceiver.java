@@ -12,7 +12,6 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,10 +21,12 @@ import android.widget.Toast;
 import com.databases.example.R;
 import com.databases.example.app.CheckbookActivity;
 import com.databases.example.app.PlansActivity;
+import com.databases.example.model.Notification;
 import com.databases.example.model.Plan;
 import com.databases.example.utils.DateTime;
 import com.databases.example.utils.Money;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -137,18 +138,15 @@ public class PlanReceiver extends BroadcastReceiver {
         mBuilder.setAutoCancel(true);
 
         //Inbox Style
-        inboxStyle.setBigContentTitle("PlansActivity:");
-        Cursor notifications = context.getContentResolver().query(Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/"), null, null, null, null);
+        inboxStyle.setBigContentTitle("Plans:");
+        ArrayList<Notification> notifications = Notification.getNotifications(context.getContentResolver().query(Uri.parse(MyContentProvider.NOTIFICATIONS_URI + "/"), null, null, null, null));
 
-        while (notifications.moveToNext()) {
+        for (Notification notification : notifications) {
             notificationCount++;
-            String notification_name = notifications.getString(1);
-            String notification_value = notifications.getString(2);
-            String notification_date = notifications.getString(3);
             DateTime date = new DateTime();
-            date.setStringSQL(notification_date);
+            date.setStringSQL(notification.date);
 
-            inboxStyle.addLine(notification_name + ": " + notification_value + " " + date.getReadableDate());
+            inboxStyle.addLine(notification.name + ": " + notification.value + " " + date.getReadableDate());
         }
 
         if (notificationCount > 1) {
@@ -163,44 +161,14 @@ public class PlanReceiver extends BroadcastReceiver {
         nm.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-    //Method that remakes the planned transaction
+    /****RESET ALARMS HERE****/
     private void reschedulePlans(Context context) {
-        Cursor cursorPlans = context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI + "/"), null, null, null, null);
+        ArrayList<Plan> plans = Plan.getPlans(context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI + "/"), null, null, null, null));
 
-        //startManagingCursor(cursorPlans);
-        int columnID = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ID);
-        int columnToID = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID);
-        int columnName = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_NAME);
-        int columnValue = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_VALUE);
-        int columnType = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_TYPE);
-        int columnCategory = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CATEGORY);
-        int columnMemo = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_MEMO);
-        int columnOffset = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_OFFSET);
-        int columnRate = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_RATE);
-        int columnNext = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_NEXT);
-        int columnScheduled = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED);
-        int columnCleared = cursorPlans.getColumnIndex(DatabaseHelper.PLAN_CLEARED);
-
-        while (cursorPlans.moveToNext()) {
-            int id = cursorPlans.getInt(0);
-            int to_id = cursorPlans.getInt(columnToID);
-            String name = cursorPlans.getString(columnName);
-            String value = cursorPlans.getString(columnValue);
-            String type = cursorPlans.getString(columnType);
-            String category = cursorPlans.getString(columnCategory);
-            String memo = cursorPlans.getString(columnMemo);
-            String offset = cursorPlans.getString(columnOffset);
-            String rate = cursorPlans.getString(columnRate);
-            String next = cursorPlans.getString(columnNext);
-            String scheduled = cursorPlans.getString(columnScheduled);
-            String cleared = cursorPlans.getString(columnCleared);
-
-            /****RESET ALARMS HERE****/
-            Timber.d("rescheduling " + id + to_id + name + value + type + category + memo + offset + rate + cleared);
-            final Plan record = new Plan(id, to_id, name, value, type, category, memo, offset, rate, next, scheduled, cleared);
-            schedule(record, context);
+        for (Plan plan : plans) {
+            Timber.d("rescheduling " + plan.toString());
+            schedule(plan, context);
         }
-
     }
 
     //Re-Hash of the schedule method of PlansActivity.java

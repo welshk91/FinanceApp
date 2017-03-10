@@ -33,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -70,9 +69,6 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
     //Used to determine if fragment should show all transactions
     private boolean showAllTransactions = false;
-
-    public static Button timePicker;
-    public static Button datePicker;
 
     //ID of account transaction belongs to
     //TODO make non-static

@@ -45,7 +45,7 @@ public class CategoryAddFragment extends DialogFragment {
             isCategory = false;
             int groupPos = getArguments().getInt("group");
             int childPos = getArguments().getInt("child");
-            catRecord = CategoriesActivity.adapterCategory.getCategory(groupPos);
+            catRecord = ((CategoriesActivity) getActivity()).getAdapterCategory().getCategory(groupPos);
             itemID = catRecord.id;
             //Log.e("categoryAdd", "itemID: " + catRecord.id);
         }
@@ -83,6 +83,7 @@ public class CategoryAddFragment extends DialogFragment {
                                 ContentValues categoryValues = new ContentValues();
                                 categoryValues.put(DatabaseHelper.CATEGORY_NAME, name);
                                 categoryValues.put(DatabaseHelper.CATEGORY_NOTE, note);
+                                categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "false");
                                 getActivity().getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
                                 getActivity().getSupportLoaderManager().restartLoader(CategoriesActivity.CATEGORIES_LOADER, null, (CategoriesActivity) getActivity());
                             }
@@ -92,9 +93,9 @@ public class CategoryAddFragment extends DialogFragment {
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, catID);
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, name);
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, note);
+                                subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "false");
                                 getActivity().getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
                                 ((CategoriesActivity) getActivity()).subcategoryPopulate(catID);
-
                             }
 
                         } catch (Exception e) {

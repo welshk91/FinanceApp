@@ -34,7 +34,7 @@ import java.util.GregorianCalendar;
 import timber.log.Timber;
 
 public class CardsFragment extends Fragment {
-    private static CardUI mCardView;
+    private CardUI mCardView;
     public static boolean accountChanged = false;
     public static boolean transactionChanged = false;
     public static boolean planChanged = false;

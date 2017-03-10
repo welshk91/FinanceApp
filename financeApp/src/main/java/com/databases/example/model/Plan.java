@@ -70,6 +70,24 @@ public class Plan implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "Plan{" +
+                "id=" + id +
+                ", acctId=" + acctId +
+                ", name='" + name + '\'' +
+                ", value='" + value + '\'' +
+                ", type='" + type + '\'' +
+                ", category='" + category + '\'' +
+                ", memo='" + memo + '\'' +
+                ", offset='" + offset + '\'' +
+                ", rate='" + rate + '\'' +
+                ", next='" + next + '\'' +
+                ", scheduled='" + scheduled + '\'' +
+                ", cleared='" + cleared + '\'' +
+                '}';
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

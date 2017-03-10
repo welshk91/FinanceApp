@@ -65,9 +65,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/selectable_background_cardbank"
-                android:contentDescription="Overflow Discription Stuff HERE"
+                android:contentDescription="Overflow Description Stuff HERE"
                 android:padding="2dp"
-                android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
+                android:src="@drawable/ic_menu_overflow_holo_light" />
         </LinearLayout>
     </LinearLayout>
 

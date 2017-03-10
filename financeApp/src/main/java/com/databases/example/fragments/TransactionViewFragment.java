@@ -3,7 +3,6 @@ package com.databases.example.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,12 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.model.Transaction;
 import com.databases.example.utils.Constants;
 import com.databases.example.utils.DateTime;
 import com.databases.example.utils.Money;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class TransactionViewFragment extends DialogFragment {
@@ -35,37 +35,10 @@ public class TransactionViewFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final int id = getArguments().getInt("id");
-        final Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + id), null, null, null, null);
+        ArrayList<Transaction> transactions = Transaction.getTransactions(getActivity().getContentResolver().query(
+                Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + getArguments().getInt("id")), null, null, null, null));
 
-        int entry_id = 0;
-        int entry_acctId = 0;
-        int entry_planId = 0;
-        String entry_name;
-        String entry_value;
-        String entry_type;
-        String entry_category;
-        String entry_checknum;
-        String entry_memo;
-        String entry_time;
-        String entry_date;
-        String entry_cleared;
-
-        c.moveToFirst();
-        do {
-            entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_ID));
-            entry_acctId = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID));
-            entry_planId = c.getInt(c.getColumnIndex(DatabaseHelper.TRANS_PLAN_ID));
-            entry_name = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_NAME));
-            entry_value = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_VALUE));
-            entry_type = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_TYPE));
-            entry_category = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CATEGORY));
-            entry_checknum = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM));
-            entry_memo = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_MEMO));
-            entry_time = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_TIME));
-            entry_date = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_DATE));
-            entry_cleared = c.getString(c.getColumnIndex(DatabaseHelper.TRANS_CLEARED));
-        } while (c.moveToNext());
+        Transaction transaction = transactions.get(0);
 
         final LayoutInflater li = LayoutInflater.from(this.getActivity());
         final View transStatsView = li.inflate(R.layout.transaction_item, null);
@@ -74,7 +47,7 @@ public class TransactionViewFragment extends DialogFragment {
         final boolean useDefaults = prefs.getBoolean(getString(R.string.pref_key_account_default_appearance), true);
 
         final Locale locale = getResources().getConfiguration().locale;
-        final Money value = new Money(entry_value);
+        final Money value = new Money(transaction.value);
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
@@ -94,14 +67,14 @@ public class TransactionViewFragment extends DialogFragment {
                     new int[]{0xFFe00707, 0xFFe00707});
 
             if (useDefaults) {
-                if (entry_type.contains(Constants.DEPOSIT)) {
+                if (transaction.type.contains(Constants.DEPOSIT)) {
                     l.setBackgroundDrawable(defaultGradientPos);
                 } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
                 }
 
             } else {
-                if (entry_type.contains(Constants.DEPOSIT)) {
+                if (transaction.type.contains(Constants.DEPOSIT)) {
                     l.setBackgroundDrawable(defaultGradientPos);
                 } else {
                     l.setBackgroundDrawable(defaultGradientNeg);
@@ -114,29 +87,28 @@ public class TransactionViewFragment extends DialogFragment {
 
         //Set Statistics
         TextView statsName = (TextView) transStatsView.findViewById(R.id.transaction_name);
-        statsName.setText(entry_name);
+        statsName.setText(transaction.name);
         TextView statsValue = (TextView) transStatsView.findViewById(R.id.transaction_value);
         statsValue.setText("Value: " + value.getNumberFormat(locale));
         TextView statsType = (TextView) transStatsView.findViewById(R.id.transaction_type);
-        statsType.setText("Type: " + entry_type);
+        statsType.setText("Type: " + transaction.type);
         TextView statsCategory = (TextView) transStatsView.findViewById(R.id.transaction_category);
-        statsCategory.setText("Category: " + entry_category);
+        statsCategory.setText("Category: " + transaction.category);
         TextView statsCheckNum = (TextView) transStatsView.findViewById(R.id.transaction_checknum);
-        statsCheckNum.setText("Check Num: " + entry_checknum);
+        statsCheckNum.setText("Check Num: " + transaction.checknum);
         TextView statsMemo = (TextView) transStatsView.findViewById(R.id.transaction_memo);
-        statsMemo.setText("Memo: " + entry_memo);
+        statsMemo.setText("Memo: " + transaction.memo);
         DateTime d = new DateTime();
-        d.setStringSQL(entry_date);
+        d.setStringSQL(transaction.date);
         TextView statsDate = (TextView) transStatsView.findViewById(R.id.transaction_date);
         statsDate.setText("Date: " + d.getReadableDate());
         DateTime t = new DateTime();
-        t.setStringSQL(entry_time);
+        t.setStringSQL(transaction.time);
         TextView statsTime = (TextView) transStatsView.findViewById(R.id.transaction_time);
         statsTime.setText("Time: " + t.getReadableTime());
         TextView statsCleared = (TextView) transStatsView.findViewById(R.id.transaction_cleared);
-        statsCleared.setText("Cleared: " + entry_cleared);
+        statsCleared.setText("Cleared: " + transaction.cleared);
 
-        //c.close();
         return alertDialogBuilder.create();
     }
 }

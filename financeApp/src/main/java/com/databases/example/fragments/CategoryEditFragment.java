@@ -50,12 +50,12 @@ public class CategoryEditFragment extends DialogFragment {
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
         if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            subrecord = CategoriesActivity.adapterCategory.getSubCategory(groupPos, childPos);
+            subrecord = ((CategoriesActivity) getActivity()).getAdapterCategory().getSubCategory(groupPos, childPos);
             alertDialogBuilder.setTitle("Editing " + subrecord.name);
             editName.setText(subrecord.name);
             editNote.setText(subrecord.note);
         } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-            record = CategoriesActivity.adapterCategory.getCategory(groupPos);
+            record = ((CategoriesActivity) getActivity()).getAdapterCategory().getCategory(groupPos);
             alertDialogBuilder.setTitle("Editing " + record.name);
             editName.setText(record.name);
             editNote.setText(record.note);
@@ -71,7 +71,7 @@ public class CategoryEditFragment extends DialogFragment {
 
                         try {
                             if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                                Subcategory oldRecord = CategoriesActivity.adapterCategory.getSubCategory(groupPos, childPos);
+                                Subcategory oldRecord = ((CategoriesActivity) getActivity()).getAdapterCategory().getSubCategory(groupPos, childPos);
 
                                 ContentValues subcategoryValues = new ContentValues();
                                 subcategoryValues.put(DatabaseHelper.SUBCATEGORY_ID, oldRecord.id);
@@ -81,7 +81,7 @@ public class CategoryEditFragment extends DialogFragment {
                                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.SUBCATEGORIES_URI + "/" + oldRecord.id), subcategoryValues, DatabaseHelper.SUBCATEGORY_ID + " = " + oldRecord.id, null);
                                 ((CategoriesActivity) getActivity()).subcategoryPopulate(oldRecord.id);
                             } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                                Category oldRecord = CategoriesActivity.adapterCategory.getCategory(groupPos);
+                                Category oldRecord = ((CategoriesActivity) getActivity()).getAdapterCategory().getCategory(groupPos);
 
                                 ContentValues categoryValues = new ContentValues();
                                 categoryValues.put(DatabaseHelper.CATEGORY_ID, oldRecord.id);

@@ -43,7 +43,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     public static final int CATEGORIES_LOADER = 8675309;
     public static final int SUBCATEGORIES_LOADER = 867;
 
-    public static CategoriesListViewAdapter adapterCategory = null;
+    public CategoriesListViewAdapter adapterCategory;
 
     //Constants for ContextMenu (Category)
     private final int CONTEXT_MENU_CATEGORY_ADD = 1;
@@ -95,6 +95,14 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
     protected void onResume() {
         super.onResume();
         drawerActivity.setActivityTag();
+    }
+
+    public CategoriesListViewAdapter getAdapterCategory() {
+        return adapterCategory;
+    }
+
+    public void setAdapterCategory(CategoriesListViewAdapter adapterCategory) {
+        this.adapterCategory = adapterCategory;
     }
 
     //Method for filling subcategories

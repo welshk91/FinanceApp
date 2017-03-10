@@ -38,6 +38,7 @@ public class PlanWizardInfo2Fragment extends Fragment {
     private Spinner mAccountsView;
     private TextInputEditText mRateView;
     private Spinner mRateTypeView;
+    private Button datePicker;
 
     public static PlanWizardInfo2Fragment create(String key) {
         Bundle args = new Bundle();
@@ -73,8 +74,8 @@ public class PlanWizardInfo2Fragment extends Fragment {
         mAccountsView = (Spinner) rootView.findViewById(R.id.spinner_transaction_account);
         mAccountsView.setAdapter(PlansActivity.accountSpinnerAdapter);
 
-        PlansActivity.datePicker = (Button) rootView.findViewById(R.id.plan_date_picker);
-        PlansActivity.datePicker.setOnClickListener(new View.OnClickListener() {
+        datePicker = (Button) rootView.findViewById(R.id.plan_date_picker);
+        datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DateUtils.showDatePickerDialog((AppCompatActivity) getActivity(), new DatePickerInterface() {
@@ -83,8 +84,8 @@ public class PlanWizardInfo2Fragment extends Fragment {
                         DateTime date = new DateTime();
                         date.setStringSQL(year + "-" + (month + 1) + "-" + day);
 
-                        if (PlansActivity.datePicker != null) {
-                            PlansActivity.datePicker.setText(date.getReadableDate());
+                        if (datePicker != null) {
+                            datePicker.setText(date.getReadableDate());
                         }
 
                         if (PlanWizardInfo2Fragment.mPage != null) {
@@ -99,14 +100,14 @@ public class PlanWizardInfo2Fragment extends Fragment {
         if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) != null && mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY).length() > 0) {
             final DateTime date = new DateTime();
             date.setStringSQL(mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY));
-            PlansActivity.datePicker.setText(date.getReadableDate());
+            datePicker.setText(date.getReadableDate());
             mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
         } else if (mPage.getData().getString(PlanWizardInfo2Page.DATE_DATA_KEY) == null) {
             final Calendar c = Calendar.getInstance();
             final DateTime date = new DateTime();
             date.setCalendar(c);
 
-            PlansActivity.datePicker.setText(date.getReadableDate());
+            datePicker.setText(date.getReadableDate());
             mPage.getData().putString(PlanWizardInfo2Page.DATE_DATA_KEY, date.getReadableDate());
         }
 

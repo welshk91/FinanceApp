@@ -37,53 +37,13 @@ public class DrawerActivity {
     public void initialize() {
         Toolbar toolbar = (Toolbar) appCompatActivity.findViewById(R.id.toolbar);
         appCompatActivity.setSupportActionBar(toolbar);
-//        appCompatDelegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        appCompatDelegate.getSupportActionBar().setHomeButtonEnabled(true);
 
         drawerLayout = (DrawerLayout) appCompatActivity.findViewById(R.id.drawer_layout);
         drawerNavView = (NavigationView) appCompatActivity.findViewById(R.id.drawer);
 
-//        switch (activityTag) {
-//            case MAIN:
-//                drawerNavView.getMenu().getItem(0).setChecked(true);
-//                break;
-//            case CHECKBOOK:
-//                drawerNavView.getMenu().getItem(1).setChecked(true);
-//                break;
-//            case CATEGROIES:
-//                drawerNavView.getMenu().getItem(2).setChecked(true);
-//                break;
-//            case PLANS:
-//                drawerNavView.getMenu().getItem(3).setChecked(true);
-//                break;
-//            case STATISTICS:
-//                drawerNavView.getMenu().getItem(4).setChecked(true);
-//                break;
-//            case OPTIONS:
-//                drawerNavView.getMenu().getItem(5).setChecked(true);
-//                break;
-//            case HELP:
-//                drawerNavView.getMenu().getItem(6).setChecked(true);
-//                break;
-//            case EXIT:
-//                drawerNavView.getMenu().getItem(7).setChecked(true);
-//                break;
-//            case SEARCH:
-//                break;
-//            case LINKS:
-//                break;
-//            default:
-//                Timber.e("Unknown Drawer Menu Item");
-//                break;
-//        }
-
         drawerNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                //Checking if the item is in checked state or not, if not make it in checked state
-//                if (menuItem.isChecked()) menuItem.setChecked(false);
-//                else menuItem.setChecked(true);
-
                 drawerLayout.closeDrawers();
 
                 switch (menuItem.getItemId()) {
@@ -113,9 +73,6 @@ public class DrawerActivity {
 
                     case R.id.statistics:
                         Timber.v("Statistics Listener Fired");
-                        //	Intent intentStats = new Intent(MainActivity.this, AccountsFragment.class);
-                        //	startActivity(intentStats);
-                        //drawPattern();
                         return true;
 
                     case R.id.options:

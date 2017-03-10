@@ -25,33 +25,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbFinance";
 
     //Table Names
-    private static final String TABLE_ACCOUNTS = "tblAccounts";
-    private static final String TABLE_TRANSACTIONS = "tblTrans";
-    private static final String TABLE_PLANS = "tblPlanTrans";
-    private static final String TABLE_CATEGORIES = "tblCategory";
-    private static final String TABLE_SUBCATEGORIES = "tblSubCategory";
-    private static final String TABLE_LINKS = "tblLinks";
-    private static final String TABLE_NOTIFICATIONS = "tblNotifications";
+    private static final String TABLE_ACCOUNTS = "Accounts";
+    private static final String TABLE_TRANSACTIONS = "Transactions";
+    private static final String TABLE_PLANS = "Plans";
+    private static final String TABLE_CATEGORIES = "Category";
+    private static final String TABLE_SUBCATEGORIES = "SubCategory";
+    private static final String TABLE_LINKS = "Links";
+    private static final String TABLE_NOTIFICATIONS = "Notifications";
 
     //Column Names
     public static final String ACCOUNT_ID = "_id";
-    public static final String ACCOUNT_NAME = "AcctName";
-    public static final String ACCOUNT_BALANCE = "AcctBalance";
-    public static final String ACCOUNT_TIME = "AcctTime";
-    public static final String ACCOUNT_DATE = "AcctDate";
+    public static final String ACCOUNT_NAME = "AccountName";
+    public static final String ACCOUNT_BALANCE = "AccountBalance";
+    public static final String ACCOUNT_TIME = "AccountTime";
+    public static final String ACCOUNT_DATE = "AccountDate";
 
     public static final String TRANS_ID = "_id";
-    public static final String TRANS_ACCT_ID = "ToAcctID";
-    public static final String TRANS_PLAN_ID = "ToPlanID";
-    public static final String TRANS_NAME = "TransName";
-    public static final String TRANS_VALUE = "TransValue";
-    public static final String TRANS_TYPE = "TransType";
-    public static final String TRANS_CATEGORY = "TransCategory";
-    public static final String TRANS_CHECKNUM = "TransCheckNum";
-    public static final String TRANS_MEMO = "TransMemo";
-    public static final String TRANS_TIME = "TransTime";
-    public static final String TRANS_DATE = "TransDate";
-    public static final String TRANS_CLEARED = "TransCleared";
+    public static final String TRANS_ACCT_ID = "ToAccountId";
+    public static final String TRANS_PLAN_ID = "ToPlanId";
+    public static final String TRANS_NAME = "TransactionName";
+    public static final String TRANS_VALUE = "TransactionValue";
+    public static final String TRANS_TYPE = "TransactionType";
+    public static final String TRANS_CATEGORY = "TransactionCategory";
+    public static final String TRANS_CHECKNUM = "TransactionCheckNumber";
+    public static final String TRANS_MEMO = "TransactionMemo";
+    public static final String TRANS_TIME = "TransactionTime";
+    public static final String TRANS_DATE = "TransactionDate";
+    public static final String TRANS_CLEARED = "TransactionCleared";
 
     public static final String PLAN_ID = "_id";
     public static final String PLAN_ACCT_ID = TRANS_ACCT_ID;
@@ -67,15 +67,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PLAN_CLEARED = "PlanCleared";
 
     public static final String CATEGORY_ID = "_id";
-    public static final String CATEGORY_IS_DEFAULT = "CatIsDefault";
-    public static final String CATEGORY_NAME = "CatName";
-    public static final String CATEGORY_NOTE = "CatNote";
+    public static final String CATEGORY_IS_DEFAULT = "CategoryIsDefault";
+    public static final String CATEGORY_NAME = "CategoryName";
+    public static final String CATEGORY_NOTE = "CategoryNote";
 
     public static final String SUBCATEGORY_ID = "_id";
-    public static final String SUBCATEGORY_CAT_ID = "ToCatID";
-    public static final String SUBCATEGORY_IS_DEFAULT = "SubCatIsDefault";
-    public static final String SUBCATEGORY_NAME = "SubCatName";
-    public static final String SUBCATEGORY_NOTE = "SubCatNote";
+    public static final String SUBCATEGORY_CAT_ID = "ToCategoryId";
+    public static final String SUBCATEGORY_IS_DEFAULT = "SubcategoryIsDefault";
+    public static final String SUBCATEGORY_NAME = "SubcategoryName";
+    public static final String SUBCATEGORY_NOTE = "SubcategoryNote";
 
     public static final String NOT_ID = "_id";
     public static final String NOT_NAME = "NotificationName";

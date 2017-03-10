@@ -19,18 +19,19 @@ There is currently no license I'm releasing this code under (subject to change).
 
 Known Issues
 ------------
-* Options navigates "up" awkwardly
 * Wizard text is now white? Was black recently...
+* Adapter is showing the wrong subcategories for a newly added category (fixes after leaving activity)
+* Drawer should close on back button
 
 Things To Do
 ------------
 * Construct Observer Pattern so Cards can be refreshed appropriately
 * Pass Parcelable Objects instead of all their parameters
 * Let Drawer handle Accounts?
-* Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Move ListViews to RecyclerViews
 * Move ActionMode into it's own class with Interface
 * Improve Drawer/Hamburger menu
+* Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Fork [Wizard Pager](https://github.com/romannurik/Android-WizardPager) and put up an aar on Maven/Gradle
 * Fork (https://github.com/Androguide/cardsui-for-android) and put up an aar on Maven/Gradle
 * Improve the way we handle & store dates/times (we should store dates as System.currentTimeMillis)
@@ -64,7 +65,7 @@ Optimizations
 Notes to Self
 -------------
 * Need more spinners, less typing
-* What should happen when a user clicks on a search result?
+* What should happen when a user clicks on a search result? Advance Transaction View?
 * Link a contact (own table?)
 * Possibly a payee field, own table. Can avoid if description is dropdown.
 

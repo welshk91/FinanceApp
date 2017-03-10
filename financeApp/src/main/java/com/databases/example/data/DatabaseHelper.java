@@ -17,12 +17,11 @@ import java.io.File;
 import timber.log.Timber;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    //Database Name
+    public static final String DATABASE_NAME = "dbFinance";
 
     //Database Version
-    private static final int DATABASE_VERSION = 1;
-
-    //Database Name
-    private static final String DATABASE_NAME = "dbFinance";
+    public static final int DATABASE_VERSION = 1;
 
     //Table Names
     private static final String TABLE_ACCOUNTS = "Accounts";

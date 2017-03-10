@@ -3,6 +3,14 @@ package com.databases.example.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 import timber.log.Timber;
 
@@ -32,6 +40,56 @@ public class DatabaseUtils {
 
         return false;
     }
+
+    public static String DB_FILEPATH = "/data/data/{package_name}/databases/database.db";
+
+    /**
+     * Copies the database file at the specified location over the current
+     * internal application database.
+     */
+    public static void exportDB(Context context) {
+        FileChannel src = null;
+        FileChannel dst = null;
+
+        try {
+            if (!context.getExternalFilesDir(null).exists()) {
+                context.getExternalFilesDir(null).mkdir();
+            }
+
+            File data = Environment.getDataDirectory();
+
+            if (context.getExternalFilesDir(null).canWrite()) {
+                String currentDBPath = "//data//" + context.getPackageName()
+                        + "//databases//" + DatabaseHelper.DATABASE_NAME;
+                String backupDBPath = "/" + DatabaseHelper.DATABASE_NAME + "Backup.db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(context.getExternalFilesDir(null), backupDBPath);
+
+                src = new FileInputStream(currentDB).getChannel();
+                dst = new FileOutputStream(backupDB).getChannel();
+                dst.transferFrom(src, 0, src.size());
+                src.close();
+                dst.close();
+                Timber.d("Successfully backed up database: " + backupDBPath);
+                Toast.makeText(context, "Backup Successful", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+            e.printStackTrace();
+            Toast.makeText(context, "Backup Error\n" + e.toString(), Toast.LENGTH_LONG).show();
+        } finally {
+            if (src != null) {
+                try {
+                    src.close();
+                    dst.close();
+                } catch (IOException e) {
+                    Timber.e("Failed to clean up databases on backup failure! " + e);
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     public static void addTestData(Context context) {
         Timber.d("Adding Test Data...");

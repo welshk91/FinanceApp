@@ -116,6 +116,17 @@ public class SettingsFragment extends PreferenceFragment {
                                 });
 
                         //Clear Database
+                        Preference prefBackupDB = findPreference(getString(R.string.pref_key_backup_database));
+                        prefBackupDB
+                                .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+                                    public boolean onPreferenceClick(Preference preference) {
+                                        DatabaseUtils.exportDB(getActivity().getApplicationContext());
+                                        return true;
+                                    }
+                                });
+
+                        //Clear Database
                         Preference prefClearDB = findPreference(getString(R.string.pref_key_clear_database));
                         prefClearDB
                                 .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

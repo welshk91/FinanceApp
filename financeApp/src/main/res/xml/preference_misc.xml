@@ -11,6 +11,10 @@
         android:summary="Will add some Test Data"
         android:title="Add Dummy Data" />
     <Preference
+        android:key="@string/pref_key_backup_database"
+        android:summary="Will backup database in '/files'"
+        android:title="Backup Checkbook" />
+    <Preference
         android:key="@string/pref_key_clear_database"
         android:summary="Will delete all the checkbook data. Use with extreme caution."
         android:title="Delete Checkbook" />

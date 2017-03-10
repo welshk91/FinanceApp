@@ -102,7 +102,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case ACCOUNT_ID:
-                cursor = dh.getAccount(uri.getLastPathSegment());
+                cursor = dh.getAccounts(projection, DatabaseHelper.ACCOUNT_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case ACCOUNT_SEARCH_ID:
@@ -114,7 +114,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case TRANSACTION_ID:
-                cursor = dh.getTransaction(uri.getLastPathSegment());
+                cursor = dh.getTransactions(projection, DatabaseHelper.TRANS_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case TRANSACTION_SEARCH_ID:
@@ -126,7 +126,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case CATEGORY_ID:
-                cursor = dh.getCategory(uri.getLastPathSegment());
+                cursor = dh.getCategories(projection, DatabaseHelper.CATEGORY_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case SUBCATEGORIES_ID:
@@ -134,7 +134,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case SUBCATEGORY_ID:
-                cursor = dh.getSubCategory(uri.getLastPathSegment());
+                cursor = dh.getSubCategories(projection, DatabaseHelper.SUBCATEGORY_CAT_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case PLANS_ID:
@@ -142,7 +142,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case PLAN_ID:
-                cursor = dh.getPlan(uri.getLastPathSegment());
+                cursor = dh.getSubCategories(projection, DatabaseHelper.PLAN_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case LINKS_ID:
@@ -154,7 +154,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case NOTIFICATION_ID:
-                cursor = dh.getNotification(uri.getLastPathSegment());
+                cursor = dh.getNotifications(projection, DatabaseHelper.NOT_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             default:

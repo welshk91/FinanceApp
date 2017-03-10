@@ -159,18 +159,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    //Get single account
-    public Cursor getAccount(String aID) {
-        Cursor cursor;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sqlCommand = "SELECT * FROM " + TABLE_ACCOUNTS +
-                " WHERE " + ACCOUNT_ID + " = " + aID;
-
-        cursor = db.rawQuery(sqlCommand, null);
-        return cursor;
-    }
-
     //Get searched accounts
     public Cursor getSearchedAccounts(String query) {
         Cursor cursor;
@@ -221,18 +209,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_TRANSACTIONS, new String[]{TRANS_ID + " as _id", TRANS_ACCT_ID, TRANS_PLAN_ID, TRANS_NAME, TRANS_VALUE, TRANS_TYPE, TRANS_CATEGORY, TRANS_CHECKNUM, TRANS_MEMO, TRANS_TIME, TRANS_DATE, TRANS_CLEARED}, selection,
                 selectionArgs, null, null, sortOrder);
-        return cursor;
-    }
-
-    //Get single transaction
-    public Cursor getTransaction(String tID) {
-        Cursor cursor;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sqlCommand = "SELECT * FROM " + TABLE_TRANSACTIONS +
-                " WHERE " + TRANS_ID + " = " + tID;
-
-        cursor = db.rawQuery(sqlCommand, null);
         return cursor;
     }
 
@@ -301,18 +277,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    //Get single category
-    public Cursor getCategory(String cID) {
-        Cursor cursor;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sqlCommand = "SELECT * FROM " + TABLE_CATEGORIES +
-                " WHERE " + CATEGORY_ID + " = " + cID;
-
-        cursor = db.rawQuery(sqlCommand, null);
-        return cursor;
-    }
-
     //Add category
     public long addCategory(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -337,18 +301,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_SUBCATEGORIES, new String[]{SUBCATEGORY_ID + " as _id", SUBCATEGORY_CAT_ID, SUBCATEGORY_IS_DEFAULT, SUBCATEGORY_NAME, SUBCATEGORY_NOTE}, selection,
                 selectionArgs, null, null, sortOrder);
-        return cursor;
-    }
-
-    //Get single subcategory
-    public Cursor getSubCategory(String sID) {
-        Cursor cursor;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sqlCommand = "SELECT * FROM " + TABLE_SUBCATEGORIES +
-                " WHERE " + SUBCATEGORY_ID + " = " + sID;
-
-        cursor = db.rawQuery(sqlCommand, null);
         return cursor;
     }
 
@@ -379,18 +331,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    //Get single planned transaction
-    public Cursor getPlan(String pID) {
-        Cursor cursor;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sqlCommand = "SELECT * FROM " + TABLE_PLANS +
-                " WHERE " + PLAN_ID + " = " + pID;
-
-        cursor = db.rawQuery(sqlCommand, null);
-        return cursor;
-    }
-
     //Add planned transaction (no ID)
     public long addPlan(ContentValues values) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -415,18 +355,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.query(TABLE_NOTIFICATIONS, new String[]{NOT_ID + " as _id", NOT_NAME, NOT_VALUE, NOT_DATE}, selection,
                 selectionArgs, null, null, sortOrder);
-        return cursor;
-    }
-
-    //Get single notification
-    public Cursor getNotification(String nID) {
-        Cursor cursor;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sqlCommand = "SELECT * FROM " + TABLE_NOTIFICATIONS +
-                " WHERE " + NOT_ID + " = " + nID;
-
-        cursor = db.rawQuery(sqlCommand, null);
         return cursor;
     }
 

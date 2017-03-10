@@ -103,6 +103,8 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     private final String TRANSFER_FRAGMENT_TAG = "plans_transfer_fragment";
     private final String SORT_FRAGMENT_TAG = "plans_sort_fragment";
 
+    private DrawerActivity drawerActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +113,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         setTitle(getString(R.string.plans));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.PLANS, null);
+        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.PLANS, null);
         drawerActivity.initialize();
 
         ListView lvPlans = (ListView) this.findViewById(R.id.plans_list);
@@ -162,7 +164,13 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         getSupportLoaderManager().initLoader(PLAN_SUBCATEGORY_LOADER, null, this);
         getSupportLoaderManager().initLoader(PLAN_ACCOUNT_LOADER, null, this);
 
-    }//end onCreate
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawerActivity.setActivityTag();
+    }
 
     //Used for ActionMode
     private void listItemChecked(int position) {

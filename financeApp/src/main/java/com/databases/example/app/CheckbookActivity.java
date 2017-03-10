@@ -23,6 +23,8 @@ import timber.log.Timber;
 public class CheckbookActivity extends AppCompatActivity {
     public static final String SHOW_ALL_KEY = "showAll";
 
+    DrawerActivity drawerActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +34,7 @@ public class CheckbookActivity extends AppCompatActivity {
         setTitle(getString(R.string.checkbook));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CHECKBOOK, null);
+        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CHECKBOOK, null);
         drawerActivity.initialize();
 
         if (savedInstanceState != null) {
@@ -81,6 +83,12 @@ public class CheckbookActivity extends AppCompatActivity {
 
         getSupportFragmentManager().executePendingTransactions();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawerActivity.setActivityTag();
     }
 
     //Needed to have notification extras work

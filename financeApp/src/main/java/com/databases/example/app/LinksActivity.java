@@ -49,6 +49,7 @@ public class LinksActivity extends AppCompatActivity {
     private Uri contactPhoto = null;
 
     private static Intent intent = null;
+    private DrawerActivity drawerActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +58,14 @@ public class LinksActivity extends AppCompatActivity {
         setTitle(getString(R.string.attachments));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.LINKS, null);
+        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.LINKS, null);
         drawerActivity.initialize();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawerActivity.setActivityTag();
     }
 
     //Method for when you click the Add button

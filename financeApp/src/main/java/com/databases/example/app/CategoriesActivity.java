@@ -58,6 +58,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
 
     private static DatabaseHelper dh = null;
     private final ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
+    private DrawerActivity drawerActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         setTitle(getString(R.string.categories));
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CATEGROIES, null);
+        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CATEGROIES, null);
         drawerActivity.initialize();
 
         ExpandableListView lvCategory = (ExpandableListView) this.findViewById(R.id.category_list);
@@ -88,6 +89,12 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
 
         adapterCategory = new CategoriesListViewAdapter(this, 0, null, resultsCursor);
         lvCategory.setAdapter(adapterCategory);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawerActivity.setActivityTag();
     }
 
     //Method for filling subcategories

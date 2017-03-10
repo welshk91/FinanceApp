@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final String CARDS_TAG = "cards_tag";
 
+    DrawerActivity drawerActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.MAIN, null);
+        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.MAIN, null);
         drawerActivity.initialize();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawerActivity.setActivityTag();
     }
 
     //For Menu

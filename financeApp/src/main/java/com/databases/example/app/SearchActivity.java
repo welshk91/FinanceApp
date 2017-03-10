@@ -29,6 +29,8 @@ public class SearchActivity extends AppCompatActivity {
     public static final String BOOLEAN_SEARCH_KEY = "boolSearch";
     public static final String QUERY_KEY = "query";
 
+    private DrawerActivity drawerActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +43,15 @@ public class SearchActivity extends AppCompatActivity {
         handleIntent(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawerActivity.setActivityTag();
+    }
+
     private void handleIntent(Intent intent) {
         String query = intent.getStringExtra(QUERY_KEY);
-        setTitle("SearchActivity <" + query + ">");
+        setTitle("Search <" + query + ">");
         makeView();
     }
 
@@ -61,7 +69,7 @@ public class SearchActivity extends AppCompatActivity {
         mTabsAdapter.notifyDataSetChanged();
 
         //NavigationDrawer
-        DrawerActivity drawerActivity = new DrawerActivity(this, Constants.ActivityTag.SEARCH, null);
+        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.SEARCH, null);
         drawerActivity.initialize();
     }
 

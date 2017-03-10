@@ -164,6 +164,42 @@ public class DrawerActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    public void setActivityTag() {
+        switch (activityTag) {
+            case MAIN:
+                drawerNavView.getMenu().getItem(0).setChecked(true);
+                break;
+            case CHECKBOOK:
+                drawerNavView.getMenu().getItem(1).setChecked(true);
+                break;
+            case CATEGROIES:
+                drawerNavView.getMenu().getItem(2).setChecked(true);
+                break;
+            case PLANS:
+                drawerNavView.getMenu().getItem(3).setChecked(true);
+                break;
+            case STATISTICS:
+                drawerNavView.getMenu().getItem(4).setChecked(true);
+                break;
+            case OPTIONS:
+                drawerNavView.getMenu().getItem(5).setChecked(true);
+                break;
+            case HELP:
+                drawerNavView.getMenu().getItem(6).setChecked(true);
+                break;
+            case EXIT:
+                drawerNavView.getMenu().getItem(7).setChecked(true);
+                break;
+            case SEARCH:
+                break;
+            case LINKS:
+                break;
+            default:
+                Timber.e("Unknown Drawer Menu Item");
+                break;
+        }
+    }
+
     //Method to exit app
     private void closeApp() {
         System.exit(0);

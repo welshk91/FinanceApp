@@ -200,7 +200,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
             searchFragment = bundle.getBoolean(SearchActivity.BOOLEAN_SEARCH_KEY);
 
             if (!showAllTransactions && !searchFragment) {
-                account = bundle.getParcelable(AccountsFragment.ACCOUNT_ID_KEY);
+                account = bundle.getParcelable(AccountsFragment.ACCOUNT_KEY);
             }
 
             Timber.v("searchFragment=" + searchFragment + "\nshowAllTransactions=" + showAllTransactions + "\nAccount_id=" + account);

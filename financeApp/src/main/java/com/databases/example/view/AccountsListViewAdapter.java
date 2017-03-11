@@ -36,21 +36,7 @@ public class AccountsListViewAdapter extends CursorAdapter {
     }
 
     public Account getAccount(long position) {
-        final Cursor group = getCursor();
-
-        group.moveToPosition((int) position);
-        final int NameColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_NAME);
-        final int BalanceColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
-        final int TimeColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_TIME);
-        final int DateColumn = group.getColumnIndex(DatabaseHelper.ACCOUNT_DATE);
-
-        final int id = group.getInt(0);
-        final String name = group.getString(NameColumn);
-        final String balance = group.getString(BalanceColumn);
-        final String time = group.getString(TimeColumn);
-        final String date = group.getString(DateColumn);
-
-        return new Account(id, name, balance, time, date);
+        return Account.getAccounts(getCursor()).get((int) position);
     }
 
     @Override

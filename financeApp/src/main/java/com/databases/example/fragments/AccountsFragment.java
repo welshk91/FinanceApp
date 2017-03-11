@@ -76,7 +76,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     private final String CURRENT_ACCOUNT_KEY = "currentAccount";
     public static int currentAccount = -1;
 
-    public static final String ACCOUNT_ID_KEY = "ID";
+    public static final String ACCOUNT_KEY = "ID";
 
     private final String ADD_FRAGMENT_TAG = "account_add_fragment";
     private final String EDIT_FRAGMENT_TAG = "account_edit_fragment";
@@ -118,15 +118,14 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                                               listItemChecked(position);
                                           } else {
                                               int selectionRowID = (int) adapterAccounts.getItemId(position);
-                                              Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null);
-
-                                              ArrayList<Account> accounts = Account.getAccounts(c);
+                                              ArrayList<Account> accounts = Account.getAccounts(getActivity().getContentResolver()
+                                                      .query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null));
 
                                               View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
                                               if (checkbook_frame != null) {
                                                   Bundle args = new Bundle();
-                                                  args.putParcelable(ACCOUNT_ID_KEY, accounts.get(0));
+                                                  args.putParcelable(ACCOUNT_KEY, accounts.get(0));
 
                                                   //Add the fragment to the activity, pushing this transaction on to the back stack.
                                                   TransactionsFragment tran_frag = new TransactionsFragment();
@@ -141,7 +140,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                                                   Bundle args = new Bundle();
                                                   args.putBoolean(CheckbookActivity.SHOW_ALL_KEY, false);
                                                   args.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
-                                                  args.putParcelable(ACCOUNT_ID_KEY, accounts.get(0));
+                                                  args.putParcelable(ACCOUNT_KEY, accounts.get(0));
 
                                                   currentAccount = position;
 
@@ -333,7 +332,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
             case R.id.account_menu_transfer:
                 if (adapterAccounts.getCount() < 2) {
-                    Toast.makeText(getActivity(), "Not Enough AccountsFragment For Transfer \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Not Enough Accounts For Transfer \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
                 } else {
                     accountTransfer();
                 }
@@ -351,7 +350,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (!isDetached()) {
-            Timber.d("OptionsActivity changed. Requery");
+            Timber.d("Settings changed. Requery");
             //getActivity().getContentResolver().notifyChange(MyContentProvider.ACCOUNTS_URI, null);
             //getLoaderManager().restartLoader(ACCOUNTS_LOADER, null, this);
         }
@@ -502,7 +501,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             //accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);
-                            DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)).id);
+                            DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
                             newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
                         }
                     }

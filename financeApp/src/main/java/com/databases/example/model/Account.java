@@ -50,6 +50,17 @@ public class Account implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", balance='" + balance + '\'' +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                '}';
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

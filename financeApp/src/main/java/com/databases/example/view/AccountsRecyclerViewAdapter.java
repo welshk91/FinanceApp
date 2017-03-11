@@ -53,7 +53,7 @@ public class AccountsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_account_default_appearance), true);
 
         if (viewType == VIEW_TYPE_EMPTY) {
-            TextView view = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.accounts_empty, parent, false);
+            TextView view = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
             return new ViewHolderEmpty(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.account_item, parent, false);
@@ -134,6 +134,8 @@ public class AccountsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 break;
 
             case VIEW_TYPE_EMPTY:
+                ViewHolderEmpty holderEmpty = (ViewHolderEmpty) genericHolder;
+                holderEmpty.view.setText("No Accounts\n\nTo Add An Account, Please Use The ActionBar On The Top");
                 break;
         }
     }

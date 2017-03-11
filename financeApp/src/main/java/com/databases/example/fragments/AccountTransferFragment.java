@@ -11,6 +11,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -192,19 +193,19 @@ public class AccountTransferFragment extends DialogFragment {
 
     //Method to get the list of accounts for transfer spinner
     private void accountPopulate() {
+        //TODO: need to customize this layout since we dont use a SimpleCursorAdapter anymore
         String[] from = new String[]{DatabaseHelper.ACCOUNT_NAME};
         int[] to = new int[]{android.R.id.text1};
 
-        Cursor accountCursor = AccountsFragment.adapterAccounts.getCursor();
+        ArrayList<Account> accounts = AccountsFragment.adapterAccounts.getAccounts();
+        ArrayAdapter<Account> adapterFrom = new ArrayAdapter<Account>(getContext(), android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, accounts);
+        ArrayAdapter<Account> adapterTo = new ArrayAdapter<Account>(getContext(), android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, accounts);
 
-        transferSpinnerAdapterFrom = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to, 0);
-        transferSpinnerAdapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to, 0);
-        transferSpinnerAdapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
-        transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
+        transferSpinnerFrom.setAdapter(adapterFrom);
+        transferSpinnerTo.setAdapter(adapterTo);
 
         transferSpinnerFrom.setSelection(0);
         transferSpinnerTo.setSelection(1);

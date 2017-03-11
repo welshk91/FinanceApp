@@ -12,7 +12,7 @@
     <color name="toolbar_background">@color/primary</color>
     <color name="toolbar_text">@color/google_white</color>
 
-    <color name="listview_background">#e5e5e5</color>
+    <color name="recyclerview_background">#e5e5e5</color>
     <color name="search_pager_text">@color/text_darkest</color>
 
     <color name="balance_background">@color/black</color>

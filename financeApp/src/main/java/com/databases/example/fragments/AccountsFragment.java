@@ -19,6 +19,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -30,9 +32,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +44,8 @@ import com.databases.example.data.MyContentProvider;
 import com.databases.example.model.Account;
 import com.databases.example.model.SearchWidget;
 import com.databases.example.utils.Money;
-import com.databases.example.view.AccountsListViewAdapter;
+import com.databases.example.view.AccountsRecyclerViewAdapter;
+import com.databases.example.view.RecyclerViewListener;
 import com.databases.example.wizard.AccountWizard;
 
 import java.math.BigDecimal;
@@ -68,8 +68,8 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     private View myFragmentView;
 
-    private ListView lv = null;
-    public static AccountsListViewAdapter adapterAccounts = null;
+    private RecyclerView recylerView = null;
+    public static AccountsRecyclerViewAdapter adapterAccounts = null;
 
     public static Object mActionMode = null;
 
@@ -104,67 +104,60 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.accounts, container, false);
-        lv = (ListView) myFragmentView.findViewById(R.id.account_list);
+        recylerView = (RecyclerView) myFragmentView.findViewById(R.id.account_list);
 
-        lv.setClickable(true);
-        lv.setLongClickable(true);
+        recylerView.setClickable(true);
+        recylerView.setLongClickable(true);
 
-        //Set Listener for regular mouse click
-        lv.setOnItemClickListener(new OnItemClickListener() {
-                                      @Override
-                                      public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        //Set up a listener for changes in settings menu
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
-                                          if (mActionMode != null) {
-                                              listItemChecked(position);
-                                          } else {
-                                              int selectionRowID = (int) adapterAccounts.getItemId(position);
-                                              ArrayList<Account> accounts = Account.getAccounts(getActivity().getContentResolver()
-                                                      .query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + (selectionRowID)), null, null, null, null));
+        adapterAccounts = new AccountsRecyclerViewAdapter(getActivity(), null, new RecyclerViewListener() {
+            @Override
+            public void onItemClick(final Object object, int position) {
+                if (mActionMode != null) {
+                    listItemChecked(position);
+                } else {
+                    Account account = (Account) object;
+                    View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
 
-                                              View checkbook_frame = getActivity().findViewById(R.id.checkbook_frag_frame);
+                    if (checkbook_frame != null) {
+                        Bundle args = new Bundle();
+                        args.putParcelable(ACCOUNT_KEY, account);
 
-                                              if (checkbook_frame != null) {
-                                                  Bundle args = new Bundle();
-                                                  args.putParcelable(ACCOUNT_KEY, accounts.get(0));
+                        //Add the fragment to the activity, pushing this transaction on to the back stack.
+                        TransactionsFragment tran_frag = new TransactionsFragment();
+                        tran_frag.setArguments(args);
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        ft.replace(R.id.checkbook_frag_frame, tran_frag);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                        getFragmentManager().executePendingTransactions();
+                    } else {
+                        Bundle args = new Bundle();
+                        args.putBoolean(CheckbookActivity.SHOW_ALL_KEY, false);
+                        args.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
+                        args.putParcelable(ACCOUNT_KEY, account);
 
-                                                  //Add the fragment to the activity, pushing this transaction on to the back stack.
-                                                  TransactionsFragment tran_frag = new TransactionsFragment();
-                                                  tran_frag.setArguments(args);
-                                                  FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                                  ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                                                  ft.replace(R.id.checkbook_frag_frame, tran_frag);
-                                                  ft.addToBackStack(null);
-                                                  ft.commit();
-                                                  getFragmentManager().executePendingTransactions();
-                                              } else {
-                                                  Bundle args = new Bundle();
-                                                  args.putBoolean(CheckbookActivity.SHOW_ALL_KEY, false);
-                                                  args.putBoolean(SearchActivity.BOOLEAN_SEARCH_KEY, false);
-                                                  args.putParcelable(ACCOUNT_KEY, accounts.get(0));
+                        currentAccount = position;
 
-                                                  currentAccount = position;
-
-                                                  //Add the fragment to the activity
-                                                  //NOTE: Don't add custom animation, seems to mess with onLoaderReset
-                                                  TransactionsFragment tran_frag = new TransactionsFragment();
-                                                  tran_frag.setArguments(args);
-                                                  FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                                  //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                                                  ft.replace(R.id.transaction_frag_frame, tran_frag);
-                                                  ft.commit();
-                                                  getFragmentManager().executePendingTransactions();
-                                              }
-                                          }
-                                      }// end onItemClick
-
-                                  }
-        );
-
-        lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+                        //Add the fragment to the activity
+                        //NOTE: Don't add custom animation, seems to mess with onLoaderReset
+                        TransactionsFragment tran_frag = new TransactionsFragment();
+                        tran_frag.setArguments(args);
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                        ft.replace(R.id.transaction_frag_frame, tran_frag);
+                        ft.commit();
+                        getFragmentManager().executePendingTransactions();
+                    }
+                }
+            }
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
+            public boolean onItemLongClick(Object account, int position) {
                 if (mActionMode != null) {
                     return false;
                 }
@@ -174,12 +167,8 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
             }
         });
 
-        //Set up a listener for changes in settings menu
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        prefs.registerOnSharedPreferenceChangeListener(this);
-
-        adapterAccounts = new AccountsListViewAdapter(this.getActivity(), null);
-        lv.setAdapter(adapterAccounts);
+        recylerView.setAdapter(adapterAccounts);
+        recylerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         populate();
 
@@ -196,7 +185,6 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         return myFragmentView;
     }
 
-    //Used for ActionMode
     private void listItemChecked(int position) {
         adapterAccounts.toggleSelection(position);
         boolean hasCheckedItems = adapterAccounts.getSelectedCount() > 0;
@@ -331,7 +319,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                 return true;
 
             case R.id.account_menu_transfer:
-                if (adapterAccounts.getCount() < 2) {
+                if (adapterAccounts.getItemCount() < 2) {
                     Toast.makeText(getActivity(), "Not Enough Accounts For Transfer \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
                 } else {
                     accountTransfer();
@@ -398,22 +386,21 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
         switch (loader.getId()) {
             case ACCOUNTS_LOADER:
-                adapterAccounts.swapCursor(data);
+                ArrayList<Account> accounts = Account.getAccounts(data);
+                adapterAccounts.setAccounts(accounts);
                 Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
-                int balanceColumn = data.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE);
                 BigDecimal totalBalance = BigDecimal.ZERO;
                 Locale locale = getResources().getConfiguration().locale;
 
-                data.moveToPosition(-1);
-                while (data.moveToNext()) {
-                    totalBalance = totalBalance.add(new Money(data.getString(balanceColumn)).getBigDecimal(locale));
+                for (Account account : accounts) {
+                    totalBalance = totalBalance.add(new Money(account.balance).getBigDecimal(locale));
                 }
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
-                    noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
-                    lv.setEmptyView(noResult);
+//                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
+//                    noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
+//                    lv.setEmptyView(noResult);
 
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
@@ -423,19 +410,9 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
-                adapterAccounts.swapCursor(data);
+                adapterAccounts.setAccounts(Account.getAccounts(data));
                 Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
-
-                try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
-                    noResult.setText(R.string.no_accounts_found);
-                    lv.setEmptyView(noResult);
-
-                    footerTV.setText(R.string.search_results);
-                } catch (Exception e) {
-                    Timber.e("Error setting search TextView. e=" + e);
-                }
-
+                footerTV.setText(R.string.search_results);
                 break;
 
             default:
@@ -452,12 +429,12 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
             case ACCOUNTS_LOADER:
-                adapterAccounts.swapCursor(null);
+                adapterAccounts.setAccounts(null);
                 Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case ACCOUNTS_SEARCH_LOADER:
-                adapterAccounts.swapCursor(null);
+                adapterAccounts.setAccounts(null);
                 Timber.v("loader reset. loader=" + loader.getId());
                 break;
 

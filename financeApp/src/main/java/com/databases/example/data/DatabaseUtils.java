@@ -6,11 +6,15 @@ import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.databases.example.model.Category;
+import com.databases.example.model.Subcategory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
 import timber.log.Timber;
 
@@ -20,6 +24,11 @@ import timber.log.Timber;
  */
 
 public class DatabaseUtils {
+    /**
+     * Deletes all Accounts, Transactions, and Plans
+     * @param context
+     * @return whether the delete was successful or not
+     */
     public static boolean deleteDatabase(Context context) {
         Timber.d("Deleting database...");
 
@@ -40,8 +49,6 @@ public class DatabaseUtils {
 
         return false;
     }
-
-    public static String DB_FILEPATH = "/data/data/{package_name}/databases/database.db";
 
     /**
      * Copies the database file at the specified location over the current
@@ -97,22 +104,22 @@ public class DatabaseUtils {
         //CHECKING
         ContentValues accountValues = new ContentValues();
         accountValues.put(DatabaseHelper.ACCOUNT_NAME, "Checking");
-        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, "4850");
-        accountValues.put(DatabaseHelper.ACCOUNT_TIME, "06:10 PM");
-        accountValues.put(DatabaseHelper.ACCOUNT_DATE, "03-01-2017");
+        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, "4850.50");
+        accountValues.put(DatabaseHelper.ACCOUNT_TIME, "06:10");
+        accountValues.put(DatabaseHelper.ACCOUNT_DATE, "2017-03-01");
         Uri checkingUri = context.getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
 
         ContentValues transactionValues = new ContentValues();
         transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(checkingUri.getLastPathSegment()));
         transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
         transactionValues.put(DatabaseHelper.TRANS_NAME, "STARTING BALANCE");
-        transactionValues.put(DatabaseHelper.TRANS_VALUE, "5000");
+        transactionValues.put(DatabaseHelper.TRANS_VALUE, "5000.00");
         transactionValues.put(DatabaseHelper.TRANS_TYPE, "Deposit");
         transactionValues.put(DatabaseHelper.TRANS_CATEGORY, "STARTING BALANCE");
         transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, "");
         transactionValues.put(DatabaseHelper.TRANS_MEMO, "This is an automatically generated transaction created when you add an account");
-        transactionValues.put(DatabaseHelper.TRANS_TIME, "06:10 PM");
-        transactionValues.put(DatabaseHelper.TRANS_DATE, "03-01-2017");
+        transactionValues.put(DatabaseHelper.TRANS_TIME, "06:10");
+        transactionValues.put(DatabaseHelper.TRANS_DATE, "2017-03-01");
         transactionValues.put(DatabaseHelper.TRANS_CLEARED, true);
         context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
 
@@ -120,13 +127,13 @@ public class DatabaseUtils {
         transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(checkingUri.getLastPathSegment()));
         transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
         transactionValues.put(DatabaseHelper.TRANS_NAME, "Cash withdraw");
-        transactionValues.put(DatabaseHelper.TRANS_VALUE, "150");
+        transactionValues.put(DatabaseHelper.TRANS_VALUE, "149.50");
         transactionValues.put(DatabaseHelper.TRANS_TYPE, "Withdraw");
         transactionValues.put(DatabaseHelper.TRANS_CATEGORY, "Withdraw");
         transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, "");
         transactionValues.put(DatabaseHelper.TRANS_MEMO, "Needed some extra cash...");
-        transactionValues.put(DatabaseHelper.TRANS_TIME, "09:00 PM");
-        transactionValues.put(DatabaseHelper.TRANS_DATE, "03-05-2017");
+        transactionValues.put(DatabaseHelper.TRANS_TIME, "18:23");
+        transactionValues.put(DatabaseHelper.TRANS_DATE, "2017-03-05");
         transactionValues.put(DatabaseHelper.TRANS_CLEARED, true);
         context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
 
@@ -134,426 +141,143 @@ public class DatabaseUtils {
         //SAVINGS
         accountValues = new ContentValues();
         accountValues.put(DatabaseHelper.ACCOUNT_NAME, "Savings");
-        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, "10000");
-        accountValues.put(DatabaseHelper.ACCOUNT_TIME, "05:00 PM");
-        accountValues.put(DatabaseHelper.ACCOUNT_DATE, "03-07-2017");
+        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, "10000.00");
+        accountValues.put(DatabaseHelper.ACCOUNT_TIME, "18:00");
+        accountValues.put(DatabaseHelper.ACCOUNT_DATE, "2017-03-07");
         Uri savingsUri = context.getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
 
         transactionValues = new ContentValues();
         transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(savingsUri.getLastPathSegment()));
         transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
         transactionValues.put(DatabaseHelper.TRANS_NAME, "STARTING BALANCE");
-        transactionValues.put(DatabaseHelper.TRANS_VALUE, "10000");
+        transactionValues.put(DatabaseHelper.TRANS_VALUE, "10000.00");
         transactionValues.put(DatabaseHelper.TRANS_TYPE, "Deposit");
         transactionValues.put(DatabaseHelper.TRANS_CATEGORY, "STARTING BALANCE");
         transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, "");
         transactionValues.put(DatabaseHelper.TRANS_MEMO, "This is an automatically generated transaction created when you add an account");
-        transactionValues.put(DatabaseHelper.TRANS_TIME, "05:00 PM");
-        transactionValues.put(DatabaseHelper.TRANS_DATE, "03-07-2017");
+        transactionValues.put(DatabaseHelper.TRANS_TIME, "18:00");
+        transactionValues.put(DatabaseHelper.TRANS_DATE, "2017-03-07");
         transactionValues.put(DatabaseHelper.TRANS_CLEARED, true);
         context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
     }
 
-    public static void addDefaultCategories(Context context) {
-        Timber.d("Adding Default CategoriesActivity...");
+    public static void addDefaultCategories(final Context context) {
+        Timber.d("Adding Default Categories...");
 
         //Default
+        ArrayList<Subcategory> subcategories = new ArrayList<>();
+        subcategories.add(new Subcategory(-1, -1, true, "STARTING BALANCE", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "TRANSFER", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Default", "Default Category"), subcategories);
+
+        //ATM
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Deposit", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Withdraw", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "ATM", "Default Category"), subcategories);
+
+        //Car
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Road Services", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Fuel", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Maintenance", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Car", "Default Category"), subcategories);
+
+        //Food
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Snacks", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Restaurant", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Groceries", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Food", "Default Category"), subcategories);
+
+        //Fun
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Entertainment", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Electronics", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Shopping", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Fun", "Default Category"), subcategories);
+
+        //Housing
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Mortgage", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Rent", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Maintenance", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Decorating", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "House", "Default Category"), subcategories);
+
+        //Insurance
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Auto", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Health", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Dental", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Home", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Life", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Insurance", "Default Category"), subcategories);
+
+        //Job
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Paycheck", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Tax", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Income", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Job", "Default Category"), subcategories);
+
+        //Loans
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Auto", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Home Equity", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Mortgage", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Student", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Loans", "Default Category"), subcategories);
+
+        //Personal
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Gift", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Donation", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Personal", "Default Category"), subcategories);
+
+        //Random
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Interest", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Tip", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Random", "Default Category"), subcategories);
+
+        //Travel
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Airplane", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Car Rental", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Dining", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Hotel", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Misc Expenses", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Taxi", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Travel", "Default Category"), subcategories);
+
+        //Utils
+        subcategories.clear();
+        subcategories.add(new Subcategory(-1, -1, true, "Gas", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Electricity", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Heat", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Water", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Air Conditioning", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Internet", "Default Subcategory"));
+        subcategories.add(new Subcategory(-1, -1, true, "Garbage", "Default Subcategory"));
+        insertCategories(context, new Category(-1, true, "Utilities", "Default Category"), subcategories);
+    }
+
+    private static void insertCategories(final Context context, final Category category, final ArrayList<Subcategory> subcategories){
         ContentValues categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Default");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
+        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, category.isDefault);
+        categoryValues.put(DatabaseHelper.CATEGORY_NAME, category.name);
+        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, category.note);
         Uri categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
 
         ContentValues subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "STARTING BALANCE");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "TRANSFER");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //ATM
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "ATM");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Deposit");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Withdraw");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Car
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Car");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Road Services");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Fuel");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Maintenance");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Food
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Food");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Groceries");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Restaurant");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Snacks");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Fun
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Fun");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Entertainment");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Electronics");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Shopping");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Housing
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "House");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Rent");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Maintenance");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Decorating");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Insurance
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Insurance");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Auto");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Health");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Home");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Life");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Job
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Job");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Paycheck");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Tax");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Income");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Loans
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Loans");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Auto");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Home Equity");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Mortgage");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Student");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Personal
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Personal");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Gift");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Donation");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Random
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Random");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Interest");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Tip");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Travel
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Travel");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Airplane");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Car Rental");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Dining");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Hotel");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Misc Expenses");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Taxi");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        //Utils
-        categoryValues = new ContentValues();
-        categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, "true");
-        categoryValues.put(DatabaseHelper.CATEGORY_NAME, "Utilities");
-        categoryValues.put(DatabaseHelper.CATEGORY_NOTE, "Default Category");
-        categoriesUri = context.getContentResolver().insert(MyContentProvider.CATEGORIES_URI, categoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Gas");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Electricity");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Heat");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Water");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Air Conditioning");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Internet");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
-
-        subcategoryValues = new ContentValues();
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, "true");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, "Garbage");
-        subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, "Default Subcategory");
-        context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
+        for (Subcategory subcategory : subcategories) {
+            subcategoryValues.clear();
+            subcategoryValues.put(DatabaseHelper.SUBCATEGORY_CAT_ID, Long.parseLong(categoriesUri.getLastPathSegment()));
+            subcategoryValues.put(DatabaseHelper.SUBCATEGORY_IS_DEFAULT, subcategory.isDefault);
+            subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NAME, subcategory.name);
+            subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, subcategory.note);
+            context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
+        }
     }
 }

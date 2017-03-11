@@ -49,7 +49,7 @@ public class Transaction implements Parcelable {
         ArrayList<Transaction> transactions = new ArrayList<>();
         Transaction transaction;
 
-        while (cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             transaction = new Transaction(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TRANS_ID)),
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TRANS_ACCT_ID)),

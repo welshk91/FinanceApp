@@ -34,7 +34,7 @@ public class Subcategory implements Parcelable {
         ArrayList<Subcategory> subcategories = new ArrayList<>();
         Subcategory subcategory;
 
-        while (cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             subcategory = new Subcategory(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_ID)),
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUBCATEGORY_CAT_ID)),

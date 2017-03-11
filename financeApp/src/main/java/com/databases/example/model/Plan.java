@@ -48,7 +48,7 @@ public class Plan implements Parcelable {
         ArrayList<Plan> plans = new ArrayList<>();
         Plan plan;
 
-        while (cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             plan = new Plan(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.PLAN_ID)),
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.PLAN_ACCT_ID)),

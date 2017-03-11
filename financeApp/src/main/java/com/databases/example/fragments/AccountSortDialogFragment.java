@@ -22,10 +22,7 @@ import timber.log.Timber;
  */
 public class AccountSortDialogFragment extends DialogFragment {
     public static AccountSortDialogFragment newInstance() {
-        AccountSortDialogFragment frag = new AccountSortDialogFragment();
-        Bundle args = new Bundle();
-        frag.setArguments(args);
-        return frag;
+        return new AccountSortDialogFragment();
     }
 
     @Override
@@ -38,7 +35,7 @@ public class AccountSortDialogFragment extends DialogFragment {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
         alertDialogBuilder.setView(accountSortView);
-        alertDialogBuilder.setTitle("Sort");
+        alertDialogBuilder.setTitle(R.string.sort);
         alertDialogBuilder.setCancelable(true);
 
         ListView sortOptions = (ListView) accountSortView.findViewById(R.id.sort_options);

@@ -32,7 +32,7 @@ public class Category implements Parcelable {
         ArrayList<Category> categories = new ArrayList<>();
         Category category;
 
-        while (cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             category = new Category(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.CATEGORY_ID)),
                     Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(DatabaseHelper.CATEGORY_IS_DEFAULT))),

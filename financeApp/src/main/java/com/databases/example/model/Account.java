@@ -35,7 +35,7 @@ public class Account implements Parcelable {
         ArrayList<Account> accounts = new ArrayList<>();
         Account account;
 
-        while (cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             account = new Account(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.ACCOUNT_ID)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.ACCOUNT_NAME)),

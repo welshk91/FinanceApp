@@ -18,9 +18,11 @@ import android.widget.Toast;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.model.Account;
 import com.databases.example.utils.Constants;
 import com.databases.example.utils.DateTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -33,11 +35,16 @@ public class AccountTransferFragment extends DialogFragment {
     private SimpleCursorAdapter transferSpinnerAdapterFrom = null;
     private SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
+    private final String transferName = "TRANSFER";
+    private final String transferPlanId = "0";
+    private final String transferCategory = "TRANSFER";
+    private final String transferCheckNum = "None";
+    private final String transferMemo = "This is an automatically generated transaction created when you transfer money";
+    private final String transferCleared = "true";
+    private String transferType = Constants.WITHDRAW;
+
     public static AccountTransferFragment newInstance() {
-        AccountTransferFragment frag = new AccountTransferFragment();
-        Bundle args = new Bundle();
-        frag.setArguments(args);
-        return frag;
+        return new AccountTransferFragment();
     }
 
     @Override
@@ -48,7 +55,7 @@ public class AccountTransferFragment extends DialogFragment {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(promptsView);
-        alertDialogBuilder.setTitle("Transfer Money");
+        alertDialogBuilder.setTitle(R.string.transfer_money);
 
         transferSpinnerFrom = (Spinner) promptsView.findViewById(R.id.spinner_account_from);
         transferSpinnerTo = (Spinner) promptsView.findViewById(R.id.spinner_account_to);
@@ -59,36 +66,31 @@ public class AccountTransferFragment extends DialogFragment {
         //Set dialog message
         alertDialogBuilder
                 .setCancelable(false)
-                .setPositiveButton("Transfer",
+                .setPositiveButton(R.string.transfer,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                Cursor cursorAccount1 = transferSpinnerAdapterFrom.getCursor();
+                                ArrayList<Account> accounts = Account.getAccounts(cursorAccount1);
 
-                                //Needed to get account's name from DB-populated spinner
-                                int accountPosition1 = transferSpinnerFrom.getSelectedItemPosition();
-                                Cursor cursorAccount1 = (Cursor) transferSpinnerAdapterFrom.getItem(accountPosition1);
+                                if(accounts == null || accounts.isEmpty()){
+                                    Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                }
 
-                                int accountPosition2 = transferSpinnerTo.getSelectedItemPosition();
-                                Cursor cursorAccount2 = (Cursor) transferSpinnerAdapterTo.getItem(accountPosition2);
+                                int accountPositionFrom = transferSpinnerFrom.getSelectedItemPosition();
+                                int accountPositionTo = transferSpinnerTo.getSelectedItemPosition();
 
-                                String transferAmount = tAmount.getText().toString().trim();
-                                String transferFrom;
-                                String transferTo;
-                                String transferToID;
-                                String transferFromID;
+                                Account accountFrom = accounts.get(accountPositionFrom);
+                                Account accountTo = accounts.get(accountPositionTo);
 
-                                try {
-                                    transferFrom = cursorAccount1.getString(cursorAccount1.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                    transferFromID = cursorAccount1.getString(cursorAccount1.getColumnIndex("_id"));
-                                    transferTo = cursorAccount2.getString(cursorAccount2.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                    transferToID = cursorAccount2.getString(cursorAccount2.getColumnIndex("_id"));
-                                } catch (Exception e) {
-                                    Timber.e("No Accounts? Exception e=" + e);
-                                    dialog.cancel();
-                                    Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create AccountsFragment", Toast.LENGTH_LONG).show();
+                                if(accountFrom.equals(accountTo)){
+                                    Toast.makeText(getActivity(), "You picked the same account!", Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
-                                Timber.d("From:" + transferFrom + " To:" + transferTo + " Amount:" + transferAmount);
+                                String transferAmount = tAmount.getText().toString().trim();
+
+                                Timber.d("From Account:" + accountFrom + " To Account:" + accountTo + " Amount:" + transferAmount);
 
                                 //Transfer From
                                 final Calendar cal = Calendar.getInstance();
@@ -97,13 +99,6 @@ public class AccountTransferFragment extends DialogFragment {
                                 transferDate.setDate(cal.getTime());
 
                                 float tAmount;
-                                final String transferName = "TRANSFER";
-                                final String transferPlanId = "0";
-                                final String transferCategory = "TRANSFER";
-                                final String transferCheckNum = "None";
-                                final String transferMemo = "This is an automatically generated transaction created when you transfer money";
-                                final String transferCleared = "true";
-                                String transferType = Constants.WITHDRAW;
 
                                 //Check Value to see if it's valid
                                 try {
@@ -116,7 +111,7 @@ public class AccountTransferFragment extends DialogFragment {
                                 ContentValues transferValues = new ContentValues();
 
                                 try {
-                                    transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferFromID);
+                                    transferValues.put(DatabaseHelper.TRANS_ACCT_ID, accountFrom.id);
                                     transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
                                     transferValues.put(DatabaseHelper.TRANS_NAME, transferName);
                                     transferValues.put(DatabaseHelper.TRANS_VALUE, tAmount);
@@ -134,7 +129,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     //Update Account Info
                                     ContentValues accountValues = new ContentValues();
 
-                                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + transferFromID), null, null, null, null);
+                                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountFrom.id), null, null, null, null);
 
                                     int entry_id;
                                     String entry_name;
@@ -157,7 +152,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     accountValues.put(DatabaseHelper.ACCOUNT_TIME, entry_time);
                                     accountValues.put(DatabaseHelper.ACCOUNT_DATE, entry_date);
 
-                                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + transferFromID), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + transferFromID, null);
+                                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountFrom.id), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + accountFrom.id, null);
                                     c.close();
 
                                 } catch (Exception e) {
@@ -171,7 +166,7 @@ public class AccountTransferFragment extends DialogFragment {
 
                                 try {
                                     transferValues.clear();
-                                    transferValues.put(DatabaseHelper.TRANS_ACCT_ID, transferToID);
+                                    transferValues.put(DatabaseHelper.TRANS_ACCT_ID, accountTo.id);
                                     transferValues.put(DatabaseHelper.TRANS_PLAN_ID, transferPlanId);
                                     transferValues.put(DatabaseHelper.TRANS_NAME, transferName);
                                     transferValues.put(DatabaseHelper.TRANS_VALUE, tAmount);
@@ -189,7 +184,7 @@ public class AccountTransferFragment extends DialogFragment {
                                     //Update Account Info
                                     ContentValues accountValues = new ContentValues();
 
-                                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + transferToID), null, null, null, null);
+                                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountTo.id), null, null, null, null);
 
                                     int entry_id;
                                     String entry_name;
@@ -212,22 +207,20 @@ public class AccountTransferFragment extends DialogFragment {
                                     accountValues.put(DatabaseHelper.ACCOUNT_TIME, entry_time);
                                     accountValues.put(DatabaseHelper.ACCOUNT_DATE, entry_date);
 
-                                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + transferToID), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + transferToID, null);
+                                    getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountTo.id), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + accountTo.id, null);
                                     c.close();
 
                                 } catch (Exception e) {
                                     Timber.e("Transfer To failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
                                 }
-
-                            }//end onClick "OK"
+                            }
                         }
                 )
-                .setNegativeButton("Cancel",
+                .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // CODE FOR "Cancel"
-                                dialog.cancel();
+                                dialog.dismiss();
                             }
                         }
                 );
@@ -248,12 +241,11 @@ public class AccountTransferFragment extends DialogFragment {
         transferSpinnerAdapterTo = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, accountCursor, from, to, 0);
         transferSpinnerAdapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
         transferSpinnerFrom.setAdapter(transferSpinnerAdapterFrom);
+        transferSpinnerTo.setAdapter(transferSpinnerAdapterTo);
 
         transferSpinnerFrom.setSelection(0);
         transferSpinnerTo.setSelection(1);
-
     }
 
 }

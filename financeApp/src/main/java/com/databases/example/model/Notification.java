@@ -35,7 +35,7 @@ public class Notification implements Parcelable {
         ArrayList<Notification> notifications = new ArrayList<>();
         Notification notification;
 
-        while (cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             notification = new Notification(
                     cursor.getInt(cursor.getColumnIndex(DatabaseHelper.NOT_ID)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.NOT_NAME)),

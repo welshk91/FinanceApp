@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -12,7 +11,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -33,8 +31,6 @@ import timber.log.Timber;
 public class AccountTransferFragment extends DialogFragment {
     private Spinner transferSpinnerTo;
     private Spinner transferSpinnerFrom;
-    private SimpleCursorAdapter transferSpinnerAdapterFrom = null;
-    private SimpleCursorAdapter transferSpinnerAdapterTo = null;
 
     private final String transferName = "TRANSFER";
     private final String transferPlanId = "0";
@@ -70,22 +66,16 @@ public class AccountTransferFragment extends DialogFragment {
                 .setPositiveButton(R.string.transfer,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Cursor cursorAccount1 = transferSpinnerAdapterFrom.getCursor();
-                                ArrayList<Account> accounts = Account.getAccounts(cursorAccount1);
+                                Account accountFrom = ((Account) transferSpinnerFrom.getItemAtPosition(transferSpinnerFrom.getSelectedItemPosition()));
+                                Account accountTo = ((Account) transferSpinnerTo.getItemAtPosition(transferSpinnerTo.getSelectedItemPosition()));
 
-                                if (accounts == null || accounts.isEmpty()) {
+                                if (accountFrom == null || accountTo == null) {
                                     Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
                                     dialog.dismiss();
                                     return;
                                 }
 
-                                int accountPositionFrom = transferSpinnerFrom.getSelectedItemPosition();
-                                int accountPositionTo = transferSpinnerTo.getSelectedItemPosition();
-
-                                Account accountFrom = accounts.get(accountPositionFrom);
-                                Account accountTo = accounts.get(accountPositionTo);
-
-                                if (accountFrom.equals(accountTo)) {
+                                if (accountFrom.id == accountTo.id) {
                                     Toast.makeText(getActivity(), "You picked the same account!", Toast.LENGTH_LONG).show();
                                     dismiss();
                                     return;

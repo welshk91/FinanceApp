@@ -72,9 +72,10 @@ public class AccountTransferFragment extends DialogFragment {
                                 Cursor cursorAccount1 = transferSpinnerAdapterFrom.getCursor();
                                 ArrayList<Account> accounts = Account.getAccounts(cursorAccount1);
 
-                                if(accounts == null || accounts.isEmpty()){
+                                if (accounts == null || accounts.isEmpty()) {
                                     Toast.makeText(getActivity(), "No Accounts \n\nUse The ActionBar To Create Accounts", Toast.LENGTH_LONG).show();
                                     dialog.dismiss();
+                                    return;
                                 }
 
                                 int accountPositionFrom = transferSpinnerFrom.getSelectedItemPosition();
@@ -83,8 +84,9 @@ public class AccountTransferFragment extends DialogFragment {
                                 Account accountFrom = accounts.get(accountPositionFrom);
                                 Account accountTo = accounts.get(accountPositionTo);
 
-                                if(accountFrom.equals(accountTo)){
+                                if (accountFrom.equals(accountTo)) {
                                     Toast.makeText(getActivity(), "You picked the same account!", Toast.LENGTH_LONG).show();
+                                    dismiss();
                                     return;
                                 }
 
@@ -128,33 +130,13 @@ public class AccountTransferFragment extends DialogFragment {
 
                                     //Update Account Info
                                     ContentValues accountValues = new ContentValues();
-
-                                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountFrom.id), null, null, null, null);
-
-                                    int entry_id;
-                                    String entry_name;
-                                    String entry_balance;
-                                    String entry_time;
-                                    String entry_date;
-
-                                    c.moveToFirst();
-                                    do {
-                                        entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
-                                        entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                        entry_balance = Float.parseFloat(c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE))) - tAmount + "";
-                                        entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
-                                        entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
-                                    } while (c.moveToNext());
-
-                                    accountValues.put(DatabaseHelper.ACCOUNT_ID, entry_id);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_NAME, entry_name);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, entry_balance);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_TIME, entry_time);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_DATE, entry_date);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_ID, accountFrom.id);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_NAME, accountFrom.name);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, Float.parseFloat(accountFrom.balance) - tAmount + "");
+                                    accountValues.put(DatabaseHelper.ACCOUNT_TIME, accountFrom.time);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_DATE, accountFrom.date);
 
                                     getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountFrom.id), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + accountFrom.id, null);
-                                    c.close();
-
                                 } catch (Exception e) {
                                     Timber.e("Transfer From failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();
@@ -183,33 +165,13 @@ public class AccountTransferFragment extends DialogFragment {
 
                                     //Update Account Info
                                     ContentValues accountValues = new ContentValues();
-
-                                    Cursor c = getActivity().getContentResolver().query(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountTo.id), null, null, null, null);
-
-                                    int entry_id;
-                                    String entry_name;
-                                    String entry_balance;
-                                    String entry_time;
-                                    String entry_date;
-
-                                    c.moveToFirst();
-                                    do {
-                                        entry_id = c.getInt(c.getColumnIndex(DatabaseHelper.ACCOUNT_ID));
-                                        entry_name = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_NAME));
-                                        entry_balance = Float.parseFloat(c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_BALANCE))) + tAmount + "";
-                                        entry_time = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_TIME));
-                                        entry_date = c.getString(c.getColumnIndex(DatabaseHelper.ACCOUNT_DATE));
-                                    } while (c.moveToNext());
-
-                                    accountValues.put(DatabaseHelper.ACCOUNT_ID, entry_id);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_NAME, entry_name);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, entry_balance);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_TIME, entry_time);
-                                    accountValues.put(DatabaseHelper.ACCOUNT_DATE, entry_date);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_ID, accountTo.id);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_NAME, accountTo.name);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, Float.parseFloat(accountTo.balance) + tAmount + "");
+                                    accountValues.put(DatabaseHelper.ACCOUNT_TIME, accountTo.time);
+                                    accountValues.put(DatabaseHelper.ACCOUNT_DATE, accountTo.date);
 
                                     getActivity().getContentResolver().update(Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + accountTo.id), accountValues, DatabaseHelper.ACCOUNT_ID + "=" + accountTo.id, null);
-                                    c.close();
-
                                 } catch (Exception e) {
                                     Timber.e("Transfer To failed. Exception e=" + e);
                                     Toast.makeText(getActivity(), "Error Transferring!\n Did you enter valid input? ", Toast.LENGTH_SHORT).show();

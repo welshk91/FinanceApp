@@ -68,7 +68,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     private View myFragmentView;
 
-    private RecyclerView recylerView = null;
+    private RecyclerView recyclerView = null;
     public static AccountsRecyclerViewAdapter adapterAccounts = null;
 
     public static Object mActionMode = null;
@@ -104,10 +104,10 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.accounts, container, false);
-        recylerView = (RecyclerView) myFragmentView.findViewById(R.id.account_list);
+        recyclerView = (RecyclerView) myFragmentView.findViewById(R.id.account_list);
 
-        recylerView.setClickable(true);
-        recylerView.setLongClickable(true);
+        recyclerView.setClickable(true);
+        recyclerView.setLongClickable(true);
 
         //Set up a listener for changes in settings menu
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -167,8 +167,8 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
             }
         });
 
-        recylerView.setAdapter(adapterAccounts);
-        recylerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapterAccounts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         populate();
 
@@ -398,10 +398,6 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                 }
 
                 try {
-//                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.account_empty);
-//                    noResult.setText("No Accounts\n\n To Add An Account, Please Use The ActionBar On The Top");
-//                    lv.setEmptyView(noResult);
-
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
                     Timber.e("Error setting balance TextView. e=" + e);

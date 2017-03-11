@@ -20,6 +20,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -30,10 +32,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +47,8 @@ import com.databases.example.model.SearchWidget;
 import com.databases.example.model.Transaction;
 import com.databases.example.utils.Constants;
 import com.databases.example.utils.Money;
-import com.databases.example.view.TransactionsListViewAdapter;
+import com.databases.example.view.RecyclerViewListener;
+import com.databases.example.view.TransactionsRecyclerViewAdapter;
 import com.databases.example.wizard.TransactionWizard;
 
 import java.math.BigDecimal;
@@ -74,7 +73,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     //TODO make non-static
     public static Account account;
 
-    private ListView lv = null;
+    private RecyclerView recyclerView = null;
 
     //Constants for ContextMenu
     private final int CONTEXT_MENU_VIEW = 5;
@@ -82,7 +81,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     private final int CONTEXT_MENU_DELETE = 7;
 
     //ListView Adapter
-    private static TransactionsListViewAdapter adapterTransactions = null;
+    private static TransactionsRecyclerViewAdapter adapterTransactions = null;
 
     //For Autocomplete
     public static ArrayList<String> dropdownResults = new ArrayList<String>();
@@ -109,43 +108,11 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myFragmentView = inflater.inflate(R.layout.transactions, container, false);
-        lv = (ListView) myFragmentView.findViewById(R.id.transaction_list);
+        recyclerView = (RecyclerView) myFragmentView.findViewById(R.id.transaction_list);
 
         //Turn clicks on
-        lv.setClickable(true);
-        lv.setLongClickable(true);
-
-        //Set Listener for regular mouse click
-        lv.setOnItemClickListener(new OnItemClickListener() {
-                                      @Override
-                                      public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                                          if (mActionMode != null) {
-                                              listItemChecked(position);
-                                          } else {
-                                              int selectionRowID = (int) adapterTransactions.getItemId(position);
-                                              String item = adapterTransactions.getTransaction(position).name;
-
-                                              Toast.makeText(TransactionsFragment.this.getActivity(), "Click\nRow: " + selectionRowID + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
-                                          }
-                                      }
-
-                                  }
-        );
-
-        lv.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                if (mActionMode != null) {
-                    return false;
-                }
-
-                listItemChecked(position);
-                return true;
-            }
-        });
-
+        recyclerView.setClickable(true);
+        recyclerView.setLongClickable(true);
 
         //Set up a listener for changes in settings menu
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
@@ -154,8 +121,29 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         adapterCategory = new SimpleCursorAdapter(this.getActivity(), android.R.layout.simple_spinner_item, null, new String[]{DatabaseHelper.SUBCATEGORY_NAME}, new int[]{android.R.id.text1}, 0);
         adapterCategory.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        adapterTransactions = new TransactionsListViewAdapter(this.getActivity(), null);
-        lv.setAdapter(adapterTransactions);
+        adapterTransactions = new TransactionsRecyclerViewAdapter(getActivity(), null, new RecyclerViewListener() {
+            @Override
+            public void onItemClick(Object model, int position) {
+                if (mActionMode != null) {
+                    listItemChecked(position);
+                } else {
+                    String item = adapterTransactions.getTransaction(position).name;
+                    Toast.makeText(TransactionsFragment.this.getActivity(), "Click\nRow: " + position + "\nEntry: " + item, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public boolean onItemLongClick(Object model, int position) {
+                if (mActionMode != null) {
+                    return false;
+                }
+
+                listItemChecked(position);
+                return true;
+            }
+        });
+        recyclerView.setAdapter(adapterTransactions);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         //Call Loaders to get data
         populate();
@@ -394,28 +382,22 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
 
         switch (loader.getId()) {
             case TRANS_LOADER:
-                adapterTransactions.swapCursor(data);
+                ArrayList<Transaction> transactions = Transaction.getTransactions(data);
+                adapterTransactions.setTransactions(transactions);
                 Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
-                final int valueColumn = data.getColumnIndex(DatabaseHelper.TRANS_VALUE);
-                final int typeColumn = data.getColumnIndex(DatabaseHelper.TRANS_TYPE);
                 BigDecimal totalBalance = BigDecimal.ZERO;
                 Locale locale = getResources().getConfiguration().locale;
 
-                data.moveToPosition(-1);
-                while (data.moveToNext()) {
-                    if (data.getString(typeColumn).equals(Constants.DEPOSIT)) {
-                        totalBalance = totalBalance.add(new Money(data.getString(valueColumn)).getBigDecimal(locale));
+                for (Transaction transaction : transactions) {
+                    if (transaction.type.equals(Constants.DEPOSIT)) {
+                        totalBalance = totalBalance.add(new Money(transaction.value).getBigDecimal(locale));
                     } else {
-                        totalBalance = totalBalance.subtract(new Money(data.getString(valueColumn)).getBigDecimal(locale));
+                        totalBalance = totalBalance.subtract(new Money(transaction.value).getBigDecimal(locale));
                     }
                 }
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
-                    lv.setEmptyView(noResult);
-                    noResult.setText("No TransactionsFragment\n\n To Add A Transaction, Please Use The ActionBar On The Top");
-
                     footerTV.setText("Total Balance: " + new Money(totalBalance).getNumberFormat(locale));
                 } catch (Exception e) {
                     Timber.e("Error setting balance TextView. e=" + e);
@@ -430,14 +412,10 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
                 break;
 
             case TRANS_SEARCH_LOADER:
-                adapterTransactions.swapCursor(data);
+                adapterTransactions.setTransactions(Transaction.getTransactions(data));
                 Timber.v("loader finished. loader=" + loader.getId() + " data=" + data + " data size=" + data.getCount());
 
                 try {
-                    TextView noResult = (TextView) myFragmentView.findViewById(R.id.transaction_empty);
-                    lv.setEmptyView(noResult);
-                    noResult.setText("No TransactionsFragment Found");
-
                     footerTV.setText("SearchActivity Results");
                 } catch (Exception e) {
                     Timber.e("Error setting search TextView. e=" + e);
@@ -462,12 +440,12 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
             case TRANS_LOADER:
-                adapterTransactions.swapCursor(null);
+                adapterTransactions.setTransactions(null);
                 Timber.v("loader reset. loader=" + loader.getId());
                 break;
 
             case TRANS_SEARCH_LOADER:
-                adapterTransactions.swapCursor(null);
+                adapterTransactions.setTransactions(null);
                 Timber.v("loader reset. loader=" + loader.getId());
                 break;
 

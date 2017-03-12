@@ -142,7 +142,7 @@ public class MyContentProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case PLAN_ID:
-                cursor = dh.getSubCategories(projection, DatabaseHelper.PLAN_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
+                cursor = dh.getPlans(projection, DatabaseHelper.PLAN_ID + "=?", new String[]{uri.getLastPathSegment()}, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case LINKS_ID:

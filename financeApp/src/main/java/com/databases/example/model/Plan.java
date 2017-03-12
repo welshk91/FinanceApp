@@ -59,8 +59,8 @@ public class Plan implements Parcelable {
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_MEMO)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_OFFSET)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_RATE)),
-                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_NEXT)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_SCHEDULED)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.PLAN_CLEARED))
             );
             plans.add(plan);

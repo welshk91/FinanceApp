@@ -148,7 +148,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
         getSupportLoaderManager().initLoader(PLAN_SUBCATEGORY_LOADER, null, this);
         getSupportLoaderManager().initLoader(PLAN_ACCOUNT_LOADER, null, this);
-
     }
 
     @Override

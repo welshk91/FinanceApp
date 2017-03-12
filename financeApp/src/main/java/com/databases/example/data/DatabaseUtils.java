@@ -116,7 +116,7 @@ public class DatabaseUtils {
         long savingsId = insertAccount(context, new Account(-1, "Savings", "10000.00", "2017-03-07", "18:30"), transactions);
 
         transactions.clear();
-        transactions.add(new Transaction(-1, -1, -1, "STARTING BALANCE", "100.00", "Deposit", "STARTING BALANCE", "", "This is an automatically generated transaction created when you add an account", "12:45", "2017-03-11", "true"));
+        transactions.add(new Transaction(-1, -1, -1, "STARTING BALANCE", "100.00", "Deposit", "STARTING BALANCE", "", "This is an automatically generated transaction created when you add an account", "2017-03-11", "12:45", "true"));
         transactions.add(new Transaction(-1, -1, -1, "Hotdog Bet", "5.00", "Deposit", "Personal", "", "Tyler finally paid me for eating 7 hotdogs", "2017-03-12", "16:57", "true"));
         long cashId = insertAccount(context, new Account(-1, "Cash", "105.00", "2017-03-11", "12:45"), transactions);
 

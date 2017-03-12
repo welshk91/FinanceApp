@@ -80,7 +80,7 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     private final int CONTEXT_MENU_EDIT = 6;
     private final int CONTEXT_MENU_DELETE = 7;
 
-    //ListView Adapter
+    //RecyclerView Adapter
     private static TransactionsRecyclerViewAdapter adapterTransactions = null;
 
     //For Autocomplete

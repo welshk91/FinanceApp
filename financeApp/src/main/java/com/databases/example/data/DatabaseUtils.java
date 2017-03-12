@@ -6,8 +6,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.databases.example.model.Account;
 import com.databases.example.model.Category;
+import com.databases.example.model.Plan;
 import com.databases.example.model.Subcategory;
+import com.databases.example.model.Transaction;
+import com.databases.example.utils.PlanUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +30,7 @@ import timber.log.Timber;
 public class DatabaseUtils {
     /**
      * Deletes all Accounts, Transactions, and Plans
+     *
      * @param context
      * @return whether the delete was successful or not
      */
@@ -97,69 +102,32 @@ public class DatabaseUtils {
         }
     }
 
-
     public static void addTestData(Context context) {
         Timber.d("Adding Test Data...");
 
-        //CHECKING
-        ContentValues accountValues = new ContentValues();
-        accountValues.put(DatabaseHelper.ACCOUNT_NAME, "Checking");
-        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, "4850.50");
-        accountValues.put(DatabaseHelper.ACCOUNT_TIME, "06:10");
-        accountValues.put(DatabaseHelper.ACCOUNT_DATE, "2017-03-01");
-        Uri checkingUri = context.getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(-1, -1, -1, "STARTING BALANCE", "5000.00", "Deposit", "STARTING BALANCE", "", "This is an automatically generated transaction created when you add an account", "2017-03-01", "06:10", "true"));
+        transactions.add(new Transaction(-1, -1, -1, "Cash withdraw", "160.00", "Withdraw", "Withdraw", "", "Need some extra cash", "2017-03-05", "18:23", "true"));
+        transactions.add(new Transaction(-1, -1, -1, "Devon's Wedding Gift", "250.00", "Withdraw", "Gift", "8675309", "Check for Devon's Wedding", "2017-03-08", "9:17", "false"));
+        long checkingId = insertAccount(context, new Account(-1, "Checking", "4590.00", "2017-03-01", "06:10"), transactions);
 
-        ContentValues transactionValues = new ContentValues();
-        transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(checkingUri.getLastPathSegment()));
-        transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
-        transactionValues.put(DatabaseHelper.TRANS_NAME, "STARTING BALANCE");
-        transactionValues.put(DatabaseHelper.TRANS_VALUE, "5000.00");
-        transactionValues.put(DatabaseHelper.TRANS_TYPE, "Deposit");
-        transactionValues.put(DatabaseHelper.TRANS_CATEGORY, "STARTING BALANCE");
-        transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, "");
-        transactionValues.put(DatabaseHelper.TRANS_MEMO, "This is an automatically generated transaction created when you add an account");
-        transactionValues.put(DatabaseHelper.TRANS_TIME, "06:10");
-        transactionValues.put(DatabaseHelper.TRANS_DATE, "2017-03-01");
-        transactionValues.put(DatabaseHelper.TRANS_CLEARED, true);
-        context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+        transactions.clear();
+        transactions.add(new Transaction(-1, -1, -1, "STARTING BALANCE", "10000.00", "Deposit", "STARTING BALANCE", "", "This is an automatically generated transaction created when you add an account", "2017-03-07", "18:30", "true"));
+        long savingsId = insertAccount(context, new Account(-1, "Savings", "10000.00", "2017-03-07", "18:30"), transactions);
 
-        transactionValues = new ContentValues();
-        transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(checkingUri.getLastPathSegment()));
-        transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
-        transactionValues.put(DatabaseHelper.TRANS_NAME, "Cash withdraw");
-        transactionValues.put(DatabaseHelper.TRANS_VALUE, "149.50");
-        transactionValues.put(DatabaseHelper.TRANS_TYPE, "Withdraw");
-        transactionValues.put(DatabaseHelper.TRANS_CATEGORY, "Withdraw");
-        transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, "");
-        transactionValues.put(DatabaseHelper.TRANS_MEMO, "Needed some extra cash...");
-        transactionValues.put(DatabaseHelper.TRANS_TIME, "18:23");
-        transactionValues.put(DatabaseHelper.TRANS_DATE, "2017-03-05");
-        transactionValues.put(DatabaseHelper.TRANS_CLEARED, true);
-        context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+        transactions.clear();
+        transactions.add(new Transaction(-1, -1, -1, "STARTING BALANCE", "100.00", "Deposit", "STARTING BALANCE", "", "This is an automatically generated transaction created when you add an account", "12:45", "2017-03-11", "true"));
+        transactions.add(new Transaction(-1, -1, -1, "Hotdog Bet", "5.00", "Deposit", "Personal", "", "Tyler finally paid me for eating 7 hotdogs", "2017-03-12", "16:57", "true"));
+        long cashId = insertAccount(context, new Account(-1, "Cash", "105.00", "2017-03-11", "12:45"), transactions);
 
+        insertPlan(context, new Plan(-1, (int) checkingId, "Paycheck", "2200.00", "Deposit",
+                "Paycheck", "Time to get paid!", "2017-03-10", "2 Weeks", "2017-03-24", "true", "true"), checkingId);
 
-        //SAVINGS
-        accountValues = new ContentValues();
-        accountValues.put(DatabaseHelper.ACCOUNT_NAME, "Savings");
-        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, "10000.00");
-        accountValues.put(DatabaseHelper.ACCOUNT_TIME, "18:00");
-        accountValues.put(DatabaseHelper.ACCOUNT_DATE, "2017-03-07");
-        Uri savingsUri = context.getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
-
-        transactionValues = new ContentValues();
-        transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(savingsUri.getLastPathSegment()));
-        transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
-        transactionValues.put(DatabaseHelper.TRANS_NAME, "STARTING BALANCE");
-        transactionValues.put(DatabaseHelper.TRANS_VALUE, "10000.00");
-        transactionValues.put(DatabaseHelper.TRANS_TYPE, "Deposit");
-        transactionValues.put(DatabaseHelper.TRANS_CATEGORY, "STARTING BALANCE");
-        transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, "");
-        transactionValues.put(DatabaseHelper.TRANS_MEMO, "This is an automatically generated transaction created when you add an account");
-        transactionValues.put(DatabaseHelper.TRANS_TIME, "18:00");
-        transactionValues.put(DatabaseHelper.TRANS_DATE, "2017-03-07");
-        transactionValues.put(DatabaseHelper.TRANS_CLEARED, true);
-        context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+        //Annoying Transaction
+        insertPlan(context, new Plan(-1, (int) cashId, "Annoying Transaction", "50.00", "Deposit",
+                "Gift", "This is an annoying test plan...", "2017-03-09", "1 Days", "2017-03-13", "true", "true"), cashId);
     }
+
 
     public static void addDefaultCategories(final Context context) {
         Timber.d("Adding Default Categories...");
@@ -168,34 +136,34 @@ public class DatabaseUtils {
         ArrayList<Subcategory> subcategories = new ArrayList<>();
         subcategories.add(new Subcategory(-1, -1, true, "STARTING BALANCE", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "TRANSFER", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Default", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Default", "Default Category"), subcategories);
 
         //ATM
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Deposit", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Withdraw", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "ATM", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "ATM", "Default Category"), subcategories);
 
         //Car
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Road Services", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Fuel", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Maintenance", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Car", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Car", "Default Category"), subcategories);
 
         //Food
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Snacks", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Restaurant", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Groceries", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Food", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Food", "Default Category"), subcategories);
 
         //Fun
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Entertainment", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Electronics", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Shopping", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Fun", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Fun", "Default Category"), subcategories);
 
         //Housing
         subcategories.clear();
@@ -203,7 +171,7 @@ public class DatabaseUtils {
         subcategories.add(new Subcategory(-1, -1, true, "Rent", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Maintenance", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Decorating", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "House", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "House", "Default Category"), subcategories);
 
         //Insurance
         subcategories.clear();
@@ -212,14 +180,14 @@ public class DatabaseUtils {
         subcategories.add(new Subcategory(-1, -1, true, "Dental", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Home", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Life", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Insurance", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Insurance", "Default Category"), subcategories);
 
         //Job
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Paycheck", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Tax", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Income", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Job", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Job", "Default Category"), subcategories);
 
         //Loans
         subcategories.clear();
@@ -227,19 +195,19 @@ public class DatabaseUtils {
         subcategories.add(new Subcategory(-1, -1, true, "Home Equity", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Mortgage", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Student", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Loans", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Loans", "Default Category"), subcategories);
 
         //Personal
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Gift", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Donation", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Personal", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Personal", "Default Category"), subcategories);
 
         //Random
         subcategories.clear();
         subcategories.add(new Subcategory(-1, -1, true, "Interest", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Tip", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Random", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Random", "Default Category"), subcategories);
 
         //Travel
         subcategories.clear();
@@ -249,7 +217,7 @@ public class DatabaseUtils {
         subcategories.add(new Subcategory(-1, -1, true, "Hotel", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Misc Expenses", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Taxi", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Travel", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Travel", "Default Category"), subcategories);
 
         //Utils
         subcategories.clear();
@@ -260,10 +228,10 @@ public class DatabaseUtils {
         subcategories.add(new Subcategory(-1, -1, true, "Air Conditioning", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Internet", "Default Subcategory"));
         subcategories.add(new Subcategory(-1, -1, true, "Garbage", "Default Subcategory"));
-        insertCategories(context, new Category(-1, true, "Utilities", "Default Category"), subcategories);
+        insertCategory(context, new Category(-1, true, "Utilities", "Default Category"), subcategories);
     }
 
-    private static void insertCategories(final Context context, final Category category, final ArrayList<Subcategory> subcategories){
+    private static long insertCategory(final Context context, final Category category, final ArrayList<Subcategory> subcategories) {
         ContentValues categoryValues = new ContentValues();
         categoryValues.put(DatabaseHelper.CATEGORY_IS_DEFAULT, category.isDefault);
         categoryValues.put(DatabaseHelper.CATEGORY_NAME, category.name);
@@ -279,5 +247,57 @@ public class DatabaseUtils {
             subcategoryValues.put(DatabaseHelper.SUBCATEGORY_NOTE, subcategory.note);
             context.getContentResolver().insert(MyContentProvider.SUBCATEGORIES_URI, subcategoryValues);
         }
+
+        return Long.parseLong(categoriesUri.getLastPathSegment());
+    }
+
+    private static long insertAccount(final Context context, final Account account, final ArrayList<Transaction> transactions) {
+        ContentValues accountValues = new ContentValues();
+        accountValues.put(DatabaseHelper.ACCOUNT_NAME, account.name);
+        accountValues.put(DatabaseHelper.ACCOUNT_BALANCE, account.balance);
+        accountValues.put(DatabaseHelper.ACCOUNT_TIME, account.time);
+        accountValues.put(DatabaseHelper.ACCOUNT_DATE, account.date);
+        Uri accountUri = context.getContentResolver().insert(MyContentProvider.ACCOUNTS_URI, accountValues);
+
+        ContentValues transactionValues = new ContentValues();
+        for (Transaction transaction : transactions) {
+            transactionValues.clear();
+            transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, Long.parseLong(accountUri.getLastPathSegment()));
+            transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
+            transactionValues.put(DatabaseHelper.TRANS_NAME, transaction.name);
+            transactionValues.put(DatabaseHelper.TRANS_VALUE, transaction.value);
+            transactionValues.put(DatabaseHelper.TRANS_TYPE, transaction.type);
+            transactionValues.put(DatabaseHelper.TRANS_CATEGORY, transaction.category);
+            transactionValues.put(DatabaseHelper.TRANS_CHECKNUM, transaction.checknum);
+            transactionValues.put(DatabaseHelper.TRANS_MEMO, transaction.memo);
+            transactionValues.put(DatabaseHelper.TRANS_TIME, transaction.time);
+            transactionValues.put(DatabaseHelper.TRANS_DATE, transaction.date);
+            transactionValues.put(DatabaseHelper.TRANS_CLEARED, transaction.cleared);
+            context.getContentResolver().insert(MyContentProvider.TRANSACTIONS_URI, transactionValues);
+        }
+
+        return Long.parseLong(accountUri.getLastPathSegment());
+    }
+
+    private static long insertPlan(final Context context, final Plan plan, long accountId) {
+        if (PlanUtils.schedule(context, plan)) {
+            ContentValues planValues = new ContentValues();
+            planValues.put(DatabaseHelper.PLAN_ACCT_ID, accountId);
+            planValues.put(DatabaseHelper.PLAN_NAME, plan.name);
+            planValues.put(DatabaseHelper.PLAN_VALUE, plan.value);
+            planValues.put(DatabaseHelper.PLAN_TYPE, plan.type);
+            planValues.put(DatabaseHelper.PLAN_CATEGORY, plan.category);
+            planValues.put(DatabaseHelper.PLAN_MEMO, plan.memo);
+            planValues.put(DatabaseHelper.PLAN_OFFSET, plan.offset);
+            planValues.put(DatabaseHelper.PLAN_RATE, plan.rate);
+            planValues.put(DatabaseHelper.PLAN_NEXT, plan.next);
+            planValues.put(DatabaseHelper.PLAN_SCHEDULED, plan.scheduled);
+            planValues.put(DatabaseHelper.PLAN_CLEARED, plan.cleared);
+            Uri planUri = context.getContentResolver().insert(MyContentProvider.PLANS_URI, planValues);
+
+            return Long.parseLong(planUri.getLastPathSegment());
+        }
+
+        return -1;
     }
 }

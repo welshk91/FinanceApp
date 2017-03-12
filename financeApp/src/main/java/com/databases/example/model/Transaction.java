@@ -20,11 +20,11 @@ public class Transaction implements Parcelable {
     public final String category;
     public final String checknum;
     public final String memo;
-    public final String time;
     public final String date;
+    public final String time;
     public final String cleared;
 
-    public Transaction(int id, int acctId, int planId, String name, String value, String type, String category, String checknum, String memo, String time, String date, String cleared) {
+    public Transaction(int id, int acctId, int planId, String name, String value, String type, String category, String checknum, String memo, String date, String time, String cleared) {
         this.id = id;
         this.acctId = acctId;
         this.planId = planId;
@@ -34,8 +34,8 @@ public class Transaction implements Parcelable {
         this.category = category;
         this.checknum = checknum;
         this.memo = memo;
-        this.time = time;
         this.date = date;
+        this.time = time;
         this.cleared = cleared;
     }
 

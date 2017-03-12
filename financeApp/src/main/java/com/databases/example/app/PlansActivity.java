@@ -21,18 +21,14 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.databases.example.R;
@@ -44,7 +40,8 @@ import com.databases.example.model.Plan;
 import com.databases.example.model.SearchWidget;
 import com.databases.example.utils.Constants;
 import com.databases.example.utils.DateTime;
-import com.databases.example.view.PlansListViewAdapter;
+import com.databases.example.view.PlansRecyclerViewAdapter;
+import com.databases.example.view.RecyclerViewListener;
 import com.databases.example.wizard.PlanWizard;
 
 import java.util.ArrayList;
@@ -74,7 +71,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     private final int ACTION_MODE_DELETE = 3;
     private final int ACTION_MODE_TOGGLE = 4;
 
-    private PlansListViewAdapter adapterPlans;
+    private PlansRecyclerViewAdapter adapterPlans;
 
     //ActionMode
     private Object mActionMode = null;
@@ -114,31 +111,28 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         drawerActivity = new DrawerActivity(this, Constants.ActivityTag.PLANS, null);
         drawerActivity.initialize();
 
-        ListView lvPlans = (ListView) this.findViewById(R.id.plans_list);
+        RecyclerView recyclerViewPlans = (RecyclerView) findViewById(R.id.plans_list);
 
         //Turn clicks on
-        lvPlans.setClickable(true);
-        lvPlans.setLongClickable(true);
+        recyclerViewPlans.setClickable(true);
+        recyclerViewPlans.setLongClickable(true);
 
-        //Set Listener for regular mouse click
-        lvPlans.setOnItemClickListener(new OnItemClickListener() {
-                                           @Override
-                                           public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-                                               if (mActionMode != null) {
-                                                   listItemChecked(position);
-                                               } else {
-                                                   //TODO Stuff for clicking...
-                                               }
-                                           }// end onItemClick
+        //Set up a listener for changes in settings menu
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
-                                       }
-        );
-
-        lvPlans.setOnItemLongClickListener(new OnItemLongClickListener() {
+        adapterPlans = new PlansRecyclerViewAdapter(this, null, new RecyclerViewListener() {
+            @Override
+            public void onItemClick(Object model, int position) {
+                if (mActionMode != null) {
+                    listItemChecked(position);
+                } else {
+                    //TODO Stuff for clicking...
+                }
+            }
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                                           int position, long id) {
+            public boolean onItemLongClick(Object model, int position) {
                 if (mActionMode != null) {
                     return false;
                 }
@@ -148,15 +142,8 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
             }
         });
 
-        //Set up a listener for changes in settings menu
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener(this);
-
-        TextView noResult = (TextView) findViewById(R.id.plans_empty);
-        lvPlans.setEmptyView(noResult);
-
-        adapterPlans = new PlansListViewAdapter(this, null);
-        lvPlans.setAdapter(adapterPlans);
+        recyclerViewPlans.setAdapter(adapterPlans);
+        recyclerViewPlans.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
         getSupportLoaderManager().initLoader(PLAN_SUBCATEGORY_LOADER, null, this);
@@ -421,7 +408,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case PLAN_LOADER:
-                adapterPlans.swapCursor(data);
+                adapterPlans.setPlans(Plan.getPlans(data));
                 Timber.v("load done. loader=" + loader + " data=" + data + " data size=" + data.getCount());
                 break;
 
@@ -453,7 +440,7 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
             case PLAN_LOADER:
-                adapterPlans.swapCursor(null);
+                adapterPlans.setPlans(null);
                 Timber.v("loader reset. loader=" + loader.getId());
                 break;
 

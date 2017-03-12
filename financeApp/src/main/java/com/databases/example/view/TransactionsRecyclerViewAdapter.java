@@ -48,7 +48,7 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //For Custom View Properties
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_account_default_appearance), true);
+        useDefaults = prefs.getBoolean(context.getString(R.string.pref_key_transaction_default_appearance), true);
 
         if (viewType == VIEW_TYPE_EMPTY) {
             TextView view = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
@@ -107,8 +107,6 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
 
                 //Change gradient
                 try {
-                    LinearLayout l;
-                    l = (LinearLayout) holder.view.findViewById(R.id.transaction_gradient);
                     GradientDrawable defaultGradientPos = new GradientDrawable(
                             GradientDrawable.Orientation.BOTTOM_TOP,
                             new int[]{0xFF4ac925, 0xFF4ac925});
@@ -119,16 +117,16 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
 
                     if (useDefaults) {
                         if (transaction.type.contains(Constants.DEPOSIT)) {
-                            l.setBackgroundDrawable(defaultGradientPos);
+                            holder.sideBar.setBackgroundDrawable(defaultGradientPos);
                         } else {
-                            l.setBackgroundDrawable(defaultGradientNeg);
+                            holder.sideBar.setBackgroundDrawable(defaultGradientNeg);
                         }
 
                     } else {
                         if (transaction.type.contains(Constants.DEPOSIT)) {
-                            l.setBackgroundDrawable(defaultGradientPos);
+                            holder.sideBar.setBackgroundDrawable(defaultGradientPos);
                         } else {
-                            l.setBackgroundDrawable(defaultGradientNeg);
+                            holder.sideBar.setBackgroundDrawable(defaultGradientNeg);
                         }
                     }
 

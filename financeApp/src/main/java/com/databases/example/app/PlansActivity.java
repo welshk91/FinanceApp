@@ -5,10 +5,6 @@
 
 package com.databases.example.app;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ContentValues;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
@@ -29,26 +25,20 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
-import com.databases.example.data.PlanReceiver;
 import com.databases.example.fragments.PlanViewFragment;
 import com.databases.example.model.Plan;
 import com.databases.example.model.SearchWidget;
 import com.databases.example.utils.Constants;
-import com.databases.example.utils.DateTime;
+import com.databases.example.utils.PlanUtils;
 import com.databases.example.view.PlansRecyclerViewAdapter;
 import com.databases.example.view.RecyclerViewListener;
 import com.databases.example.wizard.PlanWizard;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -78,19 +68,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
 
     //For Memo autocomplete
     public static final ArrayList<String> dropdownResults = new ArrayList<String>();
-
-    public static final String PLAN_ID = "plan_id";
-    public static final String PLAN_ACCOUNT_ID = "plan_acct_id";
-    public static final String PLAN_NAME = "plan_name";
-    public static final String PLAN_VALUE = "plan_value";
-    public static final String PLAN_TYPE = "plan_type";
-    public static final String PLAN_CATEGORY = "plan_category";
-    public static final String PLAN_MEMO = "plan_memo";
-    public static final String PLAN_OFFSET = "plan_offset";
-    public static final String PLAN_RATE = "plan_rate";
-    public static final String PLAN_NEXT = "plan_next";
-    public static final String PLAN_SCHEDULED = "plan_scheduled";
-    public static final String PLAN_CLEARED = "plan_cleared";
 
     private final String ADD_FRAGMENT_TAG = "plans_add_fragment";
     private final String EDIT_FRAGMENT_TAG = "plans_edit_fragment";
@@ -179,133 +156,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         newFragment.show(getSupportFragmentManager(), ADD_FRAGMENT_TAG);
     }
 
-    public void schedule(Plan plan) {
-        Date d = null;
-
-        try {
-            DateTime test = new DateTime();
-            test.setStringSQL(plan.offset);
-            d = test.getYearMonthDay();
-        } catch (java.text.ParseException e) {
-            Timber.e("Couldn't schedule " + plan.name + "\n e:" + e);
-        }
-
-        Timber.d("d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
-
-        Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
-        Timber.d("FirstRun:" + firstRun);
-
-        Intent intent = new Intent(this, PlanReceiver.class);
-        intent.putExtra(PLAN_ID, plan.id);
-        intent.putExtra(PLAN_ACCOUNT_ID, plan.acctId);
-        intent.putExtra(PLAN_NAME, plan.name);
-        intent.putExtra(PLAN_VALUE, plan.value);
-        intent.putExtra(PLAN_TYPE, plan.type);
-        intent.putExtra(PLAN_CATEGORY, plan.category);
-        intent.putExtra(PLAN_MEMO, plan.memo);
-        intent.putExtra(PLAN_OFFSET, plan.offset);
-        intent.putExtra(PLAN_RATE, plan.rate);
-        intent.putExtra(PLAN_CLEARED, plan.cleared);
-
-        //Parse Rate (token 0 is amount, token 1 is type)
-        String phrase = plan.rate;
-        String delims = "[ ]+";
-        String[] tokens = phrase.split(delims);
-
-        final PendingIntent sender = PendingIntent.getBroadcast(this, plan.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        final AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        final Locale locale = getResources().getConfiguration().locale;
-        final DateTime nextRun = new DateTime();
-
-        if (tokens[1].contains("Days")) {
-            Timber.v("Days");
-
-            //If Starting Time is in the past, fire off next day(s)
-            while (firstRun.before(Calendar.getInstance())) {
-                firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
-            }
-
-            Timber.d("firstRun is " + firstRun);
-            nextRun.setCalendar(firstRun);
-
-            Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
-
-            ContentValues planValues = new ContentValues();
-            planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
-
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
-        } else if (tokens[1].contains("Weeks")) {
-            Timber.v("Weeks");
-
-            //If Starting Time is in the past, fire off next week(s)
-            while (firstRun.before(Calendar.getInstance())) {
-                firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
-            }
-
-            Timber.d("firstRun is " + firstRun);
-            nextRun.setCalendar(firstRun);
-
-            Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
-
-            ContentValues planValues = new ContentValues();
-            planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
-
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY) * 7, sender);
-        } else if (tokens[1].contains("Months")) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(cal.getTimeInMillis());
-            cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
-
-            //If Starting Time is in the past, fire off next month(s)
-            while (firstRun.before(Calendar.getInstance())) {
-                firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
-            }
-
-            Timber.d("firstRun is " + firstRun);
-            nextRun.setCalendar(firstRun);
-
-            Toast.makeText(this, "Next Transaction scheduled for " + nextRun.getReadableDate(), Toast.LENGTH_SHORT).show();
-
-            ContentValues planValues = new ContentValues();
-            planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
-
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
-        } else {
-            Timber.e("Could not set alarm; Something wrong with the rate");
-        }
-
-    }
-
-    public void cancelPlan(Plan plan) {
-        Intent intent = new Intent(this, PlanReceiver.class);
-        intent.putExtra(PLAN_ID, plan.id);
-        intent.putExtra(PLAN_ACCOUNT_ID, plan.acctId);
-        intent.putExtra(PLAN_NAME, plan.name);
-        intent.putExtra(PLAN_VALUE, plan.value);
-        intent.putExtra(PLAN_TYPE, plan.type);
-        intent.putExtra(PLAN_CATEGORY, plan.category);
-        intent.putExtra(PLAN_MEMO, plan.memo);
-        intent.putExtra(PLAN_OFFSET, plan.offset);
-        intent.putExtra(PLAN_RATE, plan.rate);
-        intent.putExtra(PLAN_CLEARED, plan.cleared);
-
-        // In reality, you would want to have a static variable for the request code instead of 192837
-        PendingIntent sender = PendingIntent.getBroadcast(this, plan.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Get the AlarmManager service
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        try {
-            am.cancel(sender);
-        } catch (Exception e) {
-            Toast.makeText(this, "Error canceling plan", Toast.LENGTH_SHORT).show();
-            Timber.e("AlarmManager update was not canceled. " + e.toString());
-        }
-    }
 
     //For ActionBar Menu
     @Override
@@ -517,13 +367,11 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                         if (selected.valueAt(i)) {
                             record = adapterPlans.getPlan(selected.keyAt(i));
 
-                            Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
-                            getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
-
-                            Timber.d("Deleting " + record.name + " id:" + record.id);
-
-                            //Cancel all upcoming notifications
-                            cancelPlan(record);
+                            if (PlanUtils.cancelPlan(PlansActivity.this, record)) {
+                                Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
+                                getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
+                                Timber.d("Deleting " + record.name + " id:" + record.id);
+                            }
                         }
                     }
 
@@ -531,48 +379,10 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                     return true;
 
                 case ACTION_MODE_TOGGLE:
-                    Intent intent;
-                    AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                     for (int i = 0; i < selected.size(); i++) {
                         if (selected.valueAt(i)) {
                             record = adapterPlans.getPlan(selected.keyAt(i));
-
-                            intent = new Intent(PlansActivity.this, PlanReceiver.class);
-                            intent.putExtra(PLAN_ID, record.id);
-                            intent.putExtra(PLAN_ACCOUNT_ID, record.acctId);
-                            intent.putExtra(PLAN_NAME, record.name);
-                            intent.putExtra(PLAN_VALUE, record.value);
-                            intent.putExtra(PLAN_TYPE, record.type);
-                            intent.putExtra(PLAN_CATEGORY, record.category);
-                            intent.putExtra(PLAN_MEMO, record.memo);
-                            intent.putExtra(PLAN_OFFSET, record.offset);
-                            intent.putExtra(PLAN_RATE, record.rate);
-                            intent.putExtra(PLAN_NEXT, record.next);
-                            intent.putExtra(PLAN_SCHEDULED, record.scheduled);
-                            intent.putExtra(PLAN_CLEARED, record.cleared);
-
-                            PendingIntent sender = PendingIntent.getBroadcast(PlansActivity.this, record.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                            try {
-                                if (record.scheduled.equals("true")) {
-                                    am.cancel(sender);
-
-                                    ContentValues transactionValues = new ContentValues();
-                                    transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "false");
-                                    getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id), transactionValues, DatabaseHelper.PLAN_ID + "=" + record.id, null);
-
-                                    Toast.makeText(PlansActivity.this, "Canceled plan:\n" + record.name, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    schedule(record);
-
-                                    ContentValues transactionValues = new ContentValues();
-                                    transactionValues.put(DatabaseHelper.PLAN_SCHEDULED, "true");
-                                    getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id), transactionValues, DatabaseHelper.PLAN_ID + "=" + record.id, null);
-                                }
-                            } catch (Exception e) {
-                                Toast.makeText(PlansActivity.this, "Error toggling plan \n" + record.name, Toast.LENGTH_SHORT).show();
-                                Timber.e("Error toggling a plan. " + e.toString());
-                            }
+                            PlanUtils.togglePlan(PlansActivity.this, record);
                         }
                     }
 

@@ -49,7 +49,7 @@ public class CardsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (accountChanged || planChanged || transactionChanged) {
-            Timber.d("Refreshing CardsFragment...");
+            Timber.d("Refreshing Cards...");
             mCardView.clearCards();
             dealCardsCheckbook(mCardView);
             dealCardsPlans(mCardView);

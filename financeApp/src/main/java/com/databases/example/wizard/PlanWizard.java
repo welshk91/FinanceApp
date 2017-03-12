@@ -14,12 +14,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.app.PlansActivity;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
 import com.databases.example.model.Plan;
 import com.databases.example.utils.DateTime;
 import com.databases.example.utils.Money;
+import com.databases.example.utils.PlanUtils;
 import com.wizardpager.wizard.WizardDialogFragment;
 import com.wizardpager.wizard.model.AbstractWizardModel;
 import com.wizardpager.wizard.model.PageList;
@@ -168,7 +168,7 @@ public class PlanWizard extends WizardDialogFragment {
                 transactionValues.put(DatabaseHelper.PLAN_CLEARED, bundleOptional.getString(PlanWizardOptionalPage.CLEARED_DATA_KEY));
 
                 //Cancel old plan
-                ((PlansActivity) getActivity()).cancelPlan(oldPlan);
+                PlanUtils.cancelPlan(getActivity(), oldPlan);
 
                 //Update Plan
                 getActivity().getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY)), transactionValues, DatabaseHelper.PLAN_ID + "=" + bundleInfo1.getInt(PlanWizardInfo1Page.ID_DATA_KEY), null);
@@ -186,7 +186,7 @@ public class PlanWizard extends WizardDialogFragment {
                         "true",
                         bundleOptional.getString(PlanWizardOptionalPage.CLEARED_DATA_KEY));
 
-                ((PlansActivity) getActivity()).schedule(record);
+                PlanUtils.schedule(getActivity(), record);
             } else {
                 ContentValues transactionValues = new ContentValues();
                 transactionValues.put(DatabaseHelper.PLAN_ACCT_ID, bundleInfo2.getInt(PlanWizardInfo2Page.ACCOUNT_ID_DATA_KEY));
@@ -216,11 +216,9 @@ public class PlanWizard extends WizardDialogFragment {
                         "true",
                         bundleOptional.getString(PlanWizardOptionalPage.CLEARED_DATA_KEY));
 
-                ((PlansActivity) getActivity()).schedule(record);
+                PlanUtils.schedule(getActivity(), record);
             }
-
         }
-
     }
 
     //Allow back button to be used to go back a step in the wizard

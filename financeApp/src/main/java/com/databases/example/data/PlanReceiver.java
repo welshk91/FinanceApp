@@ -5,7 +5,6 @@
 package com.databases.example.data;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -20,16 +19,14 @@ import android.widget.Toast;
 
 import com.databases.example.R;
 import com.databases.example.app.CheckbookActivity;
-import com.databases.example.app.PlansActivity;
 import com.databases.example.model.Notification;
 import com.databases.example.model.Plan;
 import com.databases.example.utils.DateTime;
 import com.databases.example.utils.Money;
+import com.databases.example.utils.PlanUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import timber.log.Timber;
@@ -45,28 +42,14 @@ public class PlanReceiver extends BroadcastReceiver {
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Timber.v("Notified of boot");
-            reschedulePlans(context);
+            PlanUtils.reschedulePlans(context);
         } else {
             String name = bundle.getString("plan_name");
             Timber.v(getClass().getSimpleName(), "PlanReceiver received " + name);
 
             try {
-                int plan_id = bundle.getInt(PlansActivity.PLAN_ID);
-                int plan_acct_id = bundle.getInt(PlansActivity.PLAN_ACCOUNT_ID);
-                String plan_name = bundle.getString(PlansActivity.PLAN_NAME);
-                String plan_value = bundle.getString(PlansActivity.PLAN_VALUE);
-                String plan_type = bundle.getString(PlansActivity.PLAN_TYPE);
-                String plan_category = bundle.getString(PlansActivity.PLAN_CATEGORY);
-                String plan_memo = bundle.getString(PlansActivity.PLAN_MEMO);
-                String plan_offset = bundle.getString(PlansActivity.PLAN_OFFSET);
-                String plan_rate = bundle.getString(PlansActivity.PLAN_RATE);
-                String plan_next = bundle.getString(PlansActivity.PLAN_NEXT);
-                String plan_scheduled = bundle.getString(PlansActivity.PLAN_SCHEDULED);
-                String plan_cleared = bundle.getString(PlansActivity.PLAN_CLEARED);
-
-                Plan record = new Plan(plan_id, plan_acct_id, plan_name, plan_value, plan_type, plan_category, plan_memo, plan_offset, plan_rate, plan_next, plan_scheduled, plan_cleared);
-
-                transactionAdd(record, context);
+                Plan plan = bundle.getParcelable(PlanUtils.PLAN_ID);
+                transactionAdd(context, plan);
 
                 notify(context, bundle);
             } catch (Exception e) {
@@ -78,7 +61,7 @@ public class PlanReceiver extends BroadcastReceiver {
     }
 
     //For Adding a Transaction
-    private void transactionAdd(Plan plan, Context context) {
+    private void transactionAdd(Context context, Plan plan) {
         final Calendar cal = Calendar.getInstance();
         Locale locale = context.getResources().getConfiguration().locale;
         DateTime date = new DateTime();
@@ -160,118 +143,4 @@ public class PlanReceiver extends BroadcastReceiver {
 
         nm.notify(NOTIFICATION_ID, mBuilder.build());
     }
-
-    /****RESET ALARMS HERE****/
-    private void reschedulePlans(Context context) {
-        ArrayList<Plan> plans = Plan.getPlans(context.getContentResolver().query(Uri.parse(MyContentProvider.PLANS_URI + "/"), null, null, null, null));
-
-        for (Plan plan : plans) {
-            Timber.d("rescheduling " + plan.toString());
-            schedule(plan, context);
-        }
-    }
-
-    //Re-Hash of the schedule method of PlansActivity.java
-    private void schedule(Plan plan, Context context) {
-        Date d = null;
-
-        try {
-            DateTime test = new DateTime();
-            test.setStringSQL(plan.offset);
-            d = test.getYearMonthDay();
-        } catch (java.text.ParseException e) {
-            Timber.e("Couldn't schedule " + plan.name + "\n e:" + e);
-            e.printStackTrace();
-        }
-
-        Timber.d("d.year=" + (d.getYear() + 1900) + " d.date=" + d.getDate() + " d.month=" + d.getMonth());
-
-        Calendar firstRun = new GregorianCalendar(d.getYear() + 1900, d.getMonth(), d.getDate());
-        Timber.d("FirstRun:" + firstRun);
-
-        Intent intent = new Intent(context, PlanReceiver.class);
-        intent.putExtra(PlansActivity.PLAN_ID, plan.id);
-        intent.putExtra(PlansActivity.PLAN_ACCOUNT_ID, plan.acctId);
-        intent.putExtra(PlansActivity.PLAN_NAME, plan.name);
-        intent.putExtra(PlansActivity.PLAN_VALUE, plan.value);
-        intent.putExtra(PlansActivity.PLAN_TYPE, plan.type);
-        intent.putExtra(PlansActivity.PLAN_CATEGORY, plan.category);
-        intent.putExtra(PlansActivity.PLAN_MEMO, plan.memo);
-        intent.putExtra(PlansActivity.PLAN_OFFSET, plan.offset);
-        intent.putExtra(PlansActivity.PLAN_RATE, plan.rate);
-        intent.putExtra(PlansActivity.PLAN_NEXT, plan.next);
-        intent.putExtra(PlansActivity.PLAN_SCHEDULED, plan.scheduled);
-        intent.putExtra(PlansActivity.PLAN_CLEARED, plan.cleared);
-
-        //Parse Rate (token 0 is amount, token 1 is type)
-        final String phrase = plan.rate;
-        final String[] tokens = phrase.split("[ ]+");
-
-        final PendingIntent sender = PendingIntent.getBroadcast(context, plan.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //Get the AlarmManager service
-        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        final Locale locale = context.getResources().getConfiguration().locale;
-        final DateTime nextRun = new DateTime();
-
-        if (tokens[1].contains("Days")) {
-            Timber.v("Days");
-
-            //If Starting Time is in the past, fire off next day(s)
-            while (firstRun.before(Calendar.getInstance())) {
-                firstRun.add(Calendar.DAY_OF_MONTH, Integer.parseInt(tokens[0]));
-            }
-
-            Timber.d("firstRun is " + firstRun);
-
-            nextRun.setCalendar(firstRun);
-
-            ContentValues planValues = new ContentValues();
-            planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
-
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY), sender);
-        } else if (tokens[1].contains("Weeks")) {
-            Timber.v("Weeks");
-
-            //If Starting Time is in the past, fire off next week(s)
-            while (firstRun.before(Calendar.getInstance())) {
-                firstRun.add(Calendar.WEEK_OF_MONTH, Integer.parseInt(tokens[0]));
-            }
-
-            Timber.d("firstRun is " + firstRun);
-
-            nextRun.setCalendar(firstRun);
-
-            ContentValues planValues = new ContentValues();
-            planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
-
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), (Integer.parseInt(tokens[0]) * AlarmManager.INTERVAL_DAY) * 7, sender);
-        } else if (tokens[1].contains("Months")) {
-            Timber.v("Months");
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(cal.getTimeInMillis());
-            cal.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
-
-            //If Starting Time is in the past, fire off next month(s)
-            while (firstRun.before(Calendar.getInstance())) {
-                firstRun.add(Calendar.MONTH, Integer.parseInt(tokens[0]));
-            }
-
-            Timber.d("firstRun is " + firstRun);
-
-            nextRun.setCalendar(firstRun);
-
-            ContentValues planValues = new ContentValues();
-            planValues.put(DatabaseHelper.PLAN_NEXT, nextRun.getSQLDate(locale));
-            context.getContentResolver().update(Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id), planValues, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
-
-            am.setRepeating(AlarmManager.RTC_WAKEUP, firstRun.getTimeInMillis(), cal.getTimeInMillis(), sender);
-        } else {
-            Timber.e("Could not set alarm; Something wrong with the rate");
-        }
-    }
-
 }

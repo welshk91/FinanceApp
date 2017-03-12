@@ -120,11 +120,11 @@ public class DatabaseUtils {
         transactions.add(new Transaction(-1, -1, -1, "Hotdog Bet", "5.00", "Deposit", "Personal", "", "Tyler finally paid me for eating 7 hotdogs", "2017-03-12", "16:57", "true"));
         long cashId = insertAccount(context, new Account(-1, "Cash", "105.00", "2017-03-11", "12:45"), transactions);
 
-        insertPlan(context, new Plan(-1, (int) checkingId, "Paycheck", "2200.00", "Deposit",
+        insertPlan(context, new Plan(1, (int) checkingId, "Paycheck", "2200.00", "Deposit",
                 "Paycheck", "Time to get paid!", "2017-03-10", "2 Weeks", "2017-03-24", "true", "true"), checkingId);
 
         //Annoying Transaction
-        insertPlan(context, new Plan(-1, (int) cashId, "Annoying Transaction", "50.00", "Deposit",
+        insertPlan(context, new Plan(2, (int) cashId, "Annoying Transaction", "50.00", "Deposit",
                 "Gift", "This is an annoying test plan...", "2017-03-09", "1 Days", "2017-03-13", "true", "true"), cashId);
     }
 
@@ -282,6 +282,7 @@ public class DatabaseUtils {
     private static long insertPlan(final Context context, final Plan plan, long accountId) {
         if (PlanUtils.schedule(context, plan)) {
             ContentValues planValues = new ContentValues();
+            planValues.put(DatabaseHelper.PLAN_ID, plan.id);
             planValues.put(DatabaseHelper.PLAN_ACCT_ID, accountId);
             planValues.put(DatabaseHelper.PLAN_NAME, plan.name);
             planValues.put(DatabaseHelper.PLAN_VALUE, plan.value);

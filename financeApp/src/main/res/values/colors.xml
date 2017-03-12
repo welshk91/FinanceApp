@@ -30,8 +30,8 @@
 
     <color name="transaction_title_default">@color/text_darker</color>
     <color name="transaction_details_default">@color/text_darkest</color>
-    <color name="transaction_plans_yes">#FF9933</color>
-    <color name="transaction_plans_no">@color/text_darkest</color>
+    <color name="transaction_title_has_plans">#FF9933</color>
+    <color name="transaction_title_no_plans">@color/text_darkest</color>
 
     <color name="plans_title_default">@color/text_darker</color>
     <color name="plans_details_default">@color/text_darkest</color>

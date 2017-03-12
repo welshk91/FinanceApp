@@ -137,10 +137,10 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
                 if (transaction.name != null) {
                     holder.tvName.setText(transaction.name);
 
-                    if (transaction.planId != 0) {
-                        holder.tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_plans_yes));
+                    if (transaction.planId != -1) {
+                        holder.tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_title_has_plans));
                     } else {
-                        holder.tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_plans_no));
+                        holder.tvName.setTextColor(ContextCompat.getColor(context, R.color.transaction_title_no_plans));
                     }
 
                 }

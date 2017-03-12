@@ -34,15 +34,15 @@ Things To Do
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Fork [Wizard Pager](https://github.com/romannurik/Android-WizardPager) and put up an aar on Maven/Gradle
 * Fork (https://github.com/Androguide/cardsui-for-android) and put up an aar on Maven/Gradle
-* Improve the way we handle & store dates/times (we should store dates as System.currentTimeMillis)
+* Improve the way we handle & store dates/times (we should store dates as System.currentTimeMillis? UTC?)
 * Figure out how to handle memo (does it need an auto complete? Or should we go with a spinner like categories?)
-* Realm database (doesn't seem to have an easy way to hook into providers...)
+* Realm database (doesn't seem to have an easy way to hook into content providers...)
 * Google Cloud back up (using Google Account?)
 * Add Archive support (ie keep balance when making back ups)
 * Add warning of liability to Pattern. Add encryption and possibly email for recovery?
 * Make the Attachment code available
 * Add custom search suggestions
-* PDF/XML/HTML Reports
+* PDF/CSV/XML/HTML Reports
 * Improve First-Time Run (use third party library to draw attention to objects, wizard in the beginning for database importing/syncing, ...)
 * Export/Import oxf (Make sure to support required fields)
 * Improve look (icons, animations, fonts, item views, default colors, slide menu, big notifications)
@@ -65,9 +65,32 @@ Optimizations
 Notes to Self
 -------------
 * Need more spinners, less typing
+* Need a number picker for entering rate
 * What should happen when a user clicks on a search result? Advance Transaction View?
-* Link a contact (own table?)
-* Possibly a payee field, own table. Can avoid if description is dropdown.
+* More granular search options?
+* Link a contact (own table?) - isn't this a Payee field option?
+* Share Option?
+* Intro - (Import option, ask for their main currency)
+* Account - Need to be able to enter an "initial" amount.
+* Account - Transfer fee.
+* Account - Billing and payment dates. Notification when a bill is happening soon (with amount).
+* Plans - should support business days (lunch)
+* Plans - should support an end date (or never, if there is none)
+* Transactions - Payee field.
+* Transactions - Project field (Personal, Business, Travel...)
+* Transactions - Currency options (with rate exchange)
+* Category - Icons?
+* Subcategory - Icons? More defaults.
+* Budget - "Include in the budget" checkbox for transactions. Percentage reminder. By category option.
+* Statistics - View Account "health" by year/month/bi-week/week
+* Statistics - Option to filter out certain transactions from the reports
+* Statistics - PDF/export/share/archive option
+* Options - Schedule a reminder to notify you to enter your daily transactions
+* Options - Themes (Dark theme)
+* Options - Choose main currency
+* Options - Sync attachments to Google Drive account?
+* Options - Periodic Archive support (email me a pdf report every month)
+* Options - About me section
 
 
 Attachments

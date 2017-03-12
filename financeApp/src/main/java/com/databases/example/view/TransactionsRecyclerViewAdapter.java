@@ -146,39 +146,39 @@ public class TransactionsRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
                 }
 
                 if (transaction.value != null) {
-                    holder.tvValue.setText(context.getString(R.string.value) + " " + value.getNumberFormat(locale));
+                    holder.tvValue.setText(context.getString(R.string.value) + ": " + value.getNumberFormat(locale));
                 }
 
                 if (transaction.type != null) {
-                    holder.tvType.setText(context.getString(R.string.type) + " " + transaction.type);
+                    holder.tvType.setText(context.getString(R.string.type) + ": " + transaction.type);
                 }
 
                 if (transaction.category != null) {
-                    holder.tvCategory.setText(context.getString(R.string.category) + " " + transaction.category);
+                    holder.tvCategory.setText(context.getString(R.string.category) + ": " + transaction.category);
                 }
 
                 if (transaction.checknum != null) {
-                    holder.tvChecknum.setText(context.getString(R.string.checknum) + " " + transaction.checknum);
+                    holder.tvChecknum.setText(context.getString(R.string.checknum) + ": " + transaction.checknum);
                 }
 
                 if (transaction.memo != null) {
-                    holder.tvMemo.setText(context.getString(R.string.memo) + " " + transaction.memo);
+                    holder.tvMemo.setText(context.getString(R.string.memo) + ": " + transaction.memo);
                 }
 
                 if (transaction.date != null) {
                     DateTime d = new DateTime();
                     d.setStringSQL(transaction.date);
-                    holder.tvDate.setText(context.getString(R.string.date) + " " + d.getReadableDate());
+                    holder.tvDate.setText(context.getString(R.string.date) + ": " + d.getReadableDate());
                 }
 
                 if (transaction.time != null) {
                     DateTime t = new DateTime();
                     t.setStringSQL(transaction.time);
-                    holder.tvTime.setText(context.getString(R.string.time) + " " + t.getReadableTime());
+                    holder.tvTime.setText(context.getString(R.string.time) + ": " + t.getReadableTime());
                 }
 
                 if (transaction.cleared != null) {
-                    holder.tvCleared.setText(context.getString(R.string.cleared) + " " + transaction.cleared);
+                    holder.tvCleared.setText(context.getString(R.string.cleared) + ": " + transaction.cleared);
                 }
 
                 holder.setOnItemClickListener(transaction, onItemClickListener);

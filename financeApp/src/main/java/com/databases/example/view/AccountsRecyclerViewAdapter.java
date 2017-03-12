@@ -106,19 +106,19 @@ public class AccountsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
 
                 if (balance != null) {
-                    holder.tvBalance.setText(context.getString(R.string.balance) + " " + balance.getNumberFormat(locale));
+                    holder.tvBalance.setText(context.getString(R.string.balance) + ": " + balance.getNumberFormat(locale));
                 }
 
                 if (account.date != null) {
                     DateTime d = new DateTime();
                     d.setStringSQL(account.date);
-                    holder.tvDate.setText(context.getString(R.string.date) + " " + d.getReadableDate());
+                    holder.tvDate.setText(context.getString(R.string.date) + ": " + d.getReadableDate());
                 }
 
                 if (account.time != null) {
                     DateTime t = new DateTime();
                     t.setStringSQL(account.time);
-                    holder.tvTime.setText(context.getString(R.string.time) + " " + t.getReadableTime());
+                    holder.tvTime.setText(context.getString(R.string.time) + ": " + t.getReadableTime());
                 }
 
                 holder.setOnItemClickListener(account, onItemClickListener);

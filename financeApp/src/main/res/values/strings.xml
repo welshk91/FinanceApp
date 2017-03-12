@@ -12,28 +12,29 @@
     <string name="options">Options</string>
     <string name="exit">Exit</string>
     <string name="done">Done</string>
-    <string name="account">ACCOUNT:</string>
-    <string name="balance">BALANCE:</string>
-    <string name="name">NAME:</string>
-    <string name="value">VALUE:</string>
-    <string name="type">TYPE:</string>
-    <string name="every">EVERY:</string>
-    <string name="next">NEXT:</string>
-    <string name="start_on">START ON:</string>
-    <string name="category">CATEGORY:</string>
-    <string name="add">add</string>
-    <string name="checknum">CHECK NUM:</string>
-    <string name="memo">MEMO:</string>
-    <string name="date">DATE:</string>
-    <string name="time">TIME:</string>
-    <string name="scheduled">SCHEDULED:</string>
-    <string name="cleared">CLEARED:</string>
+    <string name="account">Account</string>
+    <string name="balance">Balance</string>
+    <string name="name">Name</string>
+    <string name="value">Value</string>
+    <string name="type">Type</string>
+    <string name="every">Every</string>
+    <string name="next">Next</string>
+    <string name="start_on">Start On</string>
+    <string name="category">Category</string>
+    <string name="add">Add</string>
+    <string name="checknum">Check Num</string>
+    <string name="memo">Memo</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="scheduled">Scheduled</string>
+    <string name="cleared">Cleared</string>
     <string name="drawer_open">Drawer is open</string>
     <string name="drawer_closed">Drawer is closed</string>
     <string name="checkbook">Checkbook</string>
     <string name="search">Search</string>
     <string name="transfer">Transfer</string>
     <string name="sort">Sort</string>
+    <string name="settings">Settings</string>
     <string name="no_accounts_found">No Accounts Found</string>
     <string name="search_results">Search Results</string>
     <string name="view">View</string>
@@ -73,7 +74,10 @@
     <string name="appearance">Appearance</string>
     <string name="behavior">Behavior</string>
     <string name="misc">Misc</string>
+    <string name="none">None</string>
 
+    <string name="transfer_money">Transfer Money</string>
+    <string name="cancel">Cancel</string>
 
     <string name="home">Home</string>
     <string name="statistics">Statistics</string>
@@ -124,97 +128,5 @@
         <item>Alphabetical</item>
         <item>None</item>
     </string-array>
-    <string-array name="transaction_category">
-        <item>ALLOWANCE</item>
-        <item>ATM</item>
-        <item>CHECK</item>
-        <item>FOOD</item>
-        <item>GASOLINE</item>
-        <item>GIFT</item>
-        <item>GROCERIES</item>
-        <item>MORTGAGE</item>
-        <item>OTHER</item>
-        <item>PAYCHECK</item>
-        <item>RENT</item>
-        <item>STARTING BALANCE</item>
-        <item>STUDENT LOANS</item>
-        <item>TIP</item>
-        <item>TRANSFER</item>
-    </string-array>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
-    <string name="transfer_money">Transfer Money</string>
-    <string name="cancel">Cancel</string>
 
 </resources>

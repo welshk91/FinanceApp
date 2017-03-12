@@ -33,7 +33,7 @@ public class AccountTransferFragment extends DialogFragment {
     private Spinner transferSpinnerFrom;
 
     private final String transferName = "TRANSFER";
-    private final String transferPlanId = "0";
+    private final String transferPlanId = "-1";
     private final String transferCategory = "TRANSFER";
     private final String transferCheckNum = "None";
     private final String transferMemo = "This is an automatically generated transaction created when you transfer money";

@@ -100,7 +100,7 @@
 
         <activity
             android:name=".app.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/settings"></activity>
     </application>
 
 </manifest>

@@ -94,21 +94,6 @@ public class TransactionWizard extends WizardDialogFragment {
         return myFragmentView;
     }
 
-//		@Override
-//		public void onStart() {
-//			super.onStart();
-//
-//			// safety check
-//			if (getDialog() == null) {
-//				return;
-//			}
-//
-//			int dialogWidth = 500;
-//			int dialogHeight = 600;
-//
-//			getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
-//		}
-
     //Create Wizard
     @Override
     public AbstractWizardModel onCreateModel() {
@@ -161,7 +146,7 @@ public class TransactionWizard extends WizardDialogFragment {
             } else {
                 ContentValues transactionValues = new ContentValues();
                 transactionValues.put(DatabaseHelper.TRANS_ACCT_ID, TransactionsFragment.account.id);
-                transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, 0);
+                transactionValues.put(DatabaseHelper.TRANS_PLAN_ID, -1);
                 transactionValues.put(DatabaseHelper.TRANS_NAME, bundleInfo.getString(TransactionWizardInfoPage.NAME_DATA_KEY));
                 transactionValues.put(DatabaseHelper.TRANS_VALUE, value);
                 transactionValues.put(DatabaseHelper.TRANS_TYPE, bundleInfo.getString(TransactionWizardInfoPage.TYPE_DATA_KEY));

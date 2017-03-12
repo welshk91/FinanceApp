@@ -75,8 +75,8 @@ public class PlanReceiver extends BroadcastReceiver {
         transactionValues.put(DatabaseHelper.TRANS_TYPE, plan.type);
         transactionValues.put(DatabaseHelper.TRANS_CATEGORY, plan.category);
         transactionValues.put(DatabaseHelper.TRANS_MEMO, plan.memo);
-        transactionValues.put(DatabaseHelper.TRANS_TIME, date.getSQLTime(locale));
         transactionValues.put(DatabaseHelper.TRANS_DATE, date.getSQLDate(locale));
+        transactionValues.put(DatabaseHelper.TRANS_TIME, date.getSQLTime(locale));
         transactionValues.put(DatabaseHelper.TRANS_CLEARED, plan.cleared);
 
         //Insert values into accounts table

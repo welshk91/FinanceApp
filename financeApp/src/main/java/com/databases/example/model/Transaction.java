@@ -60,8 +60,8 @@ public class Transaction implements Parcelable {
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_CATEGORY)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_CHECKNUM)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_MEMO)),
-                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_TIME)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_DATE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_TIME)),
                     cursor.getString(cursor.getColumnIndex(DatabaseHelper.TRANS_CLEARED))
             );
             transactions.add(transaction);

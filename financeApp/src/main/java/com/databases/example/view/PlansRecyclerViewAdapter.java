@@ -117,36 +117,36 @@ public class PlansRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                     holder.tvName.setText(plan.name);
                 }
                 if (plan.acctId != -1) {
-                    holder.tvAccount.setText(context.getString(R.string.acount_id) + " " + plan.acctId);
+                    holder.tvAccount.setText(context.getString(R.string.acount_id) + ": " + plan.acctId);
                 }
                 if (value != null) {
-                    holder.tvValue.setText(context.getString(R.string.value) + " " + value.getNumberFormat(locale));
+                    holder.tvValue.setText(context.getString(R.string.value) + ": " + value.getNumberFormat(locale));
                 }
                 if (plan.type != null) {
-                    holder.tvType.setText(context.getString(R.string.type) + " " + plan.type);
+                    holder.tvType.setText(context.getString(R.string.type) + ": " + plan.type);
                 }
                 if (plan.category != null) {
-                    holder.tvCategory.setText(context.getString(R.string.category) + " " + plan.category);
+                    holder.tvCategory.setText(context.getString(R.string.category) + ": " + plan.category);
                 }
                 if (plan.memo != null) {
-                    holder.tvMemo.setText(context.getString(R.string.memo) + " " + plan.memo);
+                    holder.tvMemo.setText(context.getString(R.string.memo) + ": " + plan.memo);
                 }
                 if (plan.offset != null) {
                     temp.setStringSQL(plan.offset);
-                    holder.tvOffset.setText(context.getString(R.string.offset) + " " + temp.getReadableDate());
+                    holder.tvOffset.setText(context.getString(R.string.offset) + ": " + temp.getReadableDate());
                 }
                 if (plan.rate != null) {
-                    holder.tvRate.setText(context.getString(R.string.rate) + " " + plan.rate);
+                    holder.tvRate.setText(context.getString(R.string.rate) + ": " + plan.rate);
                 }
                 if (plan.next != null) {
                     temp.setStringSQL(plan.next);
-                    holder.tvNext.setText(context.getString(R.string.next) + " " + temp.getReadableDate());
+                    holder.tvNext.setText(context.getString(R.string.next) + ": " + temp.getReadableDate());
                 }
                 if (plan.scheduled != null) {
-                    holder.tvScheduled.setText(context.getString(R.string.scheduled) + " " + plan.scheduled);
+                    holder.tvScheduled.setText(context.getString(R.string.scheduled) + ": " + plan.scheduled);
                 }
                 if (plan.cleared != null) {
-                    holder.tvCleared.setText(context.getString(R.string.cleared) + " " + plan.cleared);
+                    holder.tvCleared.setText(context.getString(R.string.cleared) + ": " + plan.cleared);
                 }
 
                 if (plan.scheduled.equals("false")) {

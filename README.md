@@ -28,7 +28,7 @@ Things To Do
 * Construct Observer Pattern so Cards can be refreshed appropriately
 * Pass Parcelable Objects instead of all their parameters
 * Plan Rate should be Enum
-* Plan Rate should have seconds/minutes to test internally
+* Plan Rate should have year and seconds/minutes to test internally
 * Let Drawer handle Accounts?
 * Move ListViews to RecyclerViews
 * Move ActionMode into it's own class with Interface

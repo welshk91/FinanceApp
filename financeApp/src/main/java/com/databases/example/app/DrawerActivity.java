@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -128,6 +129,15 @@ public class DrawerActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    public void closeDrawer() {
+        drawerLayout.closeDrawers();
+    }
+
+    //Is drawer open (on start/left-hand side)
+    public boolean isDrawerOpen() {
+        return drawerLayout.isDrawerOpen(GravityCompat.START);
+    }
+
     public void setActivityTag(ActivityTag activityTag) {
         this.activityTag = activityTag;
 
@@ -166,7 +176,7 @@ public class DrawerActivity {
         }
     }
 
-    public ActivityTag getActivityTag(){
+    public ActivityTag getActivityTag() {
         return activityTag;
     }
 

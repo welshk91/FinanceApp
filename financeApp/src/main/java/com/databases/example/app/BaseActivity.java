@@ -40,7 +40,11 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseInte
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        if(drawerActivity.isDrawerOpen()){
+            drawerActivity.closeDrawer();
+        } else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        }
     }
 }

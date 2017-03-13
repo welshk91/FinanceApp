@@ -21,7 +21,6 @@ Known Issues
 ------------
 * Wizard text is now white? Was black recently...
 * Adapter is showing the wrong subcategories for a newly added category (fixes after leaving activity)
-* Drawer should close on back button
 * Transfer spinner looks ugly now. Needs custom adapter/layout.
 
 Things To Do

@@ -1,7 +1,7 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header
-        android:fragment="com.databases.example.fragments.SettingsFragment"
+        android:fragment="com.databases.example.features.settings.SettingsFragment"
         android:icon="@android:drawable/ic_menu_edit"
         android:summary="Appearance Settings"
         android:title="Appearance" >
@@ -10,7 +10,7 @@
         android:value="appearance"/>
     </header>
     <header
-        android:fragment="com.databases.example.fragments.SettingsFragment"
+        android:fragment="com.databases.example.features.settings.SettingsFragment"
         android:icon="@android:drawable/ic_menu_manage"
         android:summary="Behavior Settings"
         android:title="Behavior" >
@@ -19,7 +19,7 @@
             android:value="behavior"/>
     </header>
     <header
-        android:fragment="com.databases.example.fragments.SettingsFragment"
+        android:fragment="com.databases.example.features.settings.SettingsFragment"
         android:icon="@android:drawable/ic_menu_more"
         android:summary="Miscellaneous Settings"
         android:title="Misc" >

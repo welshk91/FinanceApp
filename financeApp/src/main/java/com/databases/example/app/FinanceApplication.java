@@ -8,7 +8,7 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.databases.example.BuildConfig;
 import com.databases.example.R;
-import com.databases.example.data.DatabaseUtils;
+import com.databases.example.database.DatabaseUtils;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;

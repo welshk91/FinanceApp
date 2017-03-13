@@ -18,6 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.databases.example.R;
+import com.databases.example.features.categories.CategoriesActivity;
+import com.databases.example.features.checkbook.CheckbookActivity;
+import com.databases.example.features.home.MainActivity;
+import com.databases.example.features.plans.PlansActivity;
+import com.databases.example.features.settings.SettingsActivity;
 import com.databases.example.utils.Constants.ActivityTag;
 
 import timber.log.Timber;

@@ -23,7 +23,7 @@
             android:name="android.app.default_searchable"
             android:value=".SearchMain" />
 
-        <receiver android:name=".data.PlanReceiver">
+        <receiver android:name=".database.PlanReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
@@ -32,7 +32,7 @@
         </receiver>
 
         <activity
-            android:name=".app.MainActivity"
+            android:name=".features.home.MainActivity"
             android:configChanges="keyboardHidden"
             android:label="@string/app_name">
             <intent-filter>
@@ -48,28 +48,28 @@
             /
         </activity>
         <activity
-            android:name=".app.CheckbookActivity"
+            android:name=".features.checkbook.CheckbookActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" />
         <activity
-            android:name=".app.PlansActivity"
+            android:name=".features.plans.PlansActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".app.BackupActivity"
             android:label="@string/app_name">
             <!--<meta-data-->
                 <!--android:name="android.support.PARENT_ACTIVITY"-->
-                <!--android:value="com.databases.example.app.SettingsActivity" />-->
+                <!--android:value="com.databases.example.features.settings.SettingsActivity" />-->
         </activity>
         <activity
-            android:name=".app.CategoriesActivity"
+            android:name=".features.categories.CategoriesActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".app.LinksActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" />
         <activity
-            android:name=".app.SearchActivity"
+            android:name=".features.search.SearchActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
@@ -88,7 +88,7 @@
         </activity>
 
         <provider
-            android:name=".data.MyContentProvider"
+            android:name=".database.MyContentProvider"
             android:authorities="com.databases.example.provider"
             android:exported="false"
             android:multiprocess="true" />
@@ -99,7 +99,7 @@
             android:value="@string/fabric_key" />
 
         <activity
-            android:name=".app.SettingsActivity"
+            android:name=".features.settings.SettingsActivity"
             android:label="@string/settings"></activity>
     </application>
 

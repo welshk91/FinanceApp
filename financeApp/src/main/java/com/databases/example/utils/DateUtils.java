@@ -2,11 +2,6 @@ package com.databases.example.utils;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.databases.example.fragments.DatePickerFragment;
-import com.databases.example.fragments.DatePickerInterface;
-import com.databases.example.fragments.TimePickerFragment;
-import com.databases.example.fragments.TimePickerInterface;
-
 /**
  * Created by kwelsh on 3/5/17.
  */

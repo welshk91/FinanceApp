@@ -26,7 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.databases.example.R;
-import com.databases.example.data.DatabaseHelper;
+import com.databases.example.database.DatabaseHelper;
 
 import java.io.File;
 import java.io.FileInputStream;

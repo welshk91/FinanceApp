@@ -130,7 +130,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
                         TransactionsFragment tran_frag = new TransactionsFragment();
                         tran_frag.setArguments(args);
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
                         ft.replace(R.id.checkbook_frag_frame, tran_frag);
                         ft.addToBackStack(null);
                         ft.commit();

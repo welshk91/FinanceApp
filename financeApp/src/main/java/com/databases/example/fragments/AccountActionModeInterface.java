@@ -18,5 +18,4 @@ public interface AccountActionModeInterface {
     boolean deleteClicked (ActionMode mode, MenuItem item, SparseBooleanArray selectedIds);
 
     SparseBooleanArray getSelectedIds();
-    int getSelectedCount();
 }

@@ -61,7 +61,6 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     public static final int ACCOUNTS_LOADER = 123456789;
     public static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
-    //Constants for ContextMenu
     public static final int CONTEXT_MENU_VIEW = 1;
     public static final int CONTEXT_MENU_EDIT = 2;
     public static final int CONTEXT_MENU_DELETE = 3;
@@ -453,12 +452,25 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        return false;
+        menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+        menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+        menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+
+        return true;
     }
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
+        menu.clear();
+        if (adapterAccounts.getSelectedCount() == 1 && mode != null) {
+            menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+            menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+        } else if (adapterAccounts.getSelectedCount() > 1) {
+            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+        }
+
+        return true;
     }
 
     @Override
@@ -469,6 +481,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     @Override
     public boolean viewClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        mode.finish();
         for (int i = 0; i < selectedIds.size(); i++) {
             if (selectedIds.valueAt(i)) {
                 DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selectedIds.keyAt(i)));
@@ -481,6 +494,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     @Override
     public boolean editClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        mode.finish();
         for (int i = 0; i < selectedIds.size(); i++) {
             if (selectedIds.valueAt(i)) {
                 final Account record = adapterAccounts.getAccount(selectedIds.keyAt(i));
@@ -494,6 +508,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     @Override
     public boolean deleteClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        mode.finish();
         Account record;
         for (int i = 0; i < selectedIds.size(); i++) {
             if (selectedIds.valueAt(i)) {
@@ -512,11 +527,6 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         }
 
         return true;
-    }
-
-    @Override
-    public int getSelectedCount() {
-        return adapterAccounts.getSelectedCount();
     }
 
     @Override

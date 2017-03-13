@@ -4,8 +4,6 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.databases.example.R;
-
 import timber.log.Timber;
 
 /**
@@ -18,43 +16,23 @@ public class AccountActionMode implements ActionMode.Callback {
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        menu.add(0, AccountsFragment.CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-        menu.add(0, AccountsFragment.CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-        menu.add(0, AccountsFragment.CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-        accountActionModeInterface.onCreateActionMode(mode, menu);
-        return true;
+        return accountActionModeInterface.onCreateActionMode(mode, menu);
     }
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        menu.clear();
-        if (accountActionModeInterface.getSelectedCount() == 1 && mode != null) {
-            menu.add(0, AccountsFragment.CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, AccountsFragment.CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, AccountsFragment.CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-        } else if (accountActionModeInterface.getSelectedCount() > 1) {
-            menu.add(0, AccountsFragment.CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-        }
-
-        accountActionModeInterface.onPrepareActionMode(mode, menu);
-        return true;
+        return accountActionModeInterface.onPrepareActionMode(mode, menu);
     }
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case AccountsFragment.CONTEXT_MENU_VIEW:
-                accountActionModeInterface.viewClicked(mode, item, accountActionModeInterface.getSelectedIds());
-                mode.finish();
-                return true;
+                return accountActionModeInterface.viewClicked(mode, item, accountActionModeInterface.getSelectedIds());
             case AccountsFragment.CONTEXT_MENU_EDIT:
-                accountActionModeInterface.editClicked(mode, item, accountActionModeInterface.getSelectedIds());
-                mode.finish();
-                return true;
+                return accountActionModeInterface.editClicked(mode, item, accountActionModeInterface.getSelectedIds());
             case AccountsFragment.CONTEXT_MENU_DELETE:
-                accountActionModeInterface.deleteClicked(mode, item, accountActionModeInterface.getSelectedIds());
-                mode.finish();
-                return true;
+                return accountActionModeInterface.deleteClicked(mode, item, accountActionModeInterface.getSelectedIds());
 
             default:
                 mode.finish();

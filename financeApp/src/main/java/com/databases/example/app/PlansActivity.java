@@ -16,7 +16,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
 
 import timber.log.Timber;
 
-public class PlansActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class PlansActivity extends BaseActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
     private static final int PLAN_LOADER = 5882300;
@@ -84,10 +83,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         setContentView(R.layout.plans);
         setTitle(getString(R.string.plans));
 
-        //NavigationDrawer
-        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.PLANS, null);
-        drawerActivity.initialize();
-
         RecyclerView recyclerViewPlans = (RecyclerView) findViewById(R.id.plans_list);
 
         //Turn clicks on
@@ -125,12 +120,6 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
         getSupportLoaderManager().initLoader(PLAN_LOADER, null, this);
         getSupportLoaderManager().initLoader(PLAN_SUBCATEGORY_LOADER, null, this);
         getSupportLoaderManager().initLoader(PLAN_ACCOUNT_LOADER, null, this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawerActivity.setActivityTag();
     }
 
     //Used for ActionMode
@@ -305,6 +294,11 @@ public class PlansActivity extends AppCompatActivity implements OnSharedPreferen
                 Timber.e("Error. Unknown loader (" + loader.getId());
                 break;
         }
+    }
+
+    @Override
+    public Constants.ActivityTag setDrawerTag() {
+        return Constants.ActivityTag.PLANS;
     }
 
     private final class MyActionMode implements ActionMode.Callback {

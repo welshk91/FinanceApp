@@ -7,6 +7,8 @@ package com.databases.example.app;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,9 +30,8 @@ public class DrawerActivity {
     private DrawerLayout drawerLayout;
     private NavigationView drawerNavView;
 
-    public DrawerActivity(final AppCompatActivity appCompatActivity, ActivityTag activityTag, final DrawerToggleInterface drawerToggleInterface) {
+    public DrawerActivity(final AppCompatActivity appCompatActivity, final DrawerToggleInterface drawerToggleInterface) {
         this.appCompatActivity = appCompatActivity;
-        this.activityTag = activityTag;
         this.drawerToggleInterface = drawerToggleInterface;
     }
 
@@ -47,28 +48,33 @@ public class DrawerActivity {
                 drawerLayout.closeDrawers();
 
                 switch (menuItem.getItemId()) {
+
                     case R.id.home:
                         Intent intentHome = new Intent(appCompatActivity, MainActivity.class);
                         intentHome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        appCompatActivity.startActivity(intentHome);
+                        ActivityOptionsCompat optionsHome = ActivityOptionsCompat.makeCustomAnimation(appCompatActivity, R.anim.slide_in_right, R.anim.slide_out_left);
+                        ActivityCompat.startActivity(appCompatActivity, intentHome, optionsHome.toBundle());
                         return true;
 
                     case R.id.checkbook:
                         Intent intentCheckbook = new Intent(appCompatActivity, CheckbookActivity.class);
                         intentCheckbook.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        appCompatActivity.startActivity(intentCheckbook);
+                        ActivityOptionsCompat optionsCheckbook = ActivityOptionsCompat.makeCustomAnimation(appCompatActivity, R.anim.slide_in_right, R.anim.slide_out_left);
+                        ActivityCompat.startActivity(appCompatActivity, intentCheckbook, optionsCheckbook.toBundle());
                         return true;
 
                     case R.id.categories:
                         Intent intentCategories = new Intent(appCompatActivity, CategoriesActivity.class);
                         intentCategories.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        appCompatActivity.startActivity(intentCategories);
+                        ActivityOptionsCompat optionsCategories = ActivityOptionsCompat.makeCustomAnimation(appCompatActivity, R.anim.slide_in_right, R.anim.slide_out_left);
+                        ActivityCompat.startActivity(appCompatActivity, intentCategories, optionsCategories.toBundle());
                         return true;
 
                     case R.id.plans:
                         Intent intentPlans = new Intent(appCompatActivity, PlansActivity.class);
                         intentPlans.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        appCompatActivity.startActivity(intentPlans);
+                        ActivityOptionsCompat optionsPlans = ActivityOptionsCompat.makeCustomAnimation(appCompatActivity, R.anim.slide_in_right, R.anim.slide_out_left);
+                        ActivityCompat.startActivity(appCompatActivity, intentPlans, optionsPlans.toBundle());
                         return true;
 
                     case R.id.statistics:
@@ -77,7 +83,8 @@ public class DrawerActivity {
 
                     case R.id.options:
                         Intent intentOptions = new Intent(appCompatActivity, SettingsActivity.class);
-                        appCompatActivity.startActivity(intentOptions);
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(appCompatActivity, R.anim.slide_in_right, R.anim.slide_out_left);
+                        ActivityCompat.startActivity(appCompatActivity, intentOptions, options.toBundle());
                         return true;
 
                     case R.id.help:
@@ -121,7 +128,9 @@ public class DrawerActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    public void setActivityTag() {
+    public void setActivityTag(ActivityTag activityTag) {
+        this.activityTag = activityTag;
+
         switch (activityTag) {
             case MAIN:
                 drawerNavView.getMenu().getItem(0).setChecked(true);
@@ -155,6 +164,10 @@ public class DrawerActivity {
                 Timber.e("Unknown Drawer Menu Item");
                 break;
         }
+    }
+
+    public ActivityTag getActivityTag(){
+        return activityTag;
     }
 
     //Method to exit app

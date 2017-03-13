@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,12 +22,10 @@ import com.databases.example.utils.Constants;
 import haibison.android.lockpattern.LockPatternActivity;
 import haibison.android.lockpattern.utils.AlpSettings;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final int LOCKSCREEN_SIGNIN = 1;
 
     private final String CARDS_TAG = "cards_tag";
-
-    DrawerActivity drawerActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,16 +46,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.card_frame, cards_frag, CARDS_TAG).commit();
         getSupportFragmentManager().executePendingTransactions();
-
-        //NavigationDrawer
-        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.MAIN, null);
-        drawerActivity.initialize();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawerActivity.setActivityTag();
     }
 
     //For Menu
@@ -119,5 +106,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
         }
+    }
+
+    @Override
+    public Constants.ActivityTag setDrawerTag() {
+        return Constants.ActivityTag.MAIN;
     }
 }

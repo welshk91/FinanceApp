@@ -25,11 +25,10 @@ import com.databases.example.utils.Constants;
 
 import java.util.ArrayList;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends BaseActivity {
     public static final String BOOLEAN_SEARCH_KEY = "boolSearch";
     public static final String QUERY_KEY = "query";
 
-    private DrawerActivity drawerActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,12 +40,6 @@ public class SearchActivity extends AppCompatActivity {
     public void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawerActivity.setActivityTag();
     }
 
     private void handleIntent(Intent intent) {
@@ -67,10 +60,11 @@ public class SearchActivity extends AppCompatActivity {
         mTabsAdapter.addTab(AccountsFragment.class, null);
         mTabsAdapter.addTab(TransactionsFragment.class, null);
         mTabsAdapter.notifyDataSetChanged();
+    }
 
-        //NavigationDrawer
-        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.SEARCH, null);
-        drawerActivity.initialize();
+    @Override
+    public Constants.ActivityTag setDrawerTag() {
+        return Constants.ActivityTag.SEARCH;
     }
 
     public static class MyPagerAdapter extends FragmentStatePagerAdapter

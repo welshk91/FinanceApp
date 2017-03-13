@@ -7,7 +7,6 @@ package com.databases.example.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 
@@ -20,10 +19,8 @@ import com.databases.example.utils.NotificationUtils;
 
 import timber.log.Timber;
 
-public class CheckbookActivity extends AppCompatActivity {
+public class CheckbookActivity extends BaseActivity {
     public static final String SHOW_ALL_KEY = "showAll";
-
-    DrawerActivity drawerActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,10 +29,6 @@ public class CheckbookActivity extends AppCompatActivity {
 
         setContentView(R.layout.checkbook);
         setTitle(getString(R.string.checkbook));
-
-        //NavigationDrawer
-        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CHECKBOOK, null);
-        drawerActivity.initialize();
 
         if (savedInstanceState != null) {
             Timber.d("SavedState, returning...");
@@ -85,12 +78,6 @@ public class CheckbookActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawerActivity.setActivityTag();
-    }
-
     //Needed to have notification extras work
     @Override
     protected void onNewIntent(Intent intent) {
@@ -105,5 +92,10 @@ public class CheckbookActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    public Constants.ActivityTag setDrawerTag() {
+        return Constants.ActivityTag.CHECKBOOK;
     }
 }

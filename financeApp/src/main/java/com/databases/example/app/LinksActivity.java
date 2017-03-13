@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -33,7 +32,7 @@ import java.io.File;
 
 import timber.log.Timber;
 
-public class LinksActivity extends AppCompatActivity {
+public class LinksActivity extends BaseActivity {
     private final static int PICKFILE_RESULT_CODE = 1;
     private final static int PICKCONTACT_RESULT_CODE = 2;
 
@@ -56,16 +55,6 @@ public class LinksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.links);
         setTitle(getString(R.string.attachments));
-
-        //NavigationDrawer
-        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.LINKS, null);
-        drawerActivity.initialize();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawerActivity.setActivityTag();
     }
 
     //Method for when you click the Add button
@@ -219,7 +208,11 @@ public class LinksActivity extends AppCompatActivity {
         //Get contact picture
         Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
         contactPhoto = Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+    }
 
+    @Override
+    public Constants.ActivityTag setDrawerTag() {
+        return Constants.ActivityTag.LINKS;
     }
 
     public static class AttachDialogFragment extends DialogFragment {

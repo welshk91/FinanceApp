@@ -15,7 +15,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -39,7 +38,7 @@ import java.util.ArrayList;
 
 import timber.log.Timber;
 
-public class CategoriesActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class CategoriesActivity extends BaseActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static final int CATEGORIES_LOADER = 8675309;
     public static final int SUBCATEGORIES_LOADER = 867;
 
@@ -58,7 +57,6 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
 
     private static DatabaseHelper dh = null;
     private final ArrayList<Cursor> resultsCursor = new ArrayList<Cursor>();
-    private DrawerActivity drawerActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,18 +66,14 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         setContentView(R.layout.categories);
         setTitle(getString(R.string.categories));
 
-        //NavigationDrawer
-        drawerActivity = new DrawerActivity(this, Constants.ActivityTag.CATEGROIES, null);
-        drawerActivity.initialize();
-
-        ExpandableListView lvCategory = (ExpandableListView) this.findViewById(R.id.category_list);
+        ExpandableListView listViewCategories = (ExpandableListView) this.findViewById(R.id.category_list);
 
         //Turn clicks on
-        lvCategory.setClickable(true);
-        lvCategory.setLongClickable(true);
+        listViewCategories.setClickable(true);
+        listViewCategories.setLongClickable(true);
 
         //Allows Context Menus for each item of the list view
-        registerForContextMenu(lvCategory);
+        registerForContextMenu(listViewCategories);
 
         //Set up a listener for changes in settings menu
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -88,13 +82,7 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         getSupportLoaderManager().initLoader(CATEGORIES_LOADER, null, this);
 
         adapterCategory = new CategoriesListViewAdapter(this, 0, null, resultsCursor);
-        lvCategory.setAdapter(adapterCategory);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawerActivity.setActivityTag();
+        listViewCategories.setAdapter(adapterCategory);
     }
 
     public CategoriesListViewAdapter getAdapterCategory() {
@@ -382,4 +370,8 @@ public class CategoriesActivity extends AppCompatActivity implements OnSharedPre
         }
     }
 
+    @Override
+    public Constants.ActivityTag setDrawerTag() {
+        return Constants.ActivityTag.CATEGROIES;
+    }
 }

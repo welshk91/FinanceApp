@@ -54,7 +54,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>, AccountActionModeInterface {
+public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>, BaseActionModeInterface {
     public static final String ACCOUNT_FRAG_TAG = "account_frag_tag";
 
     private static final int PICKFILE_RESULT_CODE = 1;
@@ -190,9 +190,9 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
         if (hasCheckedItems && mActionMode == null) {
             // there are some selected items, start the actionMode
-            AccountActionMode accountActionMode = new AccountActionMode();
-            accountActionMode.setAccountActionModeInterface(this);
-            mActionMode = getActivity().startActionMode(accountActionMode);
+            BaseActionMode baseActionMode = new BaseActionMode();
+            baseActionMode.setBaseActionModeInterface(this);
+            mActionMode = getActivity().startActionMode(baseActionMode);
         } else if (!hasCheckedItems && mActionMode != null) {
             // there no selected items, finish the actionMode
             ((ActionMode) mActionMode).finish();
@@ -481,7 +481,6 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
     @Override
     public boolean viewClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
-        mode.finish();
         for (int i = 0; i < selectedIds.size(); i++) {
             if (selectedIds.valueAt(i)) {
                 DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selectedIds.keyAt(i)));
@@ -489,12 +488,12 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
             }
         }
 
+        mode.finish();
         return true;
     }
 
     @Override
     public boolean editClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
-        mode.finish();
         for (int i = 0; i < selectedIds.size(); i++) {
             if (selectedIds.valueAt(i)) {
                 final Account record = adapterAccounts.getAccount(selectedIds.keyAt(i));
@@ -503,12 +502,12 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
             }
         }
 
+        mode.finish();
         return true;
     }
 
     @Override
     public boolean deleteClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
-        mode.finish();
         Account record;
         for (int i = 0; i < selectedIds.size(); i++) {
             if (selectedIds.valueAt(i)) {
@@ -526,6 +525,7 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
             }
         }
 
+        mode.finish();
         return true;
     }
 

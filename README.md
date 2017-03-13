@@ -22,6 +22,7 @@ Known Issues
 * Wizard text is now white? Was black recently...
 * Adapter is showing the wrong subcategories for a newly added category (fixes after leaving activity)
 * Drawer should close on back button
+* Transfer spinner looks ugly now. Needs custom adapter/layout.
 
 Things To Do
 ------------
@@ -30,8 +31,6 @@ Things To Do
 * Plan Rate should be Enum
 * Plan Rate should have year and seconds/minutes to test internally
 * Let Drawer handle Accounts?
-* Move ListViews to RecyclerViews
-* Move ActionMode into it's own class with Interface
 * Improve Drawer/Hamburger menu
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Fork [Wizard Pager](https://github.com/romannurik/Android-WizardPager) and put up an aar on Maven/Gradle

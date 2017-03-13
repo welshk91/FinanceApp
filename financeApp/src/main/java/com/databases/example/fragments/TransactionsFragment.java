@@ -57,7 +57,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class TransactionsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class TransactionsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>, BaseActionModeInterface {
     public static final String TRANSACTION_FRAG_TAG = "transaction_frag_tag";
 
     public static final int TRANS_LOADER = 987654321;
@@ -76,9 +76,9 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     private RecyclerView recyclerView = null;
 
     //Constants for ContextMenu
-    private final int CONTEXT_MENU_VIEW = 5;
-    private final int CONTEXT_MENU_EDIT = 6;
-    private final int CONTEXT_MENU_DELETE = 7;
+    public static final int CONTEXT_MENU_VIEW = 5;
+    public static final int CONTEXT_MENU_EDIT = 6;
+    public static final int CONTEXT_MENU_DELETE = 7;
 
     //RecyclerView Adapter
     private static TransactionsRecyclerViewAdapter adapterTransactions = null;
@@ -167,7 +167,9 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         boolean hasCheckedItems = adapterTransactions.getSelectedCount() > 0;
 
         if (hasCheckedItems && mActionMode == null) {
-            mActionMode = getActivity().startActionMode(new MyActionMode());
+            BaseActionMode baseActionMode = new BaseActionMode();
+            baseActionMode.setBaseActionModeInterface(this);
+            mActionMode = getActivity().startActionMode(baseActionMode);
         } else if (!hasCheckedItems && mActionMode != null) {
             ((ActionMode) mActionMode).finish();
         }
@@ -277,13 +279,6 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                //Intent intentUp = new Intent(TransactionsFragment.this.getActivity(), MainActivity.class);
-                //intentUp.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                //startActivity(intentUp);
-                //menu.toggle();
-                break;
-
             case R.id.transaction_menu_add:
                 transactionAdd();
                 return true;
@@ -296,7 +291,6 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
             case R.id.transaction_menu_sort:
                 transactionSort();
                 return true;
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -460,87 +454,6 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         }
     }
 
-    private final class MyActionMode implements ActionMode.Callback {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            menu.clear();
-            if (adapterTransactions.getSelectedCount() == 1 && mode != null) {
-                menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-                menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-                return true;
-            } else if (adapterTransactions.getSelectedCount() > 1) {
-                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-                return true;
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            SparseBooleanArray selected = adapterTransactions.getSelectedIds();
-
-            switch (item.getItemId()) {
-                case CONTEXT_MENU_VIEW:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            DialogFragment newFragment = TransactionViewFragment.newInstance(adapterTransactions.getTransaction(selected.keyAt(i)).id);
-                            newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-                case CONTEXT_MENU_EDIT:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            final Transaction record = adapterTransactions.getTransaction(selected.keyAt(i));
-                            final TransactionWizard frag = TransactionWizard.newInstance(record);
-                            frag.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-                case CONTEXT_MENU_DELETE:
-                    Transaction record;
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            record = adapterTransactions.getTransaction(selected.keyAt(i));
-
-                            Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
-                            getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID + "=" + record.id, null);
-
-                            Toast.makeText(getActivity(), "Deleted Transaction:\n" + record.name, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-
-                default:
-                    mode.finish();
-                    Timber.e("ERROR. Clicked " + item);
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-            adapterTransactions.removeSelection();
-        }
-    }
-
     @Override
     public void onDestroyView() {
         if (mActionMode != null) {
@@ -550,4 +463,83 @@ public class TransactionsFragment extends Fragment implements OnSharedPreference
         super.onDestroyView();
     }
 
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+        menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+        menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        menu.clear();
+        if (adapterTransactions.getSelectedCount() == 1 && mode != null) {
+            menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+            menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+            return true;
+        } else if (adapterTransactions.getSelectedCount() > 1) {
+            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+            return true;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mActionMode = null;
+        adapterTransactions.removeSelection();
+    }
+
+    @Override
+    public boolean viewClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                DialogFragment newFragment = TransactionViewFragment.newInstance(adapterTransactions.getTransaction(selectedIds.keyAt(i)).id);
+                newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
+            }
+        }
+
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public boolean editClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                final Transaction record = adapterTransactions.getTransaction(selectedIds.keyAt(i));
+                final TransactionWizard frag = TransactionWizard.newInstance(record);
+                frag.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
+            }
+        }
+
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public boolean deleteClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        Transaction record;
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                record = adapterTransactions.getTransaction(selectedIds.keyAt(i));
+
+                Uri uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + record.id);
+                getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ID + "=" + record.id, null);
+
+                Toast.makeText(getActivity(), "Deleted Transaction:\n" + record.name, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public SparseBooleanArray getSelectedIds() {
+        return adapterTransactions.getSelectedIds();
+    }
 }

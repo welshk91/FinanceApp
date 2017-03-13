@@ -9,7 +9,7 @@ import android.view.MenuItem;
  * Created by kwelsh on 3/12/17.
  */
 
-public interface AccountActionModeInterface {
+public interface BaseActionModeInterface {
     boolean onCreateActionMode(ActionMode mode, Menu menu);
     boolean onPrepareActionMode(ActionMode mode, Menu menu);
     void onDestroyActionMode(ActionMode mode);

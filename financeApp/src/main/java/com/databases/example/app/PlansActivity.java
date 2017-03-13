@@ -28,6 +28,8 @@ import android.widget.SimpleCursorAdapter;
 import com.databases.example.R;
 import com.databases.example.data.DatabaseHelper;
 import com.databases.example.data.MyContentProvider;
+import com.databases.example.fragments.BaseActionMode;
+import com.databases.example.fragments.PlanActionModeInterface;
 import com.databases.example.fragments.PlanViewFragment;
 import com.databases.example.model.Plan;
 import com.databases.example.model.SearchWidget;
@@ -41,7 +43,7 @@ import java.util.ArrayList;
 
 import timber.log.Timber;
 
-public class PlansActivity extends BaseActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class PlansActivity extends BaseActivity implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>, PlanActionModeInterface {
     private final int ACTIONBAR_MENU_ADD_PLAN_ID = 5882300;
 
     private static final int PLAN_LOADER = 5882300;
@@ -55,10 +57,10 @@ public class PlansActivity extends BaseActivity implements OnSharedPreferenceCha
     public static SimpleCursorAdapter accountSpinnerAdapter = null;
 
     //Constants for ContextMenu
-    private final int ACTION_MODE_VIEW = 1;
-    private final int ACTION_MODE_EDIT = 2;
-    private final int ACTION_MODE_DELETE = 3;
-    private final int ACTION_MODE_TOGGLE = 4;
+    public static final int ACTION_MODE_VIEW = 8;
+    public static final int ACTION_MODE_EDIT = 9;
+    public static final int ACTION_MODE_DELETE = 10;
+    public static final int ACTION_MODE_TOGGLE = 11;
 
     private PlansRecyclerViewAdapter adapterPlans;
 
@@ -128,7 +130,10 @@ public class PlansActivity extends BaseActivity implements OnSharedPreferenceCha
         boolean hasCheckedItems = adapterPlans.getSelectedCount() > 0;
 
         if (hasCheckedItems && mActionMode == null) {
-            mActionMode = this.startActionMode(new MyActionMode());
+            BaseActionMode baseActionMode = new BaseActionMode();
+            baseActionMode.setBaseActionModeInterface(this);
+            baseActionMode.setPlanActionModeInterface(this);
+            mActionMode = this.startActionMode(baseActionMode);
         } else if (!hasCheckedItems && mActionMode != null) {
             ((ActionMode) mActionMode).finish();
         }
@@ -301,101 +306,101 @@ public class PlansActivity extends BaseActivity implements OnSharedPreferenceCha
         return Constants.ActivityTag.PLANS;
     }
 
-    private final class MyActionMode implements ActionMode.Callback {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, ACTION_MODE_DELETE, 2, R.string.edit).setIcon(android.R.drawable.ic_menu_delete);
-            menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            menu.clear();
-            if (adapterPlans.getSelectedCount() == 1 && mode != null) {
-                menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-                menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-                menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-                menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
-                return true;
-            } else if (adapterPlans.getSelectedCount() > 1) {
-                menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-                menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
-                return true;
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            SparseBooleanArray selected = adapterPlans.getSelectedIds();
-            Plan record;
-
-            switch (item.getItemId()) {
-                case ACTION_MODE_VIEW:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            DialogFragment newFragment = PlanViewFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);
-                            newFragment.show(getSupportFragmentManager(), VIEW_FRAGMENT_TAG);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-                case ACTION_MODE_EDIT:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            record = adapterPlans.getPlan(selected.keyAt(i));
-                            final PlanWizard frag = PlanWizard.newInstance(record);
-                            frag.show(getSupportFragmentManager(), EDIT_FRAGMENT_TAG);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-                case ACTION_MODE_DELETE:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            record = adapterPlans.getPlan(selected.keyAt(i));
-
-                            if (PlanUtils.cancelPlan(PlansActivity.this, record)) {
-                                Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
-                                getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
-                                Timber.d("Deleting " + record.name + " id:" + record.id);
-                            }
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-
-                case ACTION_MODE_TOGGLE:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            record = adapterPlans.getPlan(selected.keyAt(i));
-                            PlanUtils.togglePlan(PlansActivity.this, record);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-
-                default:
-                    mode.finish();
-                    Timber.e("ERROR. Clicked " + item);
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-            adapterPlans.removeSelection();
-        }
-    }
+//    private final class MyActionMode implements ActionMode.Callback {
+//        @Override
+//        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//            menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+//            menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+//            menu.add(0, ACTION_MODE_DELETE, 2, R.string.edit).setIcon(android.R.drawable.ic_menu_delete);
+//            menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//            menu.clear();
+//            if (adapterPlans.getSelectedCount() == 1 && mode != null) {
+//                menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+//                menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+//                menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+//                menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
+//                return true;
+//            } else if (adapterPlans.getSelectedCount() > 1) {
+//                menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+//                menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
+//                return true;
+//            }
+//
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//            SparseBooleanArray selected = adapterPlans.getSelectedIds();
+//            Plan record;
+//
+//            switch (item.getItemId()) {
+//                case ACTION_MODE_VIEW:
+//                    for (int i = 0; i < selected.size(); i++) {
+//                        if (selected.valueAt(i)) {
+//                            DialogFragment newFragment = PlanViewFragment.newInstance(adapterPlans.getPlan(selected.keyAt(i)).id);
+//                            newFragment.show(getSupportFragmentManager(), VIEW_FRAGMENT_TAG);
+//                        }
+//                    }
+//
+//                    mode.finish();
+//                    return true;
+//                case ACTION_MODE_EDIT:
+//                    for (int i = 0; i < selected.size(); i++) {
+//                        if (selected.valueAt(i)) {
+//                            record = adapterPlans.getPlan(selected.keyAt(i));
+//                            final PlanWizard frag = PlanWizard.newInstance(record);
+//                            frag.show(getSupportFragmentManager(), EDIT_FRAGMENT_TAG);
+//                        }
+//                    }
+//
+//                    mode.finish();
+//                    return true;
+//                case ACTION_MODE_DELETE:
+//                    for (int i = 0; i < selected.size(); i++) {
+//                        if (selected.valueAt(i)) {
+//                            record = adapterPlans.getPlan(selected.keyAt(i));
+//
+//                            if (PlanUtils.cancelPlan(PlansActivity.this, record)) {
+//                                Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + record.id);
+//                                getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + record.id, null);
+//                                Timber.d("Deleting " + record.name + " id:" + record.id);
+//                            }
+//                        }
+//                    }
+//
+//                    mode.finish();
+//                    return true;
+//
+//                case ACTION_MODE_TOGGLE:
+//                    for (int i = 0; i < selected.size(); i++) {
+//                        if (selected.valueAt(i)) {
+//                            record = adapterPlans.getPlan(selected.keyAt(i));
+//                            PlanUtils.togglePlan(PlansActivity.this, record);
+//                        }
+//                    }
+//
+//                    mode.finish();
+//                    return true;
+//
+//                default:
+//                    mode.finish();
+//                    Timber.e("ERROR. Clicked " + item);
+//                    return false;
+//            }
+//        }
+//
+//        @Override
+//        public void onDestroyActionMode(ActionMode mode) {
+//            mActionMode = null;
+//            adapterPlans.removeSelection();
+//        }
+//    }
 
     @Override
     public void onDestroy() {
@@ -404,5 +409,106 @@ public class PlansActivity extends BaseActivity implements OnSharedPreferenceCha
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+        menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+        menu.add(0, ACTION_MODE_DELETE, 2, R.string.edit).setIcon(android.R.drawable.ic_menu_delete);
+        menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        menu.clear();
+        if (adapterPlans.getSelectedCount() == 1 && mode != null) {
+            menu.add(0, ACTION_MODE_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
+            menu.add(0, ACTION_MODE_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
+            menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+            menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
+            return true;
+        } else if (adapterPlans.getSelectedCount() > 1) {
+            menu.add(0, ACTION_MODE_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
+            menu.add(0, ACTION_MODE_TOGGLE, 3, R.string.toggle).setIcon(android.R.drawable.ic_menu_revert);
+            return true;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mActionMode = null;
+        adapterPlans.removeSelection();
+    }
+
+    @Override
+    public boolean viewClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                DialogFragment newFragment = PlanViewFragment.newInstance(adapterPlans.getPlan(selectedIds.keyAt(i)).id);
+                newFragment.show(getSupportFragmentManager(), VIEW_FRAGMENT_TAG);
+            }
+        }
+
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public boolean editClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        Plan plan;
+
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                plan = adapterPlans.getPlan(selectedIds.keyAt(i));
+                final PlanWizard frag = PlanWizard.newInstance(plan);
+                frag.show(getSupportFragmentManager(), EDIT_FRAGMENT_TAG);
+            }
+        }
+
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public boolean deleteClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        Plan plan;
+
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                plan = adapterPlans.getPlan(selectedIds.keyAt(i));
+
+                if (PlanUtils.cancelPlan(PlansActivity.this, plan)) {
+                    Uri uri = Uri.parse(MyContentProvider.PLANS_URI + "/" + plan.id);
+                    getContentResolver().delete(uri, DatabaseHelper.PLAN_ID + "=" + plan.id, null);
+                    Timber.d("Deleting " + plan.name + " id:" + plan.id);
+                }
+            }
+        }
+
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public SparseBooleanArray getSelectedIds() {
+        return adapterPlans.getSelectedIds();
+    }
+
+    @Override
+    public boolean toggleClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        Plan plan;
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                plan = adapterPlans.getPlan(selectedIds.keyAt(i));
+                PlanUtils.togglePlan(PlansActivity.this, plan);
+            }
+        }
+
+        mode.finish();
+        return true;
     }
 }

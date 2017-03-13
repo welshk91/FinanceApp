@@ -54,7 +54,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AccountsFragment extends Fragment implements OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>, AccountActionModeInterface {
     public static final String ACCOUNT_FRAG_TAG = "account_frag_tag";
 
     private static final int PICKFILE_RESULT_CODE = 1;
@@ -62,9 +62,9 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
     public static final int ACCOUNTS_SEARCH_LOADER = 12345;
 
     //Constants for ContextMenu
-    final private int CONTEXT_MENU_VIEW = 1;
-    final private int CONTEXT_MENU_EDIT = 2;
-    final private int CONTEXT_MENU_DELETE = 3;
+    public static final int CONTEXT_MENU_VIEW = 1;
+    public static final int CONTEXT_MENU_EDIT = 2;
+    public static final int CONTEXT_MENU_DELETE = 3;
 
     private View myFragmentView;
 
@@ -191,7 +191,9 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
 
         if (hasCheckedItems && mActionMode == null) {
             // there are some selected items, start the actionMode
-            mActionMode = getActivity().startActionMode(new MyActionMode());
+            AccountActionMode accountActionMode = new AccountActionMode();
+            accountActionMode.setAccountActionModeInterface(this);
+            mActionMode = getActivity().startActionMode(accountActionMode);
         } else if (!hasCheckedItems && mActionMode != null) {
             // there no selected items, finish the actionMode
             ((ActionMode) mActionMode).finish();
@@ -440,93 +442,6 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         }
     }
 
-    private final class MyActionMode implements ActionMode.Callback {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-            menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-            menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            menu.clear();
-            if (adapterAccounts.getSelectedCount() == 1 && mode != null) {
-                menu.add(0, CONTEXT_MENU_VIEW, 0, R.string.view).setIcon(android.R.drawable.ic_menu_view);
-                menu.add(0, CONTEXT_MENU_EDIT, 1, R.string.edit).setIcon(android.R.drawable.ic_menu_edit);
-                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-                return true;
-            } else if (adapterAccounts.getSelectedCount() > 1) {
-                menu.add(0, CONTEXT_MENU_DELETE, 2, R.string.delete).setIcon(android.R.drawable.ic_menu_delete);
-                return true;
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            SparseBooleanArray selected = adapterAccounts.getSelectedIds();
-
-            switch (item.getItemId()) {
-                case CONTEXT_MENU_VIEW:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            //accountOpen(adapterAccounts.getAccount(selected.keyAt(i)).id);
-                            DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selected.keyAt(i)));
-                            newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-                case CONTEXT_MENU_EDIT:
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            final Account record = adapterAccounts.getAccount(selected.keyAt(i));
-                            AccountWizard newFragment = AccountWizard.newInstance(record);
-                            newFragment.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-                case CONTEXT_MENU_DELETE:
-                    Account record;
-                    for (int i = 0; i < selected.size(); i++) {
-                        if (selected.valueAt(i)) {
-                            record = adapterAccounts.getAccount(selected.keyAt(i));
-
-                            //Delete Account
-                            Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
-                            getActivity().getContentResolver().delete(uri, DatabaseHelper.ACCOUNT_ID + "=" + record.id, null);
-
-                            //Delete All TransactionsFragment of that account
-                            uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
-                            getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ACCT_ID + "=" + record.id, null);
-
-                            Toast.makeText(getActivity(), "Deleted Account:\n" + record.name, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    mode.finish();
-                    return true;
-
-                default:
-                    mode.finish();
-                    Timber.e("ERROR. Clicked " + item);
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-            adapterAccounts.removeSelection();
-        }
-    }
-
     @Override
     public void onDestroyView() {
         if (mActionMode != null) {
@@ -534,5 +449,78 @@ public class AccountsFragment extends Fragment implements OnSharedPreferenceChan
         }
 
         super.onDestroyView();
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mActionMode = null;
+        adapterAccounts.removeSelection();
+    }
+
+    @Override
+    public boolean viewClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                DialogFragment newFragment = AccountViewFragment.newInstance(adapterAccounts.getAccount(selectedIds.keyAt(i)));
+                newFragment.show(getChildFragmentManager(), VIEW_FRAGMENT_TAG);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean editClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                final Account record = adapterAccounts.getAccount(selectedIds.keyAt(i));
+                AccountWizard newFragment = AccountWizard.newInstance(record);
+                newFragment.show(getChildFragmentManager(), EDIT_FRAGMENT_TAG);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean deleteClicked(ActionMode mode, MenuItem item, SparseBooleanArray selectedIds) {
+        Account record;
+        for (int i = 0; i < selectedIds.size(); i++) {
+            if (selectedIds.valueAt(i)) {
+                record = adapterAccounts.getAccount(selectedIds.keyAt(i));
+
+                //Delete Account
+                Uri uri = Uri.parse(MyContentProvider.ACCOUNTS_URI + "/" + record.id);
+                getActivity().getContentResolver().delete(uri, DatabaseHelper.ACCOUNT_ID + "=" + record.id, null);
+
+                //Delete All TransactionsFragment of that account
+                uri = Uri.parse(MyContentProvider.TRANSACTIONS_URI + "/" + 0);
+                getActivity().getContentResolver().delete(uri, DatabaseHelper.TRANS_ACCT_ID + "=" + record.id, null);
+
+                Toast.makeText(getActivity(), "Deleted Account:\n" + record.name, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public int getSelectedCount() {
+        return adapterAccounts.getSelectedCount();
+    }
+
+    @Override
+    public SparseBooleanArray getSelectedIds(){
+        return adapterAccounts.getSelectedIds();
     }
 }

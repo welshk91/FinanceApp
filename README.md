@@ -69,7 +69,6 @@ Notes to Self
 * Link a contact (own table?) - Isn't this a Payee field option?
 * Share Option?
 * Intro - (Import option, ask for their main currency)
-* Account - Need to be able to enter an "initial" amount.
 * Account - Transfer fee.
 * Account - Billing and payment dates. Notification when a bill is happening soon (with amount).
 * Plans - Should support business days (lunch)
@@ -102,8 +101,8 @@ Supported
 - Documents (doc, pptx, xls)
 
 Attachments Not Working
-- .mp4 files (found through the filemanager), can be returned. You can view them by hitting the filemanager in the selected programs which pops up another popup with video player in the list (Bug?). Selecting video player from that list makes it load the file, but the video stutters & audio not synced. This is due to lack of codec support on the platform.
-- .avi files (found through the filemanager) can be returned. When you select the video player to view it, it only has audio. This is due to lack of codec support on the platform.
+- .mp4 files (found through the file manager), can be returned. You can view them by hitting the file manager in the selected programs which pops up another popup with video player in the list (Bug?). Selecting video player from that list makes it load the file, but the video stutters & audio not synced. This is due to lack of codec support on the platform.
+- .avi files (found through the file manager) can be returned. When you select the video player to view it, it only has audio. This is due to lack of codec support on the platform.
 
 Third-Party Libraries Used
 --------------------------

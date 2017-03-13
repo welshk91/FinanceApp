@@ -86,8 +86,8 @@ public class Transaction implements Parcelable {
         dest.writeString(this.category);
         dest.writeString(this.checknum);
         dest.writeString(this.memo);
-        dest.writeString(this.time);
         dest.writeString(this.date);
+        dest.writeString(this.time);
         dest.writeString(this.cleared);
     }
 
@@ -101,8 +101,8 @@ public class Transaction implements Parcelable {
         this.category = in.readString();
         this.checknum = in.readString();
         this.memo = in.readString();
-        this.time = in.readString();
         this.date = in.readString();
+        this.time = in.readString();
         this.cleared = in.readString();
     }
 

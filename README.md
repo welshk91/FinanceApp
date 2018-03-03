@@ -30,6 +30,7 @@ Things To Do
 * Plan Rate should be Enum
 * Plan Rate should have year and seconds/minutes to test internally
 * Let Drawer handle Accounts?
+* RecyclerView doesn't have a ripple when clicked (needs to be on account_layout, but then we lose card background...)
 * Improve Drawer/Hamburger menu
 * Fix Memory Leaks (look into [LeakCanary](https://github.com/square/leakcanary))
 * Fork [Wizard Pager](https://github.com/romannurik/Android-WizardPager) and put up an aar on Maven/Gradle
@@ -48,6 +49,7 @@ Things To Do
 * Improve look (icons, animations, fonts, item views, default colors, slide menu, big notifications)
 * Encrypt entire database (SQLCipher)
 * Clean up some of the Android Lint warnings
+* Update Screenshots
 
 Optimizations
 -------------
@@ -62,6 +64,7 @@ Notes to Self
 -------------
 * Need more spinners, less typing
 * Need a number picker for entering rate
+* Calculator Activity (for result) to launch a custom calculator
 * What should happen when a user clicks on a search result? Advance Transaction View?
 * More granular search options?
 * Link a contact (own table?) - Isn't this a Payee field option?

@@ -16,15 +16,18 @@ repositories {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.databases.example"
         minSdkVersion 14
         targetSdkVersion 25
+        multiDexEnabled true
         versionCode 1
         versionName "Alpha"
+        setProperty("archivesBaseName", "DignityHealth-MyHome-$versionName")
         vectorDrawables.useSupportLibrary = true
+        resConfigs "en"
     }
 
     buildTypes {
@@ -44,16 +47,6 @@ android {
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def outputFile = output.outputFile
-                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                        def fileName = outputFile.name.replace('.apk', "-" + defaultConfig.versionName + ".apk")
-                        output.outputFile = new File(outputFile.parent, fileName)
-                    }
-                }
-            }
         }
 
         debug {
